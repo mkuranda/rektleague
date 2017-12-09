@@ -6,6 +6,8 @@ from django.utils import timezone
 class Team(models.Model):
     name = models.CharField(max_length=40)
 
+    def __str__(self):
+        return self.name
 
 class Player(models.Model):
     summoner_name = models.CharField(max_length=40)
