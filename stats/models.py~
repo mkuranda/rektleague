@@ -12,7 +12,6 @@ class Team(models.Model):
 class Player(models.Model):
     summoner_name = models.CharField(max_length=40)
     rank = models.CharField(max_length=15)
-    role = models.CharField(max_length=10)
     riot_id = models.IntegerField(default=0)
     team = models.ForeignKey(Team)
 
