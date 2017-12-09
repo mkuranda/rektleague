@@ -2,21 +2,17 @@ import datetime
 from django.db import models
 from django.utils import timezone
 
-class Question(models.Model):
-    question_text = models.CharField(max_length=200)
-    pub_date = models.DateTimeField('date published')
+
+class Team(models.Model):
+    name = models.CharField(max_length=40)
+
+
+class Player(models.Model):
+    summoner_name = models.CharField(max_length=40)
+    rank = models.CharField(max_length=15)
+    riot_id = models.IntegerField(default=0)
+    team = models.ForeignKey(Team)
 
     def __str__(self):
-        return self.question_text
+        return self.summoner_name
 
-    def was_published_recently(self):
-        return self.pub_date >= timezone.now() - datetime.timedelta(days=1)
-
-
-class Choice(models.Model):
-    question = models.ForeignKey(Question)
-    choice_text = models.CharField(max_length=200)
-    votes = models.IntegerField(default=0)
-
-    def __str__(self):
-        return self.choice_text
