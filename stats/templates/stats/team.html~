@@ -1,0 +1,5 @@
+<p> {{ team.name }} </p>
+
+{% for player in players %}
+    <p> {{ player.get_player.name }} </p>
+{% endfor %}

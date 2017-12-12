@@ -1,0 +1,5 @@
+<h> {{ player.name }} </h>
+
+<p> {{ team.name }} </p>
+<p> {{ player.role }} </p>
+<p> {{ player.rank }} </p>
