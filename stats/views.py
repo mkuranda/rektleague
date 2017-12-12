@@ -3,11 +3,12 @@ from django.http import HttpResponse
 from django.template import loader
 from .models import Player, TeamPlayer, Team
 
-def player_detail(request, name):
-    player = get_object_or_404(Player, name__iexact=name)
+def player_detail(request, player_id):
+    player = get_object_or_404(Player, id=player_id)
+    team_players = TeamPlayer.objects.filter(player=player_id)
     context = {
         'player': player,
-        'team': player.team
+        'team_players': team_players
     }
     return render(request, 'stats/player.html', context)
 

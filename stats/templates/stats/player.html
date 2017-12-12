@@ -1,4 +1,5 @@
 <p> {{ player.name }} </p>
-<p> {{ team.name }} </p>
-<p> {{ player.role }} </p>
+{% for team_player in team_players %}
+<p> {{ team_player.team }}, {{ team_player.role }} </p>
+{% endfor %}
 <p> {{ player.rank }} </p>

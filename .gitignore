@@ -1,5 +1,4 @@
 *.pyc
 *db.sqlite3
-*.un~
-*.py~
-*.html~
+*~
+*.sw[a-z]
