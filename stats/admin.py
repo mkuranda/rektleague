@@ -1,5 +1,6 @@
 from django.contrib import admin
 
+from .models import Season
 from .models import Team
 from .models import Player
 from .models import TeamPlayer
@@ -24,6 +25,7 @@ class TeamAdmin(admin.ModelAdmin):
 
 
 admin.site.register(Role)
+admin.site.register(Season)
 admin.site.register(Item)
 admin.site.register(Champion)
 admin.site.register(SummonerSpell)

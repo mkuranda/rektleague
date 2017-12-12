@@ -1,0 +1,11 @@
+<p> {{ season }} </p>
+{% if teams %}
+    <ul>
+    {% for team in teams %} 
+        <li><a href="/stats/season/{{ season.id }}/team/{{ team.id }}">{{ team.name }}</a></li>
+    {% endfor %}
+    </ul>
+{% else %}
+    <p>No Teams.</p>
+{% endif %}
+

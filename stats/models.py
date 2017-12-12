@@ -2,6 +2,13 @@ import datetime
 from django.db import models
 from django.utils import timezone
 
+class Season(models.Model):
+    tournament_id = models.IntegerField(default = 0)
+    team_size = models.IntegerField(default = 5)
+
+    def __str__(self):
+        return "Season " + str(self.pk)
+
 class Role(models.Model):
     name = models.CharField(max_length=15)
 
@@ -15,6 +22,7 @@ class Champion(models.Model):
 
 class Team(models.Model):
     name = models.CharField(max_length=40)
+    season = models.ForeignKey(Season)
 
     def __str__(self):
         return self.name
