@@ -54,7 +54,7 @@ class TeamPlayer(models.Model):
 class Match(models.Model):
     riot_id = models.IntegerField(default=0)
     tournament_code = models.CharField(max_length=40)
-
+    duration = models.IntegerField(default=0)
 
 class PlayerRole(models.Model):
     player = models.ForeignKey(Player)
@@ -71,6 +71,56 @@ class PlayerMatch(models.Model):
     kills = models.IntegerField(default=0)
     deaths = models.IntegerField(default=0)
     assists = models.IntegerField(default=0)
+    physical_damage_dealt = models.IntegerField(default=0)
+    neutral_minions_killed_team_jungle = models.IntegerField(default=0)
+    magic_damage_dealt = models.IntegerField(default=0)
+    total_player_score = models.IntegerField(default=0)
+    neutral_minions_killed_enemy_jungle = models.IntegerField(default=0)
+    largest_critical_strike = models.IntegerField(default=0)
+    total_damage_dealt = models.IntegerField(default=0)
+    magic_damage_dealt_to_champions = models.IntegerField(default=0)
+    vision_wards_bought_in_game = models.IntegerField(default=0)
+    damage_dealt_to_objectives = models.IntegerField(default=0)
+    largest_killing_spree = models.IntegerField(default=0)
+    double_kills = models.IntegerField(default=0)
+    triple_kills = models.IntegerField(default=0)
+    quadra_kills = models.IntegerField(default=0)
+    penta_kills = models.IntegerField(default=0)
+    total_time_crowd_control_dealt = models.IntegerField(default=0)
+    longest_time_spent_living = models.IntegerField(default=0)
+    wards_killed = models.IntegerField(default=0)
+    first_tower_assist = models.BooleanField()
+    first_tower_kill = models.BooleanField()
+    first_blood_assist = models.BooleanField()
+    vision_score = models.IntegerField(default=0)
+    wards_placed = models.IntegerField(default=0)
+    turret_kills = models.IntegerField(default=0)
+    damage_self_mitigated = models.IntegerField(default=0)
+    champ_level = models.IntegerField(default=0)
+    first_inhibitor_kill = models.BooleanField()
+    gold_earned = models.IntegerField(default=0)
+    magical_damage_taken = models.IntegerField(default=0)
+    true_damage_taken = models.IntegerField(default=0)
+    first_inhibitor_assist = models.BooleanField()
+    neutral_minions_killed = models.IntegerField(default=0)
+    objective_player_score = models.IntegerField(default=0)
+    combat_player_score = models.IntegerField(default=0)
+    damage_dealt_to_turrets = models.IntegerField(default=0)
+    physical_damage_dealt_to_champions = models.IntegerField(default=0)
+    gold_spent = models.IntegerField(default=0)
+    true_damage_dealt = models.IntegerField(default=0)
+    true_damage_dealt_to_champions = models.IntegerField(default=0)
+    total_heal = models.IntegerField(default=0)
+    total_minions_killed = models.IntegerField(default=0)
+    first_blood_kill = models.BooleanField()
+    sight_wards_bought_in_game = models.IntegerField(default=0)
+    total_damage_dealt_to_champions = models.IntegerField(default=0)
+    inhibitor_kills = models.IntegerField(default=0)
+    total_score_rank = models.IntegerField(default=0)
+    total_damage_taken = models.IntegerField(default=0)
+    killing_sprees = models.IntegerField(default=0)
+    time_ccing_others = models.IntegerField(default=0)
+    physical_damage_taken = models.IntegerField(default=0)
 
     class Meta:
         unique_together = (("player", "match"))
@@ -80,6 +130,14 @@ class TeamMatch(models.Model):
     match = models.ForeignKey(Match)
     side = models.CharField(max_length=5)
     win = models.BooleanField()
+    first_dragon = models.BooleanField()
+    first_inhibitor = models.BooleanField()
+    baron_kills = models.IntegerField(default=0)
+    first_rift_herald = models.BooleanField()
+    first_blood = models.BooleanField()
+    first_tower = models.BooleanField()
+    inhibitor_kills = models.IntegerField()
+    tower_kills = models.IntegerField()
 
     class Meta:
         unique_together = (("team", "match"))
@@ -108,12 +166,6 @@ class PlayerMatchSummonerSpell(models.Model):
     player = models.ForeignKey(Player)
     match = models.ForeignKey(Match)
     summoner_spell = models.ForeignKey(SummonerSpell)
-
-
-
-
-
-
 
 
 

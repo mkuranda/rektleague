@@ -1,0 +1,9 @@
+<h1>Match Load</h1>
+
+<p> {{ season }} </p>
+
+<form action="/stats/season/{{ season.id }}/load_match/" method="post">
+	{% csrf_token %}
+	{{ form }}
+	<input type="submit" value="Submit" \>
+</form
