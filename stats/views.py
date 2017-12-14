@@ -1,9 +1,10 @@
 from django.shortcuts import get_object_or_404, render
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponse, HttpResponseRedirect, Http404
 from django.template import loader
 from riot_request import RiotRequester
-from .models import Player, TeamPlayer, Team, Season
+from .models import Player, TeamPlayer, Team, Season, Champion
 from .forms import TournamentCodeForm
+from get_riot_object import ObjectNotFound, get_item, get_champion
 
 def season_detail(request, season_id):
     season = get_object_or_404(Season, id=season_id)
@@ -32,12 +33,20 @@ def team_detail(request, season_id, team_id):
     }
     return render(request, 'stats/team.html', context)
 
-def index(request):
-    team_list = Team.objects.all()
+def champion_detail(request, champion_id):
+    try:
+        champion = get_champion(champion_id)
+    except ObjectNotFound:
+        raise Http404("Champion does not exist")
     context = {
-        'team_list': team_list,
+        'champion': champion
     }
-    return render(request, 'stats/index.html', context)
+    return render(request, 'stats/champion.html', context)
+
+
+def index(request):
+    season = Season.objects.latest('id')
+    return HttpResponseRedirect('season/' + str(season.id) + '/')
 
 def load_match(request, season_id):
     season = get_object_or_404(Season, id=season_id)

@@ -16,9 +16,11 @@ class Role(models.Model):
         return self.name
 
 class Champion(models.Model):
-    riot_id = models.IntegerField(default=0)
     name = models.CharField(max_length=40)
     title = models.CharField(max_length=40)
+
+    def __str__(self):
+        return self.name
 
 class Team(models.Model):
     name = models.CharField(max_length=40)
@@ -40,7 +42,7 @@ class TeamPlayer(models.Model):
     team = models.ForeignKey(Team)
     player = models.ForeignKey(Player)
     role = models.ForeignKey(Role)
-    isLeader = models.BooleanField()
+    isLeader = models.BooleanField(default=False)
 
     class Meta:
         unique_together = (("team", "role"), ("team", "player"))
@@ -89,19 +91,19 @@ class PlayerMatch(models.Model):
     total_time_crowd_control_dealt = models.IntegerField(default=0)
     longest_time_spent_living = models.IntegerField(default=0)
     wards_killed = models.IntegerField(default=0)
-    first_tower_assist = models.BooleanField()
-    first_tower_kill = models.BooleanField()
-    first_blood_assist = models.BooleanField()
+    first_tower_assist = models.BooleanField(default=False)
+    first_tower_kill = models.BooleanField(default=False)
+    first_blood_assist = models.BooleanField(default=False)
     vision_score = models.IntegerField(default=0)
     wards_placed = models.IntegerField(default=0)
     turret_kills = models.IntegerField(default=0)
     damage_self_mitigated = models.IntegerField(default=0)
     champ_level = models.IntegerField(default=0)
-    first_inhibitor_kill = models.BooleanField()
+    first_inhibitor_kill = models.BooleanField(default=False)
     gold_earned = models.IntegerField(default=0)
     magical_damage_taken = models.IntegerField(default=0)
     true_damage_taken = models.IntegerField(default=0)
-    first_inhibitor_assist = models.BooleanField()
+    first_inhibitor_assist = models.BooleanField(default=False)
     neutral_minions_killed = models.IntegerField(default=0)
     objective_player_score = models.IntegerField(default=0)
     combat_player_score = models.IntegerField(default=0)
@@ -112,7 +114,7 @@ class PlayerMatch(models.Model):
     true_damage_dealt_to_champions = models.IntegerField(default=0)
     total_heal = models.IntegerField(default=0)
     total_minions_killed = models.IntegerField(default=0)
-    first_blood_kill = models.BooleanField()
+    first_blood_kill = models.BooleanField(default=False)
     sight_wards_bought_in_game = models.IntegerField(default=0)
     total_damage_dealt_to_champions = models.IntegerField(default=0)
     inhibitor_kills = models.IntegerField(default=0)
@@ -129,15 +131,15 @@ class TeamMatch(models.Model):
     team = models.ForeignKey(Team)
     match = models.ForeignKey(Match)
     side = models.CharField(max_length=5)
-    win = models.BooleanField()
-    first_dragon = models.BooleanField()
-    first_inhibitor = models.BooleanField()
+    win = models.BooleanField(default=False)
+    first_dragon = models.BooleanField(default=False)
+    first_inhibitor = models.BooleanField(default=False)
     baron_kills = models.IntegerField(default=0)
-    first_rift_herald = models.BooleanField()
-    first_blood = models.BooleanField()
-    first_tower = models.BooleanField()
-    inhibitor_kills = models.IntegerField()
-    tower_kills = models.IntegerField()
+    first_rift_herald = models.BooleanField(default=False)
+    first_blood = models.BooleanField(default=False)
+    first_tower = models.BooleanField(default=False)
+    inhibitor_kills = models.IntegerField(default=0)
+    tower_kills = models.IntegerField(default=0)
 
     class Meta:
         unique_together = (("team", "match"))
@@ -149,7 +151,6 @@ class TeamMatchBan(models.Model):
     pickTurn = models.IntegerField(default=0)
 
 class Item(models.Model):
-    riot_id = models.IntegerField(default=0)
     name = models.CharField(max_length=40)
     description = models.CharField(max_length=40)
 

@@ -1,5 +1,12 @@
 <p> Team {{ team.name }} </p>
 
-{% for team_player in players %}
-<p> {{ team_player.player.name }} ( {{ team_player.role }} ) </p>
-{% endfor %}
+{% if players %}
+    <ul>
+        {% for team_player in players %}
+            <li><a href="/stats/player/{{ team_player.player.id }}/">{{ team_player.player.name }}</a> ({{ team_player.role }} ) </li>
+        {% endfor %}
+    </ul>
+{% else %}
+    <p>No Players.</p>
+{% endif %}
+
