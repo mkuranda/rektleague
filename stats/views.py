@@ -2,9 +2,9 @@ from django.shortcuts import get_object_or_404, render
 from django.http import HttpResponse, HttpResponseRedirect, Http404
 from django.template import loader
 from riot_request import RiotRequester
-from .models import Player, TeamPlayer, Team, Season, Champion
+from .models import Player, TeamPlayer, Team, Season, Champion, Match
 from .forms import TournamentCodeForm
-from get_riot_object import ObjectNotFound, get_item, get_champion
+from get_riot_object import ObjectNotFound, get_item, get_champion, get_match
 
 def season_detail(request, season_id):
     season = get_object_or_404(Season, id=season_id)
@@ -55,7 +55,9 @@ def load_match(request, season_id):
         if form.is_valid():
             match_id_requester = RiotRequester('/lol/match/v3/matches/by-tournament-code/')
             match_id = match_id_requester.request(form.cleaned_data['tournament_code'] + '/ids')
-            return HttpResponseRedirect('results/' + str(match_id[0]) + '/')
+            team_1 = Team.objects.filter(name=form.cleaned_data['team_1'])
+            team_2 = Team.objects.filter(name=form.cleaned_data['team_2'])
+            return HttpResponseRedirect('results/' + str(team_1[0].id) + '/' + str(team_2[0].id) + '/' + str(match_id[0]) + '/')
     else:
         form = TournamentCodeForm()
     context = {
@@ -65,12 +67,17 @@ def load_match(request, season_id):
     return render(request, 'stats/load_match.html', context)
 
 
-def match_data_results(request, season_id, match_id):
+def match_data_results(request, season_id, team_1_id, team_2_id, match_id):
     match_result_requester = RiotRequester('/lol/match/v3/matches/')
-    result = match_result_requester.request(str(match_id))
+#    result = match_result_requester.request(str(match_id))
+    match = get_match(team_1_id, team_2_id, match_id)
     context = {
-        'result': result
+        'result': match
     }
+#    try:
+#        match = get_match(team_1_id, team_2_id, match_id)
+#        match = Match.objects.get(match_id)
+
     return render(request, 'stats/match_data_results.html', context)
 
 

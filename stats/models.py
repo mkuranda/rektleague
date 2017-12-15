@@ -54,9 +54,12 @@ class TeamPlayer(models.Model):
         return Team.objects.filter(pk=self.team)
 
 class Match(models.Model):
-    riot_id = models.IntegerField(default=0)
     tournament_code = models.CharField(max_length=40)
     duration = models.IntegerField(default=0)
+
+    def __str__(self):
+        teamMatches = TeamMatch.objects.filter(match=self)
+        return str(teamMatches[0].team) + " v " + str(teamMatches[1].team)
 
 class PlayerRole(models.Model):
     player = models.ForeignKey(Player)
