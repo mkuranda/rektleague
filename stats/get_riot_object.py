@@ -1,4 +1,5 @@
 from riot_request import *
+import math
 from .models import Item, Champion, Match, Team, TeamMatch, Role, TeamPlayer, PlayerMatch
 
 class ObjectNotFound(Exception) :
@@ -86,7 +87,7 @@ def get_match(team_1_id, team_2_id, riot_id):
     for participant_data in match_data['participants']:
         participant_stats = participant_data['stats']
         role = Role.objects.get(id = ((participant_stats['participantId']-1) % 5)+1)
-        if (participant_data['participantId']/5)+1 == 1:
+        if math.floor((participant_data['participantId']-1)/5)+1 == 1:
             team = team_1
         else:
             team = team_2
