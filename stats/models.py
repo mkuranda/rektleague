@@ -9,6 +9,13 @@ class Season(models.Model):
     def __str__(self):
         return "Season " + str(self.pk)
 
+class Week(models.Model):
+    season = models.ForeignKey(Season)
+
+    def __str__(self):
+	seasonWeeks = Week.objects.filter(season=self.season).order_by('id')
+	return "Week " + str(self.id - seasonWeeks[0].id + 1)
+
 class Role(models.Model):
     name = models.CharField(max_length=15)
 
@@ -54,6 +61,7 @@ class TeamPlayer(models.Model):
         return Team.objects.filter(pk=self.team)
 
 class Match(models.Model):
+    week = models.ForeignKey(Week)
     tournament_code = models.CharField(max_length=40)
     duration = models.IntegerField(default=0)
 
