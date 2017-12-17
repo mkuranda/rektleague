@@ -3,5 +3,58 @@
 {% block title %}Rekt League | News{% endblock %}
 
 {% block content %}
-News stuff here!
+<style>
+.sidebarbg
+
+{
+width:30%;
+height: 100%;
+background-color: #80808061;
+float: right;
+
+}
+
+.heading
+
+{
+
+	font-size: 37px;
+    font-family: verdana;
+    text-align: center;
+}
+
+.subheading
+
+{
+
+	text-align: center;
+	font-family: verdana;
+	font-size: 23px;
+}
+
+.matches
+
+{
+
+	text-align: center;
+	font-family: verdana;
+
+}
+</style>
+{% for team in teams %}
+    {{ team.name }}
+{% endfor %}
+<div class="sidebarbg">
+	<h2 class="heading">STANDINGS</h2>
+	<h3 class="subheading">{{ week }}</h3>
+	
+	{% for match in matches %}
+	    <p class="matches">{{ match }}</p>
+	{% endfor %}
+    
+
+</div>
+
+
+
 {% endblock %}

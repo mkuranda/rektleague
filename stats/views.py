@@ -2,7 +2,7 @@ from django.shortcuts import get_object_or_404, render
 from django.http import HttpResponse, HttpResponseRedirect, Http404
 from django.template import loader
 from riot_request import RiotRequester
-from .models import Player, TeamPlayer, Team, Season, Champion, Match
+from .models import Player, TeamPlayer, Team, Season, Champion, Match, Week
 from .forms import TournamentCodeForm
 from get_riot_object import ObjectNotFound, get_item, get_champion, get_match
 
@@ -48,7 +48,17 @@ def champion_detail(request, champion_id):
 
 
 def news(request):
-    return render(request, 'stats/news.html')
+    season = Season.objects.latest('id')
+    week = Week.objects.filter(season=season).latest('id')
+    teams = Team.objects.filter(season=season)
+    matches = Match.objects.filter(week=week)
+    context = {
+        'week': week,
+        'teams': teams,
+        'matches': matches
+    }
+    return render(request, 'stats/news.html', context)
+
 
 def index(request):
     return HttpResponseRedirect('news/')
