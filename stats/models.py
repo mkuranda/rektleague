@@ -13,8 +13,8 @@ class Week(models.Model):
     season = models.ForeignKey(Season)
 
     def __str__(self):
-	seasonWeeks = Week.objects.filter(season=self.season).order_by('id')
-	return "Week " + str(self.id - seasonWeeks[0].id + 1)
+	    seasonWeeks = Week.objects.filter(season=self.season).order_by('id')
+	    return "Week " + str(self.id - seasonWeeks[0].id + 1)
 
 class Role(models.Model):
     name = models.CharField(max_length=15)
