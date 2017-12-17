@@ -1,42 +1,6 @@
-<style>
+{% extends "stats/base.html" %}
 
-.navbar
-{
-
-	background-color: black;
-    width: 100%;
-    height: 12%;
-}
-
-.navbutton
-
-{
-
-
-margin-top: 0%;
-text-align: center;
-color:white;
-width:25%;
-
-
-}
-</style>
-
-{% load staticfiles %}
-
-<!--<link rel="stylesheet" type="text/css" href="{% static '/static/stats/styles.css' %}"/>-->
-
-
-  
-<img style="width:100%;" src="{% static '/static/stats/heropsd.png' %}"/>
-<div class="navbar">
-	
-
-<p class="navbutton">NEWS</p>
-</div>
-
-
-</div>
+{% block content %}
 <p> {{ season }} </p>
 {% if teams %}
     <ul>
@@ -47,4 +11,5 @@ width:25%;
 {% else %}
     <p>No Teams.</p>
 {% endif %}
+{% endblock %}
 

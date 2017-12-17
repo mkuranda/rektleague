@@ -1,5 +1,11 @@
+{% extends "stats/base.html" %}
+
+{% block title %}Rekt League | {{ player.name }}{% endblock %}
+
+{% block content %}
 <p> {{ player.name }} </p>
 {% for team_player in team_players %}
 <p> {{ team_player.team.season }}, <a href="/stats/season/{{ team_player.team.season.id }}/team/{{ team_player.team.id }}/">{{ team_player.team.name }}</a>, {{ team_player.role }} </p>
 {% endfor %}
 <p> {{ player.rank }} </p>
+{% endblock %}

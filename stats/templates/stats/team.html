@@ -1,3 +1,8 @@
+{% extends "stats/base.html" %}
+
+{% block title %}Rekt League | Team {{ team.name }}{% endblock %}
+
+{% block content %}
 <p> Team {{ team.name }} </p>
 
 {% if players %}
@@ -9,4 +14,4 @@
 {% else %}
     <p>No Players.</p>
 {% endif %}
-
+{% endblock %}

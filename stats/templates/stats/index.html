@@ -1,9 +1,7 @@
-{% if team_list %}
-    <ul>
-    {% for team in team_list %}
-        <li><a href="/stats/team/{{ team.id }}/">{{ team.name }}</a></li>
-    {% endfor %}
-    </ul>
-{% else %}
-    <p>No teams have been created.</p>
-{% endif %}
+{% extends "stats/base.html" %}
+
+{% block title %}Rekt League | Home{% endblock %}
+
+{% block content %}
+Home page!
+{% endblock %}

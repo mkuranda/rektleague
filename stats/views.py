@@ -6,6 +6,9 @@ from .models import Player, TeamPlayer, Team, Season, Champion, Match
 from .forms import TournamentCodeForm
 from get_riot_object import ObjectNotFound, get_item, get_champion, get_match
 
+def about(request):
+    return render(request, 'stats/about.html')
+
 def season_detail(request, season_id):
     season = get_object_or_404(Season, id=season_id)
     teams = Team.objects.filter(season=season_id)
@@ -45,8 +48,7 @@ def champion_detail(request, champion_id):
 
 
 def index(request):
-    season = Season.objects.latest('id')
-    return HttpResponseRedirect('season/' + str(season.id) + '/')
+    return render(request, 'stats/index.html')
 
 def load_match(request, season_id):
     season = get_object_or_404(Season, id=season_id)
