@@ -47,8 +47,11 @@ def champion_detail(request, champion_id):
     return render(request, 'stats/champion.html', context)
 
 
+def news(request):
+    return render(request, 'stats/news.html')
+
 def index(request):
-    return render(request, 'stats/index.html')
+    return HttpResponseRedirect('news/')
 
 def load_match(request, season_id):
     season = get_object_or_404(Season, id=season_id)
