@@ -7,12 +7,28 @@ from .forms import TournamentCodeForm
 from get_riot_object import ObjectNotFound, get_item, get_champion, get_match
 
 def about(request):
-    return render(request, 'stats/about.html')
+    latest_season = Season.objects.latest('id')
+    context = {
+        'latest_season': latest_season
+    }
+    return render(request, 'stats/about.html', context)
+
+def faq(request):
+    latest_season = Season.objects.latest('id')
+    context = {
+        'latest_season': latest_season
+    }
+    return render(request, 'stats/faq.html', context)
 
 def season_detail(request, season_id):
+    latest_season = Season.objects.latest('id')
+    context = {
+        'latest_season': latest_season
+    }
     season = get_object_or_404(Season, id=season_id)
     teams = Team.objects.filter(season=season_id)
     context = {
+        'latest_season': latest_season,
         'season': season,
         'teams': teams,
     }
@@ -53,8 +69,9 @@ def news(request):
     teams = Team.objects.filter(season=season)
     sorted_teams = sorted(teams, key= lambda t: t.get_sort_record())
     series_list = Series.objects.filter(week=week)
+
     context = {
-        'season': season,
+        'latest_season': season,
         'week': week,
         'teams': sorted_teams,
 	'series_list': series_list

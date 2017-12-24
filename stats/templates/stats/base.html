@@ -32,7 +32,7 @@
 <div class="navhover">
 <a class="navlink" href="/stats/news"><img class="navbutton" src="{% static '/static/stats/news.png' %}"/></a>
 </div>
-<a class="navlink" href="/stats/season/1"><img class="navbutton" src="{% static '/static/stats/season.png' %}"/></a>
+<a class="navlink" href="/stats/season/{{ latest_season.id }}"><img class="navbutton" src="{% static '/static/stats/season.png' %}"/></a>
 <a class="navlink" href="/stats/about"> <img class="navbutton" src="{% static '/static/stats/about.png' %}"/></a>
 <a class="navlink" href="/stats/faq"><img class="navbutton" src="{% static '/static/stats/faq.png' %}"/></a>
 <body>

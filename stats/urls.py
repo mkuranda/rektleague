@@ -6,6 +6,7 @@ urlpatterns = [
     url(r'^$', views.index, name='index'),
     url(r'^news/', views.news, name='news'),
     url(r'^about/', views.about, name='about'),
+    url(r'^faq/', views.faq, name='faq'),
     url(r'^season/(?P<season_id>[0-9]+)/$', views.season_detail, name='season'),
     url(r'^player/(?P<player_id>[0-9]+)/$', views.player_detail, name='player_detail'),
     url(r'^season/(?P<season_id>[0-9]+)/team/(?P<team_id>[0-9]+)/$', views.team_detail, name='team_detail'),
