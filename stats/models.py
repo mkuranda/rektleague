@@ -3,18 +3,18 @@ from django.db import models
 from django.utils import timezone
 
 class Season(models.Model):
-    tournament_id = models.IntegerField(default = 0)
-    team_size = models.IntegerField(default = 5)
+    tournament_id = models.IntegerField(default=0)
+    team_size = models.IntegerField(default=5)
 
     def __str__(self):
         return "Season " + str(self.pk)
 
 class Week(models.Model):
     season = models.ForeignKey(Season)
+    number = models.IntegerField(default=1)
 
     def __str__(self):
-	    seasonWeeks = Week.objects.filter(season=self.season).order_by('id')
-	    return "Week " + str(self.id - seasonWeeks[0].id + 1)
+	return "Week " + str(self.number)
 
 class Role(models.Model):
     name = models.CharField(max_length=15)
@@ -33,9 +33,33 @@ class Team(models.Model):
     name = models.CharField(max_length=40)
     season = models.ForeignKey(Season)
 
+    def get_record(self):
+	wins = TeamMatch.objects.filter(team=self, win=True).count()
+	losses = TeamMatch.objects.filter(team=self, win=False).count()
+	return str(wins) + "-" + str(losses)
+
+    def get_sort_record(self):
+	wins = TeamMatch.objects.filter(team=self, win=True).count()
+	losses = TeamMatch.objects.filter(team=self, win=False).count()
+	return -1 * ((wins * 100) - losses)
+
     def __str__(self):
         return self.name
 
+class Series(models.Model):
+    week = models.ForeignKey(Week)
+
+    def __str__(self):
+        teamSeries = SeriesTeam.objects.filter(series=self)
+	return str(teamSeries[0].team) + " v " + str(teamSeries[1].team)
+
+class SeriesTeam(models.Model):
+    team = models.ForeignKey(Team)
+    series = models.ForeignKey(Series)
+
+    class Meta:
+        unique_together = (("team", "series"))
+    
 class Player(models.Model):
     name = models.CharField(max_length=40)
     rank = models.CharField(max_length=15)
@@ -61,7 +85,7 @@ class TeamPlayer(models.Model):
         return Team.objects.filter(pk=self.team)
 
 class Match(models.Model):
-    week = models.ForeignKey(Week)
+    series = models.ForeignKey(Series)
     tournament_code = models.CharField(max_length=40)
     duration = models.IntegerField(default=0)
 

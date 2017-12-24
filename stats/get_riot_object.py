@@ -1,6 +1,6 @@
 from riot_request import *
 import math
-from .models import Item, Champion, Match, Team, TeamMatch, Role, TeamPlayer, PlayerMatch
+from .models import Item, Champion, Match, Team, TeamMatch, Role, TeamPlayer, PlayerMatch, Week, Series, SeriesTeam
 
 class ObjectNotFound(Exception) :
     """Raised when we can't find an object in db or from riot API"""
@@ -36,17 +36,7 @@ def get_champion(riot_id):
         champion.save()
     return champion
 
-def get_match(team_1_id, team_2_id, riot_id):
-    try:
-        match = Match.objects.get(id=riot_id)
-    except Match.DoesNotExist:
-        match = Match.objects.create(id=riot_id)
-
-    requester = RiotRequester('/lol/match/v3/matches/')
-    try:
-        match_data = requester.request(str(riot_id))
-    except RiotNotFound:
-        raise ObjectNotFound("Match " + str(riot_id))
+def get_match(team_1_id, team_2_id, riot_id, series_id):
 
     # find teams
     try:
@@ -57,6 +47,23 @@ def get_match(team_1_id, team_2_id, riot_id):
         team_2 = Team.objects.get(id=team_2_id)
     except Team.DoesNotExist:
         raise ObjectNotFound("Team " + str(team_2_id))
+
+    try:
+	series = Series.objects.get(id=series_id)
+    except Series.DoesNotExist:
+	raise ObjectNotFound("Series " + str(series_id))
+
+    try:
+        match = Match.objects.get(id=riot_id)
+    except Match.DoesNotExist:
+        match = Match.objects.create(id=riot_id, series=series)
+
+    requester = RiotRequester('/lol/match/v3/matches/')
+    try:
+        match_data = requester.request(str(riot_id))
+    except RiotNotFound:
+        raise ObjectNotFound("Match " + str(riot_id))
+
 
     for team_data in match_data['teams']:
         if team_data['teamId'] == 100:

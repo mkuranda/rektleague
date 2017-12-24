@@ -3,7 +3,7 @@
 {% block title %}Rekt League | Team {{ team.name }}{% endblock %}
 
 {% block content %}
-<p> Team {{ team.name }} </p>
+<p> Team {{ team.name }} ({{ team.get_record }})</p>
 
 {% if players %}
     <ul>

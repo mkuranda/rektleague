@@ -32,7 +32,7 @@ float: right;
 	font-size: 23px;
 }
 
-.matches
+.series
 
 {
 
@@ -46,10 +46,14 @@ float: right;
 {% endfor %}
 <div class="sidebarbg">
 	<h2 class="heading">STANDINGS</h2>
+	{% for team in teams %}
+	<p class="series"><a href="/stats/season/{{ season.id }}/team/{{ team.id }}/">{{ team.name }}</a> ({{ team.get_record }})</p>
+	{% endfor %}
+
 	<h3 class="subheading">{{ week }}</h3>
 	
-	{% for match in matches %}
-	    <p class="matches">{{ match }}</p>
+	{% for series in series_list %}
+	<p class="series"><a href="/stats/season/{{ series.week.season.id }}/series/{{ series.id }}/">{{ series }}</a></p>
 	{% endfor %}
     
 

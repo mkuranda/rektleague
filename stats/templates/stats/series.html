@@ -1,0 +1,20 @@
+{% extends "stats/base.html" %}
+
+{% block title %}Rekt League | {{ series }}{% endblock %}
+
+{% block content %}
+<h1>{{ series }}</h1>
+
+{% if matches %}
+    <ul>
+        {% for match in matches %}
+	<p>{{ match }}</p>
+        {% endfor %}
+    </ul>
+{% else %}
+    <p>No Matces</p>
+{% endif %}
+
+<a href="/stats/season/{{ season.id }}/series/{{ series.id }}/load_match/">Load Match</a>
+{% endblock %}
+
