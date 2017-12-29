@@ -40,10 +40,36 @@ float: right;
 	font-family: verdana;
 
 }
+
+.vod
+
+{
+float:left;
+width:70%;
+}
+
+.videoplayer
+
+{
+margin-left: 10%;
+margin-top:10%;
+
+}
+
 </style>
-{% for team in teams %}
-    {{ team.name }}
-{% endfor %}
+
+
+<div class="vod">
+
+
+
+
+  <iframe class="videoplayer" src="https://player.twitch.tv/?autoplay=false&video=v204293187" frameborder="0" allowfullscreen="true" scrolling="no" height="40%" width="80%"></iframe>
+
+</div>
+
+<!--SIDEBAR-->
+
 <div class="sidebarbg">
 	<h2 class="heading">STANDINGS</h2>
 	<h3 class="subheading">{{ week }}</h3>
