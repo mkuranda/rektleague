@@ -1,7 +1,7 @@
 from django.contrib import admin
 
 from .models import Season
-from .models import Team, Match, TeamMatch, PlayerMatch, Week
+from .models import Team, Match, TeamMatch, PlayerMatch, Week, Series, SeriesTeam
 from .models import Player
 from .models import TeamPlayer
 from .models import Role
@@ -38,8 +38,19 @@ class MatchInline(admin.StackedInline):
     model = Match
     extra = 0
 
+class SeriesTeamInline(admin.TabularInline):
+    model = SeriesTeam
+    extra = 0
+
+class SeriesAdmin(admin.ModelAdmin):
+    inlines = [MatchInline, SeriesTeamInline]
+
+class SeriesInline(admin.StackedInline):
+    model = Series
+    extra = 0
+
 class WeekAdmin(admin.ModelAdmin):
-    inlines = [MatchInline]
+    inlines = [SeriesInline]
 
 
 admin.site.register(Role)
@@ -51,3 +62,4 @@ admin.site.register(Player, PlayerAdmin)
 admin.site.register(Team, TeamAdmin)
 admin.site.register(Match, MatchAdmin)
 admin.site.register(Week, WeekAdmin)
+admin.site.register(Series, SeriesAdmin)
