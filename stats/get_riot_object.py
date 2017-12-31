@@ -1,4 +1,5 @@
 from riot_request import *
+import urllib, shutil
 import math
 from .models import Item, Champion, Match, Team, TeamMatch, Role, TeamPlayer, PlayerMatch, Week, Series, SeriesTeam
 
@@ -17,6 +18,13 @@ def get_item(riot_id):
             raise ObjectNotFound("Item " + str(riot_id))
         item = Item.objects.create(riot_id)
         item.name = item_data["name"]
+	r = requests.get("http://ddragon.leagueoflegends.com/cdn/7.5.2/img/item/" + item_data["image"]["full"], stream=True)
+        if r.status_code == 200:
+            with open("media/stats/item/icon" + item_data["image"]["full"], 'wb') as f:
+                r.raw.decode_content = True
+                shutil.copyfileobj(r.raw, f)
+	else:
+	    raise ObjectNotFound("Item Image " + item_data["image"]["full"])
         item.description = item_data["description"]
         item.save()
     return item
@@ -26,6 +34,7 @@ def get_champion(riot_id):
         champion = Champion.objects.get(id=riot_id)
     except Champion.DoesNotExist:
         requester = RiotRequester('/lol/static-data/v3/champions/')
+	requester.add_tag("image")
         try:
             champion_data = requester.request(str(riot_id))
         except RiotNotFound:
@@ -33,6 +42,15 @@ def get_champion(riot_id):
         champion = Champion.objects.create(id=riot_id)
         champion.name = champion_data["name"]
         champion.title = champion_data["title"]
+	r = requests.get("http://ddragon.leagueoflegends.com/cdn/7.5.2/img/champion/" + champion_data["image"]["full"], stream=True)
+        if r.status_code == 200:
+            with open("media/stats/champion/icon/" + champion_data["image"]["full"], 'wb') as f:
+                r.raw.decode_content = True
+                shutil.copyfileobj(r.raw, f)
+	else:
+	    raise ObjectNotFound("Champion Image " + champion_data["image"]["full"])
+#	urllib.urlretrieve(, "media/stats/" + champion_data["image"]["full"])
+	champion.icon = "stats/champion/icon/" + champion_data["image"]["full"]
         champion.save()
     return champion
 
@@ -76,6 +94,9 @@ def get_match(team_1_id, team_2_id, riot_id, series_id):
             team_match = TeamMatch.objects.get(match=match, team=team)
         except TeamMatch.DoesNotExist:
             team_match = TeamMatch.objects.create(match=match, team=team)
+	for ban_data in team_data['bans']:
+            team_ban = TeamMatchBan.objects.create(team=team, match=match, champion=get_champion(ban_data['championId']), pickTurn=ban_data['pickTurn'])
+	    team_ban.save()
         team_match.side = side
         team_match.match = match
         team_match.first_dragon = team_data['firstDragon']

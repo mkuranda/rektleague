@@ -54,9 +54,15 @@ class RiotRequester :
     def __init__(self, request_base):
         self.api_key = api_key
 	self.request_base = url_base + request_base
+	self.tag_list = []
+
+    def add_tag(self, tag):
+	self.tag_list.append(tag)
 
     def request(self, request_url):
         url = self.request_base + request_url + "?api_key=" + self.api_key
+	for tag in self.tag_list:
+	    url += "&tags=" + tag
 	r = requests.get(url).json()
 	if 'status' in r:
 	    raise riot_errors[r['status']['status_code']]

@@ -1,5 +1,6 @@
 import datetime
 from django.db import models
+from django.db.models import Count
 from django.utils import timezone
 
 class Season(models.Model):
@@ -25,6 +26,7 @@ class Role(models.Model):
 class Champion(models.Model):
     name = models.CharField(max_length=40)
     title = models.CharField(max_length=40)
+    icon = models.ImageField(upload_to='stats/champion/icon', default='')
 
     def __str__(self):
         return self.name
@@ -32,6 +34,7 @@ class Champion(models.Model):
 class Team(models.Model):
     name = models.CharField(max_length=40)
     season = models.ForeignKey(Season)
+    icon = models.ImageField(upload_to='stats')
 
     def get_record(self):
 	wins = TeamMatch.objects.filter(team=self, win=True).count()
@@ -49,9 +52,22 @@ class Team(models.Model):
 class Series(models.Model):
     week = models.ForeignKey(Week)
 
+    def get_team_1(self):
+	teamSeries = SeriesTeam.objects.filter(series=self)
+	return teamSeries[0].team
+
+    def get_team_2(self):
+	teamSeries = SeriesTeam.objects.filter(series=self)
+	return teamSeries[1].team
+
+    def get_team_1_wins(self):
+	return TeamMatch.objects.filter(team=self.get_team_1(), win=True, match__series=self).count()
+
+    def get_team_2_wins(self):
+	return TeamMatch.objects.filter(team=self.get_team_2(), win=True, match__series=self).count()
+
     def __str__(self):
-        teamSeries = SeriesTeam.objects.filter(series=self)
-	return str(teamSeries[0].team) + " v " + str(teamSeries[1].team)
+	return str(self.week) + ": " + str(self.get_team_1()) + " v " + str(self.get_team_2())
 
 class SeriesTeam(models.Model):
     team = models.ForeignKey(Team)
@@ -69,25 +85,17 @@ class Player(models.Model):
         return self.name
 
 
-class TeamPlayer(models.Model):
-    team = models.ForeignKey(Team)
-    player = models.ForeignKey(Player)
-    role = models.ForeignKey(Role)
-    isLeader = models.BooleanField(default=False)
-
-    class Meta:
-        unique_together = (("team", "role"), ("team", "player"))
-    
-    def get_player(self):
-        return Player.objects.filter(pk=self.player)
-
-    def get_team(self):
-        return Team.objects.filter(pk=self.team)
 
 class Match(models.Model):
     series = models.ForeignKey(Series)
-    tournament_code = models.CharField(max_length=40)
+    tournament_code = models.CharField(max_length=100)
     duration = models.IntegerField(default=0)
+
+    def get_winner(self):
+	return TeamMatch.objects.filter(match=self, win=True)
+
+    def get_loser(self):
+	return TeamMatch.objects.filter(match=self, win=False)
 
     def __str__(self):
         teamMatches = TeamMatch.objects.filter(match=self)
@@ -162,6 +170,24 @@ class PlayerMatch(models.Model):
     class Meta:
         unique_together = (("player", "match"))
 
+class TeamPlayer(models.Model):
+    team = models.ForeignKey(Team)
+    player = models.ForeignKey(Player)
+    role = models.ForeignKey(Role)
+    isLeader = models.BooleanField(default=False)
+
+    class Meta:
+        unique_together = (("team", "role"), ("team", "player"))
+    
+    def get_player(self):
+        return Player.objects.filter(pk=self.player)
+
+    def get_team(self):
+        return Team.objects.filter(pk=self.team)
+
+    def get_played_champion_list(self):
+	return PlayerMatch.objects.filter(player=self.player).values('champion__name').annotate(champion_count=Count('champion__name')).order_by('-champion_count')
+
 class TeamMatch(models.Model):
     team = models.ForeignKey(Team)
     match = models.ForeignKey(Match)
@@ -188,6 +214,7 @@ class TeamMatchBan(models.Model):
 class Item(models.Model):
     name = models.CharField(max_length=40)
     description = models.CharField(max_length=40)
+    icon = models.ImageField(upload_to='stats/item/icon', default='')
 
 class PlayerMatchItem(models.Model):
     player = models.ForeignKey(Player)

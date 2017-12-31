@@ -1,6 +1,7 @@
 from django.shortcuts import get_object_or_404, render
 from django.http import HttpResponse, HttpResponseRedirect, Http404
 from django.template import loader
+from django.db.models import Avg, Count
 from riot_request import RiotRequester
 from .models import Player, TeamPlayer, Team, Season, Champion, Match, Week, Series, SeriesTeam
 from .forms import TournamentCodeForm
@@ -45,10 +46,12 @@ def player_detail(request, player_id):
 
 def team_detail(request, season_id, team_id):
     team = get_object_or_404(Team, id=team_id, season=season_id)
-    team_players = TeamPlayer.objects.filter(team=team_id)
+    team_players = TeamPlayer.objects.filter(team=team_id).annotate(avg_kills=Avg('player__playermatch__kills'), avg_deaths=Avg('player__playermatch__deaths'), avg_assists=Avg('player__playermatch__assists'), num_champs_played=Count('player__playermatch__champion', distinct=True))
+    series_list = Series.objects.filter(seriesteam__team = team)
     context = {
         'team': team,
         'players': team_players,
+	'series_list': series_list
     }
     return render(request, 'stats/team.html', context)
 

@@ -3,14 +3,60 @@
 {% block title %}Rekt League | Team {{ team.name }}{% endblock %}
 
 {% block content %}
-<p> Team {{ team.name }} ({{ team.get_record }})</p>
+
+<script type="text/javascript"><!--
+function ReplacePlayerContent(id, content) {
+	var container = document.getElementById(id);
+	var contentMap = new Map();
+	{% for team_player in players %}
+	contentMap.set("{{ team_player.player.name }}",
+			"<h1>{{ team_player.player.name }}</h1>" +
+			"<h2>Team {{ team.name }} - {{ team_player.role }}</h2>" +
+		        "<h3>Average Score: {{ team_player.avg_kills }}/{{ team_player.avg_deaths }}/{{ team_player.avg_assists }}</h3>" +
+			"<h3>Champion list:</h3>" +
+			{% for champion in team_player.get_played_champion_list %}
+			    "<p>{{ champion.champion__name }} - {{ champion.champion_count }}</p>" +
+			{% endfor %}
+			"");
+	{% endfor %}
+	contentMap.set("Overview",
+			"<img src=\"{{ team.icon.url }}\">" +
+			"<h1>Team {{ team.name }}</h1>" +
+			"<h3>{{ team.get_record }}</h3>" +
+		        "<h2>Match History</h2>" +
+			{% for series in series_list %}
+			"<p><a href=\"/stats/season/{{ team.season.id }}/series/{{ series.id }}/\">{{ series }}</a></p>" +
+			{% endfor %}
+		        "");
+	container.innerHTML = contentMap.get(content);
+}
+window.onload = function() {
+	ReplacePlayerContent('pagecontent','Overview');
+}
+//--></script>
+
+<p> </p>
 
 {% if players %}
-    <ul>
-        {% for team_player in players %}
-            <li><a href="/stats/player/{{ team_player.player.id }}/">{{ team_player.player.name }}</a> ({{ team_player.role }} ) </li>
-        {% endfor %}
-    </ul>
+
+
+    <div class="pagebar">
+    <div class="pagebutton">
+	    <a class="playerlink" href="javascript:ReplacePlayerContent('pagecontent','Overview')">
+	    <p class="pagebuttonstyle">Overview</p>
+    </a>
+    </div>
+    {% for team_player in players %}
+    <div class="pagebutton">
+	    <a class="playerlink" href="javascript:ReplacePlayerContent('pagecontent','{{ team_player.player.name }}')">
+	    <p class="pagebuttonstyle">{{ team_player.player.name }}</p>
+    </a>
+    </div>
+    {% endfor %}
+    </div>
+    <div id="pagecontent" onload="ReplacePlayerContent('pagecontent','Overview')">
+    </div>
+
 {% else %}
     <p>No Players.</p>
 {% endif %}

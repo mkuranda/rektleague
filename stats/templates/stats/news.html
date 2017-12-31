@@ -73,7 +73,7 @@ margin-top:10%;
 <div class="sidebarbg">
 	<h2 class="heading">STANDINGS</h2>
 	{% for team in teams %}
-	<p class="series"><a href="/stats/season/{{ season.id }}/team/{{ team.id }}/">{{ team.name }}</a> ({{ team.get_record }})</p>
+	<p class="series"><a href="/stats/season/{{ latest_season.id }}/team/{{ team.id }}/">{{ team.name }}</a> ({{ team.get_record }})</p>
 	{% endfor %}
 
 	<h3 class="subheading">{{ week }}</h3>
