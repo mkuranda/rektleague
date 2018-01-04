@@ -99,7 +99,7 @@ class Match(models.Model):
 
     def __str__(self):
         teamMatches = TeamMatch.objects.filter(match=self)
-        return str(teamMatches[0].team) + " v " + str(teamMatches[1].team)
+        return str(teamMatches[0].team) + " v " + str(teamMatches[1].team) + " (" + str(self.series.week) + ")"
 
 class PlayerRole(models.Model):
     player = models.ForeignKey(Player)
@@ -186,7 +186,7 @@ class TeamPlayer(models.Model):
         return Team.objects.filter(pk=self.team)
 
     def get_played_champion_list(self):
-	return PlayerMatch.objects.filter(player=self.player).values('champion__name').annotate(champion_count=Count('champion__name')).order_by('-champion_count')
+	return PlayerMatch.objects.filter(player=self.player).values('champion', distinct=True).annotate(champion_count=Count('champion__name')).order_by('-champion_count')
 
 class TeamMatch(models.Model):
     team = models.ForeignKey(Team)

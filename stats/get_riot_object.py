@@ -1,7 +1,7 @@
 from riot_request import *
 import urllib, shutil
 import math
-from .models import Item, Champion, Match, Team, TeamMatch, Role, TeamPlayer, PlayerMatch, Week, Series, SeriesTeam
+from .models import Item, Champion, Match, Team, TeamMatch, Role, TeamPlayer, PlayerMatch, Week, Series, SeriesTeam, TeamMatchBan
 
 class ObjectNotFound(Exception) :
     """Raised when we can't find an object in db or from riot API"""
@@ -30,19 +30,24 @@ def get_item(riot_id):
     return item
 
 def get_champion(riot_id):
+    champion_exists = True;
     try:
         champion = Champion.objects.get(id=riot_id)
     except Champion.DoesNotExist:
+        champion_exists = False;
+
+    if champion_exists == False or champion.name == "" or champion.title == "" or champion.icon == "":
         requester = RiotRequester('/lol/static-data/v3/champions/')
 	requester.add_tag("image")
         try:
             champion_data = requester.request(str(riot_id))
         except RiotNotFound:
             raise ObjectNotFound("Champion " + str(riot_id))
-        champion = Champion.objects.create(id=riot_id)
+        if champion_exists == False:
+            champion = Champion.objects.create(id=riot_id)
         champion.name = champion_data["name"]
         champion.title = champion_data["title"]
-	r = requests.get("http://ddragon.leagueoflegends.com/cdn/7.5.2/img/champion/" + champion_data["image"]["full"], stream=True)
+	r = requests.get("http://ddragon.leagueoflegends.com/cdn/7.23.1/img/champion/" + champion_data["image"]["full"], stream=True)
         if r.status_code == 200:
             with open("media/stats/champion/icon/" + champion_data["image"]["full"], 'wb') as f:
                 r.raw.decode_content = True

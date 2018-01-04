@@ -3,4 +3,3 @@
 *~
 *.sw[a-z]
 *.DS_STORE
-db.sqlite3

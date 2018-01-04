@@ -15,11 +15,12 @@ function ReplacePlayerContent(id, content) {
 		        "<h3>Average Score: {{ team_player.avg_kills }}/{{ team_player.avg_deaths }}/{{ team_player.avg_assists }}</h3>" +
 			"<h3>Champion list:</h3>" +
 			{% for champion in team_player.get_played_champion_list %}
-			    "<p>{{ champion.champion__name }} - {{ champion.champion_count }}</p>" +
+		"<p><img src=\"{{ MEDIA_URL }}{{ champion.champion.icon }}\">{{ champion.champion.name }} - {{ champion.champion_count }}</p>" +
 			{% endfor %}
 			"");
 	{% endfor %}
 	contentMap.set("Overview",
+		        "{{ team.icon.url }}" +
 			"<img src=\"{{ team.icon.url }}\">" +
 			"<h1>Team {{ team.name }}</h1>" +
 			"<h3>{{ team.get_record }}</h3>" +
