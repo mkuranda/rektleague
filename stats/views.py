@@ -1,7 +1,7 @@
 from django.shortcuts import get_object_or_404, render
 from django.http import HttpResponse, HttpResponseRedirect, Http404
 from django.template import loader
-from django.db.models import Avg, Count
+from django.db.models import Avg, Count, Sum, F, When, Q
 from riot_request import RiotRequester
 from .models import Player, TeamPlayer, Team, Season, Champion, Match, Week, Series, SeriesTeam
 from .forms import TournamentCodeForm
@@ -46,7 +46,7 @@ def player_detail(request, player_id):
 
 def team_detail(request, season_id, team_id):
     team = get_object_or_404(Team, id=team_id, season=season_id)
-    team_players = TeamPlayer.objects.filter(team=team_id).annotate(avg_kills=Avg('player__playermatch__kills'), avg_deaths=Avg('player__playermatch__deaths'), avg_assists=Avg('player__playermatch__assists'), num_champs_played=Count('player__playermatch__champion', distinct=True))
+    team_players = TeamPlayer.objects.filter(team=team_id).annotate(avg_kills=Avg('player__playermatch__kills'), avg_deaths=Avg('player__playermatch__deaths'), avg_assists=Avg('player__playermatch__assists'), num_champs_played=Count('player__playermatch__champion'))
     series_list = Series.objects.filter(seriesteam__team = team).order_by('-week__number')
     context = {
         'team': team,
@@ -88,10 +88,20 @@ def series_detail(request, season_id, series_id):
     season = get_object_or_404(Season, id=season_id)
     series = get_object_or_404(Series, id=series_id)
     matches = Match.objects.filter(series=series)
+    seriesteams = SeriesTeam.objects.filter(series=series)    
+    num_match_links = matches.count() + 2
+    team1 = seriesteams[0]
+#    team1['wins'] = team1.get_wins()
+    team2 = seriesteams[1]
+#    team2['wins'] = team2.get_wins()
+
     context = {
         'season': season,
         'series': series,
-        'matches': matches
+        'matches': matches,
+        'num_match_links': num_match_links,
+        'team1': team1,
+        'team2': team2 
     }
     return render(request, 'stats/series.html', context)
 

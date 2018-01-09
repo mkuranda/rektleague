@@ -1,6 +1,7 @@
 <h1>Match Load</h1>
 
 <p> {{ season }} </p>
+<p> {{ series }} </p>
 
 <form action="/stats/season/{{ season.id }}/series/{{ series.id }}/load_match/" method="post">
 	{% csrf_token %}

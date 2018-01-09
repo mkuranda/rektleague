@@ -1,6 +1,6 @@
 import datetime
 from django.db import models
-from django.db.models import Count
+from django.db.models import Count, Avg, Sum, Q, Case, When, F, Value
 from django.utils import timezone
 
 class Season(models.Model):
@@ -76,6 +76,9 @@ class SeriesTeam(models.Model):
     class Meta:
         unique_together = (("team", "series"))
     
+    def get_wins(self):
+	return TeamMatch.objects.filter(team=self.team, win=True, match__series=series).count()
+
 class Player(models.Model):
     name = models.CharField(max_length=40)
     rank = models.CharField(max_length=15)
@@ -83,7 +86,6 @@ class Player(models.Model):
 
     def __str__(self):
         return self.name
-
 
 
 class Match(models.Model):
@@ -170,6 +172,9 @@ class PlayerMatch(models.Model):
     class Meta:
         unique_together = (("player", "match"))
 
+    def win(self):
+        return match.get_winner == player.team
+
 class TeamPlayer(models.Model):
     team = models.ForeignKey(Team)
     player = models.ForeignKey(Player)
@@ -186,7 +191,20 @@ class TeamPlayer(models.Model):
         return Team.objects.filter(pk=self.team)
 
     def get_played_champion_list(self):
-	return PlayerMatch.objects.filter(player=self.player).values('champion', distinct=True).annotate(champion_count=Count('champion__name')).order_by('-champion_count')
+	return PlayerMatch.objects.filter(player=self.player).values('champion', 'champion__name', 'champion__icon').annotate(champion_count=Count('champion'), avg_kills=Avg('kills'), avg_deaths=Avg('deaths'), avg_assists=Avg('assists'))
+
+
+#	return PlayerMatch.objects.filter(player=self.player).extra(select = 
+#                {"winrate": """
+#                    SELECT COUNT(*)
+#                    FROM stats_teammatch
+#                    JOIN stats_match on stats_teammatch.match_id = stats_match.id
+#                    JOIN stats_playermatch on stats_playermatch.match_id = stats_match.id
+#                    WHERE team_id = %d
+#                    AND win = 1
+#                    AND stats_playermatch.champion_id = stats_playermatch.champion_id
+#                    """ % self.team.id,
+#                 "players_champion": 'stats_playermatch.champion_id'})
 
 class TeamMatch(models.Model):
     team = models.ForeignKey(Team)

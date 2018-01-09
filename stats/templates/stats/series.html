@@ -3,17 +3,55 @@
 {% block title %}Rekt League | {{ series }}{% endblock %}
 
 {% block content %}
-<h1>{{ series }}</h1>
 
-{% if matches %}
-    <ul>
-        {% for match in matches %}
-	<p>{{ match }}</p>
-        {% endfor %}
-    </ul>
-{% else %}
-    <p>No Matces</p>
-{% endif %}
+<script type="text/javascript"><!--
+function ReplaceMatchContent(id, content) {
+	var container = document.getElementById(id);
+	var contentMap = new Map();
+	{% for match in matches %}
+	contentMap.set("{{ forloop.counter }}",
+		"Info about Game {{ forloop.counter }}: {{ match }}" +
+			"");
+	{% endfor %}
+	contentMap.set("Overview",
+		"<div>" +
+		"<img src=\"{{ team1.team.icon.url }}\" style=\"display:inline-block; padding-left:10px\">" +
+//		"<i style=\"float:left; vertical-align:middle; padding-left=10px;\">VS</i>" +
+		"<img src=\"{{ team2.team.icon.url }}\" style=\"display:inline-block; margin-left:10px\">" +
+		"</div>" +
+		"<h1>{{ series }}</h1>" +
+		        "");
+	container.innerHTML = contentMap.get(content);
+}
+window.onload = function() {
+	ReplaceMatchContent('pagecontent','Overview');
+}
+//--></script>
+
+<p></p>
+
+    <div class="pagebar">
+	    <div class="pagebutton" style="width: {% widthratio 1 num_match_links 100 %}%">
+	    <a class="playerlink" href="javascript:ReplaceMatchContent('pagecontent','Overview')">
+	    <p class="pagebuttonstyle">Overview</p>
+    </a>
+    </div>
+    {% for match in matches %}
+    <div class="pagebutton" style="width: {% widthratio 1 num_match_links 100 %}%">
+	    <a class="playerlink" href="javascript:ReplaceMatchContent('pagecontent','{{ forloop.counter }}')">
+	    <p class="pagebuttonstyle">Game {{ forloop.counter }}</p>
+    </a>
+    </div>
+    {% endfor %}
+    <div class="pagebutton" style="width: {% widthratio 1 num_match_links 100 %}%">
+	    <a class="playerlink" href="javascript:ReplaceMatchContent('pagecontent','Load Match')">
+	    <p class="pagebuttonstyle">Add Match</p>
+    </a>
+    </div>
+
+    </div>
+    <div id="pagecontent" onload="ReplaceMatchContent('pagecontent','Overview')">
+    </div>
 
 <a href="/stats/season/{{ season.id }}/series/{{ series.id }}/load_match/">Load Match</a>
 {% endblock %}

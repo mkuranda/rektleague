@@ -13,14 +13,25 @@ function ReplacePlayerContent(id, content) {
 			"<h1>{{ team_player.player.name }}</h1>" +
 			"<h2>Team {{ team.name }} - {{ team_player.role }}</h2>" +
 		        "<h3>Average Score: {{ team_player.avg_kills }}/{{ team_player.avg_deaths }}/{{ team_player.avg_assists }}</h3>" +
-			"<h3>Champion list:</h3>" +
+		"<table>" +
+		"<tr>" +
+		"<th width=\"60\"> </th>" +
+		"<th width=\"60\">Games Played</th>" +
+		"<th width=\"60\">Kills/Deaths/Assists</th>" +
+		"<th width=\"60\">Wins</th>" +
+		"</tr>" +
 			{% for champion in team_player.get_played_champion_list %}
-		"<p><img src=\"{{ MEDIA_URL }}{{ champion.champion.icon }}\">{{ champion.champion.name }} - {{ champion.champion_count }}</p>" +
+		"<tr>" +
+		"<td><img src=\"{{ MEDIA_URL }}{{ champion.champion__icon }}\" height=\"50\" width=\"50\" title=\"{{ champion.champion__name }}\"></td>" +
+		"<td><b>{{ champion.champion_count }}</b></td>" +
+		"<td>{{ champion.avg_kills }}/{{ champion.avg_deaths }}/{{ champion.avg_assists }}</td>" +
+		"<td>{{ champion.winrate }}</td>" +
+		"</tr>" +
 			{% endfor %}
+		"</table>" +
 			"");
 	{% endfor %}
 	contentMap.set("Overview",
-		        "{{ team.icon.url }}" +
 			"<img src=\"{{ team.icon.url }}\">" +
 			"<h1>Team {{ team.name }}</h1>" +
 			"<h3>{{ team.get_record }}</h3>" +
