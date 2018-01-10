@@ -18,11 +18,11 @@ function ReplacePlayerContent(id, content) {
 		"<th width=\"60\"> </th>" +
 		"<th width=\"60\">Games Played</th>" +
 		"<th width=\"60\">Kills/Deaths/Assists</th>" +
-		"<th width=\"60\">Wins</th>" +
+		"<th width=\"60\">Winrate</th>" +
 		"</tr>" +
 			{% for champion in team_player.get_played_champion_list %}
 		"<tr>" +
-		"<td><img src=\"{{ MEDIA_URL }}{{ champion.champion__icon }}\" height=\"50\" width=\"50\" title=\"{{ champion.champion__name }}\"></td>" +
+		"<td><img src=\"{{ MEDIA_URL }}{{ champion.playermatch__champion__icon }}\" height=\"50\" width=\"50\" title=\"{{ champion.playermatch__champion__name }}\"></td>" +
 		"<td><b>{{ champion.champion_count }}</b></td>" +
 		"<td>{{ champion.avg_kills }}/{{ champion.avg_deaths }}/{{ champion.avg_assists }}</td>" +
 		"<td>{{ champion.winrate }}</td>" +

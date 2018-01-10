@@ -31,24 +31,6 @@ class Champion(models.Model):
     def __str__(self):
         return self.name
 
-class Team(models.Model):
-    name = models.CharField(max_length=40)
-    season = models.ForeignKey(Season)
-    icon = models.ImageField(upload_to='stats')
-
-    def get_record(self):
-	wins = TeamMatch.objects.filter(team=self, win=True).count()
-	losses = TeamMatch.objects.filter(team=self, win=False).count()
-	return str(wins) + "-" + str(losses)
-
-    def get_sort_record(self):
-	wins = TeamMatch.objects.filter(team=self, win=True).count()
-	losses = TeamMatch.objects.filter(team=self, win=False).count()
-	return -1 * ((wins * 100) - losses)
-
-    def __str__(self):
-        return self.name
-
 class Series(models.Model):
     week = models.ForeignKey(Week)
 
@@ -69,24 +51,6 @@ class Series(models.Model):
     def __str__(self):
 	return str(self.week) + ": " + str(self.get_team_1()) + " v " + str(self.get_team_2())
 
-class SeriesTeam(models.Model):
-    team = models.ForeignKey(Team)
-    series = models.ForeignKey(Series)
-
-    class Meta:
-        unique_together = (("team", "series"))
-    
-    def get_wins(self):
-	return TeamMatch.objects.filter(team=self.team, win=True, match__series=series).count()
-
-class Player(models.Model):
-    name = models.CharField(max_length=40)
-    rank = models.CharField(max_length=15)
-    riot_id = models.IntegerField(default=0)
-
-    def __str__(self):
-        return self.name
-
 
 class Match(models.Model):
     series = models.ForeignKey(Series)
@@ -102,6 +66,46 @@ class Match(models.Model):
     def __str__(self):
         teamMatches = TeamMatch.objects.filter(match=self)
         return str(teamMatches[0].team) + " v " + str(teamMatches[1].team) + " (" + str(self.series.week) + ")"
+
+class Player(models.Model):
+    name = models.CharField(max_length=40)
+    rank = models.CharField(max_length=15)
+    riot_id = models.IntegerField(default=0)
+    matches = models.ManyToManyField(Match, through='PlayerMatch')
+
+    def __str__(self):
+        return self.name
+
+class Team(models.Model):
+    name = models.CharField(max_length=40)
+    players = models.ManyToManyField(Player, through='TeamPlayer')
+    matches = models.ManyToManyField(Match, through='TeamMatch')
+    season = models.ForeignKey(Season)
+    icon = models.ImageField(upload_to='stats')
+
+    def get_record(self):
+	wins = TeamMatch.objects.filter(team=self, win=True).count()
+	losses = TeamMatch.objects.filter(team=self, win=False).count()
+	return str(wins) + "-" + str(losses)
+
+    def get_sort_record(self):
+	wins = TeamMatch.objects.filter(team=self, win=True).count()
+	losses = TeamMatch.objects.filter(team=self, win=False).count()
+	return -1 * ((wins * 100) - losses)
+
+    def __str__(self):
+        return self.name
+
+class SeriesTeam(models.Model):
+    team = models.ForeignKey(Team)
+    series = models.ForeignKey(Series)
+
+    class Meta:
+        unique_together = (("team", "series"))
+    
+    def get_wins(self):
+	return TeamMatch.objects.filter(team=self.team, win=True, match__series=series).count()
+
 
 class PlayerRole(models.Model):
     player = models.ForeignKey(Player)
@@ -176,7 +180,7 @@ class PlayerMatch(models.Model):
         return match.get_winner == player.team
 
 class TeamPlayer(models.Model):
-    team = models.ForeignKey(Team)
+    team = models.ForeignKey(Team, on_delete=models.CASCADE)
     player = models.ForeignKey(Player)
     role = models.ForeignKey(Role)
     isLeader = models.BooleanField(default=False)
@@ -191,20 +195,9 @@ class TeamPlayer(models.Model):
         return Team.objects.filter(pk=self.team)
 
     def get_played_champion_list(self):
-	return PlayerMatch.objects.filter(player=self.player).values('champion', 'champion__name', 'champion__icon').annotate(champion_count=Count('champion'), avg_kills=Avg('kills'), avg_deaths=Avg('deaths'), avg_assists=Avg('assists'))
 
+        return Match.objects.select_related().filter(playermatch__player=self.player, teammatch__team=self.team).values('playermatch__champion', 'playermatch__champion__name', 'playermatch__champion__icon').annotate(champion_count=Count('playermatch__champion'), avg_kills=Avg('playermatch__kills'), avg_deaths=Avg('playermatch__deaths'), avg_assists=Avg('playermatch__assists'), winrate=Avg('teammatch__win')).order_by('-champion_count')
 
-#	return PlayerMatch.objects.filter(player=self.player).extra(select = 
-#                {"winrate": """
-#                    SELECT COUNT(*)
-#                    FROM stats_teammatch
-#                    JOIN stats_match on stats_teammatch.match_id = stats_match.id
-#                    JOIN stats_playermatch on stats_playermatch.match_id = stats_match.id
-#                    WHERE team_id = %d
-#                    AND win = 1
-#                    AND stats_playermatch.champion_id = stats_playermatch.champion_id
-#                    """ % self.team.id,
-#                 "players_champion": 'stats_playermatch.champion_id'})
 
 class TeamMatch(models.Model):
     team = models.ForeignKey(Team)
