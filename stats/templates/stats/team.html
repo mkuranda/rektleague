@@ -19,6 +19,7 @@ function ReplacePlayerContent(id, content) {
 		"<th width=\"60\">Games Played</th>" +
 		"<th width=\"60\">Kills/Deaths/Assists</th>" +
 		"<th width=\"60\">Winrate</th>" +
+		"<th width=\"60\">Average CS</th>" +
 		"</tr>" +
 			{% for champion in team_player.get_played_champion_list %}
 		"<tr>" +
@@ -26,6 +27,7 @@ function ReplacePlayerContent(id, content) {
 		"<td><b>{{ champion.champion_count }}</b></td>" +
 		"<td>{{ champion.avg_kills }}/{{ champion.avg_deaths }}/{{ champion.avg_assists }}</td>" +
 		"<td>{{ champion.winrate }}</td>" +
+		"<td>{{ champion.average_cs}}</td>" +
 		"</tr>" +
 			{% endfor %}
 		"</table>" +
@@ -35,6 +37,17 @@ function ReplacePlayerContent(id, content) {
 			"<img src=\"{{ team.icon.url }}\">" +
 			"<h1>Team {{ team.name }}</h1>" +
 			"<h3>{{ team.get_record }}</h3>" +
+		        "<h3>Popular Bans</h3>" +
+		        "<table>" +
+		        "<tr>" +
+		        {% for champion in team.get_top_banned %}
+          		"<th width=\"60\"><img src=\"{{ MEDIA_URL }}{{ champion.champion__icon }}\" height=\"50\" width=\"50\" title=\"{{ champion.champion__name }}\"></th>" +
+          		{% endfor %}
+		"</tr><tr style=\"background-color: white\">" +
+		        {% for champion in team.get_top_banned %}
+		"<td width=\"60\"><b>{{ champion.ban_rate }}%</b></td>" +
+          		{% endfor %}
+		"</tr></table>" +
 		        "<h2>Match History</h2>" +
 			{% for series in series_list %}
 			"<p><a href=\"/stats/season/{{ team.season.id }}/series/{{ series.id }}/\">{{ series }}</a></p>" +

@@ -93,6 +93,10 @@ class Team(models.Model):
 	losses = TeamMatch.objects.filter(team=self, win=False).count()
 	return -1 * ((wins * 100) - losses)
 
+    def get_top_banned(self):
+        num_matches = TeamMatch.objects.filter(team=self).count()
+        return TeamMatchBan.objects.filter(match__teammatch__team=self).exclude(team=self).values('champion', 'champion__name', 'champion__icon').annotate(ban_rate=Count('champion') * 100 / num_matches).order_by('-ban_rate')[:5]
+
     def __str__(self):
         return self.name
 
@@ -195,8 +199,13 @@ class TeamPlayer(models.Model):
         return Team.objects.filter(pk=self.team)
 
     def get_played_champion_list(self):
+#        queryset = Match.objects.select_related().filter(playermatch__player=self.player, teammatch__team=self.team).values('playermatch__champion', 'playermatch__champion__name', 'playermatch__champion__icon')
+#        queryset.annotate(champion_count=Count('playermatch__champion'), avg_kills=Avg('playermatch__kills'), avg_deaths=Avg('playermatch__deaths'), avg_assists=Avg('playermatch__assists'), winrate=Avg('teammatch__win'))
+#        queryset.order_by('-champion_count')
+#        return queryset
 
-        return Match.objects.select_related().filter(playermatch__player=self.player, teammatch__team=self.team).values('playermatch__champion', 'playermatch__champion__name', 'playermatch__champion__icon').annotate(champion_count=Count('playermatch__champion'), avg_kills=Avg('playermatch__kills'), avg_deaths=Avg('playermatch__deaths'), avg_assists=Avg('playermatch__assists'), winrate=Avg('teammatch__win')).order_by('-champion_count')
+#        return Match.objects.select_related().filter(playermatch__player=self.player, teammatch__team=self.team).values('playermatch__champion', 'playermatch__champion__name', 'playermatch__champion__icon').annotate(champion_count=Count('playermatch__champion'), avg_kills=Avg('playermatch__kills'), avg_deaths=Avg('playermatch__deaths'), avg_assists=Avg('playermatch__assists'), winrate=Avg('teammatch__win')).annotate(kill_participation=Sum('playermatch__kills')).order_by('-champion_count')
+        return Match.objects.select_related().filter(playermatch__player=self.player, teammatch__team=self.team).values('playermatch__champion', 'playermatch__champion__name', 'playermatch__champion__icon').annotate(champion_count=Count('playermatch__champion'), avg_kills=Avg('playermatch__kills'), avg_deaths=Avg('playermatch__deaths'), avg_assists=Avg('playermatch__assists'), winrate=Avg('teammatch__win'), average_cs=Avg(F('playermatch__neutral_minions_killed') + F('playermatch__total_minions_killed'))).order_by('-champion_count')
 
 
 class TeamMatch(models.Model):
@@ -221,6 +230,9 @@ class TeamMatchBan(models.Model):
     match = models.ForeignKey(Match)
     champion = models.ForeignKey(Champion)
     pickTurn = models.IntegerField(default=0)
+
+    class Meta:
+        ordering = ["champion"]
 
 class Item(models.Model):
     name = models.CharField(max_length=40)
