@@ -87,8 +87,8 @@ def index(request):
 def series_detail(request, season_id, series_id):
     season = get_object_or_404(Season, id=season_id)
     series = get_object_or_404(Series, id=series_id)
-    matches = Match.objects.filter(series=series)
-    seriesteams = SeriesTeam.objects.filter(series=series)    
+    matches = Match.objects.prefetch_related('playermatch_set').filter(series=series)
+    seriesteams = SeriesTeam.objects.filter(series=series)
     num_match_links = matches.count() + 2
     team1 = seriesteams[0]
 #    team1['wins'] = team1.get_wins()
