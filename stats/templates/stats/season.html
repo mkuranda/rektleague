@@ -1,15 +1,26 @@
 {% extends "stats/base.html" %}
 
 {% block content %}
-<p> {{ season }} </p>
-{% if teams %}
-    <ul>
-    {% for team in teams %} 
-        <li><a href="/stats/season/{{ season.id }}/team/{{ team.id }}">{{ team.name }}</a></li>
-    {% endfor %}
-    </ul>
+<p></p>
+{% if sorted_teams %}
+<table>
+	<tr>
+	<th>Rank</th>
+	<th> </th>
+	<th>Team</th>
+	<th>Record</th>
+	</tr>
+	{% for team in sorted_teams %}
+	<tr>
+		<td><b>{{ forloop.counter }}</b></td>
+		<td><img src="{{ MEDIA_URL }}{{ team.icon }}" height="50" width="50"></td>
+		<td><a href="/stats/season/{{ season.id }}/team/{{ team.id }}">{{ team.name }}</a></td>
+		<td><b>{{ team.get_record }}</b></td>
+	</tr>
+	{% endfor %}
+</table>
+
 {% else %}
-    <p>No Teams.</p>
 {% endif %}
 
 <p>Top Bans</p>

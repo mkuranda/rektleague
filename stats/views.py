@@ -28,10 +28,11 @@ def season_detail(request, season_id):
     }
     season = get_object_or_404(Season, id=season_id)
     teams = Team.objects.filter(season=season_id)
+    sorted_teams = sorted(teams, key= lambda t: t.get_sort_record())
     context = {
         'latest_season': latest_season,
         'season': season,
-        'teams': teams,
+        'sorted_teams': sorted_teams
     }
     return render(request, 'stats/season.html', context)
 
