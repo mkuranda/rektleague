@@ -17,6 +17,7 @@ function ReplacePlayerContent(id, content) {
 		"<tr>" +
 		"<th width=\"60\"> </th>" +
 		"<th width=\"60\">Games Played</th>" +
+		"<th width=\"60\">KDA</th>" +
 		"<th width=\"60\">Kills/Deaths/Assists</th>" +
 		"<th width=\"60\">Winrate</th>" +
 		"<th width=\"60\">Average CS</th>" +
@@ -25,6 +26,11 @@ function ReplacePlayerContent(id, content) {
 		"<tr>" +
 		"<td><img src=\"{{ MEDIA_URL }}{{ champion.playermatch__champion__icon }}\" height=\"50\" width=\"50\" title=\"{{ champion.playermatch__champion__name }}\"></td>" +
 		"<td><b>{{ champion.champion_count }}</b></td>" +
+		{% if champion.kda == None %}
+		"<td>Perfect KDA</td>" +
+		{% else %}
+		"<td>{{ champion.kda }}</td>" +
+		{% endif %}
 		"<td>{{ champion.avg_kills }}/{{ champion.avg_deaths }}/{{ champion.avg_assists }}</td>" +
 		"<td>{{ champion.winrate }}%</td>" +
 		"<td>{{ champion.average_cs}}</td>" +

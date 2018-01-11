@@ -138,7 +138,6 @@ class PlayerMatch(models.Model):
     physical_damage_dealt = models.IntegerField(default=0)
     neutral_minions_killed_team_jungle = models.IntegerField(default=0)
     magic_damage_dealt = models.IntegerField(default=0)
-    total_player_score = models.IntegerField(default=0)
     neutral_minions_killed_enemy_jungle = models.IntegerField(default=0)
     largest_critical_strike = models.IntegerField(default=0)
     total_damage_dealt = models.IntegerField(default=0)
@@ -167,8 +166,6 @@ class PlayerMatch(models.Model):
     true_damage_taken = models.IntegerField(default=0)
     first_inhibitor_assist = models.BooleanField(default=False)
     neutral_minions_killed = models.IntegerField(default=0)
-    objective_player_score = models.IntegerField(default=0)
-    combat_player_score = models.IntegerField(default=0)
     damage_dealt_to_turrets = models.IntegerField(default=0)
     physical_damage_dealt_to_champions = models.IntegerField(default=0)
     gold_spent = models.IntegerField(default=0)
@@ -180,7 +177,6 @@ class PlayerMatch(models.Model):
     sight_wards_bought_in_game = models.IntegerField(default=0)
     total_damage_dealt_to_champions = models.IntegerField(default=0)
     inhibitor_kills = models.IntegerField(default=0)
-    total_score_rank = models.IntegerField(default=0)
     total_damage_taken = models.IntegerField(default=0)
     killing_sprees = models.IntegerField(default=0)
     time_ccing_others = models.IntegerField(default=0)
@@ -211,7 +207,7 @@ class TeamPlayer(models.Model):
         return Team.objects.filter(pk=self.team)
 
     def get_played_champion_list(self):
-        return Match.objects.select_related().filter(playermatch__player=self.player, teammatch__team=self.team).values('playermatch__champion', 'playermatch__champion__name', 'playermatch__champion__icon').annotate(champion_count=Count('playermatch__champion'), avg_kills=Avg('playermatch__kills'), avg_deaths=Avg('playermatch__deaths'), avg_assists=Avg('playermatch__assists'), winrate=Avg(F('teammatch__win') * 100), average_cs=Avg(F('playermatch__neutral_minions_killed') + F('playermatch__total_minions_killed'))).order_by('-champion_count')
+        return Match.objects.select_related().filter(playermatch__player=self.player, teammatch__team=self.team).values('playermatch__champion', 'playermatch__champion__name', 'playermatch__champion__icon').annotate(champion_count=Count('playermatch__champion'), kda=Avg((F('playermatch__kills') + F('playermatch__assists')) / F('playermatch__deaths')), avg_kills=Avg('playermatch__kills'), avg_deaths=Avg('playermatch__deaths'), avg_assists=Avg('playermatch__assists'), winrate=Avg(F('teammatch__win') * 100), average_cs=Avg(F('playermatch__neutral_minions_killed') + F('playermatch__total_minions_killed'))).order_by('-champion_count')
 
 
 class TeamMatch(models.Model):
