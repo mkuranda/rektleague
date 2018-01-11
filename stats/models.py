@@ -32,6 +32,7 @@ class Champion(models.Model):
         return self.name
 
 class Series(models.Model):
+    twitch_vod_num = models.IntegerField(default=0)
     week = models.ForeignKey(Week)
 
     def get_team_1(self):

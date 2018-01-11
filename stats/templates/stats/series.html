@@ -188,6 +188,9 @@ function ReplaceMatchContent(id, content) {
 		"<img src=\"{{ team2.team.icon.url }}\" style=\"display:inline-block; margin-left:10px\">" +
 		"</div>" +
 		"<h1>{{ series }}</h1>" +
+		{% if series.twitch_vod_num != 0 %}
+		"<iframe class=\"videoplayer\" src=\"https://player.twitch.tv/?autoplay=false&video=v{{ series.twitch_vod_num }}\" frameborder=\"0\" allowfullscreen=\"true\" scrolling=\"no\" height=\"40%\" width=\"60%\"></iframe>" +
+		{% endif %}
 		        "");
 	contentMap.set("Load Match",
                 "<a href=\"/stats/season/{{ season.id }}/series/{{ series.id }}/load_match/\">Load Match</a>");
