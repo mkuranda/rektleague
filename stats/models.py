@@ -10,6 +10,14 @@ class Season(models.Model):
     def __str__(self):
         return "Season " + str(self.pk)
 
+    def get_top_banned(self):
+        num_matches = Match.objects.filter(series__week__season=self).count()
+        return Champion.objects.all().values('name', 'icon', 'teammatchban__champion').annotate(ban_rate=Count('teammatchban__champion') * 100 / num_matches).order_by('-ban_rate')[:5]
+
+    def get_top_picked(self):
+        num_matches = Match.objects.filter(series__week__season=self).count()
+        return Champion.objects.all().values('name', 'icon', 'playermatch__champion').annotate(pick_rate=Count('playermatch__champion') * 100 / num_matches).order_by('-pick_rate')[:5]
+
 class Week(models.Model):
     season = models.ForeignKey(Season)
     number = models.IntegerField(default=1)

@@ -11,5 +11,33 @@
 {% else %}
     <p>No Teams.</p>
 {% endif %}
-{% endblock %}
 
+<p>Top Bans</p>
+<table>
+	<tr>
+	{% for champion in season.get_top_banned %}
+	<th><img src="{{ MEDIA_URL }}{{ champion.icon }}" height="50" width="50" title="{{ champion.name }}"></th>
+	{% endfor %}
+	</tr>
+	<tr>
+	{% for champion in season.get_top_banned %}
+		<th><b>{{ champion.ban_rate }}%</b></th>
+	{% endfor %}
+	</tr>
+</table>
+
+<p>Top Picks</p>
+<table>
+	<tr>
+	{% for champion in season.get_top_picked %}
+	<th><img src="{{ MEDIA_URL }}{{ champion.icon }}" height="50" width="50" title="{{ champion.name }}"></th>
+	{% endfor %}
+	</tr>
+	<tr>
+	{% for champion in season.get_top_picked %}
+		<th><b>{{ champion.pick_rate }}%</b></th>
+	{% endfor %}
+	</tr>
+</table>
+
+{% endblock %}
