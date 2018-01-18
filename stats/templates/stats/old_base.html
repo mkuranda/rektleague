@@ -1,0 +1,234 @@
+{% load staticfiles %}
+
+<head>
+    <style>
+
+    
+        .hero
+        {
+            width:100%;
+            margin-bottom: -4px;
+        }
+        
+        .signin
+        {
+    position: absolute;
+        top: 20px;
+    right: 203px;
+    font-size: 17px;
+    color: white;
+    font-family: verdana;
+    font-weight: 600;
+
+
+        }
+        .signinbutton
+
+        {
+            position: absolute;
+        top: -36px;
+    right: 170px;
+    width: 8%;
+
+
+        }
+
+
+           .register
+        {
+    position: absolute;
+        top: 20px;
+    right: 38px;
+    font-size: 17px;
+    color: white;
+    font-family: verdana;
+    font-weight: 600;
+
+
+        }
+        .registerbutton
+
+        {
+            position: absolute;
+        top: -36px;
+    right: 14px;
+    width: 8%;
+
+
+        }
+
+        .navbar
+        {
+
+            width:100%;
+            background-color: black;
+            overflow: hidden;
+        }
+
+
+        .navbutton
+        {
+            width:25%;
+            float:left;
+            
+
+        }
+
+        .navbuttonstyle
+
+        {
+    font-family: verdana;
+    font-weight: 600;
+    text-align: center;
+    color: white;
+
+
+        }
+
+       .navbutton:hover {
+    background-color: #ca2222;
+    }
+        .pagebar
+        {
+
+            width:100%;
+            background-color: black;
+            overflow: hidden;
+        }
+         .pagebutton
+        {
+            width:16%;
+            float:left;
+            
+
+        }
+
+        .pagebuttonstyle
+
+        {
+    font-family: verdana;
+    font-weight: 600;
+    text-align: center;
+    color: white;
+
+
+        } 
+
+    h1
+
+    {
+font-family: verdana;
+
+
+    }
+
+    table
+    {
+	border: 1px solid #dddddd;
+	border-collapse: collapse;
+	padding: 10px;
+    }
+    td, th
+    {
+        text-align: center;
+        padding: 8px;
+    }
+    tr:nth-child(even) {
+	background-color: #dddddd;
+    }
+
+  .content
+  {
+    padding-left: 5%;
+    padding-right: 5%;
+    background-color: white;
+    position: center;
+    width:80%;
+
+
+  }
+
+  body
+  {
+   
+
+
+  }
+
+  a:link {
+    text-decoration: none;
+}
+
+a:visited {
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: none;
+}
+
+a:active {
+    text-decoration: none;
+}
+
+    </style>
+    <title>{% block title %}Rekt League{% endblock %}</title>
+</head>
+
+
+<!--<link rel="stylesheet" type="text/css" href="{% static '/static/stats/styles.css' %}"/>-->
+<!--
+<img class="signinbutton" src="{% static '/static/stats/button1.png' %}">
+<p class="signin"><a style="color:white;" href="">SIGN IN</a></p>  
+
+<img class="registerbutton" src="{% static '/static/stats/button1.png' %}">
+
+<p class="register"><a style="color:white;" href="">REGISTER</a></p>  
+-->
+<a href="/stats/news"><img class="hero" src="{% static '/static/stats/hero6.png' %}"/></a>
+
+
+
+<div class="navbar">
+    
+<div class="navbutton">
+<a class="navlink" href="/stats/news">
+<p class="navbuttonstyle">NEWS</p>
+</a>
+</div>
+
+<div class="navbutton">
+
+<a class="navlink" href="/stats/season/1">
+<p class="navbuttonstyle">SEASONS</p>
+</a>
+</div>
+
+<div class="navbutton">
+<a class="navlink" href="/stats/about">
+<p class="navbuttonstyle">ABOUT</p>
+</a>
+</div>
+
+<div class="navbutton">
+<a class="navlink" href="/stats/about">
+<p class="navbuttonstyle">FAQ</p>
+</a>
+</div>
+
+</div>
+
+
+
+
+
+
+</div>
+
+<body>
+    <div id="content">
+        {% block content %}{% endblock %}
+    </div>
+</body>
+
+
