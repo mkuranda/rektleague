@@ -10,13 +10,16 @@ class Season(models.Model):
     def __str__(self):
         return "Season " + str(self.pk)
 
+    def get_weeks(self):
+        return Week.objects.filter(season=self).order_by('-number')
+
     def get_top_banned(self):
         num_matches = Match.objects.filter(series__week__season=self).count()
-        return Champion.objects.all().values('name', 'icon', 'teammatchban__champion').annotate(ban_rate=Count('teammatchban__champion') * 100 / num_matches).order_by('-ban_rate')[:10]
+        return Champion.objects.all().values('name', 'icon', 'teammatchban__champion').annotate(ban_rate=Count('teammatchban__champion') * 100 / num_matches).order_by('-ban_rate')[:8]
 
     def get_top_picked(self):
         num_matches = Match.objects.filter(series__week__season=self).count()
-        return Champion.objects.all().values('name', 'icon', 'playermatch__champion').annotate(pick_rate=Count('playermatch__champion') * 100 / num_matches).order_by('-pick_rate')[:10]
+        return Champion.objects.all().values('name', 'icon', 'playermatch__champion').annotate(pick_rate=Count('playermatch__champion') * 100 / num_matches).order_by('-pick_rate')[:8]
 
 class Week(models.Model):
     season = models.ForeignKey(Season)
@@ -104,7 +107,7 @@ class Team(models.Model):
 
     def get_top_banned(self):
         num_matches = TeamMatch.objects.filter(team=self).count()
-        return TeamMatchBan.objects.filter(match__teammatch__team=self).exclude(team=self).values('champion', 'champion__name', 'champion__icon').annotate(ban_rate=Count('champion') * 100 / num_matches).order_by('-ban_rate')[:5]
+        return TeamMatchBan.objects.filter(match__teammatch__team=self).exclude(team=self).values('champion', 'champion__name', 'champion__icon').annotate(ban_rate=Count('champion') * 100 / num_matches).order_by('-ban_rate')[:6]
 
     def __str__(self):
         return self.name
@@ -206,8 +209,16 @@ class TeamPlayer(models.Model):
     def get_team(self):
         return Team.objects.filter(pk=self.team)
 
+    def get_kda(self):
+        return PlayerMatch.objects.filter(player=self.player).aggregate(kda=Avg((F('kills') + F('assists')) / F('deaths')))
+
+    def get_kill_participation(self):
+        total_kills = PlayerMatch.objects.filter(player__team=self.team).aggregate(Sum('kills'))['kills__sum']
+        player_kills_assists = PlayerMatch.objects.filter(player=self.player).aggregate(kills__sum=Sum(F('kills') + F('assists')))['kills__sum']
+        return 100.0 * player_kills_assists / total_kills
+
     def get_played_champion_list(self):
-        return Match.objects.select_related().filter(playermatch__player=self.player, teammatch__team=self.team).values('playermatch__champion', 'playermatch__champion__name', 'playermatch__champion__icon').annotate(champion_count=Count('playermatch__champion'), kda=Avg((F('playermatch__kills') + F('playermatch__assists')) / F('playermatch__deaths')), avg_kills=Avg('playermatch__kills'), avg_deaths=Avg('playermatch__deaths'), avg_assists=Avg('playermatch__assists'), winrate=Avg(F('teammatch__win') * 100), average_cs=Avg(F('playermatch__neutral_minions_killed') + F('playermatch__total_minions_killed'))).order_by('-champion_count')
+        return Match.objects.select_related().filter(playermatch__player=self.player, teammatch__team=self.team).values('playermatch__champion', 'playermatch__champion__name', 'playermatch__champion__icon').annotate(champion_count=Count('playermatch__champion'), average_vision_score=Avg('playermatch__vision_score'), avg_kills=Avg('playermatch__kills'), avg_deaths=Avg('playermatch__deaths'), avg_assists=Avg('playermatch__assists'), winrate=Avg(F('teammatch__win') * 100), average_cs=Avg(F('playermatch__neutral_minions_killed') + F('playermatch__total_minions_killed'))).order_by('-champion_count')
 
 
 class TeamMatch(models.Model):
@@ -255,6 +266,7 @@ class PlayerMatchItem(models.Model):
 class SummonerSpell(models.Model):
     riot_id = models.IntegerField(default=0)
     name = models.CharField(max_length=20)
+    icon = models.ImageField(upload_to='stats/summoner-spell/icon', default='')
 
 class PlayerMatchSummonerSpell(models.Model):
     player = models.ForeignKey(Player)

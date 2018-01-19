@@ -60,6 +60,8 @@
         .navbar
         {
 
+		margin:0px;
+		padding:0px;
             width:100%;
             background-color: black;
             overflow: hidden;
@@ -95,14 +97,6 @@
             background-color: black;
             overflow: hidden;
         }
-         .pagebutton
-        {
-            width:16%;
-            float:left;
-            
-
-        }
-
         .pagebuttonstyle
 
         {
@@ -114,6 +108,19 @@
 
         } 
 
+	.linktable {
+		display: table;
+		width: 100%;
+	}
+	
+	.linktablecell {
+		display: table-cell;
+		text-align: center;
+		vertical-align: middle;
+	}
+
+
+
     h1
 
     {
@@ -124,52 +131,102 @@ font-family: verdana;
 
     table
     {
-	border: 1px solid #dddddd;
 	border-collapse: collapse;
 	padding: 10px;
+    }
+    	table.navbar
+        {
+		margin:0px;
+		padding-bottom:0px;
+	        width:100%;
+	        background-color: black;
+	}
+
+    table.centercontent
+    {
+	margin-left: auto;
+	margin-right: auto;
+	padding-left: 0px;
+	padding-right: 0px;
+	border-left: 0px;
+	border-right: 0px;
+    }
+    td.centercontent
+    {
+	border-bottom: 1px solid #6d6d6d; 
+    }
+    tr.centercontent
+    {
+	padding: 0px;
+	text-align: center;
+	border-bottom: 1px solid #6d6d6d; 
+    }
+    td.navlink
+    {
+	font-color: white;
+	padding: 12px;
+	
+    }
+
+    td.pagebutton
+    {
+	font-color: white;
+	padding-top: 5px;
+	padding-bottom: 5px;
+	
     }
     td, th
     {
         text-align: center;
         padding: 8px;
     }
-    tr:nth-child(even) {
-	background-color: #dddddd;
+    th.centertableheader
+    {
+	padding-bottom:20px;
+	padding-top:10px;
+	font-size:24;
+        color:#727272;
+    }
+    tr.alternating-back:nth-child(even) {
+	background-color: #303030;
     }
 
   .content
   {
-    padding-left: 5%;
-    padding-right: 5%;
-    background-color: white;
+	margin:0px 0px 0px 0px;
+	padding:0px 0px 0px 0px;
+    background-color: #212121;
     position: center;
-    width:80%;
 
 
   }
 
   body
   {
-   
-
-
+	margin:0px;
+    	background-color: #212121;
+	
   }
 
   a:link {
     text-decoration: none;
+	    color: white;
 }
 
 a:visited {
     text-decoration: none;
+	    color: white;
 }
 
 a:hover {
     text-decoration: none;
+    color: red;
 }
 
 a:active {
     text-decoration: none;
 }
+
 
     </style>
     <title>{% block title %}Rekt League{% endblock %}</title>
@@ -177,55 +234,43 @@ a:active {
 
 
 <!--<link rel="stylesheet" type="text/css" href="{% static '/static/stats/styles.css' %}"/>-->
-<img class="signinbutton" src="{% static '/static/stats/button1.png' %}">
-<p class="signin"><a style="color:white;" href="">SIGN IN</a></p>  
 
-<img class="registerbutton" src="{% static '/static/stats/button1.png' %}">
 
-<p class="register"><a style="color:white;" href="">REGISTER</a></p>  
 
+
+<body text="white" link="white">
+	
 <a href="/stats/news"><img class="hero" src="{% static '/static/stats/hero6.png' %}"/></a>
 
+<table class="navbar">
+	<tr>
+		<td class="navlink" width="25%">
+		<a class="navlink" href="/stats/news">
+		<p class="navbuttonstyle">NEWS</p>
+		</a>
+		</td>
 
+		<td class="navlink" width="25%">
+		<a class="navlink" href="/stats/season/1">
+		<p class="navbuttonstyle">SEASONS</p>
+		</a>
+		</td>
 
-<div class="navbar">
-    
-<div class="navbutton">
-<a class="navlink" href="/stats/news">
-<p class="navbuttonstyle">NEWS</p>
-</a>
-</div>
+		<td class="navlink" width="25%">
+		<a class="navlink" href="/stats/about">
+		<p class="navbuttonstyle">ABOUT</p>
+		</a>
+		</td>
 
-<div class="navbutton">
+		<td class="navlink" width="25%">
+		<a class="navlink" href="/stats/about">
+		<p class="navbuttonstyle">FAQ</p>
+		</a>
+		</td>
+	</tr>
+</table>
 
-<a class="navlink" href="/stats/season/1">
-<p class="navbuttonstyle">SEASONS</p>
-</a>
-</div>
-
-<div class="navbutton">
-<a class="navlink" href="/stats/about">
-<p class="navbuttonstyle">ABOUT</p>
-</a>
-</div>
-
-<div class="navbutton">
-<a class="navlink" href="/stats/about">
-<p class="navbuttonstyle">FAQ</p>
-</a>
-</div>
-
-</div>
-
-
-
-
-
-
-</div>
-
-<body>
-    <div id="content">
+    <div class="content">
         {% block content %}{% endblock %}
     </div>
 </body>

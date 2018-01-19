@@ -5,7 +5,7 @@ from django.db.models import Avg, Count, Sum, F, When, Q
 from riot_request import RiotRequester
 from .models import Player, TeamPlayer, Team, Season, Champion, Match, Week, Series, SeriesTeam
 from .forms import TournamentCodeForm
-from get_riot_object import ObjectNotFound, get_item, get_champion, get_match
+from get_riot_object import ObjectNotFound, get_item, get_champion, get_match, get_all_items
 
 def about(request):
     latest_season = Season.objects.latest('id')
@@ -66,6 +66,12 @@ def champion_detail(request, champion_id):
     }
     return render(request, 'stats/champion.html', context)
 
+def get_items(request):
+    try:
+        get_all_items(1)
+    except ObjectNotFound:
+        raise Http404("Items do not exist")
+    return HttpResponseRedirect('news/')
 
 def news(request):
     season = Season.objects.latest('id')
@@ -90,7 +96,7 @@ def series_detail(request, season_id, series_id):
     series = get_object_or_404(Series, id=series_id)
     matches = Match.objects.prefetch_related('playermatch_set').filter(series=series)
     seriesteams = SeriesTeam.objects.filter(series=series)
-    num_match_links = matches.count() + 2
+    num_match_links = matches.count()
     team1 = seriesteams[0]
 #    team1['wins'] = team1.get_wins()
     team2 = seriesteams[1]

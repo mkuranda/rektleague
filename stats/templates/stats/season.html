@@ -1,54 +1,172 @@
 {% extends "stats/base.html" %}
 
 {% block content %}
-<p></p>
-<h1>{{ season }}</h1>
-{% if sorted_teams %}
-<table>
-	<tr>
-	<th>Rank</th>
-	<th> </th>
-	<th>Team</th>
-	<th>Record</th>
-	</tr>
-	{% for team in sorted_teams %}
-	<tr>
-		<td><b>{{ forloop.counter }}</b></td>
-		<td><img src="{{ MEDIA_URL }}{{ team.icon }}" height="50" width="50"></td>
-		<td><a href="/stats/season/{{ season.id }}/team/{{ team.id }}">{{ team.name }}</a></td>
-		<td><b>{{ team.get_record }}</b></td>
-	</tr>
-	{% endfor %}
-</table>
 
-{% else %}
-{% endif %}
+<p> </p>
 
-<p>Top Bans</p>
-<table>
-	<tr>
-	{% for champion in season.get_top_banned %}
-	<th><img src="{{ MEDIA_URL }}{{ champion.icon }}" height="50" width="50" title="{{ champion.name }}"></th>
-	{% endfor %}
+<table class="centercontent" width="70%">
+	<tr class="centercontent">
+		<td>
+		<table class="centercontent">
+			<tr>
+				<td><div style=font-size:64;><font color="white">{{ season }}</font></div></td>
+			</tr>
+		</table>
+		</td>
 	</tr>
-	<tr>
-	{% for champion in season.get_top_banned %}
-		<th><b>{{ champion.ban_rate }}%</b></th>
-	{% endfor %}
-	</tr>
-</table>
+	<tr class="centercontent">
+		<td>
+		<table class="centercontent" width="100%">
+			<td class="pagebutton" width="33%">
+				<div style="font-size:20;">
+					<b>Players</b>
+				</div>
+			</td>
+			<td class="pagebutton" width="33%">
+				<div style="font-size:20;">
+					<b>Teams</b>
+				</div>
+			</td>
+			<td class="pagebutton" width="33%">
+				<div style="font-size:20;">
+					<b>Champions</b>
+				</div>
+			</td>
 
-<p>Top Picks</p>
-<table>
-	<tr>
-	{% for champion in season.get_top_picked %}
-	<th><img src="{{ MEDIA_URL }}{{ champion.icon }}" height="50" width="50" title="{{ champion.name }}"></th>
-	{% endfor %}
+		</table>
+		</td>
 	</tr>
 	<tr>
-	{% for champion in season.get_top_picked %}
-		<th><b>{{ champion.pick_rate }}%</b></th>
-	{% endfor %}
+		<td>
+		<table width="100%" class="centercontent">
+			<tr>
+				<td width="50%" style="vertical-align:top">
+					<table width="100%" class="centercontent">
+						<tr>
+							<th class="centertableheader">
+								Standings
+							</th>
+						</tr>
+						<tr class="centercontent">
+							<td>
+								{% if sorted_teams %}
+									<table width="100%" class="centercontent">
+										<tr class="alternating-back">
+											<th>Rank</th>
+											<th> </th>
+											<th>Team</th>
+											<th>Record</th>
+										</tr>
+										{% for team in sorted_teams %}
+										<tr class="alternating-back">
+											<td style="font-size:20;"><b>{{ forloop.counter }}</b></td>
+											<td style="font-size:20;"><img src="{{ MEDIA_URL }}{{ team.icon }}" height="50" width="50"></td>
+											<td style="font-size:20;"><a href="/stats/season/{{ season.id }}/team/{{ team.id }}">{{ team.name }}</a></td>
+											<td style="font-size:20;"><b>{{ team.get_record }}</b></td>
+										</tr>
+										{% endfor %}
+									</table>
+								{% endif %}
+							</td>
+						</tr>
+						<tr>
+							<th class="centertableheader">
+								Top Picks
+							</th>
+						</tr>
+						<tr class="centercontent">
+							<td>
+							<table width="100%">
+								<tr>
+								{% for champion in season.get_top_picked %}
+									<th><img src="{{ MEDIA_URL }}{{ champion.icon }}" height="50" width="50" title="{{ champion.name }}"></th>
+								{% endfor %}
+								</tr>
+								<tr>
+								{% for champion in season.get_top_picked %}
+									<th><b>{{ champion.pick_rate }}%</b></th>
+								{% endfor %}
+								</tr>
+							</table>
+							</td>
+						</tr>
+						<tr>
+							<th class="centertableheader">
+								Top Bans 
+							</th>
+						</tr>
+						<tr class="centercontent">
+							<td>
+							<table width="100%">
+								<tr>
+								{% for champion in season.get_top_banned %}
+									<th><img src="{{ MEDIA_URL }}{{ champion.icon }}" height="50" width="50" title="{{ champion.name }}"></th>
+								{% endfor %}
+								</tr>
+								<tr>
+								{% for champion in season.get_top_banned %}
+									<th><b>{{ champion.ban_rate }}%</b></th>
+								{% endfor %}
+								</tr>
+							</table>
+							</td>
+						</tr>
+					</table>
+
+				</td>
+				<td width="50%" style="vertical-align:top">
+					<table width="100%" class="centercontent">
+						<tr>
+							<th class="centertableheader">
+								Schedule
+							</th>
+						</tr>
+						<tr>
+							<td>
+								<table width="100%" class="centercontent">
+								{% for week in season.get_weeks %}
+									<tr>
+										<td style="padding-top:20px;">
+											<i>{{ week }}</i>
+										<td>
+									</tr>
+								{% for series in week.series_set.all %}
+									<tr>
+										<td>
+										<div class="linktable">
+											<a style="display: table-row" href="/stats/season/{{ season.id }}/series/{{ series.id }}/">
+												<div class="linktablecell" style="width: 10%;"></div>
+												<div class="linktablecell" style="width: 10%;">
+													<img src="{{ series.get_team_1.icon.url }}" height="50" width="50">
+												</div>
+												<div class="linktablecell" style="width: 25%;">
+													{{ series.get_team_1.name }}
+												</div>
+												<div class="linktablecell" style="width: 10%;">
+													{{ series.get_team_1_wins }} - {{ series.get_team_2_wins }}
+												</div>
+												<div class="linktablecell" style="width: 25%;">
+													{{ series.get_team_2.name }}
+												</div>
+												<div class="linktablecell" style="width: 10%;">
+													<img src="{{ series.get_team_2.icon.url }}" height="50" width="50">
+												</div>
+												<div class="linktablecell" style="width: 10%;"></div>
+											</a>
+										</div>
+										</td>
+									</tr>
+								{% endfor %}
+									<tr class="centercontent"><td width="100%"></td></tr>
+								{% endfor %}
+								</table>
+							</td>
+						</tr>
+					</table>
+				</td>
+			</tr>
+		</table>
+		</td>
 	</tr>
 </table>
 

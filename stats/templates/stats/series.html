@@ -10,187 +10,217 @@ function ReplaceMatchContent(id, content) {
 	var contentMap = new Map();
 	{% for match in matches %}
 	contentMap.set("{{ forloop.counter }}",
-		"Info about Game {{ forloop.counter }}: {{ match }}" +
-		"<table>" +
-		"<tr>" +
-		{% for teammatch in match.teammatch_set.all %}
-		"<th>{{ teammatch.team.name }}</th>" +
-		{% endfor %}
-		"</tr><tr>" +
-		{% for teammatch in match.teammatch_set.all %}
-		"<td>" +
-		"<table>" +
-		{% for playermatch in teammatch.get_player_matches %}
-	        "<tr>" +
-		{% if forloop.parentloop.counter == 1 %}
-		"<td><img src=\"{{ playermatch.champion.icon.url }}\" height=\"50\" width=\"50\" title=\"{{ playermatch.champion.name }}\"></td>" +
-		"<td>{{ playermatch.player.name }}</td>" +
-		"<td>{{ playermatch.kills }}/{{ playermatch.deaths }}/{{ playermatch.assists }}</td>" +
-		"<td>{{ playermatch.get_cs }}</td>" +
-		"<td>{{ playermatch.gold_earned }}</td>" +
-		{% else %}
-		"<td>{{ playermatch.gold_earned }}</td>" +
-		"<td>{{ playermatch.get_cs }}</td>" +
-		"<td>{{ playermatch.kills }}/{{ playermatch.deaths }}/{{ playermatch.assists }}</td>" +
-		"<td>{{ playermatch.player.name }}</td>" +
-		"<td><img src=\"{{ playermatch.champion.icon.url }}\" height=\"50\" width=\"50\" title=\"{{ playermatch.champion.name }}\"></td>" +
-		{% endif %}
-		"</tr>" +
-		{% endfor %}
-		"<tr>" +
-		{% for ban in teammatch.get_team_bans %}
-		"<img src=\"{{ ban.champion.icon.url }}\" height=\"35\" width=\"35\" style=\"padding:5px\" title=\"{{ ban.champion.name }}\">" +
-		{% endfor %}
-		"</tr>" +
-		"</tr>" +
-		"</table>" +
-		"</td>" +
-		{% endfor %}
-		"</tr>" +
-		"</table>" +
-		"<p> </p>" +
-
+                '<table width="100%">' +
+		 '<tr class="centercontent">' +
+		  {% for teammatch in match.teammatch_set.all %}
+		  '<td width="50%">' +
+		   '<table class="centercontent" width="100%">' +
+		    '<tr>' +
+		     {% if forloop.counter == 1 %}
+		     '<th class="centertableheader" style="border-bottom: 1px solid #4a56b2">{{ teammatch.team.name }}</th>' +
+		     {% else %}
+		     '<th class="centertableheader" style="border-bottom: 1px solid #b24a58">{{ teammatch.team.name }}</th>' +
+		     {% endif %}
+		    '</tr>' +
+		    '<tr>' +
+		     {% if forloop.counter == 1 %}
+		     '<td style="border-bottom: 1px solid #4a56b2">' +
+		     {% else %}
+		     '<td style="border-bottom: 1px solid #b24a58">' +
+		     {% endif %}
+		      '<table class="centercontent" width="100%">' +
+		       '<tr class="alternating-back"></tr>' +
+		    {% for playermatch in teammatch.get_player_matches %}
+		       '<tr class="alternating-back">' +
+		      {% if forloop.parentloop.counter == 1 %}
+		        '<td width="10%"></td>' +
+		        '<td><img src="{{ playermatch.champion.icon.url }}" height="50" width="50" title="{{ playermatch.champion.name }}"></td>' +
+		        '<td>{{ playermatch.player.name }}</td>' +
+		        '<td>{{ playermatch.kills }}/{{ playermatch.deaths }}/{{ playermatch.assists }}</td>' +
+		        '<td>{{ playermatch.get_cs }}</td>' +
+		        '<td>{{ playermatch.gold_earned }}</td>' +
+		        '<td width="10%"></td>' +
+		      {% else %}
+		        '<td width="10%"></td>' +
+		        '<td>{{ playermatch.gold_earned }}</td>' +
+		        '<td>{{ playermatch.get_cs }}</td>' +
+		        '<td>{{ playermatch.kills }}/{{ playermatch.deaths }}/{{ playermatch.assists }}</td>' +
+		        '<td>{{ playermatch.player.name }}</td>' +
+		        '<td><img src="{{ playermatch.champion.icon.url }}" height="50" width="50" title="{{ playermatch.champion.name }}"></td>' +
+		        '<td width="10%"></td>' +
+		      {% endif %}
+		       '</tr>' +
+		    {% endfor %}
+		      '</table>' +
+		     '</td>' +
+		    '</tr>' +
+		    '<tr>' +
+		     '<td>' +
+		      '<table class="centercontent" width="40%">' +
+		       '<tr>' +
+		        '<th class="centertableheader">Bans</th>' +
+		     {% for ban in teammatch.get_team_bans %}
+		        '<td>' +
+		         '<img src="{{ ban.champion.icon.url }}" height="40" width="40" style="padding:5px" title="{{ ban.champion.name }}">' +
+		        '</td>' +
+		     {% endfor %}
+		       '</tr>' +
+		      '</table>' +
+		     '</td>' +
+		    '</tr>' +
+		   '</table>' +
+		  '</td>' +
+		 {% endfor %}
+		 '</tr>' +
+		'</table>' +
+		'<table class="centercontent" width="100%">' +
+		 '<tr>' +
+		  '<th class="centertableheader">Full Statistics</th>' +
+		 '</tr>' +
+		'</table>' +
 		// Full stats table
-		"<table>" +
-		"<tr>" +
-		"<tr><td> </td>" +
+		'<table class="centercontent" width="90%">' +
+		'<tr class="alternating-back">' +
+		'<tr class="alternating-back"><td width="30%"> </td>' +
 		{% for playermatch in match.playermatch_set.all %}
-		"<td><img src=\"{{ playermatch.champion.icon.url }}\" height=\"30\" width=\"30\" title=\"{{ playermatch.champion.name }}\"></td>" +
+		'<td width="7%"><img src="{{ playermatch.champion.icon.url }}" height="30" width="30" title="{{ playermatch.champion.name }}"></td>' +
 		{% endfor %}
-		"</tr><tr><th>Combat</th>" +
-		"</tr><tr><td>KDA</td>" +
+		'</tr><tr class="alternating-back"><th><i>Combat</i></th>' +
+		'</tr><tr class="alternating-back"><td style="text-align: left;">KDA</td>' +
 		{% for playermatch in match.playermatch_set.all %}
-		"<td>{{ playermatch.kills }}/{{ playermatch.deaths }}/{{ playermatch.assists }}</td>" +
+		'<td>{{ playermatch.kills }}/{{ playermatch.deaths }}/{{ playermatch.assists }}</td>' +
 		{% endfor %}
-		"</tr><tr><td>Largest Killing Spree</td>" +
+		'</tr><tr class="alternating-back"><td style="text-align: left;">Largest Killing Spree</td>' +
 		{% for playermatch in match.playermatch_set.all %}
-		"<td>{{ playermatch.largest_killing_spree }}</td>" +
+		'<td>{{ playermatch.largest_killing_spree }}</td>' +
 		{% endfor %}
-		"</tr><tr><td>First Blood</td>" +
+		'</tr><tr class="alternating-back"><td style="text-align: left;">First Blood</td>' +
 		{% for playermatch in match.playermatch_set.all %}
 		{% if playermatch.first_blood_kill %}
-		"<td>Yes</td>" +
+		'<td>Yes</td>' +
 		{% else %}
-		"<td>No</td>" +
+		'<td>No</td>' +
 		{% endif %}
 		{% endfor %}
-		"</tr><tr><th>Damage Dealt</th>" +
-		"</tr><tr><td>Total Damage Dealt to Champions</td>" +
+		'</tr><tr class="alternating-back"><th><i>Damage Dealt</i></th>' +
+		'</tr><tr class="alternating-back"><td style="text-align: left;">Total Damage Dealt to Champions</td>' +
 		{% for playermatch in match.playermatch_set.all %}
-		"<td>{{ playermatch.total_damage_dealt_to_champions }}</td>" +
+		'<td>{{ playermatch.total_damage_dealt_to_champions }}</td>' +
 		{% endfor %}
-		"</tr><tr><td>Physical Damage Dealt to Champions</td>" +
+		'</tr><tr class="alternating-back"><td style="text-align: left;">Physical Damage Dealt to Champions</td>' +
 		{% for playermatch in match.playermatch_set.all %}
-		"<td>{{ playermatch.physical_damage_dealt_to_champions }}</td>" +
+		'<td>{{ playermatch.physical_damage_dealt_to_champions }}</td>' +
 		{% endfor %}
-		"</tr><tr><td>Magic Damage Dealt to Champions</td>" +
+		'</tr><tr class="alternating-back"><td style="text-align: left;">Magic Damage Dealt to Champions</td>' +
 		{% for playermatch in match.playermatch_set.all %}
-		"<td>{{ playermatch.magic_damage_dealt_to_champions }}</td>" +
+		'<td>{{ playermatch.magic_damage_dealt_to_champions }}</td>' +
 		{% endfor %}
-		"</tr><tr><td>True Damage Dealt to Champions</td>" +
+		'</tr><tr class="alternating-back"><td style="text-align: left;">True Damage Dealt to Champions</td>' +
 		{% for playermatch in match.playermatch_set.all %}
-		"<td>{{ playermatch.true_damage_dealt_to_champions }}</td>" +
+		'<td>{{ playermatch.true_damage_dealt_to_champions }}</td>' +
 		{% endfor %}
-		"</tr><tr><td>Total Damage Dealt</td>" +
+		'</tr><tr class="alternating-back"><td style="text-align: left;">Total Damage Dealt</td>' +
 		{% for playermatch in match.playermatch_set.all %}
-		"<td>{{ playermatch.total_damage_dealt }}</td>" +
+		'<td>{{ playermatch.total_damage_dealt }}</td>' +
 		{% endfor %}
-		"</tr><tr><td>Physical Damage Dealt</td>" +
+		'</tr><tr class="alternating-back"><td style="text-align: left;">Physical Damage Dealt</td>' +
 		{% for playermatch in match.playermatch_set.all %}
-		"<td>{{ playermatch.physical_damage_dealt }}</td>" +
+		'<td>{{ playermatch.physical_damage_dealt }}</td>' +
 		{% endfor %}
-		"</tr><tr><td>Magic Damage Dealt</td>" +
+		'</tr><tr class="alternating-back"><td style="text-align: left;">Magic Damage Dealt</td>' +
 		{% for playermatch in match.playermatch_set.all %}
-		"<td>{{ playermatch.magic_damage_dealt }}</td>" +
+		'<td>{{ playermatch.magic_damage_dealt }}</td>' +
 		{% endfor %}
-		"</tr><tr><td>True Damage Dealt</td>" +
+		'</tr><tr><td style="text-align: left;">True Damage Dealt</td>' +
 		{% for playermatch in match.playermatch_set.all %}
-		"<td>{{ playermatch.true_damage_dealt }}</td>" +
+		'<td>{{ playermatch.true_damage_dealt }}</td>' +
 		{% endfor %}
-		"</tr><tr><td>Largest Critical Strike</td>" +
+		'</tr><tr class="alternating-back"><td style="text-align: left;">Largest Critical Strike</td>' +
 		{% for playermatch in match.playermatch_set.all %}
-		"<td>{{ playermatch.largest_critical_strike }}</td>" +
+		'<td>{{ playermatch.largest_critical_strike }}</td>' +
 		{% endfor %}
-		"</tr><tr><td>Total Damage to Objectives</td>" +
+		'</tr><tr class="alternating-back"><td style="text-align: left;">Total Damage to Objectives</td>' +
 		{% for playermatch in match.playermatch_set.all %}
-		"<td>{{ playermatch.damage_dealt_to_objectives }}</td>" +
+		'<td>{{ playermatch.damage_dealt_to_objectives }}</td>' +
 		{% endfor %}
-		"</tr><tr><td>Total Damage to Turrets</td>" +
+		'</tr><tr class="alternating-back"><td style="text-align: left;">Total Damage to Turrets</td>' +
 		{% for playermatch in match.playermatch_set.all %}
-		"<td>{{ playermatch.damage_dealt_to_turrets }}</td>" +
+		'<td>{{ playermatch.damage_dealt_to_turrets }}</td>' +
 		{% endfor %}
-		"</tr><tr><th>Damage Taken & Healed</th>" +
-		"</tr><tr><td>Damage Healed</td>" +
+		'</tr><tr class="alternating-back"><th><i>Damage Taken & Healed</i></th>' +
+		'</tr><tr class="alternating-back"><td style="text-align: left;">Damage Healed</td>' +
 		{% for playermatch in match.playermatch_set.all %}
-		"<td>{{ playermatch.total_heal }}</td>" +
+		'<td>{{ playermatch.total_heal }}</td>' +
 		{% endfor %}
-		"</tr><tr><td>Damage Taken</td>" +
+		'</tr><tr class="alternating-back"><td style="text-align: left;">Damage Taken</td>' +
 		{% for playermatch in match.playermatch_set.all %}
-		"<td>{{ playermatch.total_damage_taken }}</td>" +
+		'<td>{{ playermatch.total_damage_taken }}</td>' +
 		{% endfor %}
-		"</tr><tr><td>Physical Damage Taken</td>" +
+		'</tr><tr class="alternating-back"><td style="text-align: left;">Physical Damage Taken</td>' +
 		{% for playermatch in match.playermatch_set.all %}
-		"<td>{{ playermatch.physical_damage_taken }}</td>" +
+		'<td>{{ playermatch.physical_damage_taken }}</td>' +
 		{% endfor %}
-		"</tr><tr><td>Magic Damage Taken</td>" +
+		'</tr><tr class="alternating-back"><td style="text-align: left;">Magic Damage Taken</td>' +
 		{% for playermatch in match.playermatch_set.all %}
-		"<td>{{ playermatch.magical_damage_taken }}</td>" +
+		'<td>{{ playermatch.magical_damage_taken }}</td>' +
 		{% endfor %}
-		"</tr><tr><td>True Damage Taken</td>" +
+		'</tr><tr class="alternating-back"><td style="text-align: left;">True Damage Taken</td>' +
 		{% for playermatch in match.playermatch_set.all %}
-		"<td>{{ playermatch.true_damage_taken }}</td>" +
+		'<td>{{ playermatch.true_damage_taken }}</td>' +
 		{% endfor %}
-		"</tr><tr><th>Vision</th>" +
-		"</tr><tr><td>Wards Placed</td>" +
+		'</tr><tr class="alternating-back"><th><i>Vision</i></th>' +
+		'</tr><tr class="alternating-back"><td style="text-align: left;">Wards Placed</td>' +
 		{% for playermatch in match.playermatch_set.all %}
-		"<td>{{ playermatch.wards_placed }}</td>" +
+		'<td>{{ playermatch.wards_placed }}</td>' +
 		{% endfor %}
-		"</tr><tr><td>Wards Destroyed</td>" +
+		'</tr><tr class="alternating-back"><td style="text-align: left;">Wards Destroyed</td>' +
 		{% for playermatch in match.playermatch_set.all %}
-		"<td>{{ playermatch.wards_killed }}</td>" +
+		'<td>{{ playermatch.wards_killed }}</td>' +
 		{% endfor %}
-		"</tr><tr><td>Control Wards Purchased</td>" +
+		'</tr><tr class="alternating-back"><td style="text-align: left;">Control Wards Purchased</td>' +
 		{% for playermatch in match.playermatch_set.all %}
-		"<td>{{ playermatch.vision_wards_bought_in_game }}</td>" +
+		'<td>{{ playermatch.vision_wards_bought_in_game }}</td>' +
 		{% endfor %}
-		"</tr><tr><th>Income</th>" +
-		"</tr><tr><td>Gold Earned</td>" +
+		'</tr><tr class="alternating-back"><th><i>Income</i></th>' +
+		'</tr><tr class="alternating-back"><td style="text-align: left;">Gold Earned</td>' +
 		{% for playermatch in match.playermatch_set.all %}
-		"<td>{{ playermatch.gold_earned }}</td>" +
+		'<td>{{ playermatch.gold_earned }}</td>' +
 		{% endfor %}
-		"</tr><tr><td>Gold Spent</td>" +
+		'</tr><tr class="alternating-back"><td style="text-align: left;">Gold Spent</td>' +
 		{% for playermatch in match.playermatch_set.all %}
-		"<td>{{ playermatch.gold_spent }}</td>" +
+		'<td>{{ playermatch.gold_spent }}</td>' +
 		{% endfor %}
-		"</tr><tr><td>Minions Killed</td>" +
+		'</tr><tr class="alternating-back"><td style="text-align: left;">Minions Killed</td>' +
 		{% for playermatch in match.playermatch_set.all %}
-		"<td>{{ playermatch.total_minions_killed }}</td>" +
+		'<td>{{ playermatch.total_minions_killed }}</td>' +
 		{% endfor %}
-		"</tr><tr><td>Neutral Minions Killed</td>" +
+		'</tr><tr class="alternating-back"><td style="text-align: left;">Neutral Minions Killed</td>' +
 		{% for playermatch in match.playermatch_set.all %}
-		"<td>{{ playermatch.neutral_minions_killed }}</td>" +
+		'<td>{{ playermatch.neutral_minions_killed }}</td>' +
 		{% endfor %}
-		"</tr><tr><td>Neutral Minions Killed in Team's Jungle</td>" +
+		'</tr><tr class="alternating-back"><td style="text-align: left;">Neutral Minions Killed in Team\'s Jungle</td>' +
 		{% for playermatch in match.playermatch_set.all %}
-		"<td>{{ playermatch.neutral_minions_killed_team_jungle }}</td>" +
+		'<td>{{ playermatch.neutral_minions_killed_team_jungle }}</td>' +
 		{% endfor %}
-		"</tr><tr><td>Neutral Minions Killed in Enemy Jungle</td>" +
+		'</tr><tr class="alternating-back"><td style="text-align: left;">Neutral Minions Killed in Enemy Jungle</td>' +
 		{% for playermatch in match.playermatch_set.all %}
-		"<td>{{ playermatch.neutral_minions_killed_enemy_jungle }}</td>" +
+		'<td>{{ playermatch.neutral_minions_killed_enemy_jungle }}</td>' +
 		{% endfor %}
-		"</tr></table>" +
+		'</tr></table>' +
 			"");
 	{% endfor %}
 	contentMap.set("Overview",
-		"<div>" +
-		"<img src=\"{{ team1.team.icon.url }}\" style=\"display:inline-block; padding-left:10px\">" +
-//		"<i style=\"float:left; vertical-align:middle; padding-left=10px;\">VS</i>" +
-		"<img src=\"{{ team2.team.icon.url }}\" style=\"display:inline-block; margin-left:10px\">" +
-		"</div>" +
-		"<h1>{{ series }}</h1>" +
-		{% if series.twitch_vod_num != 0 %}
-		"<iframe class=\"videoplayer\" src=\"https://player.twitch.tv/?autoplay=false&video=v{{ series.twitch_vod_num }}\" frameborder=\"0\" allowfullscreen=\"true\" scrolling=\"no\" height=\"40%\" width=\"60%\"></iframe>" +
-		{% endif %}
+		'<table width="100%">' +
+		 '<tr>' +
+		  '<td width="50%">' +
+		   {% if series.twitch_vod_num != 0 %}
+		   '<iframe class="videoplayer" src="https://player.twitch.tv/?autoplay=false&video=v{{ series.twitch_vod_num }}" frameborder="0" allowfullscreen="true" scrolling="no" height="400px" width="90%"></iframe>' +
+		   {% endif %}
+		  '</td>' +
+		  '<td width="50%">' +
+		  '</td>' +
+		 '</tr>' +
+		'</table>' +
 		        "");
 	contentMap.set("Load Match",
                 "<a href=\"/stats/season/{{ season.id }}/series/{{ series.id }}/load_match/\">Load Match</a>");
@@ -204,28 +234,52 @@ window.onload = function() {
 
 <p></p>
 
-    <div class="pagebar">
-	    <div class="pagebutton" style="width: {% widthratio 1 num_match_links 100 %}%">
-	    <a class="playerlink" href="javascript:ReplaceMatchContent('pagecontent','Overview')">
-	    <p class="pagebuttonstyle">Overview</p>
-    </a>
-    </div>
-    {% for match in matches %}
-    <div class="pagebutton" style="width: {% widthratio 1 num_match_links 100 %}%">
-	    <a class="playerlink" href="javascript:ReplaceMatchContent('pagecontent','{{ forloop.counter }}')">
-	    <p class="pagebuttonstyle">Game {{ forloop.counter }}</p>
-    </a>
-    </div>
-    {% endfor %}
-    <div class="pagebutton" style="width: {% widthratio 1 num_match_links 100 %}%">
-	    <a class="playerlink" href="javascript:ReplaceMatchContent('pagecontent','Load Match')">
-	    <p class="pagebuttonstyle">Add Match</p>
-    </a>
-    </div>
+<table class="centercontent" width="70%">
+	<tr class="centercontent">
+		<td>
+		<table class="centercontent">
+			<tr>
+				<td style="font-size:64">{{ series.week }}</td>
+			</tr>
+			<tr>
+				<td>
+				<table class="centercontent">
+					<tr>
+						<td><img src="{{ series.get_team_1.icon.url }}"></td>
+						<td style="font-size:40"><a href="/stats/season/{{ series.get_team_1.season.id }}/team/{{ series.get_team_1.id }}/">{{ series.get_team_1.name }}</a></td>
+						<td style="font-size:40">vs</td>
+						<td style="font-size:40"><a href="/stats/season/{{ series.get_team_2.season.id }}/team/{{ series.get_team_2.id }}/">{{ series.get_team_2.name }}</a></td>
+						<td><img src="{{ series.get_team_2.icon.url }}"></td>
+					</tr>
+				</table>
+				</td>
+			</tr>
+		</table>
+		</td>
+	</tr>
+	<tr class="centercontent">
+		<td>
+		<table class="centercontent" width="100%">
+			<tr>
+			{% for match in matches %}
+				<td class="pagebutton" width= "{% widthratio 1 num_match_links 100 %}%">
+					<div style="font-size:20;">
+						<a href="javascript:ReplaceMatchContent('pagecontent','{{ forloop.counter }}')"><b>Game {{ forloop.counter }}</b></a>
+					</div>
+				</td>
+			{% endfor %}
+			</tr>
+		</table>
+		</td>
+	</tr>
+	<tr>
+		<td>
+			<div id="pagecontent" onload="ReplaceMatchContent('pagecontent'),'Overview')">
+			</div>
+		</td>
+	</tr>
 
-    </div>
-    <div id="pagecontent" onload="ReplaceMatchContent('pagecontent','Overview')">
-    </div>
+</table>
 
 {% endblock %}
 

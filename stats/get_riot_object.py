@@ -7,6 +7,74 @@ class ObjectNotFound(Exception) :
     """Raised when we can't find an object in db or from riot API"""
     pass
 
+def get_all_summoner_spells(riot_id):
+    requester = RiotRequester('/lol/static-data/v3/summoner-spells/')
+    requester.add_tag("image")
+    try:
+        total_ss_data = requester.request("")
+    except RiotNotFound:
+        raise ObjectNotFound("Summoner Spells")
+
+    for ss_id in total_ss_data["data"]:
+        ss_data = total_ss_data["data"][ss_id]
+        ss_exists = True
+        try:
+            ss = SummonerSpell.objects.get(id=ss_id)
+        except SummonerSpell.DoesNotExist:
+            ss_exists = False
+
+        if ss_exists == False or ss.name == "" or ss.description == "" or ss.icon == "":
+            if ss_exists == False:
+                ss = SummonerSpell.objects.create(id=ss_id)
+            ss.name = ""
+            if "name" in ss_data:
+                ss.name = ss_data["name"]
+            r = requests.get("http://ddragon.leagueoflegends.com/cdn/7.5.2/img/item/" + ss_data["image"]["full"], stream=True)
+            if r.status_code == 200:
+                with open("media/stats/summoner-spell/icon/" + ss_data["image"]["full"], 'wb') as f:
+                    r.raw.decode_content = True
+                    shutil.copyfileobj(r.raw, f)
+	    ss.icon = "stats/summoner-spell/icon/" + ss_data["image"]["full"]
+            ss.save()
+
+
+def get_all_items(riot_id):
+    requester = RiotRequester('/lol/static-data/v3/items/')
+    requester.add_tag("image")
+    try:
+        total_item_data = requester.request("")
+    except RiotNotFound:
+        raise ObjectNotFound("Items")
+
+    for item_id in total_item_data["data"]:
+        item_data = total_item_data["data"][item_id]
+        item_exists = True
+        try:
+            item = Item.objects.get(id=item_id)
+        except Item.DoesNotExist:
+            item_exists = False
+
+        if item_exists == False or item.name == "" or item.description == "" or item.icon == "":
+            if item_exists == False:
+                item = Item.objects.create(id=item_id)
+            item.name = ""
+            if "name" in item_data:
+                item.name = item_data["name"]
+            item.description = ""
+            if "description" in item_data:
+                item.description = item_data["description"]
+            r = requests.get("http://ddragon.leagueoflegends.com/cdn/7.5.2/img/item/" + item_data["image"]["full"], stream=True)
+            if r.status_code == 200:
+                with open("media/stats/item/icon/" + item_data["image"]["full"], 'wb') as f:
+                    r.raw.decode_content = True
+                    shutil.copyfileobj(r.raw, f)
+#	    else:
+#	        raise ObjectNotFound("Item Image " + item_data["image"]["full"])
+
+	    item.icon = "stats/item/icon/" + item_data["image"]["full"]
+            item.save()
+
+
 def get_item(riot_id):
     try:
         item = Item.objects.get(id=riot_id)
@@ -30,11 +98,11 @@ def get_item(riot_id):
     return item
 
 def get_champion(riot_id):
-    champion_exists = True;
+    champion_exists = True
     try:
         champion = Champion.objects.get(id=riot_id)
     except Champion.DoesNotExist:
-        champion_exists = False;
+        champion_exists = False
 
     if champion_exists == False or champion.name == "" or champion.title == "" or champion.icon == "":
         requester = RiotRequester('/lol/static-data/v3/champions/')
