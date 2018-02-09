@@ -9,9 +9,10 @@ function ReplaceMatchContent(id, content) {
 	var container = document.getElementById(id);
 	var contentMap = new Map();
 	{% for match in matches %}
-	contentMap.set("{{ forloop.counter }}",
+	contentMap.set("{{ match.game_num }}",
                 '<table width="100%">' +
 		 '<tr class="centercontent">' +
+		{% if match.playermatch_set.all %}
 		  {% for teammatch in match.teammatch_set.all %}
 		  '<td width="50%">' +
 		   '<table class="centercontent" width="100%">' +
@@ -206,6 +207,100 @@ function ReplaceMatchContent(id, content) {
 		{% for playermatch in match.playermatch_set.all %}
 		'<td>{{ playermatch.neutral_minions_killed_enemy_jungle }}</td>' +
 		{% endfor %}
+		{% else %}
+		 {% if match.tournament_code %}
+		'<table class="centercontent" width="80%">' +
+		 '<tr>' +
+		  '<td>' +
+		   '<table class="centercontent" width="100%">' +
+		    '<tr>' +
+		{% for teammatch in match.teammatch_set.all %}
+		     '<td width="50%">' +
+		      '<table class="centercontent" width="100%">' +
+		       '<tr>' +
+		     {% if forloop.counter == 1 %}
+		        '<th class="centertableheader" style="border-bottom: 1px solid #4a56b2">{{ teammatch.team.name }}</th>' +
+		     {% else %}
+		        '<th class="centertableheader" style="border-bottom: 1px solid #b24a58">{{ teammatch.team.name }}</th>' +
+		     {% endif %}
+		       '</tr>' +
+		       '<tr>' +
+		     {% if forloop.counter == 1 %}
+		        '<td style="border-bottom: 1px solid #4a56b2">' +
+		     {% else %}
+		        '<td style="border-bottom: 1px solid #b24a58">' +
+		     {% endif %}
+		         '<table class="centercontent" width="100%">' +
+		          '<tr class="alternating-back"></tr>' +
+		    {% for teamplayer in teammatch.team.teamplayer_set.all %}
+		          '<tr class="alternating-back">' +
+		      {% if forloop.parentloop.counter == 1 %}
+		           '<td width="40%"><img src="{{ teamplayer.role.icon.url }}" height="30" width="30" title="{{ teamplayer.role.name }}"></td>' +
+		           '<td style="font-size:20; text-align:left">{{ teamplayer.player.name }}</td>' +
+		      {% else %}
+		           '<td style="font-size:20; text-align:right">{{ teamplayer.player.name }}</td>' +
+		           '<td width="40%"><img src="{{ teamplayer.role.icon.url }}" height="30" width="30" title="{{ teamplayer.role.name }}"></td>' +
+		      {% endif %}
+		          '</tr>' +
+		    {% endfor %}
+		         '</table>' +
+		        '</td>' +
+		       '</tr>' +	
+		      '</table>' +
+		     '</td>' +
+		 {% endfor %}
+		    '</tr>' +
+		   '</table>' +
+		  '</td>' +
+		 '</tr>' +
+		 '<tr class="centercontent">' +
+		  '<td>' +
+		  '</td>' +
+		 '</tr>' +
+		 '<tr>' +
+		  '<td>' +
+		   '<table class="centercontent">' +
+		    '<tr>' +
+		     '<th class="centertableheader">Casters</th>' +
+		    '</tr>' +
+		{% for caster in match.matchcaster_set.all %}
+		    '<tr class="alternating-back">' +
+         	     '<td style="font-size:20;" width="50%">{{ caster.player.name }}</td>' +
+		    '</tr>' +
+		{% endfor %}
+		   '</table>' +
+		  '</td>' +
+		 '</tr>' +
+		 '<tr class="centercontent">' +
+		  '<td>' +
+		  '</td>' +
+		 '</tr>' +
+		 '<tr class="centercontent">' +
+		  '<td>' +
+		   '<table class="centercontent">' +
+		    '<tr>' +
+		     '<th class="centertableheader">Tournament Code</th>' +
+		    '</tr>' +
+		    '<tr>' +
+		     '<td>' +
+		      '{{ match.tournament_code }}' +
+		     '</td>' +
+		    '</tr>' +
+		   '</table>' +
+		  '</td>' +
+		 '</tr>' +
+		'</table>' +
+		 {% else %}
+		  '<table width="100%">' +
+		  '<tr>' +
+		  '<td>No Tournament Code Configured.</td>' +
+		 '</tr>' +
+		 '<tr>' +
+		'<td><a href="/stats/create_code/{{ match.id }}">Create Tournament Code</a></td>' +
+		 '</tr>' +
+		 '</table>' +
+		 {% endif %}
+		{% endif %}
 		'</tr></table>' +
 			"");
 	{% endfor %}
@@ -264,7 +359,7 @@ window.onload = function() {
 			{% for match in matches %}
 				<td class="pagebutton" width= "{% widthratio 1 num_match_links 100 %}%">
 					<div style="font-size:20;">
-						<a href="javascript:ReplaceMatchContent('pagecontent','{{ forloop.counter }}')"><b>Game {{ forloop.counter }}</b></a>
+						<a href="javascript:ReplaceMatchContent('pagecontent','{{ match.game_num }}')"><b>Game {{ match.game_num }}</b></a>
 					</div>
 				</td>
 			{% endfor %}

@@ -90,6 +90,8 @@ DATABASES = {
 # Internationalization
 # https://docs.djangoproject.com/en/1.8/topics/i18n/
 
+DEFAULT_CHARSET = 'utf-8'
+
 LANGUAGE_CODE = 'en-us'
 
 TIME_ZONE = 'US'

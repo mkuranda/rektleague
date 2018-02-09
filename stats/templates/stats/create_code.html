@@ -1,0 +1,21 @@
+
+
+<p> </p>
+<p> </p>
+<p> </p>
+<p> </p>
+<p> </p>
+
+<h1>{{ match }}</h1>
+
+{{ request }}
+
+<p> </p>
+
+{{ result }}
+
+<form action="/stats/create_code/{{ match.id }}/" method="post">
+	{% csrf_token %}
+	{{ form }}
+	<input type="submit" value="Submit" \>
+</form

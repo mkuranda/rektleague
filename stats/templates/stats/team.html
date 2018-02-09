@@ -15,9 +15,20 @@ function ReplacePlayerContent(id, content) {
 		          '<td width="50%" style="vertical-align:top;">' +
 		           '<table width="100%">' +
 	            	    '<tr class="centercontent">' +
-		             '<th style="padding-bottom:30px; font-size:48;">' +
-		'{{ team_player.player.name }} - {{ team_player.role }}' +
-		             '</th>' +
+		             '<td>' +
+		              '<table width="100%">' +
+		               '<tr>' +
+		                '<th style="padding-bottom:30px; font-size:48; text-align: right;">' +
+		                 '{{ team_player.player.name }}' +
+		                '</th>' +
+		                '<th style="padding-left:10px; padding-bottom:25px; text-align: left;">' +
+		                 '<img src="{{ team_player.role.icon.url }}" height="70px" width="70px">' +
+		                '</th>' +
+		'<th width="10%">' +
+		                '</th>' +
+		               '</tr>' +
+		              '</table>' +
+		             '</td>' +
 	            	    '</tr>' +
 	            	    '<tr>' +
 		             '<th class="centertableheader">' +
@@ -26,7 +37,7 @@ function ReplacePlayerContent(id, content) {
 		            '</tr>' +
 		            '<tr class="centercontent">' +
 		             '<th style="padding-bottom:20px; font-size:25;">' +
-		              '{{ team_player.get_kda.kda|floatformat:"1" }}' +
+		              '{{ team_player.get_kda|floatformat:"1" }}' +
 		             '</th>' +
 		            '</tr>' +
 		            '<tr>' +
@@ -36,7 +47,7 @@ function ReplacePlayerContent(id, content) {
 		            '</tr>' +
 		            '<tr class="centercontent">' +
 		             '<th style="padding-bottom:20px; font-size:25;">' +
-		              '{{ team_player.avg_kills|floatformat:"1" }}/{{ team_player.avg_deaths|floatformat:"1" }}/{{ team_player.avg_assists|floatformat:"1" }}' +
+		              '{{ team_player.get_avg_kills|floatformat:"1" }}/{{ team_player.get_avg_deaths|floatformat:"1" }}/{{ team_player.get_avg_assists|floatformat:"1" }}' +
 		             '</th>' +
 		            '</tr>' +
 		            '<tr>' +

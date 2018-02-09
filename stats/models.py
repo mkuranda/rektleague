@@ -6,6 +6,9 @@ from django.utils import timezone
 class Season(models.Model):
     tournament_id = models.IntegerField(default=0)
     team_size = models.IntegerField(default=5)
+    pick_type = models.CharField(max_length=30)
+    map_type = models.CharField(max_length=30)
+    spectator_type = models.CharField(max_length=30)
 
     def __str__(self):
         return "Season " + str(self.pk)
@@ -26,10 +29,11 @@ class Week(models.Model):
     number = models.IntegerField(default=1)
 
     def __str__(self):
-	return "Week " + str(self.number)
+        return str(self.season) + ": Week " + str(self.number)
 
 class Role(models.Model):
     name = models.CharField(max_length=15)
+    icon = models.ImageField(upload_to='stats/role/icon', default='')
 
     def __str__(self):
         return self.name
@@ -66,7 +70,8 @@ class Series(models.Model):
 
 class Match(models.Model):
     series = models.ForeignKey(Series)
-    tournament_code = models.CharField(max_length=100)
+    game_num = models.IntegerField(default=1)
+    tournament_code = models.CharField(max_length=100, blank=True)
     duration = models.IntegerField(default=0)
 
     def get_winner(self):
@@ -76,12 +81,11 @@ class Match(models.Model):
 	return TeamMatch.objects.filter(match=self, win=False)
 
     def __str__(self):
-        teamMatches = TeamMatch.objects.filter(match=self)
-        return str(teamMatches[0].team) + " v " + str(teamMatches[1].team) + " (" + str(self.series.week) + ")"
+        seriesTeams = SeriesTeam.objects.filter(series=self.series)
+        return str(seriesTeams[0].team) + " v " + str(seriesTeams[1].team) + " (" + str(self.series.week) + " game " + str(self.game_num) + ")"
 
 class Player(models.Model):
     name = models.CharField(max_length=40)
-    rank = models.CharField(max_length=15)
     riot_id = models.IntegerField(default=0)
     matches = models.ManyToManyField(Match, through='PlayerMatch')
 
@@ -97,12 +101,12 @@ class Team(models.Model):
 
     def get_record(self):
 	wins = TeamMatch.objects.filter(team=self, win=True).count()
-	losses = TeamMatch.objects.filter(team=self, win=False).count()
+	losses = TeamMatch.objects.filter(team=self, win=False).exclude(match__duration=0).count()
 	return str(wins) + "-" + str(losses)
 
     def get_sort_record(self):
 	wins = TeamMatch.objects.filter(team=self, win=True).count()
-	losses = TeamMatch.objects.filter(team=self, win=False).count()
+	losses = TeamMatch.objects.filter(team=self, win=False).exclude(match__duration=0).count()
 	return -1 * ((wins * 100) - losses)
 
     def get_top_banned(self):
@@ -120,7 +124,7 @@ class SeriesTeam(models.Model):
         unique_together = (("team", "series"))
     
     def get_wins(self):
-	return TeamMatch.objects.filter(team=self.team, win=True, match__series=series).count()
+	return TeamMatch.objects.filter(team=self.team, win=True, match__series=series).exclude(match__duration=0).count()
 
 
 class PlayerRole(models.Model):
@@ -209,12 +213,37 @@ class TeamPlayer(models.Model):
     def get_team(self):
         return Team.objects.filter(pk=self.team)
 
+    def get_avg_kills(self):
+        avg_kills = Match.objects.select_related().filter(playermatch__player=self.player, teammatch__team=self.team).aggregate(avg_kills=Avg('playermatch__kills'))['avg_kills']
+        if avg_kills == None:
+            return 0
+        return avg_kills
+
+    def get_avg_deaths(self):
+        avg_deaths = Match.objects.select_related().filter(playermatch__player=self.player, teammatch__team=self.team).aggregate(avg_deaths=Avg('playermatch__deaths'))['avg_deaths']
+        if avg_deaths == None:
+            return 0
+        return avg_deaths
+
+    def get_avg_assists(self):
+        avg_assists = Match.objects.select_related().filter(playermatch__player=self.player, teammatch__team=self.team).aggregate(avg_assists=Avg('playermatch__assists'))['avg_assists']
+        if avg_assists == None:
+            return 0
+        return avg_assists
+
     def get_kda(self):
-        return PlayerMatch.objects.filter(player=self.player).aggregate(kda=Avg((F('kills') + F('assists')) / F('deaths')))
+        kda = Match.objects.select_related().filter(playermatch__player=self.player, teammatch__team=self.team).aggregate(kda=Avg((F('playermatch__kills') + F('playermatch__assists')) / F('playermatch__deaths')))['kda']
+#        kda = PlayerMatch.objects.filter(player=self.player).aggregate(kda=Avg((F('kills') + F('assists')) / F('deaths')))
+        if kda == None:
+            return 0
+        return kda
 
     def get_kill_participation(self):
         total_kills = PlayerMatch.objects.filter(player__team=self.team).aggregate(Sum('kills'))['kills__sum']
-        player_kills_assists = PlayerMatch.objects.filter(player=self.player).aggregate(kills__sum=Sum(F('kills') + F('assists')))['kills__sum']
+#        player_kills_assists = PlayerMatch.objects.filter(player=self.player).aggregate(kills__sum=Sum(F('kills') + F('assists')))['kills__sum']
+        player_kills_assists = Match.objects.select_related().filter(playermatch__player=self.player, teammatch__team=self.team).aggregate(kills__sum=Sum(F('playermatch__kills') + F('playermatch__assists')))['kills__sum']
+        if player_kills_assists == None:
+            return 0
         return 100.0 * player_kills_assists / total_kills
 
     def get_played_champion_list(self):
@@ -274,4 +303,6 @@ class PlayerMatchSummonerSpell(models.Model):
     summoner_spell = models.ForeignKey(SummonerSpell)
 
 
-
+class MatchCaster(models.Model):
+    match = models.ForeignKey(Match)
+    player = models.ForeignKey(Player)

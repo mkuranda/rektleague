@@ -1,7 +1,7 @@
 from django.contrib import admin
 
 from .models import Season
-from .models import Team, Match, TeamMatch, PlayerMatch, Week, Series, SeriesTeam, TeamMatchBan
+from .models import Team, Match, TeamMatch, PlayerMatch, Week, Series, SeriesTeam, TeamMatchBan, MatchCaster
 from .models import Player
 from .models import TeamPlayer
 from .models import Role
@@ -16,7 +16,7 @@ class TeamPlayerInline(admin.TabularInline):
 
 class PlayerAdmin(admin.ModelAdmin):
     fieldsets = [
-        ('Player Info', {'fields': ['name', 'rank']}),
+        ('Player Info', {'fields': ['name', 'riot_id']}),
     ]
     inlines = [TeamPlayerInline]
 
@@ -35,8 +35,12 @@ class PlayerMatchInline(admin.TabularInline):
     model = PlayerMatch
     extra = 0
 
+class CasterInline(admin.TabularInline):
+    model = MatchCaster
+    extra = 0
+
 class MatchAdmin(admin.ModelAdmin):
-    inlines = [TeamMatchInline, PlayerMatchInline, TeamMatchBanInline]
+    inlines = [TeamMatchInline, PlayerMatchInline, TeamMatchBanInline, CasterInline]
 
 class MatchInline(admin.StackedInline):
     model = Match

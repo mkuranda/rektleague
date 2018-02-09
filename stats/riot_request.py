@@ -3,6 +3,8 @@ import requests, json
 api_key = 'RGAPI-4d17443e-45b5-4599-bfaa-71f39e02eb61'
 
 url_base = 'https://na1.api.riotgames.com'
+post_url_base = 'https://americas.api.riotgames.com'
+
 
 
 class RiotApiError(Exception) :
@@ -54,6 +56,7 @@ class RiotRequester :
     def __init__(self, request_base):
         self.api_key = api_key
 	self.request_base = url_base + request_base
+	self.post_base = post_url_base + request_base
 	self.tag_list = []
 
     def add_tag(self, tag):
@@ -67,4 +70,13 @@ class RiotRequester :
 	if 'status' in r:
 	    raise riot_errors[r['status']['status_code']]
 	return r
-        
+
+    def post(self, post_url, body):
+        url = self.post_base + post_url + "&api_key=" + self.api_key
+	for tag in self.tag_list:
+	    url += "&tags=" + tag
+	r = requests.post(url, data=json.dumps(body)).json()
+	if 'status' in r:
+	    raise riot_errors[r['status']['status_code']]
+	return r
+       
