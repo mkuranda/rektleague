@@ -2,16 +2,13 @@
 
 {% block content %}
 
+<img style="width: 100%; margin-top:190px;" src="/static/stats/season2.png">
+
 <p> </p>
 
 <table class="centercontent" width="70%">
 	<tr class="centercontent">
 		<td>
-		<table class="centercontent">
-			<tr>
-				<td><div style=font-size:64;><font color="white">{{ season }}</font></div></td>
-			</tr>
-		</table>
 		</td>
 	</tr>
 	<tr class="centercontent">
@@ -127,7 +124,7 @@
 								{% for week in season.get_weeks %}
 									<tr>
 										<td style="padding-top:20px;">
-											<i>{{ week }}</i>
+											<i>Week {{ week.number }}</i>
 										<td>
 									</tr>
 								{% for series in week.series_set.all %}
@@ -135,23 +132,23 @@
 										<td>
 										<div class="linktable">
 											<a style="display: table-row" href="/stats/season/{{ season.id }}/series/{{ series.id }}/">
-												<div class="linktablecell" style="width: 10%;"></div>
+												<div class="linktablecell" style="width: 5%;"></div>
 												<div class="linktablecell" style="width: 10%;">
 													<img src="{{ series.get_team_1.icon.url }}" height="50" width="50">
 												</div>
-												<div class="linktablecell" style="width: 25%;">
+												<div class="linktablecell" style="width: 30%; padding-left:10px; padding-right:10px;">
 													{{ series.get_team_1.name }}
 												</div>
 												<div class="linktablecell" style="width: 10%;">
 													{{ series.get_team_1_wins }} - {{ series.get_team_2_wins }}
 												</div>
-												<div class="linktablecell" style="width: 25%;">
+												<div class="linktablecell" style="width: 30%; padding-left:10px; padding-right:10px;">
 													{{ series.get_team_2.name }}
 												</div>
 												<div class="linktablecell" style="width: 10%;">
 													<img src="{{ series.get_team_2.icon.url }}" height="50" width="50">
 												</div>
-												<div class="linktablecell" style="width: 10%;"></div>
+												<div class="linktablecell" style="width: 5%;"></div>
 											</a>
 										</div>
 										</td>

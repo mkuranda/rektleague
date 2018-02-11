@@ -4,6 +4,7 @@
 
 {% block content %}
 
+
 <script type="text/javascript"><!--
 function ReplacePlayerContent(id, content) {
 	var container = document.getElementById(id);
@@ -153,7 +154,7 @@ function ReplacePlayerContent(id, content) {
 		       '<a style="display: table-row;" href="/stats/season/{{ series.week.season.id }}/series/{{ series.id }}/">' +
 		        '<div class="linktablecell" style="width: 10%"></div>' +
 		        '<div class="linktablecell" style="width: 10%">' +
-		         '<i>{{ series.week }}</i>' +
+		         '<i>Week {{ series.week.number }}</i>' +
 		        '</div>' +
 		        {% if series.get_team_1 == team %}
 		        '<div class="linktablecell" style="width: 10%">' +
@@ -195,32 +196,12 @@ window.onload = function() {
 }
 //--></script>
 
+<img style="width: 100%;" src="{{ team.splash.url }}">
 <p> </p>
 
 <table class="centercontent" width="70%">
 	<tr class="centercontent">
 		<td>
-		<table class="centercontent">
-			<tr>
-				<td>
-				<table class="centercontent">
-					<tr>
-						<td><img src="{{ team.icon.url }}"></td>
-					</tr>
-				</table>
-				</td>
-				<td>
-				<table class="centercontent">
-					<tr>
-						<td><div style=font-size:64;><font color="white"><a href="javascript:ReplacePlayerContent('pagecontent','Overview')">Team {{ team.name }}</a></font></div></td>
-					</tr>
-					<tr>
-						<td style="float: left; font-size:48; padding-left:80px; color: #727272;">{{ team.season }}</td>
-					</tr>
-				</table>
-				<td>
-			</tr>
-		</table>
 		</td>
 	</tr>
 	<tr class="centercontent">
