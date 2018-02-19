@@ -76,7 +76,7 @@
 							<table width="100%">
 								<tr>
 								{% for champion in season.get_top_picked %}
-									<th><img src="{{ MEDIA_URL }}{{ champion.icon }}" height="50" width="50" title="{{ champion.name }}"></th>
+									<th><img src="{{ MEDIA_URL }}{{ champion.champion__icon }}" height="50" width="50" title="{{ champion.champion__name }}"></th>
 								{% endfor %}
 								</tr>
 								<tr>
@@ -97,7 +97,7 @@
 							<table width="100%">
 								<tr>
 								{% for champion in season.get_top_banned %}
-									<th><img src="{{ MEDIA_URL }}{{ champion.icon }}" height="50" width="50" title="{{ champion.name }}"></th>
+									<th><img src="{{ MEDIA_URL }}{{ champion.champion__icon }}" height="50" width="50" title="{{ champion.champion__name }}"></th>
 								{% endfor %}
 								</tr>
 								<tr>

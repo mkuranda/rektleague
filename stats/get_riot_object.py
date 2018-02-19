@@ -127,33 +127,39 @@ def get_champion(riot_id):
         champion.save()
     return champion
 
-def get_match(team_1_id, team_2_id, riot_id, series_id):
+def get_match(match_id):
+    try:
+        match = Match.objects.get(id=match_id)
+    except:
+        raise ObjectNotFound("Match " + str(match_id))
+
+    if match.riot_id == 0:
+        inp = match.tournament_code + '/ids'
+        match_id_requester = RiotRequester('/lol/match/v3/matches/by-tournament-code/')
+        match.riot_id = match_id_requester.request(match.tournament_code + '/ids')[0]
 
     # find teams
     try:
-        team_1 = Team.objects.get(id=team_1_id)
+        teammatch_1 = TeamMatch.objects.get(match=match_id, side="Blue")
+        team_1 = Team.objects.get(id=teammatch_1.team.id)
     except Team.DoesNotExist:
-        raise ObjectNotFound("Team " + str(team_1_id))
+        raise ObjectNotFound("Team 1")
     try:
-        team_2 = Team.objects.get(id=team_2_id)
+        teammatch_2 = TeamMatch.objects.get(match=match_id, side="Red")
+        team_2 = Team.objects.get(id=teammatch_2.team.id)
     except Team.DoesNotExist:
-        raise ObjectNotFound("Team " + str(team_2_id))
+        raise ObjectNotFound("Team 2")
 
     try:
-	series = Series.objects.get(id=series_id)
+	series = Series.objects.filter(id=match.series.id)
     except Series.DoesNotExist:
-	raise ObjectNotFound("Series " + str(series_id))
-
-    try:
-        match = Match.objects.get(id=riot_id)
-    except Match.DoesNotExist:
-        match = Match.objects.create(id=riot_id, series=series)
+	raise ObjectNotFound("Series")
 
     requester = RiotRequester('/lol/match/v3/matches/')
     try:
-        match_data = requester.request(str(riot_id))
+        match_data = requester.request(str(match.riot_id))
     except RiotNotFound:
-        raise ObjectNotFound("Match " + str(riot_id))
+        raise ObjectNotFound("Match " + str(match.riot_id))
 
 
     for team_data in match_data['teams']:

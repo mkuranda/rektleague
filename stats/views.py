@@ -164,23 +164,25 @@ def create_code(request, match_id):
     }
     return render(request, 'stats/create_code.html', context)
 
-def load_match(request, season_id, series_id):
+def load_match(request, season_id, match_id):
     season = get_object_or_404(Season, id=season_id)
-    series = get_object_or_404(Series, id=series_id)
-    if request.method == 'POST':
-        form = TournamentCodeForm(request.POST, series_id=series_id)
-        if form.is_valid():
-            match_id_requester = RiotRequester('/lol/match/v3/matches/by-tournament-code/')
-            match_id = match_id_requester.request(form.cleaned_data['tournament_code'] + '/ids')
-            team_1 = Team.objects.filter(name=form.cleaned_data['team_1'])
-            team_2 = Team.objects.filter(name=form.cleaned_data['team_2'])
-            return HttpResponseRedirect('results/' + str(team_1[0].id) + '/' + str(team_2[0].id) + '/' + str(match_id[0]) + '/')
-    else:
-        form = TournamentCodeForm(series_id=series_id)
+    match = get_object_or_404(Match, id=match_id)
+    match = get_match(match_id)
+    
+
+#    if request.method == 'POST':
+#        form = TournamentCodeForm(request.POST, series_id=series_id)
+#        if form.is_valid():
+#            match_id_requester = RiotRequester('/lol/match/v3/matches/by-tournament-code/')
+#            match_id = match_id_requester.request(form.cleaned_data['tournament_code'] + '/ids')
+#            team_1 = Team.objects.filter(name=form.cleaned_data['team_1'])
+#            team_2 = Team.objects.filter(name=form.cleaned_data['team_2'])
+#            return HttpResponseRedirect('results/' + str(team_1[0].id) + '/' + str(team_2[0].id) + '/' + str(match_id[0]) + '/')
+#    else:
+#        form = TournamentCodeForm(series_id=series_id)
     context = {
         'season': season,
-	'series': series,
-        'form': form,
+        'match': match
     }
     return render(request, 'stats/load_match.html', context)
 

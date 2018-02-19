@@ -19,14 +19,16 @@ class Season(models.Model):
     def get_top_banned(self):
         num_matches = Match.objects.filter(series__week__season=self).exclude(duration=0).count()
         if num_matches == 0:
-            return Champion.objects.none()
-        return Champion.objects.all().values('name', 'icon', 'teammatchban__champion').annotate(ban_rate=Count('teammatchban__champion') * 100 / num_matches).order_by('-ban_rate')[:6]
+            return TeamMatchBan.objects.none()
+#        return Champion.objects.all().values('name', 'icon', 'teammatchban__champion').annotate(ban_rate=Count('teammatchban__champion') * 100 / num_matches).order_by('-ban_rate')[:6]
+        return TeamMatchBan.objects.filter(team__season=self).values('champion__name', 'champion__icon', 'champion').annotate(ban_rate=Count('champion') * 100 / num_matches).order_by('-ban_rate')[:6]
 
     def get_top_picked(self):
         num_matches = Match.objects.filter(series__week__season=self).exclude(duration=0).count()
         if num_matches == 0:
-            return Champion.objects.none()
-        return Champion.objects.all().values('name', 'icon', 'playermatch__champion').annotate(pick_rate=Count('playermatch__champion') * 100 / num_matches).order_by('-pick_rate')[:6]
+            return PlayerMatch.objects.none()
+#        return Champion.objects.all().values('name', 'icon', 'playermatch__champion').annotate(pick_rate=Count('playermatch__champion') * 100 / num_matches).order_by('-pick_rate')[:6]
+        return PlayerMatch.objects.filter(match__series__week__season=self).values('champion__name', 'champion__icon', 'champion').annotate(pick_rate=Count('champion') * 100 / num_matches).order_by('-pick_rate')[:6]
 
 class Week(models.Model):
     season = models.ForeignKey(Season)
@@ -74,6 +76,7 @@ class Series(models.Model):
 
 class Match(models.Model):
     series = models.ForeignKey(Series)
+    riot_id = models.IntegerField(default=0)
     game_num = models.IntegerField(default=1)
     tournament_code = models.CharField(max_length=100, blank=True)
     duration = models.IntegerField(default=0)
@@ -115,8 +118,8 @@ class Team(models.Model):
 	return -1 * ((wins * 100) - losses)
 
     def get_top_banned(self):
-        num_matches = TeamMatch.objects.filter(team=self).count()
-        return TeamMatchBan.objects.filter(match__teammatch__team=self).exclude(team=self).values('champion', 'champion__name', 'champion__icon').annotate(ban_rate=Count('champion') * 100 / num_matches).order_by('-ban_rate')[:6]
+        num_matches = TeamMatch.objects.filter(team=self).exclude(match__duration=0).count()
+        return TeamMatchBan.objects.filter(match__teammatch__team=self).exclude(team=self, match__duration=0).values('champion', 'champion__name', 'champion__icon').annotate(ban_rate=Count('champion') * 100 / num_matches).order_by('-ban_rate')[:6]
 
     def __str__(self):
         return self.name
@@ -244,7 +247,8 @@ class TeamPlayer(models.Model):
         return kda
 
     def get_kill_participation(self):
-        total_kills = PlayerMatch.objects.filter(player__team=self.team).aggregate(Sum('kills'))['kills__sum']
+#        total_kills = PlayerMatch.objects.filter(player__team=self.team).aggregate(Sum('kills'))['kills__sum']
+        total_kills = TeamMatch.objects.filter(team=self.team).aggregate(kills__sum=Sum('match__playermatch__kills'))['kills__sum']
 #        player_kills_assists = PlayerMatch.objects.filter(player=self.player).aggregate(kills__sum=Sum(F('kills') + F('assists')))['kills__sum']
         player_kills_assists = Match.objects.select_related().filter(playermatch__player=self.player, teammatch__team=self.team).aggregate(kills__sum=Sum(F('playermatch__kills') + F('playermatch__assists')))['kills__sum']
         if player_kills_assists == None:
