@@ -78,7 +78,6 @@ function ReplacePlayerContent(id, content) {
 		               '<th width="16%">KDA</th>' +
 		               '<th width="16%">Winrate</th>' +
 		               '<th width="16%">CS/Game</th>' +
-		               '<th width="16%">Vision Score</th>' +
 		              '</tr>' +
 		              {% for champion in team_player.get_played_champion_list %}
 		              '<tr class="alternating-back">' +
@@ -87,7 +86,6 @@ function ReplacePlayerContent(id, content) {
 		               '<td>{{ champion.avg_kills|floatformat:"1" }}/{{ champion.avg_deaths|floatformat:"1" }}/{{ champion.avg_assists|floatformat:"1" }}</td>' +
 		               '<td>{{ champion.winrate|floatformat:"1" }}%</td>' +
 		               '<td>{{ champion.average_cs|floatformat:"1" }}</td>' +
-		               '<td>{{ champion.average_vision_score|floatformat:"1" }}</td>' +
 		                
 		              '</tr>' +
 		              {% endfor %}

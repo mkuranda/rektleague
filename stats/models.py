@@ -119,7 +119,7 @@ class Team(models.Model):
 
     def get_top_banned(self):
         num_matches = TeamMatch.objects.filter(team=self).exclude(match__duration=0).count()
-        return TeamMatchBan.objects.filter(match__teammatch__team=self).exclude(team=self, match__duration=0).values('champion', 'champion__name', 'champion__icon').annotate(ban_rate=Count('champion') * 100 / num_matches).order_by('-ban_rate')[:6]
+        return TeamMatchBan.objects.filter(match__teammatch__team=self).exclude(team=self).exclude(match__duration=0).values('champion', 'champion__name', 'champion__icon').annotate(ban_rate=Count('champion') * 100 / num_matches).order_by('-ban_rate')[:6]
 
     def __str__(self):
         return self.name

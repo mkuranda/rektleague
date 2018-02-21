@@ -115,8 +115,6 @@ def create_code(request, match_id):
     match = get_object_or_404(Match, id=match_id)
 
     jsonRequest = {
-        'allowedSummonerIds': [
-            ],
         'mapType': match.series.week.season.map_type,
         'metadata': "",
         'pickType': match.series.week.season.pick_type,
@@ -124,45 +122,42 @@ def create_code(request, match_id):
         'teamSize': match.series.week.season.team_size
     }
 
-    players = TeamPlayer.objects.select_related().filter(Q(team=match.series.get_team_1()) | Q(team=match.series.get_team_2()))
-
     result = {}
 
-    for player in players:
-        jsonRequest['allowedSummonerIds'].append(player.player.riot_id)
+    form = InitializeMatchForm(request.POST, series_id=match.series.id)
+    code_requester = RiotRequester('/lol/tournament/v3/codes')
+    result = code_requester.post('?count=1&tournamentId=' + str(match.series.week.season.tournament_id), jsonRequest)
+    match.tournament_code = result[0]
+    match.save()
 
-    if request.method == 'POST':
-        form = InitializeMatchForm(request.POST, series_id=match.series.id)
-        if form.is_valid():
-            for caster in form.cleaned_data['casters']:
-                jsonRequest['allowedSummonerIds'].append(caster.riot_id)
-        code_requester = RiotRequester('/lol/tournament/v3/codes')
-        result = code_requester.post('?count=1&tournamentId=' + str(match.series.week.season.tournament_id), jsonRequest)
-        match.tournament_code = result[0]
-        blueteam = form.cleaned_data['blue_team']
-        redteam = form.cleaned_data['red_team']
-        for teammatch in TeamMatch.objects.filter(match=match):
-            teammatch.delete()
-        teammatch1 = TeamMatch.objects.create(match=match, team=blueteam, side="blue")
-        teammatch2 = TeamMatch.objects.create(match=match, team=redteam, side="red")
-        for caster in MatchCaster.objects.filter(match=match):
-            caster.delete()
-        for caster in form.cleaned_data['casters']:
-            matchcaster = MatchCaster.objects.create(match=match, player=caster)
-            matchcaster.save()
-        match.save()
-        teammatch1.save()
-        teammatch2.save()
-    else:
-        form = InitializeMatchForm(series_id=match.series.id)
+    return HttpResponseRedirect('/stats/season/' + str(match.series.week.season.id) + '/series/' + str(match.series.id) + '/')
 
-    context = {
-        'match': match,
-        'request': json.dumps(jsonRequest, ensure_ascii=False),
-        'form': form,
-        'result': result
-    }
-    return render(request, 'stats/create_code.html', context)
+
+#    if request.method == 'POST':
+#        blueteam = form.cleaned_data['blue_team']
+#        redteam = form.cleaned_data['red_team']
+#        for teammatch in TeamMatch.objects.filter(match=match):
+#            teammatch.delete()
+#        teammatch1 = TeamMatch.objects.create(match=match, team=blueteam, side="blue")
+#        teammatch2 = TeamMatch.objects.create(match=match, team=redteam, side="red")
+#        for caster in MatchCaster.objects.filter(match=match):
+#            caster.delete()
+#        for caster in form.cleaned_data['casters']:
+#            matchcaster = MatchCaster.objects.create(match=match, player=caster)
+#            matchcaster.save()
+#        match.save()
+#        teammatch1.save()
+#        teammatch2.save()
+#    else:
+#        form = InitializeMatchForm(series_id=match.series.id)
+#
+#    context = {
+#        'match': match,
+#        'request': json.dumps(jsonRequest, ensure_ascii=False),
+#        'form': form,
+#        'result': result
+#    }
+#    return render(request, 'stats/create_code.html', context)
 
 def load_match(request, season_id, match_id):
     season = get_object_or_404(Season, id=season_id)
