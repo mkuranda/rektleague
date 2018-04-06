@@ -124,19 +124,19 @@ class Team(models.Model):
         return TeamMatchBan.objects.filter(match__teammatch__team=self).exclude(team=self).exclude(match__duration=0).values('champion', 'champion__name', 'champion__icon').annotate(ban_rate=Count('champion') * 100 / num_matches).order_by('-ban_rate')[:6]
 
     def get_wins(self):
-        return TeamMatch.objects.filter(team=self, win=True).count()
+        return TeamMatch.objects.filter(team=self, win=True).exclude(match__duration=0).count()
 
     def get_losses(self):
-        return TeamMatch.objects.filter(team=self, win=False).count()
+        return TeamMatch.objects.filter(team=self, win=False).exclude(match__duration=0).count()
 
     def get_first_blood_percent(self):
-        first_bloods = TeamMatch.objects.filter(team=self, first_blood=True).count()
-        games = TeamMatch.objects.filter(team=self).count()
+        first_bloods = TeamMatch.objects.filter(team=self, first_blood=True).exclude(match__duration=0).count()
+        games = TeamMatch.objects.filter(team=self).exclude(match__duration=0).count()
         return float(first_bloods) * 100 / games
 
     def get_first_tower_percent(self):
-        first_towers = TeamMatch.objects.filter(team=self, first_tower=True).count()
-        games = TeamMatch.objects.filter(team=self).count()
+        first_towers = TeamMatch.objects.filter(team=self, first_tower=True).exclude(match__duration=0).count()
+        games = TeamMatch.objects.filter(team=self).exclude(match__duration=0).count()
         return float(first_towers) * 100 / games
 
     def get_tower_kills(self):
