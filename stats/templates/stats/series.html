@@ -18,9 +18,18 @@ function ReplaceMatchContent(id, content) {
 		   '<table class="centercontent" width="100%">' +
 		    '<tr>' +
 		     {% if forloop.counter == 1 %}
-		     '<th class="centertableheader" style="border-bottom: 1px solid #4a56b2">{{ teammatch.team.name }}</th>' +
+		{% if teammatch.win %}
+		'<th class="centertableheader" style="border-bottom: 1px solid #4a56b2"><a class="centertableheader" style="margin-bottom: 20px; padding-right: 20px; padding-left: 20px; padding-bottom: 5px; border-bottom: 1px solid #6d6d6d;" href="/stats/season/{{ season.id }}/team/{{ teammatch.team.id }}/">{{ teammatch.team.name }}</a></th>' +
+		{% else %}
+		'<th class="centertableheader" style="border-bottom: 1px solid #4a56b2"><a class="centertableheader" href="/stats/season/{{ season.id }}/team/{{ teammatch.team.id }}/">{{ teammatch.team.name }}</a></th>' +
+		{% endif %}
 		     {% else %}
-		     '<th class="centertableheader" style="border-bottom: 1px solid #b24a58">{{ teammatch.team.name }}</th>' +
+		{% if teammatch.win %}
+		'<th class="centertableheader" style="border-bottom: 1px solid #b24a58"><a class="centertableheader" style="margin-bottom: 20px; padding-right: 20px; padding-left: 20px; padding-bottom: 5px; border-bottom: 1px solid #6d6d6d;" href="/stats/season/{{ season.id }}/team/{{ teammatch.team.id }}/">{{ teammatch.team.name }}</a></th>' +
+		{% else %}
+		'<th class="centertableheader" style="border-bottom: 1px solid #b24a58"><a class="centertableheader" href="/stats/season/{{ season.id }}/team/{{ teammatch.team.id }}/">{{ teammatch.team.name }}</a></th>' +
+		{% endif %}
+
 		     {% endif %}
 		    '</tr>' +
 		    '<tr>' +
@@ -286,6 +295,11 @@ function ReplaceMatchContent(id, content) {
 		      '{{ match.tournament_code }}' +
 		     '</td>' +
 		    '</tr>' +
+		    '<tr>' +
+		     '<td>' +
+        		'<a href="/stats/season/{{ season.id }}/match/{{ match.id }}/load_match/">Match Complete</a>' +
+		     '</td>' +
+		    '</tr>' +
 		   '</table>' +
 		  '</td>' +
 		 '</tr>' +
@@ -327,31 +341,23 @@ window.onload = function() {
 }
 //--></script>
 
+<a class="imglink" href="/stats/season/{{ season.id }}/"><img style="width: 100%; margin-top:190px; margin-bottom: 100px;" src="/static/stats/season2.png"></a>
+
+<div style="width: 75%; text-align: center; background-color: #303030; padding: 20px; margin: 0 auto;">
+	<h1 style="font-size: 48">Week {{ series.week.number }}</h1>
+	<h1 style="font-size: 48">{% for seriesteam in series.seriesteam_set.all %}{{ seriesteam.team.name }}{% if forloop.counter == 1 %} vs {% endif %}{% endfor %}</h1>
+
+	<div style="padding: 20px;">
+		{% if series.youtube_link != '' %}
+        	<iframe class="videoplayer" src="{{ series.youtube_link }}" frameborder="0" allowfullscreen="true" scrolling="no" height="441" width="784"></iframe>
+		{% else %}
+		<img style="margin-left: auto; margin-right: auto; display: block; width: 85%; box-shadow: 6px 6px 6px #212121;" src="{{ series.splash.url }}">
+		   {% endif %}
+	</div>
+</div>
 <p></p>
 
 <table class="centercontent" width="70%">
-	<tr class="centercontent">
-		<td>
-		<table class="centercontent">
-			<tr>
-				<td style="font-size:64">{{ series.week }}</td>
-			</tr>
-			<tr>
-				<td>
-				<table class="centercontent">
-					<tr>
-						<td><img src="{{ series.get_team_1.icon.url }}"></td>
-						<td style="font-size:40"><a href="/stats/season/{{ series.get_team_1.season.id }}/team/{{ series.get_team_1.id }}/">{{ series.get_team_1.name }}</a></td>
-						<td style="font-size:40">vs</td>
-						<td style="font-size:40"><a href="/stats/season/{{ series.get_team_2.season.id }}/team/{{ series.get_team_2.id }}/">{{ series.get_team_2.name }}</a></td>
-						<td><img src="{{ series.get_team_2.icon.url }}"></td>
-					</tr>
-				</table>
-				</td>
-			</tr>
-		</table>
-		</td>
-	</tr>
 	<tr class="centercontent">
 		<td>
 		<table class="centercontent" width="100%">
@@ -359,7 +365,7 @@ window.onload = function() {
 			{% for match in matches %}
 				<td class="pagebutton" width= "{% widthratio 1 num_match_links 100 %}%">
 					<div style="font-size:20;">
-						<a href="javascript:ReplaceMatchContent('pagecontent','{{ match.game_num }}')"><b>Game {{ match.game_num }}</b></a>
+						<a style="font-size: 28" href="javascript:ReplaceMatchContent('pagecontent','{{ match.game_num }}')"><b>Game {{ match.game_num }}</b></a>
 					</div>
 				</td>
 			{% endfor %}
@@ -375,6 +381,5 @@ window.onload = function() {
 	</tr>
 
 </table>
-
 {% endblock %}
 

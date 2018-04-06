@@ -207,7 +207,7 @@ window.onload = function() {
 		<table class="centercontent" width="100%">
 			<tr>
     			{% for team_player in players %}
-    			<td class="pagebutton" width="20%">
+			<td class="pagebutton" width="{% widthratio 1 players.count 100 %}%">
 				<div style="font-size:20;">
 					<a href="javascript:ReplacePlayerContent('pagecontent','{{ team_player.player.name }}')"><b>{{ team_player.player.name }}</b></a>
 				</div>

@@ -86,7 +86,7 @@ def get_item(riot_id):
             raise ObjectNotFound("Item " + str(riot_id))
         item = Item.objects.create(riot_id)
         item.name = item_data["name"]
-	r = requests.get("http://ddragon.leagueoflegends.com/cdn/7.5.2/img/item/" + item_data["image"]["full"], stream=True)
+	r = requests.get("http://ddragon.leagueoflegends.com/cdn/8.6.1/img/item/" + item_data["image"]["full"], stream=True)
         if r.status_code == 200:
             with open("media/stats/item/icon" + item_data["image"]["full"], 'wb') as f:
                 r.raw.decode_content = True
@@ -115,7 +115,7 @@ def get_champion(riot_id):
             champion = Champion.objects.create(id=riot_id)
         champion.name = champion_data["name"]
         champion.title = champion_data["title"]
-	r = requests.get("http://ddragon.leagueoflegends.com/cdn/7.23.1/img/champion/" + champion_data["image"]["full"], stream=True)
+	r = requests.get("http://ddragon.leagueoflegends.com/cdn/8.6.1/img/champion/" + champion_data["image"]["full"], stream=True)
         if r.status_code == 200:
             with open("media/stats/champion/icon/" + champion_data["image"]["full"], 'wb') as f:
                 r.raw.decode_content = True
@@ -134,9 +134,9 @@ def get_match(match_id):
         raise ObjectNotFound("Match " + str(match_id))
 
     if match.riot_id == 0:
-        inp = match.tournament_code + '/ids'
         match_id_requester = RiotRequester('/lol/match/v3/matches/by-tournament-code/')
         match.riot_id = match_id_requester.request(match.tournament_code + '/ids')[0]
+        match.save()
 
     # find teams
     try:
@@ -198,7 +198,7 @@ def get_match(match_id):
             team = team_1
         else:
             team = team_2
-        team_player = TeamPlayer.objects.get(role=role, team=team)
+        team_player = TeamPlayer.objects.filter(role=role, team=team)[0]
         champion = get_champion(participant_data['championId'])
         try:
             player_match = PlayerMatch.objects.get(player=team_player.player, match=match)
@@ -261,6 +261,7 @@ def get_match(match_id):
         player_match.physical_damage_taken = participant_stats['physicalDamageTaken']
         player_match.save()
 
+    match.duration = 1
     match.save()
     return match
 

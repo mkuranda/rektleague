@@ -21,14 +21,14 @@ class Season(models.Model):
         if num_matches == 0:
             return TeamMatchBan.objects.none()
 #        return Champion.objects.all().values('name', 'icon', 'teammatchban__champion').annotate(ban_rate=Count('teammatchban__champion') * 100 / num_matches).order_by('-ban_rate')[:6]
-        return TeamMatchBan.objects.filter(team__season=self).values('champion__name', 'champion__icon', 'champion').annotate(ban_rate=Count('champion') * 100 / num_matches).order_by('-ban_rate')[:6]
+        return TeamMatchBan.objects.filter(team__season=self).values('champion__name', 'champion__icon', 'champion').annotate(ban_rate=Count('champion') * 100 / num_matches).order_by('-ban_rate')[:20]
 
     def get_top_picked(self):
         num_matches = Match.objects.filter(series__week__season=self).exclude(duration=0).count()
         if num_matches == 0:
             return PlayerMatch.objects.none()
 #        return Champion.objects.all().values('name', 'icon', 'playermatch__champion').annotate(pick_rate=Count('playermatch__champion') * 100 / num_matches).order_by('-pick_rate')[:6]
-        return PlayerMatch.objects.filter(match__series__week__season=self).values('champion__name', 'champion__icon', 'champion').annotate(pick_rate=Count('champion') * 100 / num_matches).order_by('-pick_rate')[:6]
+        return PlayerMatch.objects.filter(match__series__week__season=self).values('champion__name', 'champion__icon', 'champion').annotate(pick_rate=Count('champion') * 100 / num_matches).order_by('-pick_rate')[:20]
 
 class Week(models.Model):
     season = models.ForeignKey(Season)
@@ -54,7 +54,9 @@ class Champion(models.Model):
 
 class Series(models.Model):
     twitch_vod_num = models.IntegerField(default=0)
+    youtube_link = models.CharField(max_length=100, default='')
     week = models.ForeignKey(Week)
+    splash = models.ImageField(upload_to='stats/champion/matchup_splashes', default='')
 
     def get_team_1(self):
 	teamSeries = SeriesTeam.objects.filter(series=self)
@@ -213,7 +215,7 @@ class TeamPlayer(models.Model):
     isLeader = models.BooleanField(default=False)
 
     class Meta:
-        unique_together = (("team", "role"), ("team", "player"))
+        unique_together = (("team", "player"))
     
     def get_player(self):
         return Player.objects.filter(pk=self.player)

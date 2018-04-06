@@ -2,7 +2,7 @@
 
 {% block content %}
 
-<img style="width: 100%; margin-top:190px;" src="/static/stats/season2.png">
+<a class="imglink" href="/stats/season/{{ season.id }}/"><img style="width: 100%; margin-top:190px; margin-bottom: 90px;" src="/static/stats/season2.png"></a>
 
 <p> </p>
 
@@ -34,17 +34,98 @@
 		</td>
 	</tr>
 	<tr>
-		<td>
-		<table width="100%" class="centercontent">
+		<th style="padding-top:30px;" class="centertableheader">
+			Schedule
+		</th>
+	</tr>
+	<tr>
+		<td class="centercontent">
+			<div style="width: 100%; height: 375px; text-align:center;" class="container" style="margin: 10px;">
+				<div class="row">
+					<div class="col-md-12 col-centered">
+						<div style="width: 80%; height: 200px; margin: auto;" id="carousel" class="carousel slide" data-type="single" data-interval="0">
+							<div class="carousel-inner" >
+									{% for week in season.get_weeks %}
+									{% if forloop.counter == 1 %}
+								<div class="item active">
+									{% else %}
+								<div class="item">
+									{% endif %}
+									<div style="width: 100%;" class="carousel-col">
+										<div style="display: block; margin: 0 auto;" height="500px">
+											<table style="width: 100%">
+												<tr>
+													<td style="font-size:28;">
+														<b>Week {{ week.number }}</b>
+													</td>
+												</tr>
+												{% for series in week.series_set.all %}
+												<tr>
+													<td>
+													<div class="linktable">
+														<a style="display: table-row" href="/stats/season/{{ season.id }}/series/{{ series.id }}/">
+															<div class="linktablecell" style="width: 5%;"></div>
+															<div class="linktablecell" style="width: 10%;">
+																<img src="{{ series.get_team_1.icon.url }}" height="50" width="50">
+															</div>
+															<div class="linktablecell" style="width: 30%; padding-left:10px; padding-right:10px;">
+																{{ series.get_team_1.name }}
+															</div>
+															<div class="linktablecell" style="width: 10%;">
+																{{ series.get_team_1_wins }} - {{ series.get_team_2_wins }}
+															</div>
+															<div class="linktablecell" style="width: 30%; padding-left:10px; padding-right:10px;">
+																{{ series.get_team_2.name }}
+															</div>
+															<div class="linktablecell" style="width: 10%;">
+																<img src="{{ series.get_team_2.icon.url }}" height="50" width="50">
+															</div>
+															<div class="linktablecell" style="width: 5%;"></div>
+														</a>
+													</div>
+													</td>
+												</tr>
+												{% endfor %}
+											</table>
+										</div>
+									</div>
+								</div>
+									{% endfor %}
+							</div>
+
+							<!-- Controls -->
+							<div class="left carousel-control">
+								<a href="#carousel" role="button" data-slide="prev">
+									<span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>
+									<span class="sr-only">Previous</span>
+								</a>
+							</div>
+							<div class="right carousel-control">
+								<a href="#carousel" role="button" data-slide="next">
+									<span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
+									<span class="sr-only">Next</span>
+								</a>
+							</div>
+						</div>
+			
+					</div>
+				</div>
+			</div>
+		</td>
+
+	</tr>
+	<tr>
+		<td class="centercontent">
+		<table width="100%">
 			<tr>
-				<td width="50%" style="vertical-align:top">
-					<table width="100%" class="centercontent">
+				<td width="100%" class="centercontent" style="vertical-align:top">
+					<table width="80%" class="centercontent">
 						<tr>
 							<th class="centertableheader">
 								Standings
 							</th>
 						</tr>
-						<tr class="centercontent">
+						<tr>
 							<td>
 								{% if sorted_teams %}
 									<table width="100%" class="centercontent">
@@ -66,100 +147,69 @@
 								{% endif %}
 							</td>
 						</tr>
-						<tr>
-							<th class="centertableheader">
-								Top Picks
-							</th>
-						</tr>
-						<tr class="centercontent">
-							<td>
-							<table width="100%">
-								<tr>
-								{% for champion in season.get_top_picked %}
-									<th><img src="{{ MEDIA_URL }}{{ champion.champion__icon }}" height="50" width="50" title="{{ champion.champion__name }}"></th>
-								{% endfor %}
-								</tr>
-								<tr>
-								{% for champion in season.get_top_picked %}
-									<th><b>{{ champion.pick_rate }}%</b></th>
-								{% endfor %}
-								</tr>
-							</table>
-							</td>
-						</tr>
-						<tr>
-							<th class="centertableheader">
-								Top Bans 
-							</th>
-						</tr>
-						<tr class="centercontent">
-							<td>
-							<table width="100%">
-								<tr>
-								{% for champion in season.get_top_banned %}
-									<th><img src="{{ MEDIA_URL }}{{ champion.champion__icon }}" height="50" width="50" title="{{ champion.champion__name }}"></th>
-								{% endfor %}
-								</tr>
-								<tr>
-								{% for champion in season.get_top_banned %}
-									<th><b>{{ champion.ban_rate }}%</b></th>
-								{% endfor %}
-								</tr>
-							</table>
-							</td>
-						</tr>
 					</table>
 
 				</td>
-				<td width="50%" style="vertical-align:top">
-					<table width="100%" class="centercontent">
+			</tr>
+		</table>
+		<table class="centercontent">
+			<tr>
+				<td width="80%" style="vertical-align:top">
+					<table class="centercontent">
 						<tr>
-							<th class="centertableheader">
-								Schedule
+							<th style="padding-top: 20px;" class="centertableheader">
+								Top Picks
+							</th>
+						</tr>
+
+						<tr>
+							<td>
+								<div style="overflow-x: auto; white-space: nowrap; width: 50em; margin: auto;" class="champ-slider">
+									<div class="row">
+										<table>
+											<tr>
+										{% for champion in season.get_top_picked %}
+												<td>
+													<img style="margin-bottom: 8px; margin-left:15px;" src="{{ MEDIA_URL }}{{ champion.champion__icon }}" height="50" width="50" title="{{ champion.champion__name }}">
+													<div style="margin-bottom: 8px;">
+														<b>{{ champion.pick_rate }}%</b>
+													</div>
+												</td>
+										{% endfor %}
+											</tr>
+										</table>
+									</div>
+								</div>
+							</td>
+						</tr>
+						<tr>
+							<th style="padding-top:20px;" class="centertableheader">
+								Top Bans 
 							</th>
 						</tr>
 						<tr>
 							<td>
-								<table width="100%" class="centercontent">
-								{% for week in season.get_weeks %}
-									<tr>
-										<td style="padding-top:20px;">
-											<i>Week {{ week.number }}</i>
-										<td>
-									</tr>
-								{% for series in week.series_set.all %}
-									<tr>
-										<td>
-										<div class="linktable">
-											<a style="display: table-row" href="/stats/season/{{ season.id }}/series/{{ series.id }}/">
-												<div class="linktablecell" style="width: 5%;"></div>
-												<div class="linktablecell" style="width: 10%;">
-													<img src="{{ series.get_team_1.icon.url }}" height="50" width="50">
-												</div>
-												<div class="linktablecell" style="width: 30%; padding-left:10px; padding-right:10px;">
-													{{ series.get_team_1.name }}
-												</div>
-												<div class="linktablecell" style="width: 10%;">
-													{{ series.get_team_1_wins }} - {{ series.get_team_2_wins }}
-												</div>
-												<div class="linktablecell" style="width: 30%; padding-left:10px; padding-right:10px;">
-													{{ series.get_team_2.name }}
-												</div>
-												<div class="linktablecell" style="width: 10%;">
-													<img src="{{ series.get_team_2.icon.url }}" height="50" width="50">
-												</div>
-												<div class="linktablecell" style="width: 5%;"></div>
-											</a>
-										</div>
-										</td>
-									</tr>
-								{% endfor %}
-									<tr class="centercontent"><td width="100%"></td></tr>
-								{% endfor %}
-								</table>
+								<div style="overflow-x: auto; white-space: nowrap; width: 50em;" class="champ-slider" style="margin: 10px;">
+									<div class="row">
+										<table>
+											<tr>
+										{% for champion in season.get_top_banned %}
+												<td>
+													<img style="margin-bottom: 8px; margin-left:15px;" src="{{ MEDIA_URL }}{{ champion.champion__icon }}" height="50" width="50" title="{{ champion.champion__name }}">
+													<div style="margin-bottom: 8px;">
+														<b>{{ champion.ban_rate }}%</b>
+													</div>
+												</td>
+										{% endfor %}
+											</tr>
+										</table>
+									</div>
+								</div>
 							</td>
+
 						</tr>
 					</table>
+
 				</td>
 			</tr>
 		</table>

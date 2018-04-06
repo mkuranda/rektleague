@@ -48,7 +48,7 @@ def player_detail(request, player_id):
 
 def team_detail(request, season_id, team_id):
     team = get_object_or_404(Team, id=team_id, season=season_id)
-    team_players = TeamPlayer.objects.filter(team=team_id).annotate(avg_kills=Avg('player__playermatch__kills'), avg_deaths=Avg('player__playermatch__deaths'), avg_assists=Avg('player__playermatch__assists'), num_champs_played=Count('player__playermatch__champion'))
+    team_players = TeamPlayer.objects.filter(team=team_id).annotate(avg_kills=Avg('player__playermatch__kills'), avg_deaths=Avg('player__playermatch__deaths'), avg_assists=Avg('player__playermatch__assists'), num_champs_played=Count('player__playermatch__champion')).order_by('role')
     series_list = Series.objects.filter(seriesteam__team = team).order_by('-week__number')
     context = {
         'team': team,
