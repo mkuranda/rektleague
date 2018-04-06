@@ -7,6 +7,8 @@
 <link href="https://fonts.googleapis.com/css?family=Bowlby+One|Open+Sans" rel="stylesheet">
 <link rel="stylesheet" type="text/css" href="slick/slick.css"/>
   <link rel="stylesheet" type="text/css" href="slick/slick-theme.css"/>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+  <script type="text/javascript" src="https://bowercdn.net/c/jquery.tablesorter-2.1.4/js/jquery.tablesorter.js"></script> 
 <meta name="viewport" content="width=device-width, initial-scale=1">
     <style>
 
@@ -198,6 +200,24 @@ font-family: verdana;
         color:#727272;
 	font-family: 'Noto Sans', sans-serif;
     }
+    th.sortableheader
+    {
+	border:1px solid #727272;
+	font-family: 'Noto Sans', sans-serif;
+    }
+    th.headerSortDown
+    {
+	border:1px solid #727272;
+	background-color: #303030;
+	font-family: 'Noto Sans', sans-serif;
+    }
+    th.headerSortUp
+    {
+	border:1px solid #727272;
+	background-color: #303030;
+	font-family: 'Noto Sans', sans-serif;
+    }
+
     .centertableheader a:link
     {
 	    color: #727272;
@@ -395,7 +415,6 @@ a:active {
 <span style="float:right; font-size:30px;cursor:pointer;margin-right: 20px;color:#fff;padding: 5px;font-family: verdana;" onclick="openNav()">&#9776; MENU</span>
 </div>
 <a href="/stats/news"><img src="/static/stats/logoogsize.png" style="width:300px;position: fixed;" id='Logo'></a>
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
 <script type="text/javascript" src="//cdn.jsdelivr.net/jquery.slick/1.8.0/slick.min.js"></script>
 
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous">

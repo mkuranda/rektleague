@@ -123,6 +123,28 @@ class Team(models.Model):
         num_matches = TeamMatch.objects.filter(team=self).exclude(match__duration=0).count()
         return TeamMatchBan.objects.filter(match__teammatch__team=self).exclude(team=self).exclude(match__duration=0).values('champion', 'champion__name', 'champion__icon').annotate(ban_rate=Count('champion') * 100 / num_matches).order_by('-ban_rate')[:6]
 
+    def get_wins(self):
+        return TeamMatch.objects.filter(team=self, win=True).count()
+
+    def get_losses(self):
+        return TeamMatch.objects.filter(team=self, win=False).count()
+
+    def get_first_blood_percent(self):
+        first_bloods = TeamMatch.objects.filter(team=self, first_blood=True).count()
+        games = TeamMatch.objects.filter(team=self).count()
+        return float(first_bloods) * 100 / games
+
+    def get_first_tower_percent(self):
+        first_towers = TeamMatch.objects.filter(team=self, first_tower=True).count()
+        games = TeamMatch.objects.filter(team=self).count()
+        return float(first_towers) * 100 / games
+
+    def get_tower_kills(self):
+        return TeamMatch.objects.filter(team=self).aggregate(Sum('tower_kills'))
+
+    def get_baron_kills(self):
+        return TeamMatch.objects.filter(team=self).aggregate(Sum('baron_kills'))
+
     def __str__(self):
         return self.name
 
@@ -247,6 +269,13 @@ class TeamPlayer(models.Model):
         if kda == None:
             return 0
         return kda
+
+    def get_cs_per_game(self):
+        cs = Match.objects.select_related().filter(playermatch__player=self.player, teammatch__team=self.team).aggregate(cs=Avg((F('playermatch__neutral_minions_killed') + F('playermatch__total_minions_killed'))))['cs']
+#        kda = PlayerMatch.objects.filter(player=self.player).aggregate(kda=Avg((F('kills') + F('assists')) / F('deaths')))
+        if cs == None:
+            return 0
+        return cs 
 
     def get_kill_participation(self):
 #        total_kills = PlayerMatch.objects.filter(player__team=self.team).aggregate(Sum('kills'))['kills__sum']

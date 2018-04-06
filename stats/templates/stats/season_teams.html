@@ -1,0 +1,112 @@
+{% extends "stats/base.html" %}
+
+{% block content %}
+
+<a class="imglink" href="/stats/season/{{ season.id }}/"><img style="width: 100%; margin-top:190px; margin-bottom: 90px;" src="/static/stats/season2.png"></a>
+
+<p> </p>
+
+<table class="centercontent" width="70%">
+	<tr class="centercontent">
+		<td>
+		</td>
+	</tr>
+	<tr class="centercontent">
+		<td>
+		<table class="centercontent" width="100%">
+			<td class="pagebutton" width="33%">
+				<div style="font-size:20;">
+					<a href="/stats/season/{{ season.id }}/players/"><b>Players</b></a>
+				</div>
+			</td>
+			<td class="pagebutton" width="33%">
+				<div style="font-size:20;">
+					<a href="/stats/season/{{ season.id }}/teams/"><b>Teams</b></a>
+				</div>
+			</td>
+			<td class="pagebutton" width="33%">
+				<div style="font-size:20;">
+					<a href="/stats/season/{{ season.id }}/champions/"><b>Champions</b></a>
+				</div>
+			</td>
+		</table>
+		</td>
+	</tr>
+	<tr>
+		<td>
+			<table id="playerTable" style="margin-bottom:20px; margin-top:20px;" class="centercontent tablesorter">
+				<thead>
+				<tr>
+					<th class="sortableheader" width="20%">
+						Team
+					</th>
+					<th class="sortableheader" width="10%">
+						Wins
+					</th>
+					<th class="sortableheader" width="10%">
+						Losses
+					</th>
+					<th class="sortableheader" width="10%">
+						First Blood %
+					</th>
+					<th class="sortableheader" width="10%">
+						First Tower %
+					</th>
+					<th class="sortableheader" width="10%">
+						Tower Kills
+					</th>
+					<th class="sortableheader" width="10%">
+						Baron Kills
+					</th>
+				</tr>
+				</thead>
+				<tbody>
+				{% for team in teams %}
+				<tr class="alternating-back">
+					<td>
+						<table style="width:100%">
+							<tr>
+								<td style="width:70%; margin: auto;">
+									{{ team.name }}
+								</td>
+								<td style="width:30%;">
+									<img style="margin-right:15px;" height="50" width="50" src="{{ team.icon.url }}" title="{{ team.name }}">
+								</td>
+							</tr>
+						</table>
+					</td>
+					<td>
+						{{ team.get_wins }}
+					</td>
+					<td>
+						{{ team.get_losses }}
+					</td>
+					<td>
+						{{ team.get_first_blood_percent|floatformat:"1" }}%
+					</td>
+					<td>
+						{{ team.get_first_tower_percent|floatformat:"1" }}%
+					</td>
+					<td>
+						{{ team.get_tower_kills.tower_kills__sum }}
+					</td>
+					<td>
+						{{ team.get_baron_kills.baron_kills__sum }}
+					</td>
+
+				</tr>
+				{% endfor %}
+				</tbody>
+			</table>
+		</td>
+	</tr>
+</table>
+<script type="text/javascript">
+$(document).ready(function() 
+    { 
+	    $("#playerTable").tablesorter( {sortList: [[0,0]]} ); 
+    } 
+); 
+	</script>
+
+{% endblock %}

@@ -37,6 +37,47 @@ def season_detail(request, season_id):
     }
     return render(request, 'stats/season.html', context)
 
+def season_players_detail(request, season_id):
+    latest_season = Season.objects.latest('id')
+    context = {
+        'latest_season': latest_season
+    }
+    season = get_object_or_404(Season, id=season_id)
+    team_players = TeamPlayer.objects.filter(team__season=season_id)
+    context = {
+        'latest_season': latest_season,
+        'season': season,
+        'team_players': team_players
+    }
+    return render(request, 'stats/season_players.html', context)
+
+
+def season_teams_detail(request, season_id):
+    latest_season = Season.objects.latest('id')
+    context = {
+        'latest_season': latest_season
+    }
+    season = get_object_or_404(Season, id=season_id)
+    teams = Team.objects.filter(season=season_id)
+    context = {
+        'latest_season': latest_season,
+        'season': season,
+        'teams': teams
+    }
+    return render(request, 'stats/season_teams.html', context)
+
+def season_champions_detail(request, season_id):
+    latest_season = Season.objects.latest('id')
+    context = {
+        'latest_season': latest_season
+    }
+    season = get_object_or_404(Season, id=season_id)
+    context = {
+        'latest_season': latest_season,
+        'season': season
+    }
+    return render(request, 'stats/season_champions.html', context)
+
 def player_detail(request, player_id):
     player = get_object_or_404(Player, id=player_id)
     team_players = TeamPlayer.objects.filter(player=player_id)
