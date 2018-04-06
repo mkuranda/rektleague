@@ -383,3 +383,9 @@ class PlayerMatchSummonerSpell(models.Model):
 class MatchCaster(models.Model):
     match = models.ForeignKey(Match)
     player = models.ForeignKey(Player)
+
+class HypeVideo(models.Model):
+    season = models.ForeignKey(Season)
+    creator = models.ForeignKey(Player)
+    youtube_link = models.CharField(max_length=100, default='')
+

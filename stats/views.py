@@ -3,7 +3,7 @@ from django.http import HttpResponse, HttpResponseRedirect, Http404
 from django.template import loader
 from django.db.models import Avg, Count, Sum, F, When, Q
 from riot_request import RiotRequester
-from .models import Player, TeamPlayer, Team, Season, Champion, Match, Week, Series, SeriesTeam, TeamMatch, MatchCaster, SeasonChampion, PlayerMatch
+from .models import Player, TeamPlayer, Team, Season, Champion, Match, Week, Series, SeriesTeam, TeamMatch, MatchCaster, SeasonChampion, PlayerMatch, HypeVideo
 from .forms import TournamentCodeForm, InitializeMatchForm
 from get_riot_object import ObjectNotFound, get_item, get_champion, get_match, get_all_items
 import json
@@ -123,12 +123,14 @@ def news(request):
     teams = Team.objects.filter(season=season)
     sorted_teams = sorted(teams, key= lambda t: t.get_sort_record())
     series_list = Series.objects.filter(week=week)
+    hype_videos = HypeVideo.objects.filter(season=season)
 
     context = {
         'latest_season': season,
         'week': week,
         'teams': sorted_teams,
-	'series_list': series_list
+	'series_list': series_list,
+        'hype_videos': hype_videos
     }
     return render(request, 'stats/news.html', context)
 
