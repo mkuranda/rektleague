@@ -123,7 +123,7 @@ def news(request):
     teams = Team.objects.filter(season=season)
     sorted_teams = sorted(teams, key= lambda t: t.get_sort_record())
     series_list = Series.objects.filter(week=week)
-    hype_videos = HypeVideo.objects.filter(season=season)
+    hype_videos = HypeVideo.objects.filter(season=season).order_by('-id')
 
     context = {
         'latest_season': season,

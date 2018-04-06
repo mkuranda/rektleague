@@ -39,6 +39,48 @@ function ReplaceMatchContent(id, content) {
 		     '<td style="border-bottom: 1px solid #b24a58">' +
 		     {% endif %}
 		      '<table class="centercontent" width="100%">' +
+		     {% if forloop.counter == 1 %}
+		       '<tr class="alternating-back"></tr>' +
+		        '<th>' +
+		        '</th>' +
+		        '<th>' +
+		         '<img src="/static/stats/scoreboardicon_champion.png" title="Champion" height="25px" width="25px">' +
+		        '</th>' +
+		        '<th>' +
+		        '</th>' +
+		        '<th>' +
+		         '<img src="/static/stats/scoreboardicon_score.png" title="Score" height="25px" width="25px">' +
+		        '</th>' +
+		        '<th>' +
+		         '<img src="/static/stats/scoreboardicon_minion.png" title="Minions Killed" height="25px" width="25px">' +
+		        '</th>' +
+		        '<th>' +
+		         '<img src="/static/stats/scoreboardicon_gold.png" title="Total Gold" height="25px" width="25px">' +
+		        '</th>' +
+		       '</tr>' +
+		     {% else %}
+	               '<tr class="alternating-back"></tr>' +
+		        '<th>' +
+		        '</th>' +
+		        '<th>' +
+		         '<img src="/static/stats/scoreboardicon_gold.png" title="Total Gold" height="25px" width="25px">' +
+		        '</th>' +
+		        '<th>' +
+		         '<img src="/static/stats/scoreboardicon_minion.png" title="Minions Killed" height="25px" width="25px">' +
+		        '</th>' +
+		        '<th>' +
+		         '<img src="/static/stats/scoreboardicon_score.png" title="Score" height="25px" width="25px">' +
+		        '</th>' +
+		        '<th>' +
+		        '</th>' +
+		        '<th>' +
+		         '<img src="/static/stats/scoreboardicon_champion.png" title="Champion" height="25px" width="25px">' +
+		        '</th>' +
+		        '<th>' +
+		        '</th>' +
+		       '</tr>' +
+
+		     {% endif %}
 		       '<tr class="alternating-back"></tr>' +
 		    {% for playermatch in teammatch.get_player_matches %}
 		       '<tr class="alternating-back">' +
@@ -345,7 +387,7 @@ window.onload = function() {
 
 <div style="width: 75%; text-align: center; background-color: #303030; padding: 20px; margin: 0 auto;">
 	<h1 style="font-size: 48">Week {{ series.week.number }}</h1>
-	<h1 style="font-size: 48">{% for seriesteam in series.seriesteam_set.all %}{{ seriesteam.team.name }}{% if forloop.counter == 1 %} vs {% endif %}{% endfor %}</h1>
+	<h1 style="font-size: 48">{% for seriesteam in series.seriesteam_set.all %}<a href="/stats/season/{{ season.id }}/team/{{ seriesteam.team.id }}/">{{ seriesteam.team.name }}</a>{% if forloop.counter == 1 %} vs {% endif %}{% endfor %}</h1>
 
 	<div style="padding: 20px;">
 		{% if series.youtube_link != '' %}
