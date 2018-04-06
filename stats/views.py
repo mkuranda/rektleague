@@ -3,7 +3,7 @@ from django.http import HttpResponse, HttpResponseRedirect, Http404
 from django.template import loader
 from django.db.models import Avg, Count, Sum, F, When, Q
 from riot_request import RiotRequester
-from .models import Player, TeamPlayer, Team, Season, Champion, Match, Week, Series, SeriesTeam, TeamMatch, MatchCaster
+from .models import Player, TeamPlayer, Team, Season, Champion, Match, Week, Series, SeriesTeam, TeamMatch, MatchCaster, SeasonChampion, PlayerMatch
 from .forms import TournamentCodeForm, InitializeMatchForm
 from get_riot_object import ObjectNotFound, get_item, get_champion, get_match, get_all_items
 import json
@@ -72,9 +72,11 @@ def season_champions_detail(request, season_id):
         'latest_season': latest_season
     }
     season = get_object_or_404(Season, id=season_id)
+    champions = SeasonChampion.objects.filter(season=season)
     context = {
         'latest_season': latest_season,
-        'season': season
+        'season': season,
+        'champions': champions
     }
     return render(request, 'stats/season_champions.html', context)
 

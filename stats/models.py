@@ -30,6 +30,13 @@ class Season(models.Model):
 #        return Champion.objects.all().values('name', 'icon', 'playermatch__champion').annotate(pick_rate=Count('playermatch__champion') * 100 / num_matches).order_by('-pick_rate')[:6]
         return PlayerMatch.objects.filter(match__series__week__season=self).values('champion__name', 'champion__icon', 'champion').annotate(pick_rate=Count('champion') * 100 / num_matches).order_by('-pick_rate')[:20]
 
+    def get_champ_stats(self):
+        num_matches = Match.objects.filter(series__week__season=self).exclude(duration=0).count()
+#        stats = PlayerMatch.objects.filter(match__series__week__season=self).values('champion__name', 'champion__icon', 'champion').annotate(pick_rate=Count('champion') * 100 / num_matches)
+        stats = PlayerMatch.objects.filter(match__series__week__season=self)
+        win_ids = [o.id for o in stats if o.win()]
+        return stats.filter(id__in=win_ids).values('champion__name', 'champion__icon', 'champion').annotate(pick_rate=Count('champion') * 100 / num_matches)
+
 class Week(models.Model):
     season = models.ForeignKey(Season)
     number = models.IntegerField(default=1)
@@ -48,9 +55,38 @@ class Champion(models.Model):
     name = models.CharField(max_length=40)
     title = models.CharField(max_length=40)
     icon = models.ImageField(upload_to='stats/champion/icon', default='')
+    seasons = models.ManyToManyField(Season, through='SeasonChampion')
 
     def __str__(self):
         return self.name
+
+class SeasonChampion(models.Model):
+    season = models.ForeignKey(Season)
+    champion = models.ForeignKey(Champion)
+
+    def get_matches(self):
+        matches = PlayerMatch.objects.filter(champion=self.champion, match__series__week__season=self.season).exclude(match__duration=0)
+        return matches.count()
+
+    def get_bans(self):
+        matches = TeamMatchBan.objects.filter(champion=self.champion, team__season=self.season)
+        return matches.count()
+
+    def get_winrate(self):
+        matches = PlayerMatch.objects.filter(champion=self.champion, match__series__week__season=self.season).exclude(match__duration=0)
+        win_ids = [o.id for o in matches if o.win()]
+        num_matches = matches.count()
+        if num_matches == 0:
+            return 0.0
+        num_wins = PlayerMatch.objects.filter(id__in=win_ids).count()
+        return float(num_wins) * 100 / num_matches
+
+    def get_most_picked_player(self):
+        return PlayerMatch.objects.filter(champion=self.champion).values('player', 'team__name', 'team__icon', 'player__name').annotate(player_count=Count('player')).order_by('-player_count')[:1]
+        
+    def get_most_banned_by(self):
+        return TeamMatchBan.objects.filter(champion=self.champion).values('team__name', 'team__icon').annotate(ban_count=Count('team__name')).order_by('-team__name')[:1]
+ 
 
 class Series(models.Model):
     twitch_vod_num = models.IntegerField(default=0)
@@ -84,10 +120,10 @@ class Match(models.Model):
     duration = models.IntegerField(default=0)
 
     def get_winner(self):
-	return TeamMatch.objects.filter(match=self, win=True)
+	return TeamMatch.objects.get(match=self, win=True)
 
     def get_loser(self):
-	return TeamMatch.objects.filter(match=self, win=False)
+	return TeamMatch.objects.get(match=self, win=False)
 
     def __str__(self):
         seriesTeams = SeriesTeam.objects.filter(series=self.series)
@@ -170,6 +206,7 @@ class PlayerRole(models.Model):
 class PlayerMatch(models.Model):
     player = models.ForeignKey(Player)
     match = models.ForeignKey(Match)
+    team = models.ForeignKey(Team)
     champion = models.ForeignKey(Champion)
     kills = models.IntegerField(default=0)
     deaths = models.IntegerField(default=0)
@@ -225,7 +262,7 @@ class PlayerMatch(models.Model):
         unique_together = (("player", "match"))
 
     def win(self):
-        return match.get_winner == player.team
+        return self.match.get_winner().team == self.team
 
     def get_cs(self):
         return self.neutral_minions_killed + self.total_minions_killed

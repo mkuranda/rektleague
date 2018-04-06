@@ -1,0 +1,125 @@
+{% extends "stats/base.html" %}
+
+{% block content %}
+
+<a class="imglink" href="/stats/season/{{ season.id }}/"><img style="width: 100%; margin-top:190px; margin-bottom: 90px;" src="/static/stats/season2.png"></a>
+
+<p> </p>
+
+<table class="centercontent" width="70%">
+	<tr class="centercontent">
+		<td>
+		</td>
+	</tr>
+	<tr class="centercontent">
+		<td>
+		<table class="centercontent" width="100%">
+			<td class="pagebutton" width="33%">
+				<div style="font-size:20;">
+					<a href="/stats/season/{{ season.id }}/players/"><b>Players</b></a>
+				</div>
+			</td>
+			<td class="pagebutton" width="33%">
+				<div style="font-size:20;">
+					<a href="/stats/season/{{ season.id }}/teams/"><b>Teams</b></a>
+				</div>
+			</td>
+			<td class="pagebutton" width="33%">
+				<div style="font-size:20;">
+					<a href="/stats/season/{{ season.id }}/champions/"><b>Champions</b></a>
+				</div>
+			</td>
+
+		</table>
+		</td>
+	</tr>
+	<tr>
+		<td>
+			<table id="playerTable" style="margin-bottom:20px; margin-top:20px;" class="centercontent tablesorter">
+				<thead>
+				<tr>
+					<th class="sortableheader" width="20%">
+						Champion
+					</th>
+					<th class="sortableheader" width="10%">
+						Picks
+					</th>
+					<th class="sortableheader" width="10%">
+						Bans
+					</th>
+					<th class="sortableheader" width="10%">
+						Winrate
+					</th>
+					<th class="sortableheader" width="20%">
+						Most Picked By
+					</th>
+					<th class="sortableheader" width="10%">
+						Most Banned By
+					</th>
+
+
+				</tr>
+				</thead>
+				<tbody>
+				{% for champion in champions %}
+				{% if champion.get_matches > 0 %}
+				<tr class="alternating-back">
+					<td>
+						<table width="100%">
+							<tr>
+								<td width="60%">
+									{{ champion.champion.name }}
+								</td>
+								<td width="40%">
+									<img height="50" width="50" src="{{ champion.champion.icon.url }}" title="{{ champion.champion.name }}">
+								</td>
+							</tr>
+						</table>
+					</td>
+					<td>
+						{{ champion.get_matches }}
+					</td>
+					<td>
+						{{ champion.get_bans }}
+					</td>
+					<td>
+						{{ champion.get_winrate|floatformat:"1" }}%
+					</td>
+					<td>
+						<table width="100%">
+							<tr>
+								<td style="text-align: right;" width="40%">
+									<img height="50" width="50" src="{{ MEDIA_URL }}{{ champion.get_most_picked_player.first.team__icon }}" title="{{ champion.get_most_picked_player.first.team__name }}">
+								</td>
+								<td style="text-align: left;" width="60%">
+						                        {{ champion.get_most_picked_player.first.player__name }}
+								</td>
+							</tr>
+						</table>
+
+					</td>
+					<td>
+						{% if champion.get_bans > 0 %}
+						<img height="50" width="50" src="{{ MEDIA_URL }}{{ champion.get_most_banned_by.first.team__icon }}" title="{{ champion.get_most_banned_by.first.team__name }}">
+						{% else %}
+						None
+						{% endif %}
+					</td>
+
+				</tr>
+				{% endif %}
+				{% endfor %}
+				</tbody>
+			</table>
+		</td>
+	</tr>
+</table>
+<script type="text/javascript">
+$(document).ready(function() 
+    { 
+	    $("#playerTable").tablesorter( {sortList: [[0,0]]} ); 
+    } 
+); 
+	</script>
+
+{% endblock %}
