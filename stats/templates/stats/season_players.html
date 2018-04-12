@@ -75,6 +75,10 @@
 					<th class="sortableheader" width="10%">
 						CS/Game	
 					</th>
+					<th class="sortableheader" width="10%">
+						Team Damage %
+					</th>
+
 
 				</tr>
 				</thead>
@@ -85,6 +89,7 @@
 						{{ team_player.player.name }}
 					</td>
 					<td>
+						<div style="position: absolute; opacity: 0.0;">{{ team_player.team.id }}</div>
 						<img height="50" width="50" src="{{ team_player.team.icon.url }}" title="{{ team_player.team.name }}">
 					</td>
 					<td>
@@ -103,10 +108,13 @@
 						{{ team_player.get_kda|floatformat:"2" }}
 					</td>
 					<td>
-						{{ team_player.get_kill_participation|floatformat:"1" }}
+						{{ team_player.get_kill_participation|floatformat:"1" }}%
 					</td>
 					<td>
 						{{ team_player.get_cs_per_game|floatformat:"1" }}
+					</td>
+					<td>
+						{{ team_player.get_percent_team_damage|floatformat:"1" }}%
 					</td>
 
 				</tr>

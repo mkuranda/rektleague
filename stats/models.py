@@ -82,10 +82,10 @@ class SeasonChampion(models.Model):
         return float(num_wins) * 100 / num_matches
 
     def get_most_picked_player(self):
-        return PlayerMatch.objects.filter(champion=self.champion).values('player', 'team__name', 'team__icon', 'player__name').annotate(player_count=Count('player')).order_by('-player_count')[:1]
+        return PlayerMatch.objects.filter(match__series__week__season=self.season, champion=self.champion).values('player', 'team__name', 'team__icon', 'player__name').annotate(player_count=Count('player')).order_by('-player_count')[:1]
         
     def get_most_banned_by(self):
-        return TeamMatchBan.objects.filter(champion=self.champion).values('team__name', 'team__icon').annotate(ban_count=Count('team__name')).order_by('-team__name')[:1]
+        return TeamMatchBan.objects.filter(match__series__week__season=self.season, champion=self.champion).values('team__name', 'team__icon', 'team__id').annotate(ban_count=Count('team__name')).order_by('-ban_count')[:1]
  
 
 class Series(models.Model):
@@ -314,11 +314,22 @@ class TeamPlayer(models.Model):
             return 0
         return cs 
 
+    def get_percent_team_damage(self):
+        matches = Match.objects.filter(playermatch__player=self.player)
+        match_ids = [o.id for o in matches]
+
+        total_dmg_to_champs = PlayerMatch.objects.filter(match__id__in=match_ids, team=self.team).aggregate(dmg__sum=Sum('total_damage_dealt_to_champions'))['dmg__sum']
+        player_dmg_to_champs = PlayerMatch.objects.select_related().filter(player=self.player, team=self.team).aggregate(dmg__sum=Sum('total_damage_dealt_to_champions'))['dmg__sum']
+        if total_dmg_to_champs == None:
+            return 0
+        return 100.0 * player_dmg_to_champs / total_dmg_to_champs 
+
     def get_kill_participation(self):
-#        total_kills = PlayerMatch.objects.filter(player__team=self.team).aggregate(Sum('kills'))['kills__sum']
-        total_kills = TeamMatch.objects.filter(team=self.team).aggregate(kills__sum=Sum('match__playermatch__kills'))['kills__sum']
-#        player_kills_assists = PlayerMatch.objects.filter(player=self.player).aggregate(kills__sum=Sum(F('kills') + F('assists')))['kills__sum']
-        player_kills_assists = Match.objects.select_related().filter(playermatch__player=self.player, teammatch__team=self.team).aggregate(kills__sum=Sum(F('playermatch__kills') + F('playermatch__assists')))['kills__sum']
+        matches = Match.objects.filter(playermatch__player=self.player)
+        match_ids = [o.id for o in matches]
+
+        total_kills = PlayerMatch.objects.filter(match__id__in=match_ids, team=self.team).aggregate(kills__sum=Sum('kills'))['kills__sum']
+        player_kills_assists = PlayerMatch.objects.select_related().filter(player=self.player, team=self.team).aggregate(kills__sum=Sum(F('kills') + F('assists')))['kills__sum']
         if player_kills_assists == None:
             return 0
         return 100.0 * player_kills_assists / total_kills
@@ -348,7 +359,7 @@ class TeamMatch(models.Model):
         return PlayerMatch.objects.filter(match=self.match, player__team=self.team)
 
     def get_team_bans(self):
-        return TeamMatchBan.objects.filter(match=self.match, team=self.team)
+        return TeamMatchBan.objects.filter(match=self.match, team=self.team).order_by('-pickTurn')
 
 class TeamMatchBan(models.Model):
     team = models.ForeignKey(Team)

@@ -105,6 +105,7 @@
 					</td>
 					<td>
 						{% if champion.get_bans > 0 %}
+						<div style="position: absolute; opacity: 0.0;">{{ champion.get_most_banned_by.first.team__id }}</div>
 						<img height="50" width="50" src="{{ MEDIA_URL }}{{ champion.get_most_banned_by.first.team__icon }}" title="{{ champion.get_most_banned_by.first.team__name }}">
 						{% else %}
 						None

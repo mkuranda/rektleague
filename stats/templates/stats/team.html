@@ -61,6 +61,17 @@ function ReplacePlayerContent(id, content) {
 		              '{{ team_player.get_kill_participation|floatformat:"1" }}%' +
 		             '</th>' +
 		            '</tr>' +
+		            '<tr>' +
+		             '<th class="centertableheader">' +
+		              'Percent of Team Damage' +
+		             '</th>' +
+		            '</tr>' +
+		            '<tr class="centercontent">' +
+		             '<th style="padding-bottom:20px; font-size:25;">' +
+		              '{{ team_player.get_percent_team_damage|floatformat:"1" }}%' +
+		             '</th>' +
+		            '</tr>' +
+
 		           '</table>' +
 		          '</td>' +
 		          '<td width="50%" style="vertical-align:top;">' +
@@ -111,8 +122,9 @@ function ReplacePlayerContent(id, content) {
 	             '<th style="padding-bottom:20px; font-size:25;">' +
 		      '{{ team.get_record }}' +
 		     '</th>' +
+		    '</tr>' +
 		    '<tr class="centercontent">' +
-		     '<td class="10">' +
+		     '<td class="centercontent">' +
 		      '<table width="100%">' +
 		       '<tr>' +
 		        '<td>' +
@@ -131,15 +143,49 @@ function ReplacePlayerContent(id, content) {
 		          {% for champion in team.get_top_banned %}
   		    	     '<td width="60"><b>{{ champion.ban_rate }}%</b></td>' +
           	  	{% endfor %}
+		            '</tr>' +
+		           '</table>' +
+		          '</td>' +
 		         '</tr>' +
 		        '</table>' +
+		     '</td>' +
+		    '</tr>' +
+		    '<tr>' +
+		     '<td>' +
+		      '<table width="100%">' +
+		       '<tr>' +
+		         '<th class="centertableheader">' +
+		          'First Blood %' +
+		         '</th>' +
 		       '</tr>' +
+		       '<tr>' +
+		        '<th style="padding-bottom:20px; font-size:25;">' +
+		         '{{ team.get_first_blood_percent|floatformat:"1" }}%' +
+		        '</th>' +
+		       '</tr>' +
+		      '</table>' +
+		     '</td>' +
+		    '</tr>' +
+		'<tr class="centercontent"><td width="100%"></td></tr><tr>' +
+		     '<td>' +
+		      '<table width="100%">' +
+		       '<tr>' +
+		         '<th class="centertableheader">' +
+		          'First Tower %' +
+		         '</th>' +
+		       '</tr>' +
+		       '<tr>' +
+		        '<th style="padding-bottom:20px; font-size:25;">' +
+		         '{{ team.get_first_tower_percent|floatformat:"1" }}%' +
+		        '</th>' +
+		       '</tr>' +
+
 		      '</table>' +
 		     '</td>' +
 		    '</tr>' +
 		   '</table>' +
 		  '</td>' +
-		  '<td class="centercontent" width="50%" height="100%">' +
+		  '<td width="50%" height="100%" style="vertical-align:top">' +
 		   '<table width="100%" class="centercontent">' +
 		    '<tr >' +
 		     '<th class="centertableheader">' +

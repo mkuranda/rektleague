@@ -201,10 +201,10 @@ def get_match(match_id):
         team_player = TeamPlayer.objects.filter(role=role, team=team)[0]
         champion = get_champion(participant_data['championId'])
         try:
-            player_match = PlayerMatch.objects.get(player=team_player.player, match=match)
+            player_match = PlayerMatch.objects.get(player=team_player.player, team=team_player.team, match=match)
             player_match.champion=champion
         except PlayerMatch.DoesNotExist:
-            player_match = PlayerMatch.objects.create(player=team_player.player, match=match, champion=champion)
+            player_match = PlayerMatch.objects.create(player=team_player.player, team=team_player.team, match=match, champion=champion)
         player_match.kills = participant_stats['kills']
         player_match.deaths = participant_stats['deaths']
         player_match.assists = participant_stats['assists']
