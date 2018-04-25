@@ -135,7 +135,8 @@ def news(request):
     return render(request, 'stats/news.html', context)
 
 def index(request):
-    return HttpResponseRedirect('news/')
+    latest_season = Season.objects.latest('id')
+    return HttpResponseRedirect('season/' + str(latest_season.id))
 
 def series_detail(request, season_id, series_id):
     season = get_object_or_404(Season, id=season_id)

@@ -113,8 +113,9 @@ class Series(models.Model):
 
 
 class Match(models.Model):
+    id = models.BigIntegerField(primary_key=True)
     series = models.ForeignKey(Series)
-    riot_id = models.IntegerField(default=0)
+    riot_id = models.BigIntegerField(default=0)
     game_num = models.IntegerField(default=1)
     tournament_code = models.CharField(max_length=100, blank=True)
     duration = models.IntegerField(default=0)
@@ -313,6 +314,9 @@ class TeamPlayer(models.Model):
         if cs == None:
             return 0
         return cs 
+    
+    def get_distinct_champs_played(self):
+        return PlayerMatch.objects.filter(player=self.player, team=self.team).values('champion').aggregate(num_champs=Count('champion', distinct=True))['num_champs']
 
     def get_percent_team_damage(self):
         matches = Match.objects.filter(playermatch__player=self.player)
@@ -372,7 +376,7 @@ class TeamMatchBan(models.Model):
 
 class Item(models.Model):
     name = models.CharField(max_length=40)
-    description = models.CharField(max_length=40)
+    description = models.CharField(max_length=5000)
     icon = models.ImageField(upload_to='stats/item/icon', default='')
 
 class PlayerMatchItem(models.Model):
