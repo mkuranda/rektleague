@@ -308,24 +308,7 @@ function ReplaceMatchContent(id, content) {
 		  '<td>' +
 		  '</td>' +
 		 '</tr>' +
-		 '<tr>' +
-		  '<td>' +
-		   '<table class="centercontent">' +
-		    '<tr>' +
-		     '<th class="centertableheader">Casters</th>' +
-		    '</tr>' +
-		{% for caster in match.matchcaster_set.all %}
-		    '<tr class="alternating-back">' +
-         	     '<td style="font-size:20;" width="50%">{{ caster.player.name }}</td>' +
-		    '</tr>' +
-		{% endfor %}
-		   '</table>' +
-		  '</td>' +
-		 '</tr>' +
-		 '<tr class="centercontent">' +
-		  '<td>' +
-		  '</td>' +
-		 '</tr>' +
+                   {% if match.tournament_code != 'none' %}
 		 '<tr class="centercontent">' +
 		  '<td>' +
 		   '<table class="centercontent">' +
@@ -345,6 +328,7 @@ function ReplaceMatchContent(id, content) {
 		   '</table>' +
 		  '</td>' +
 		 '</tr>' +
+                   {% endif %}
 		'</table>' +
 		 {% else %}
 		  '<table width="100%">' +
@@ -387,7 +371,7 @@ window.onload = function() {
 	<h1 style="font-size: 48">{% for seriesteam in series.seriesteam_set.all %}<a href="/stats/season/{{ season.id }}/team/{{ seriesteam.team.id }}/">{{ seriesteam.team.name }}</a>{% if forloop.counter == 1 %} vs {% endif %}{% endfor %}</h1>
 
 	<div style="padding: 20px;">
-		{% if series.youtube_link != '' %}
+		{% if series.youtube_link != '' and series.youtube_link != ' ' %}
         	<iframe class="videoplayer" src="{{ series.youtube_link }}" frameborder="0" allowfullscreen="true" scrolling="no" height="441" width="784"></iframe>
 		{% else %}
 		<img style="margin-left: auto; margin-right: auto; display: block; width: 85%; box-shadow: 6px 6px 6px #212121;" src="{{ series.splash.url }}">

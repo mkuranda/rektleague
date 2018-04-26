@@ -45,7 +45,7 @@
 					<div class="col-md-12 col-centered">
 						<div style="width: 80%; height: 300px; margin: auto;" id="carousel" class="carousel slide" data-type="single" data-interval="0">
 							<div class="carousel-inner" >
-									{% for week in season.get_weeks %}
+									{% for week in season.get_weeks_desc %}
 									{% if forloop.counter == 1 %}
 								<div class="item active">
 									{% else %}
@@ -56,7 +56,7 @@
 											<table class="centercontent" style="width: 90%">
 												<tr class="alternating-back">
 													<td style="font-size:28;">
-														<b>Week {{ week.number }}</b>
+														<b>{{ week.name_w_title }}</b>
 													</td>
 												</tr>
 												{% for series in week.series_set.all %}
@@ -115,7 +115,7 @@
 
 	</tr>
 	<tr>
-		<td class="centercontent">
+		<td>
 		<table width="100%">
 			<tr>
 				<td width="100%" class="centercontent" style="vertical-align:top">

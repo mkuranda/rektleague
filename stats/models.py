@@ -16,6 +16,9 @@ class Season(models.Model):
     def get_weeks(self):
         return Week.objects.filter(season=self).order_by('-number')
 
+    def get_weeks_desc(self):
+        return Week.objects.filter(season=self).order_by('number')
+
     def get_top_banned(self):
         num_matches = Match.objects.filter(series__week__season=self).exclude(duration=0).count()
         if num_matches == 0:
@@ -40,6 +43,13 @@ class Season(models.Model):
 class Week(models.Model):
     season = models.ForeignKey(Season)
     number = models.IntegerField(default=1)
+    regular = models.BooleanField(default=True)
+    title = models.CharField(max_length=50, default="")
+
+    def name_w_title(self):
+        if self.title != "":
+            return "Week " + str(self.number) + " - " + self.title
+        return "Week " + str(self.number)
 
     def __str__(self):
         return str(self.season) + ": Week " + str(self.number)
@@ -147,14 +157,14 @@ class Team(models.Model):
     splash = models.ImageField(upload_to='stats/team_splashes', default='')
 
     def get_record(self):
-	wins = TeamMatch.objects.filter(team=self, win=True).count()
-	losses = TeamMatch.objects.filter(team=self, win=False).exclude(match__duration=0).count()
+	wins = TeamMatch.objects.filter(team=self, win=True, match__series__week__regular=True).count()
+	losses = TeamMatch.objects.filter(team=self, win=False, match__series__week__regular=True).exclude(match__duration=0).count()
 	return str(wins) + "-" + str(losses)
 
     def get_sort_record(self):
-	wins = TeamMatch.objects.filter(team=self, win=True).count()
-	losses = TeamMatch.objects.filter(team=self, win=False).exclude(match__duration=0).count()
-	return -1 * ((wins * 100) - losses)
+	wins = TeamMatch.objects.filter(team=self, win=True, match__series__week__regular=True).exclude(match__duration=0).count()
+	losses = TeamMatch.objects.filter(team=self, win=False, match__series__week__regular=True).exclude(match__duration=0).count()
+        return losses - wins
 
     def get_top_banned(self):
         num_matches = TeamMatch.objects.filter(team=self).exclude(match__duration=0).count()
