@@ -312,11 +312,14 @@ class TeamPlayer(models.Model):
         return avg_assists
 
     def get_kda(self):
-        kda = Match.objects.select_related().filter(playermatch__player=self.player, teammatch__team=self.team).aggregate(kda=Avg((F('playermatch__kills') + F('playermatch__assists')) / F('playermatch__deaths')))['kda']
+#        kda = Match.objects.select_related().filter(playermatch__player=self.player, teammatch__team=self.team).aggregate(kda=Avg((F('playermatch__kills') + F('playermatch__assists')) / F('playermatch__deaths')))['kda']
+        kills = PlayerMatch.objects.filter(player=self.player, team=self.team).aggregate(sum_kills=Sum('kills'))['sum_kills']
+        deaths = PlayerMatch.objects.filter(player=self.player, team=self.team).aggregate(sum_deaths=Sum('deaths'))['sum_deaths']
+        assists = PlayerMatch.objects.filter(player=self.player, team=self.team).aggregate(sum_assists=Sum('assists'))['sum_assists']
 #        kda = PlayerMatch.objects.filter(player=self.player).aggregate(kda=Avg((F('kills') + F('assists')) / F('deaths')))
-        if kda == None:
+        if deaths == 0:
             return 0
-        return kda
+        return (float(kills) + assists) / deaths
 
     def get_cs_per_game(self):
         cs = Match.objects.select_related().filter(playermatch__player=self.player, teammatch__team=self.team).aggregate(cs=Avg((F('playermatch__neutral_minions_killed') + F('playermatch__total_minions_killed'))))['cs']
