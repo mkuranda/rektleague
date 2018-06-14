@@ -23,22 +23,23 @@ class Season(models.Model):
         num_matches = Match.objects.filter(series__week__season=self).exclude(duration=0).count()
         if num_matches == 0:
             return TeamMatchBan.objects.none()
-#        return Champion.objects.all().values('name', 'icon', 'teammatchban__champion').annotate(ban_rate=Count('teammatchban__champion') * 100 / num_matches).order_by('-ban_rate')[:6]
         return TeamMatchBan.objects.filter(team__season=self).values('champion__name', 'champion__icon', 'champion').annotate(ban_rate=Count('champion') * 100 / num_matches).order_by('-ban_rate')[:20]
 
     def get_top_picked(self):
         num_matches = Match.objects.filter(series__week__season=self).exclude(duration=0).count()
         if num_matches == 0:
             return PlayerMatch.objects.none()
-#        return Champion.objects.all().values('name', 'icon', 'playermatch__champion').annotate(pick_rate=Count('playermatch__champion') * 100 / num_matches).order_by('-pick_rate')[:6]
         return PlayerMatch.objects.filter(match__series__week__season=self).values('champion__name', 'champion__icon', 'champion').annotate(pick_rate=Count('champion') * 100 / num_matches).order_by('-pick_rate')[:20]
 
     def get_champ_stats(self):
         num_matches = Match.objects.filter(series__week__season=self).exclude(duration=0).count()
-#        stats = PlayerMatch.objects.filter(match__series__week__season=self).values('champion__name', 'champion__icon', 'champion').annotate(pick_rate=Count('champion') * 100 / num_matches)
         stats = PlayerMatch.objects.filter(match__series__week__season=self)
         win_ids = [o.id for o in stats if o.win()]
         return stats.filter(id__in=win_ids).values('champion__name', 'champion__icon', 'champion').annotate(pick_rate=Count('champion') * 100 / num_matches)
+
+    def get_winner(self):
+        return Team.objects.filter(season=self, season_win=True)
+
 
 class Week(models.Model):
     season = models.ForeignKey(Season)
@@ -155,6 +156,7 @@ class Team(models.Model):
     season = models.ForeignKey(Season)
     icon = models.ImageField(upload_to='stats')
     splash = models.ImageField(upload_to='stats/team_splashes', default='')
+    season_win = models.BooleanField(default=False)
 
     def get_record(self):
 	wins = TeamMatch.objects.filter(team=self, win=True, match__series__week__regular=True).count()
