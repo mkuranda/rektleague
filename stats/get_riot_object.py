@@ -161,7 +161,6 @@ def get_match(match_id):
     except RiotNotFound:
         raise ObjectNotFound("Match " + str(match.riot_id))
 
-
     for team_data in match_data['teams']:
         if team_data['teamId'] == 100:
             team = team_1
@@ -261,7 +260,7 @@ def get_match(match_id):
         player_match.physical_damage_taken = participant_stats['physicalDamageTaken']
         player_match.save()
 
-    match.duration = 1
+    match.duration = match_data['gameDuration']
     match.save()
     return match
 
