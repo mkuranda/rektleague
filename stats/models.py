@@ -2,6 +2,7 @@ import datetime
 from django.db import models
 from django.db.models import Count, Avg, Sum, Q, Case, When, F, Value
 from django.utils import timezone
+from django_enumfield import enum
 
 class Season(models.Model):
     tournament_id = models.IntegerField(default=0)
@@ -219,8 +220,11 @@ class PlayerRole(models.Model):
 class PlayerMatch(models.Model):
     player = models.ForeignKey(Player)
     match = models.ForeignKey(Match)
+    role = models.ForeignKey(Role, default=0)
     team = models.ForeignKey(Team)
+    participant_id = models.IntegerField(default=0)
     champion = models.ForeignKey(Champion)
+    participant_id = models.IntegerField(default=0)
     kills = models.IntegerField(default=0)
     deaths = models.IntegerField(default=0)
     assists = models.IntegerField(default=0)
@@ -398,6 +402,88 @@ class PlayerMatchItem(models.Model):
     player = models.ForeignKey(Player)
     match = models.ForeignKey(Match)
     item = models.ForeignKey(Item)
+
+class Lane(models.Model):
+    name = models.CharField(max_length=10)
+    riot_name = models.CharField(max_length=25)
+
+    def __str__(self):
+        return self.name
+
+class Ward(models.Model):
+    name = models.CharField(max_length=25)
+    riot_name = models.CharField(max_length=25)
+
+    def __str__(self):
+        return self.name
+
+class Building(models.Model):
+    lane = models.ForeignKey(Lane)
+    name = models.CharField(max_length=25)
+    riot_name = models.CharField(max_length=25)
+    riot_subname = models.CharField(max_length=25, default="")
+    
+    def __str__(self):
+        return str(self.lane) + ' ' + self.name
+
+class EliteMonster(models.Model):
+    name = models.CharField(max_length=25)
+    riot_name = models.CharField(max_length=25)
+    riot_subname = models.CharField(max_length=25, default="")
+
+    def __str__(self):
+        return self.name
+
+class PlayerMatchKill(models.Model):
+    killer = models.ForeignKey(Player)
+    victim = models.ForeignKey(Player, related_name="victim")
+    match = models.ForeignKey(Match)
+    timestamp = models.IntegerField()
+
+class PlayerMatchAssist(models.Model):
+    kill = models.ForeignKey(PlayerMatchKill)
+    player = models.ForeignKey(Player)
+
+class PlayerMatchWardPlace(models.Model):
+    player = models.ForeignKey(Player)
+    match = models.ForeignKey(Match)
+    ward_type = models.ForeignKey(Ward)
+    timestamp = models.IntegerField()
+
+class PlayerMatchWardKill(models.Model):
+    player = models.ForeignKey(Player)
+    match = models.ForeignKey(Match)
+    ward_type = models.ForeignKey(Ward)
+    timestamp = models.IntegerField()
+
+class PlayerMatchBuildingKill(models.Model):
+    player = models.ForeignKey(Player)
+    match = models.ForeignKey(Match)
+    building_type = models.ForeignKey(Building)
+    timestamp = models.IntegerField()
+
+class PlayerMatchBuildingAssist(models.Model):
+    kill = models.ForeignKey(PlayerMatchBuildingKill)
+    player = models.ForeignKey(Player)
+
+class PlayerMatchEliteMonsterKill(models.Model):
+    player = models.ForeignKey(Player)
+    match = models.ForeignKey(Match)
+    monster_type = models.ForeignKey(EliteMonster)
+    timestamp = models.IntegerField()
+
+class PlayerMatchTimeline(models.Model):
+    player = models.ForeignKey(Player)
+    match = models.ForeignKey(Match)
+    timestamp = models.IntegerField()
+    level = models.IntegerField(default=1)
+    gold = models.IntegerField(default=0)
+    totalGold = models.IntegerField(default=0)
+    minions_killed = models.IntegerField(default=0)
+    monsters_killed = models.IntegerField(default=0)
+    position_x = models.IntegerField(default=0)
+    position_y = models.IntegerField(default=0)
+    xp = models.IntegerField(default=0)
 
 class SummonerSpell(models.Model):
     riot_id = models.IntegerField(default=0)

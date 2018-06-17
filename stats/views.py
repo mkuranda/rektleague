@@ -3,9 +3,9 @@ from django.http import HttpResponse, HttpResponseRedirect, Http404
 from django.template import loader
 from django.db.models import Avg, Count, Sum, F, When, Q
 from riot_request import RiotRequester
-from .models import Player, TeamPlayer, Team, Season, Champion, Match, Week, Series, SeriesTeam, TeamMatch, MatchCaster, SeasonChampion, PlayerMatch, HypeVideo
+from .models import Player, TeamPlayer, Team, Season, Champion, Match, Week, Series, SeriesTeam, TeamMatch, MatchCaster, SeasonChampion, PlayerMatch, HypeVideo, Role
 from .forms import TournamentCodeForm, InitializeMatchForm
-from get_riot_object import ObjectNotFound, get_item, get_champion, get_match, get_all_items
+from get_riot_object import ObjectNotFound, get_item, get_champion, get_match, get_all_items, get_match_timeline
 import json
 
 def about(request):

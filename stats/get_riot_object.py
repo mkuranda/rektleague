@@ -2,6 +2,8 @@ from riot_request import *
 import urllib, shutil
 import math
 from .models import Item, Champion, Match, Team, TeamMatch, Role, TeamPlayer, PlayerMatch, Week, Series, SeriesTeam, TeamMatchBan
+from .models import PlayerMatchKill, PlayerMatchAssist, PlayerMatchWardPlace, PlayerMatchWardKill, PlayerMatchBuildingKill, PlayerMatchBuildingAssist, PlayerMatchEliteMonsterKill, PlayerMatchTimeline
+from .models import Lane, Ward, Building, EliteMonster
 
 class ObjectNotFound(Exception) :
     """Raised when we can't find an object in db or from riot API"""
@@ -127,6 +129,134 @@ def get_champion(riot_id):
         champion.save()
     return champion
 
+def get_ward_type(riot_ward_type):
+    if riot_ward_type == "YELLOW_TRINKET":
+        return "Yellow Trinket Ward"
+    elif riot_ward_type == "CONTROL_WARD":
+        return "Control Ward"
+    elif riot_ward_type == "SIGHT_WARD":
+        return "Sight Ward"
+    return ""
+
+def get_building_type(riot_building_type, riot_building_subtype):
+    if riot_building_type == "TOWER_BUILDING" and riot_building_subtype == "OUTER_TURRET":
+        return "Outer Turret"
+    elif riot_building_type == "TOWER_BUILDING" and riot_building_subtype == "INNER_TURRET":
+        return "Inner Turret"
+    elif riot_building_type == "TOWER_BUILDING" and riot_building_subtype == "BASE_TURRET":
+        return "Base Turret"
+    elif riot_building_type == "TOWER_BUILDING" and riot_building_subtype == "NEXUS_TURRET":
+        return "Nexus Turret"
+    elif riot_building_type == "INHIBITOR_BUILDING":
+        return "Inhibitor"
+    return ""
+
+def get_elite_monster_type(riot_monster_type, riot_monster_subtype):
+    if riot_monster_type == "DRAGON" and riot_monster_subtype == "FIRE_DRAGON":
+        return "Infernal Dragon"
+    if riot_monster_type == "DRAGON" and riot_monster_subtype == "EARTH_DRAGON":
+        return "Mountain Dragon"
+    if riot_monster_type == "DRAGON" and riot_monster_subtype == "AIR_DRAGON":
+        return "Air Dragon"
+    if riot_monster_type == "DRAGON" and riot_monster_subtype == "WATER_DRAGON":
+        return "Ocean Dragon"
+    if riot_monster_type == "DRAGON" and riot_monster_subtype == "ELDER_DRAGON":
+        return "Elder Dragon"
+    if riot_monster_type == "RIFTHERALD":
+        return "Rift Herald"
+    if riot_monster_type == "BARON":
+        return "Baron"
+    return ""
+
+def get_lane_type(riot_lane_type):
+    if riot_lane_type == "TOP_LANE":
+        return "Top"
+    elif riot_lane_type == "MID_LANE":
+        return "Mid"
+    elif riot_lane_type == "BOT_LANE":
+        return "Bot"
+    return ""
+
+def get_match_timeline(match_id):
+    try:
+        match = Match.objects.get(id=match_id)
+    except:
+        raise ObjectNotFound("Match " + str(match_id))
+    
+    match_timeline_requester = RiotRequester('/lol/match/v3/timelines/by-match/')
+    match_timeline_data = match_timeline_requester.request(str(match.riot_id))
+
+    participants = PlayerMatch.objects.filter(match=match).order_by('participant_id')
+
+    frame_data = match_timeline_data['frames']
+    for frame in frame_data:
+        timestamp = frame['timestamp']
+        for participant in participants:
+            data = frame['participantFrames'][str(participant.participant_id)]
+            timeline = PlayerMatchTimeline.objects.create(player=participant.player, match=participant.match, timestamp = timestamp)
+            timeline.level = data['level']
+            timeline.gold = data['currentGold']
+            timeline.totalGold = data['totalGold']
+            timeline.minions_killed = data['minionsKilled']
+            timeline.monsters_killed = data['jungleMinionsKilled']
+            if 'position' in data:
+                timeline.position_x = data['position']['x']
+                timeline.position_y = data['position']['y']
+            timeline.xp = data['xp']
+            timeline.save()
+        for event_data in frame['events']:
+            if event_data['type'] == 'CHAMPION_KILL':
+                if event_data['killerId'] > 0 and event_data['victimId'] > 0:
+                    killer = participants[event_data['killerId'] - 1].player
+                    victim = participants[event_data['victimId'] - 1].player
+                    event = PlayerMatchKill.objects.create(killer=killer, victim=victim, match=match, timestamp=timestamp)
+                    event.save()
+                    for assist_id in event_data['assistingParticipantIds']:
+                        assist = PlayerMatchAssist.objects.create(kill=event, player=participants[assist_id - 1].player)
+                        assist.save()
+            elif event_data['type'] == 'WARD_PLACED':
+                if event_data['creatorId'] > 0:
+                    player = participants[event_data['creatorId'] - 1].player
+                    ward_type = Ward.objects.get(riot_name=event_data['wardType'])
+                    event = PlayerMatchWardPlace.objects.create(player=player, match=match, timestamp=timestamp, ward_type=ward_type)
+                    event.save()
+            elif event_data['type'] == 'WARD_KILL':
+                if event_data['killerId'] > 0:
+                    player = participants[event_data['killerId'] - 1].player
+                    ward_type = Ward.objects.get(riot_name=event_data['wardType'])
+                    event = PlayerMatchWardKill.objects.create(player=player, match=match, timestamp=timestamp, ward_type=ward_type)
+                    event.save()
+            elif event_data['type'] == 'BUILDING_KILL':
+                if event_data['killerId'] > 0:
+                    killer = participants[event_data['killerId'] - 1].player
+                    buildingSubtype = " "
+                    if 'laneType' in event_data and 'towerType' in event_data:
+                        building_type = Building.objects.get(riot_name=event_data['buildingType'], riot_subname=event_data['towerType'], lane__riot_name=event_data['laneType'])
+                    elif 'towerType' in event_data:
+                        building_type = Building.objects.get(riot_name=event_data['buildingType'], riot_subname=event_data['towerType'])
+                    elif 'laneType' in event_data:
+                        building_type = Building.objects.get(riot_name=event_data['buildingType'], lane__name=event_data['laneType'])
+                    else:
+                        building_type = Building.objects.get(riot_name=event_data['buildingType'])
+
+                    event = PlayerMatchBuildingKill.objects.create(player=killer, match=match, timestamp=timestamp, building_type=building_type)
+                    event.save()
+                    for assist_id in event_data['assistingParticipantIds']:
+                        assist = PlayerMatchBuildingAssist.objects.create(kill=event, player=participants[assist_id - 1].player)
+                        assist.save()
+            elif event_data['type'] == 'ELITE_MONSTER_KILL':
+                if event_data['killerId'] > 0:
+                    player = participants[event_data['killerId'] - 1].player
+                    if 'monsterSubType' in event_data:
+                        monster_type = EliteMonster.objects.get(riot_name=event_data['monsterType'], riot_subname=event_data['monsterSubType'])
+                    else: 
+                        monster_type = EliteMonster.objects.get(riot_name=event_data['monsterType'])
+
+                    event = PlayerMatchEliteMonsterKill.objects.create(player=player, match=match, timestamp=timestamp, monster_type=monster_type)
+                    event.save()
+
+
+
 def get_match(match_id):
     try:
         match = Match.objects.get(id=match_id)
@@ -190,6 +320,8 @@ def get_match(match_id):
         team_match.dragon_kills = team_data['dragonKills']
         team_match.save()
 
+    i = 0
+    roles = Role.objects.all()
     for participant_data in match_data['participants']:
         participant_stats = participant_data['stats']
         role = Role.objects.get(id = ((participant_stats['participantId']-1) % 5)+1)
@@ -202,8 +334,11 @@ def get_match(match_id):
         try:
             player_match = PlayerMatch.objects.get(player=team_player.player, team=team_player.team, match=match)
             player_match.champion=champion
+            player_match.participant_id=participant_data['participantId']
         except PlayerMatch.DoesNotExist:
             player_match = PlayerMatch.objects.create(player=team_player.player, team=team_player.team, match=match, champion=champion)
+        player_match.role = roles[i % 5]
+        i=i+1
         player_match.kills = participant_stats['kills']
         player_match.deaths = participant_stats['deaths']
         player_match.assists = participant_stats['assists']
@@ -262,5 +397,6 @@ def get_match(match_id):
 
     match.duration = match_data['gameDuration']
     match.save()
+    get_match_timeline(match_id)
     return match
 
