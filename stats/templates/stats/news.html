@@ -4,7 +4,7 @@
 
 {% block content %}
 
-<img style="width:100%; margin-top:190px; margin-bottom: 90px;" src="/static/stats/aleagueforlegends.png">
+<img style="width:100%; margin-top:190px; margin-bottom: 90px;" src="/static/stats/welcome-blur.png">
 
 <p> </p>
 
@@ -36,13 +36,18 @@
 		</td>
 	</tr>
 
+
+
 	<tr>
+
+
 		<td height="700px">
-			<div style="width: 100%; height: 375px; text-align:center;" class="container" style="margin: 10px;">
+			<div style="width: 100%; height: 611px; text-align:center;" class="container" style="margin: 10px;">
 				<div class="row">
 					<div class="col-md-12 col-centered">
 						<div style="width: 80%; height: 400px; margin: auto;" id="carousel" class="carousel slide" data-type="single" data-interval="0">
-							<div class="carousel-inner" >
+
+							<div class="carousel-inner" > 
 									{% for video in hype_videos %}
 									{% if forloop.counter == 1 %}
 								<div class="item active">
@@ -81,5 +86,20 @@
 </table>
 
 
+<div style="
+	width: 75%;
+    padding-left: 26%;
+    margin-top: -170px;
+    font-size: 16px;
+    margin-bottom: 60px;">
+<p>Here for the memes? Here for the stats? Here to get more information? Well you've come to the right place!</p> 
+
+<p>Welcome to The Rekt League! The Rekt League is a competitve League of Legends tournaments series and community for the people. Our goal is to create a fun and competitve place for all ranks to play organized League of Legends while also trying to provide a high production value stream for the games. We think that playing League FEELS a lot different when they're treated more like LCS than flex queue. We want to cater to the players that want to play with their friends, but also want a new and unique challenge.</p>
+
+<p>If you're looking to join The Rekt League explore the site, follow us, and email us at <a style="font-size:18px;color:#bf1f2f;" href="mailto:therektleague.com">therektleague.com</a> with your intent to join the single greatest tournament series to ever bless Twitch.</p>
+
+</div>
 
 {% endblock %}
+
+
