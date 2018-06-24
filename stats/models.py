@@ -2,7 +2,6 @@ import datetime
 from django.db import models
 from django.db.models import Count, Avg, Sum, Q, Case, When, F, Value
 from django.utils import timezone
-from django_enumfield import enum
 
 class Season(models.Model):
     tournament_id = models.IntegerField(default=0)
