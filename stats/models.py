@@ -23,22 +23,23 @@ class Season(models.Model):
         num_matches = Match.objects.filter(series__week__season=self).exclude(duration=0).count()
         if num_matches == 0:
             return TeamMatchBan.objects.none()
-#        return Champion.objects.all().values('name', 'icon', 'teammatchban__champion').annotate(ban_rate=Count('teammatchban__champion') * 100 / num_matches).order_by('-ban_rate')[:6]
         return TeamMatchBan.objects.filter(team__season=self).values('champion__name', 'champion__icon', 'champion').annotate(ban_rate=Count('champion') * 100 / num_matches).order_by('-ban_rate')[:20]
 
     def get_top_picked(self):
         num_matches = Match.objects.filter(series__week__season=self).exclude(duration=0).count()
         if num_matches == 0:
             return PlayerMatch.objects.none()
-#        return Champion.objects.all().values('name', 'icon', 'playermatch__champion').annotate(pick_rate=Count('playermatch__champion') * 100 / num_matches).order_by('-pick_rate')[:6]
         return PlayerMatch.objects.filter(match__series__week__season=self).values('champion__name', 'champion__icon', 'champion').annotate(pick_rate=Count('champion') * 100 / num_matches).order_by('-pick_rate')[:20]
 
     def get_champ_stats(self):
         num_matches = Match.objects.filter(series__week__season=self).exclude(duration=0).count()
-#        stats = PlayerMatch.objects.filter(match__series__week__season=self).values('champion__name', 'champion__icon', 'champion').annotate(pick_rate=Count('champion') * 100 / num_matches)
         stats = PlayerMatch.objects.filter(match__series__week__season=self)
         win_ids = [o.id for o in stats if o.win()]
         return stats.filter(id__in=win_ids).values('champion__name', 'champion__icon', 'champion').annotate(pick_rate=Count('champion') * 100 / num_matches)
+
+    def get_winner(self):
+        return Team.objects.filter(season=self, season_win=True)
+
 
 class Week(models.Model):
     season = models.ForeignKey(Season)
@@ -155,6 +156,7 @@ class Team(models.Model):
     season = models.ForeignKey(Season)
     icon = models.ImageField(upload_to='stats')
     splash = models.ImageField(upload_to='stats/team_splashes', default='')
+    season_win = models.BooleanField(default=False)
 
     def get_record(self):
 	wins = TeamMatch.objects.filter(team=self, win=True, match__series__week__regular=True).count()
@@ -217,8 +219,11 @@ class PlayerRole(models.Model):
 class PlayerMatch(models.Model):
     player = models.ForeignKey(Player)
     match = models.ForeignKey(Match)
+    role = models.ForeignKey(Role, default=0)
     team = models.ForeignKey(Team)
+    participant_id = models.IntegerField(default=0)
     champion = models.ForeignKey(Champion)
+    participant_id = models.IntegerField(default=0)
     kills = models.IntegerField(default=0)
     deaths = models.IntegerField(default=0)
     assists = models.IntegerField(default=0)
@@ -396,6 +401,88 @@ class PlayerMatchItem(models.Model):
     player = models.ForeignKey(Player)
     match = models.ForeignKey(Match)
     item = models.ForeignKey(Item)
+
+class Lane(models.Model):
+    name = models.CharField(max_length=10)
+    riot_name = models.CharField(max_length=25)
+
+    def __str__(self):
+        return self.name
+
+class Ward(models.Model):
+    name = models.CharField(max_length=25)
+    riot_name = models.CharField(max_length=25)
+
+    def __str__(self):
+        return self.name
+
+class Building(models.Model):
+    lane = models.ForeignKey(Lane)
+    name = models.CharField(max_length=25)
+    riot_name = models.CharField(max_length=25)
+    riot_subname = models.CharField(max_length=25, default="")
+    
+    def __str__(self):
+        return str(self.lane) + ' ' + self.name
+
+class EliteMonster(models.Model):
+    name = models.CharField(max_length=25)
+    riot_name = models.CharField(max_length=25)
+    riot_subname = models.CharField(max_length=25, default="")
+
+    def __str__(self):
+        return self.name
+
+class PlayerMatchKill(models.Model):
+    killer = models.ForeignKey(Player)
+    victim = models.ForeignKey(Player, related_name="victim")
+    match = models.ForeignKey(Match)
+    timestamp = models.IntegerField()
+
+class PlayerMatchAssist(models.Model):
+    kill = models.ForeignKey(PlayerMatchKill)
+    player = models.ForeignKey(Player)
+
+class PlayerMatchWardPlace(models.Model):
+    player = models.ForeignKey(Player)
+    match = models.ForeignKey(Match)
+    ward_type = models.ForeignKey(Ward)
+    timestamp = models.IntegerField()
+
+class PlayerMatchWardKill(models.Model):
+    player = models.ForeignKey(Player)
+    match = models.ForeignKey(Match)
+    ward_type = models.ForeignKey(Ward)
+    timestamp = models.IntegerField()
+
+class PlayerMatchBuildingKill(models.Model):
+    player = models.ForeignKey(Player)
+    match = models.ForeignKey(Match)
+    building_type = models.ForeignKey(Building)
+    timestamp = models.IntegerField()
+
+class PlayerMatchBuildingAssist(models.Model):
+    kill = models.ForeignKey(PlayerMatchBuildingKill)
+    player = models.ForeignKey(Player)
+
+class PlayerMatchEliteMonsterKill(models.Model):
+    player = models.ForeignKey(Player)
+    match = models.ForeignKey(Match)
+    monster_type = models.ForeignKey(EliteMonster)
+    timestamp = models.IntegerField()
+
+class PlayerMatchTimeline(models.Model):
+    player = models.ForeignKey(Player)
+    match = models.ForeignKey(Match)
+    timestamp = models.IntegerField()
+    level = models.IntegerField(default=1)
+    gold = models.IntegerField(default=0)
+    totalGold = models.IntegerField(default=0)
+    minions_killed = models.IntegerField(default=0)
+    monsters_killed = models.IntegerField(default=0)
+    position_x = models.IntegerField(default=0)
+    position_y = models.IntegerField(default=0)
+    xp = models.IntegerField(default=0)
 
 class SummonerSpell(models.Model):
     riot_id = models.IntegerField(default=0)

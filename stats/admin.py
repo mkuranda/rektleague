@@ -2,6 +2,8 @@ from django.contrib import admin
 
 from .models import Season
 from .models import Team, Match, TeamMatch, PlayerMatch, Week, Series, SeriesTeam, TeamMatchBan, MatchCaster, HypeVideo
+from .models import PlayerMatchTimeline, PlayerMatchKill, PlayerMatchAssist, PlayerMatchWardPlace, PlayerMatchWardKill, PlayerMatchBuildingKill, PlayerMatchBuildingAssist, PlayerMatchEliteMonsterKill
+from .models import Lane, Ward, Building, EliteMonster
 from .models import Player
 from .models import TeamPlayer
 from .models import Role
@@ -9,6 +11,29 @@ from .models import Item
 from .models import Champion
 from .models import SummonerSpell
 
+class PlayerMatchTimelineAdmin(admin.ModelAdmin):
+    model = PlayerMatchTimeline
+
+class PlayerMatchKillAdmin(admin.ModelAdmin):
+    model = PlayerMatchKill
+
+class PlayerMatchAssistAdmin(admin.ModelAdmin):
+    model = PlayerMatchAssist
+
+class PlayerMatchWardPlaceAdmin(admin.ModelAdmin):
+    model = PlayerMatchWardPlace
+
+class PlayerMatchWardKillAdmin(admin.ModelAdmin):
+    model = PlayerMatchWardKill
+
+class PlayerMatchBuildingKillAdmin(admin.ModelAdmin):
+    model = PlayerMatchBuildingKill
+
+class PlayerMatchBuildingAssistAdmin(admin.ModelAdmin):
+    model = PlayerMatchBuildingAssist
+
+class PlayerMatchEliteMonsterKillAdmin(admin.ModelAdmin):
+    model = PlayerMatchEliteMonsterKill
 
 class TeamPlayerInline(admin.TabularInline):
     model = TeamPlayer
@@ -69,6 +94,18 @@ admin.site.register(Season)
 admin.site.register(Item)
 admin.site.register(Champion)
 admin.site.register(SummonerSpell)
+admin.site.register(PlayerMatchTimeline)
+admin.site.register(PlayerMatchKill)
+admin.site.register(PlayerMatchAssist)
+admin.site.register(PlayerMatchWardPlace)
+admin.site.register(PlayerMatchWardKill)
+admin.site.register(PlayerMatchBuildingKill)
+admin.site.register(PlayerMatchBuildingAssist)
+admin.site.register(PlayerMatchEliteMonsterKill)
+admin.site.register(Lane)
+admin.site.register(Ward)
+admin.site.register(Building)
+admin.site.register(EliteMonster)
 admin.site.register(Player, PlayerAdmin)
 admin.site.register(Team, TeamAdmin)
 admin.site.register(Match, MatchAdmin)
