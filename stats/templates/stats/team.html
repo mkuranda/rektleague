@@ -10,7 +10,7 @@ function ReplacePlayerContent(id, content) {
 	var container = document.getElementById(id);
 	var contentMap = new Map();
 	{% for team_player in players %}
-	contentMap.set("{{ team_player.player.name }}",
+	contentMap.set("{{ team_player.player.name }}+{{ team_player.role.id }}",
 		        '<table width="100%">' +
 		         '<tr>' +
 		          '<td width="50%" style="vertical-align:top;">' +
@@ -252,13 +252,21 @@ window.onload = function() {
 		<td>
 		<table class="centercontent" width="100%">
 			<tr>
-    			{% for team_player in players %}
-			<td class="pagebutton" width="{% widthratio 1 players.count 100 %}%">
-				<div style="font-size:20;">
-					<a href="javascript:ReplacePlayerContent('pagecontent','{{ team_player.player.name }}')"><b>{{ team_player.player.name }}</b></a>
-				</div>
-    			</td>
-    			{% endfor %}
+			{% for role in roles %}
+			<td>
+			<div class="dropdown">
+
+				<button class="dropbtn" style="background-color:#212121;"><img src="{{ role.role.icon.url }}" height="70px" width="70px"></button>
+			  	<div class="dropdown-content">
+				  {% for player in role.get_team_players %}
+				  	  {% if player.get_player_matches.count > 0 %}
+				  	<p><a href="javascript:ReplacePlayerContent('pagecontent','{{ player.player.name }}+{{ player.role.id }}')">{{ player.player.name }}</a></p>
+				  	  {% endif %}
+				  {% endfor %}
+			  	</div>
+			</div>
+			</td>
+			{% endfor %}
 			</tr>
 		</table>
 		</td>
