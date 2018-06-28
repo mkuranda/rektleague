@@ -197,6 +197,16 @@ class Team(models.Model):
     def __str__(self):
         return self.name
 
+class TeamRole(models.Model):
+    team = models.ForeignKey(Team)
+    role = models.ForeignKey(Role)
+
+    class Meta:
+        unique_together = (("team", "role"))
+
+    def get_team_players(self):
+        return TeamPlayer.objects.filter(team=self.team, role=self.role)
+
 class SeriesTeam(models.Model):
     team = models.ForeignKey(Team)
     series = models.ForeignKey(Series)
@@ -289,9 +299,6 @@ class TeamPlayer(models.Model):
     role = models.ForeignKey(Role)
     isLeader = models.BooleanField(default=False)
 
-    class Meta:
-        unique_together = (("team", "player"))
-    
     def get_player(self):
         return Player.objects.filter(pk=self.player)
 
@@ -317,18 +324,15 @@ class TeamPlayer(models.Model):
         return avg_assists
 
     def get_kda(self):
-#        kda = Match.objects.select_related().filter(playermatch__player=self.player, teammatch__team=self.team).aggregate(kda=Avg((F('playermatch__kills') + F('playermatch__assists')) / F('playermatch__deaths')))['kda']
         kills = PlayerMatch.objects.filter(player=self.player, team=self.team).aggregate(sum_kills=Sum('kills'))['sum_kills']
         deaths = PlayerMatch.objects.filter(player=self.player, team=self.team).aggregate(sum_deaths=Sum('deaths'))['sum_deaths']
         assists = PlayerMatch.objects.filter(player=self.player, team=self.team).aggregate(sum_assists=Sum('assists'))['sum_assists']
-#        kda = PlayerMatch.objects.filter(player=self.player).aggregate(kda=Avg((F('kills') + F('assists')) / F('deaths')))
         if deaths == 0:
             return 0
         return (float(kills) + assists) / deaths
 
     def get_cs_per_game(self):
         cs = Match.objects.select_related().filter(playermatch__player=self.player, teammatch__team=self.team).aggregate(cs=Avg((F('playermatch__neutral_minions_killed') + F('playermatch__total_minions_killed'))))['cs']
-#        kda = PlayerMatch.objects.filter(player=self.player).aggregate(kda=Avg((F('kills') + F('assists')) / F('deaths')))
         if cs == None:
             return 0
         return cs 

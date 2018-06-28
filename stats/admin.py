@@ -1,7 +1,7 @@
 from django.contrib import admin
 
 from .models import Season
-from .models import Team, Match, TeamMatch, PlayerMatch, Week, Series, SeriesTeam, TeamMatchBan, MatchCaster, HypeVideo
+from .models import Team, Match, TeamMatch, PlayerMatch, Week, Series, SeriesTeam, TeamMatchBan, MatchCaster, HypeVideo, TeamRole
 from .models import PlayerMatchTimeline, PlayerMatchKill, PlayerMatchAssist, PlayerMatchWardPlace, PlayerMatchWardKill, PlayerMatchBuildingKill, PlayerMatchBuildingAssist, PlayerMatchEliteMonsterKill
 from .models import Lane, Ward, Building, EliteMonster
 from .models import Player
@@ -90,6 +90,7 @@ class HypeVideoAdmin(admin.ModelAdmin):
 
 
 admin.site.register(Role)
+admin.site.register(TeamRole)
 admin.site.register(Season)
 admin.site.register(Item)
 admin.site.register(Champion)
