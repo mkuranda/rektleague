@@ -1,5 +1,6 @@
 import datetime
 from django.db import models
+from django.contrib.auth.models import User
 from django.db.models import Count, Avg, Sum, Q, Case, When, F, Value
 from django.utils import timezone
 
@@ -113,11 +114,20 @@ class Series(models.Model):
 	teamSeries = SeriesTeam.objects.filter(series=self)
 	return teamSeries[1].team
 
+    def get_team_1_players(self):
+        return SeriesPlayer.objects.filter(series=self, team=self.get_team_1)
+
+    def get_team_2_players(self):
+        return SeriesPlayer.objects.filter(series=self, team=self.get_team_2)
+
     def get_team_1_wins(self):
 	return TeamMatch.objects.filter(team=self.get_team_1(), win=True, match__series=self).count()
 
     def get_team_2_wins(self):
 	return TeamMatch.objects.filter(team=self.get_team_2(), win=True, match__series=self).count()
+
+    def rosters_submitted(self):
+        return SeriesPlayer.objects.filter(series=self).count() == 10
 
     def __str__(self):
 	return str(self.week) + ": " + str(self.get_team_1()) + " v " + str(self.get_team_2())
@@ -151,6 +161,7 @@ class Player(models.Model):
 
 class Team(models.Model):
     name = models.CharField(max_length=40)
+    user = models.ForeignKey(User, default=0)
     players = models.ManyToManyField(Player, through='TeamPlayer')
     matches = models.ManyToManyField(Match, through='TeamMatch')
     season = models.ForeignKey(Season)
@@ -195,7 +206,7 @@ class Team(models.Model):
         return TeamMatch.objects.filter(team=self).aggregate(Sum('baron_kills'))
 
     def __str__(self):
-        return self.name
+        return self.name + " (" + str(self.season) + ")"
 
 class TeamRole(models.Model):
     team = models.ForeignKey(Team)
@@ -226,13 +237,19 @@ class PlayerRole(models.Model):
     class Meta:
         unique_together = (("player", "role"))
 
+class SeriesPlayer(models.Model):
+    player = models.ForeignKey(Player)
+    team = models.ForeignKey(Team)
+    role = models.ForeignKey(Role)
+    series = models.ForeignKey(Series)
+
 class PlayerMatch(models.Model):
     player = models.ForeignKey(Player)
     match = models.ForeignKey(Match)
     role = models.ForeignKey(Role, default=0)
     team = models.ForeignKey(Team)
     participant_id = models.IntegerField(default=0)
-    champion = models.ForeignKey(Champion)
+    champion = models.ForeignKey(Champion, default=0)
     participant_id = models.IntegerField(default=0)
     kills = models.IntegerField(default=0)
     deaths = models.IntegerField(default=0)

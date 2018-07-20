@@ -9,7 +9,7 @@
 function ReplacePlayerContent(id, content) {
 	var container = document.getElementById(id);
 	var contentMap = new Map();
-	{% for team_player in players %}
+	{% for team_player in team_players %}
 	contentMap.set("{{ team_player.player.name }}+{{ team_player.role.id }}",
 		        '<table width="100%">' +
 		         '<tr>' +
@@ -113,13 +113,35 @@ function ReplacePlayerContent(id, content) {
 		 '<tr>' +
 		  '<td width="50%" height="100%" style="vertical-align:top">' +
 		   '<table width="100%">' +
+	            '<tr>' +
+		     '<th class="centertableheader">' +
+		      'Roster' +
+		     '</th>' +
+		    '</tr>' +
+		    '<tr>' +
+		     '<td>' +
+		      '<table class="centercontent" width="60%">' +
+		       '<tr class="alternating-back"></tr>' +
+	        {% for player in players %}
+		    '<tr class="alternating-back">' +
+	             '<th style="padding:14px; font-size:24;">' +
+		      '{{ player.name }}' +
+		     '</th>' +
+		    '</tr>' +
+		{% endfor %}
+		     '</td>' +
+		    '</table>' +
+		    '</tr>' +
+		    '<tr class="centercontent">' +
+		     '<td></td>' +
+		    '</tr>' +
 		    '<tr>' +
 		     '<th class="centertableheader">' +
 		      'Record' +
 		     '</th>' +
 		    '</tr>' +
 		    '<tr class="centercontent">' +
-	             '<th style="padding-bottom:20px; font-size:25;">' +
+	             '<th style="padding-bottom:20px; font-size:24;">' +
 		      '{{ team.get_record }}' +
 		     '</th>' +
 		    '</tr>' +
@@ -205,7 +227,7 @@ function ReplacePlayerContent(id, content) {
 		         '{{ series.get_team_1_wins }}-{{ series.get_team_2_wins }}' +
 		        '</div>' +
 		        '<div class="linktablecell" style="width: 20%">' +
-   		         'vs <b>{{ series.get_team_2 }}</b>' +
+   		         'vs <b>{{ series.get_team_2.name }}</b>' +
 		        '</div>' +
 		        '<div class="linktablecell" style="width: 10%">' +
 		         '<img src="{{ series.get_team_2.icon.url }}" height="40px" width="40px">' +
@@ -215,7 +237,7 @@ function ReplacePlayerContent(id, content) {
 		         '{{ series.get_team_2_wins }}-{{ series.get_team_1_wins }}' +
 		        '</div>' +
 		        '<div class="linktablecell" style="width: 20%">' +
-   		         'vs <b>{{ series.get_team_1 }}</b>' +
+   		         'vs <b>{{ series.get_team_1.name }}</b>' +
 		        '</div>' +
 		        '<div class="linktablecell" style="width: 10%">' +
 		         '<img src="{{ series.get_team_1.icon.url }}" height="40px" width="40px">' +

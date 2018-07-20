@@ -345,13 +345,92 @@ function ReplaceMatchContent(id, content) {
 			"");
 	{% endfor %}
 	contentMap.set("Overview",
-		'<table width="100%">' +
+		'<table class="centercontent" width="50%">' +
+		{% if series.rosters_submitted %}
+		'<table class="centercontent" width="80%">' +
 		 '<tr>' +
-		  '<td width="50%">' +
-		  '</td>' +
-		  '<td width="50%">' +
+		  '<td>' +
+		   '<table class="centercontent" width="100%">' +
+		    '<tr>' +
+		     '<td width="50%">' +
+		      '<table class="centercontent" width="100%">' +
+		       '<tr>' +
+		        '<th class="centertableheader" style="border-bottom: 1px solid #4a56b2">{{ series.get_team_1.name }}</th>' +
+		       '</tr>' +
+		       '<tr>' +
+		        '<td style="border-bottom: 1px solid #4a56b2">' +
+		         '<table class="centercontent" width="100%">' +
+		          '<tr class="alternating-back"></tr>' +
+		    {% for seriesplayer in series.get_team_1_players %}
+		          '<tr class="alternating-back">' +
+		           '<td width="40%"><img src="{{ seriesplayer.role.icon.url }}" height="30" width="30" title="{{ seriesplayer.role.name }}"></td>' +
+		           '<td style="font-size:20; text-align:left">{{ seriesplayer.player.name }}</td>' +
+		          '</tr>' +
+		    {% endfor %}
+		         '</table>' +
+		        '</td>' +
+		       '</tr>' +	
+		      '</table>' +
+		     '</td>' +
+		     '<td width="50%">' +
+		      '<table class="centercontent" width="100%">' +
+		       '<tr>' +
+		        '<th class="centertableheader" style="border-bottom: 1px solid #b24a58">{{ series.get_team_2.name }}</th>' +
+		       '</tr>' +
+		       '<tr>' +
+		        '<td style="border-bottom: 1px solid #b24a58">' +
+		         '<table class="centercontent" width="100%">' +
+		          '<tr class="alternating-back"></tr>' +
+		    {% for seriesplayer in series.get_team_2_players %}
+		          '<tr class="alternating-back">' +
+		           '<td style="font-size:20; text-align:right">{{ seriesplayer.player.name }}</td>' +
+		           '<td width="40%"><img src="{{ seriesplayer.role.icon.url }}" height="30" width="30" title="{{ seriesplayer.role.name }}"></td>' +
+		          '</tr>' +
+		    {% endfor %}
+		         '</table>' +
+		        '</td>' +
+		       '</tr>' +	
+		      '</table>' +
+		     '</td>' +
+		    '</tr>' +
+		   '</table>' +
 		  '</td>' +
 		 '</tr>' +
+		 '<tr class="centercontent">' +
+		  '<td>' +
+		  '</td>' +
+		 '</tr>' +
+		'</table>' +
+		{% else %}
+		'<tr>' +
+		  '<th class="centertableheader" style="padding-bottom:15px" width="100%">' +
+		   'Rosters Pending' +
+		  '</th>' +
+		 '</tr>' +
+		 '<tr class="centercontent">' +
+		  '<td style="padding-bottom:20px;">' +
+		   '<p>Not all rosters have been submitted yet for this series!</p> <p>Check back later.</p>' +
+		  '</td>' +
+		 '</tr>' +
+		{% endif %}
+		{% if request.user == series.get_team_1.user %}
+		'<table class="centercontent" width="70%">' +
+		'<tr>' +
+		  '<td class="centercontent" style="padding: 20px; margin-bottom: 20px; font-size: 24;" width="100%">' +
+		'<a href="create_roster/{{ series.get_team_1.id }}/"><b>Create Roster for {{ series.get_team_1.name }}</b></a>' +
+		  '</td>' +
+		 '</tr>' +
+		'</table>' +
+		{% endif %}
+		{% if request.user == series.get_team_2.user %}
+		'<table class="centercontent" width="70%">' +
+		'<tr>' +
+		  '<td class="centercontent" style="padding: 20px; margin-bottom: 20px; font-size: 24;" width="100%">' +
+		'<a href="create_roster/{{ series.get_team_2.id }}/"><b>Create Roster for {{ series.get_team_2.name }}</b></a>' +
+		  '</td>' +
+		 '</tr>' +
+		'</table>' +
+		{% endif %}
 		'</table>' +
 		        "");
 	contentMap.set("Load Match",

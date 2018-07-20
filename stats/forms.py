@@ -1,6 +1,30 @@
 from django import forms
 from django.db.models import Q
-from .models import Team, Series, SeriesTeam, Player
+from .models import Team, Series, SeriesTeam, Player, TeamPlayer, Role
+
+class CreateRosterForm(forms.Form):
+
+    top = forms.ModelChoiceField(queryset=Team.objects.none())
+    jun = forms.ModelChoiceField(queryset=Team.objects.none())
+    mid = forms.ModelChoiceField(queryset=Team.objects.none())
+    bot = forms.ModelChoiceField(queryset=Team.objects.none())
+    sup = forms.ModelChoiceField(queryset=Team.objects.none())
+
+    def __init__(self, *args, **kwargs):
+        team_id = kwargs.pop('team_id')
+        series_id = kwargs.pop('series_id')
+	super(CreateRosterForm, self).__init__(*args, **kwargs)
+        top_role = Role.objects.get(name="Top")
+        jun_role = Role.objects.get(name="Jungle")
+        mid_role = Role.objects.get(name="Mid")
+        bot_role = Role.objects.get(name="Bot")
+        sup_role = Role.objects.get(name="Support")
+        self.fields["top"].queryset = Player.objects.filter(teamplayer__team=team_id, teamplayer__role=top_role)
+        self.fields["jun"].queryset = Player.objects.filter(teamplayer__team=team_id, teamplayer__role=jun_role)
+        self.fields["mid"].queryset = Player.objects.filter(teamplayer__team=team_id, teamplayer__role=mid_role)
+        self.fields["bot"].queryset = Player.objects.filter(teamplayer__team=team_id, teamplayer__role=bot_role)
+        self.fields["sup"].queryset = Player.objects.filter(teamplayer__team=team_id, teamplayer__role=sup_role)
+
 
 class TournamentCodeForm(forms.Form):
 
@@ -13,6 +37,7 @@ class TournamentCodeForm(forms.Form):
 	super(TournamentCodeForm, self).__init__(*args, **kwargs)
         self.fields["team_1"].queryset = Team.objects.filter(seriesteam__series=series_id)
         self.fields["team_2"].queryset = Team.objects.filter(seriesteam__series=series_id)
+
 
 class InitializeMatchForm(forms.Form):
 

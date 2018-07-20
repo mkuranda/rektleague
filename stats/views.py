@@ -1,10 +1,11 @@
 from django.shortcuts import get_object_or_404, render
+from django.contrib.auth import authenticate, login
 from django.http import HttpResponse, HttpResponseRedirect, Http404
 from django.template import loader
 from django.db.models import Avg, Count, Sum, F, When, Q
 from riot_request import RiotRequester
-from .models import Player, TeamPlayer, Team, Season, Champion, Match, Week, Series, SeriesTeam, TeamMatch, MatchCaster, SeasonChampion, PlayerMatch, HypeVideo, Role, TeamRole
-from .forms import TournamentCodeForm, InitializeMatchForm
+from .models import Player, TeamPlayer, Team, Season, Champion, Match, Week, Series, SeriesTeam, TeamMatch, MatchCaster, SeasonChampion, PlayerMatch, HypeVideo, Role, TeamRole, SeriesPlayer
+from .forms import TournamentCodeForm, InitializeMatchForm, CreateRosterForm
 from get_riot_object import ObjectNotFound, get_item, get_champion, get_match, get_all_items, get_match_timeline
 import json
 
@@ -92,11 +93,13 @@ def player_detail(request, player_id):
 def team_detail(request, season_id, team_id):
     team = get_object_or_404(Team, id=team_id, season=season_id)
     team_players = TeamPlayer.objects.filter(team=team_id).annotate(avg_kills=Avg('player__playermatch__kills'), avg_deaths=Avg('player__playermatch__deaths'), avg_assists=Avg('player__playermatch__assists'), num_champs_played=Count('player__playermatch__champion')).order_by('role')
+    players = Player.objects.filter(teamplayer__team=team).values('name').distinct()
     series_list = Series.objects.filter(seriesteam__team = team).order_by('-week__number')
     team_roles = TeamRole.objects.filter(team=team).order_by('role')
     context = {
         'team': team,
-        'players': team_players,
+        'team_players': team_players,
+        'players': players,
         'roles': team_roles,
 	'series_list': series_list
     }
@@ -158,6 +161,62 @@ def series_detail(request, season_id, series_id):
         'team2': team2 
     }
     return render(request, 'stats/series.html', context)
+
+def create_roster(request, season_id, series_id, team_id):
+    if request.method == 'POST':
+        form = CreateRosterForm(request.POST, series_id=series_id, team_id=team_id)
+        if form.is_valid():
+            s = set()
+            top = form.cleaned_data['top']
+            jun = form.cleaned_data['jun']
+            mid = form.cleaned_data['mid']
+            bot = form.cleaned_data['bot']
+            sup = form.cleaned_data['sup']
+
+            failed = False
+            s.add(top)
+            if jun in s: 
+                failed=True
+            s.add(jun)
+            if mid in s: 
+                failed=True
+            s.add(mid)
+            if bot in s: 
+                failed=True
+            s.add(bot)
+            if sup in s: 
+                failed=True
+            s.add(sup)
+
+            if failed:
+                return HttpResponseRedirect('/create_roster_error/')
+            else:
+                team = Team.objects.get(id=team_id)
+                series = Series.objects.get(id=series_id)
+                SeriesPlayer.objects.filter(series=series, team=team).delete()
+                p1 = SeriesPlayer.objects.create(player=top, team=team, series=series, role=Role.objects.get(name='Top'))
+                p2 = SeriesPlayer.objects.create(player=jun, team=team, series=series, role=Role.objects.get(name='Jungle'))
+                p3 = SeriesPlayer.objects.create(player=mid, team=team, series=series, role=Role.objects.get(name='Mid'))
+                p4 = SeriesPlayer.objects.create(player=bot, team=team, series=series, role=Role.objects.get(name='Bot'))
+                p5 = SeriesPlayer.objects.create(player=sup, team=team, series=series, role=Role.objects.get(name='Support'))
+                p1.save()
+                p2.save()
+                p3.save()
+                p4.save()
+                p5.save()
+                return HttpResponseRedirect('/season/' + str(season_id) + '/series/' + str(series.id) + '/')
+    else:
+        form = CreateRosterForm(series_id=series_id, team_id=team_id)
+    season=Season.objects.get(id=season_id)
+    series=Series.objects.get(id=series_id)
+    team=Team.objects.get(id=team_id)
+    context = {
+        'season': season,
+        'series': series,
+        'team': team,
+        'form': form
+    }
+    return render(request, 'stats/create_roster.html', context)
 
 def create_code(request, match_id):
     match = get_object_or_404(Match, id=match_id)
@@ -242,5 +301,19 @@ def match_data_results(request, season_id, series_id, team_1_id, team_2_id, matc
 #        match = Match.objects.get(match_id)
 
     return render(request, 'stats/match_data_results.html', context)
+
+def login(request):
+    username = request.POST['username']
+    password = request.POST['password']
+    user = authenticate(username=username, password=password)
+    if user is not None:
+        if user.is_active:
+            login(request, user)
+            return HttpResponseRedirect('stats/')
+        else:
+            return HttpResponseRedirect('stats/disabled_account')
+    else:
+        return HttpResponseRedirect('stats/invalid_login')
+
 
 

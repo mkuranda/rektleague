@@ -15,6 +15,7 @@ urlpatterns = [
     url(r'^player/(?P<player_id>[0-9]+)/$', views.player_detail, name='player_detail'),
     url(r'^season/(?P<season_id>[0-9]+)/team/(?P<team_id>[0-9]+)/$', views.team_detail, name='team_detail'),
     url(r'^season/(?P<season_id>[0-9]+)/series/(?P<series_id>[0-9]+)/$', views.series_detail, name='series_detail'),
+    url(r'^season/(?P<season_id>[0-9]+)/series/(?P<series_id>[0-9]+)/create_roster/(?P<team_id>[0-9]+)/$', views.create_roster, name='create_roster'),
     url(r'^season/(?P<season_id>[0-9]+)/match/(?P<match_id>[0-9]+)/load_match/$', views.load_match, name='load_match'),
     url(r'^season/(?P<season_id>[0-9]+)/series/(?P<series_id>[0-9]+)/load_match/results/(?P<team_1_id>[0-9]+)/(?P<team_2_id>[0-9]+)/(?P<match_id>[0-9]+)/$', views.match_data_results, name='match_data_results'),
     url(r'^champion/(?P<champion_id>[0-9]+)/$', views.champion_detail, name='champion_detail'),

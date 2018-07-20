@@ -1,7 +1,7 @@
 from django.contrib import admin
 
 from .models import Season
-from .models import Team, Match, TeamMatch, PlayerMatch, Week, Series, SeriesTeam, TeamMatchBan, MatchCaster, HypeVideo, TeamRole
+from .models import Team, Match, TeamMatch, PlayerMatch, Week, Series, SeriesTeam, TeamMatchBan, MatchCaster, HypeVideo, TeamRole, SeriesPlayer
 from .models import PlayerMatchTimeline, PlayerMatchKill, PlayerMatchAssist, PlayerMatchWardPlace, PlayerMatchWardKill, PlayerMatchBuildingKill, PlayerMatchBuildingAssist, PlayerMatchEliteMonsterKill
 from .models import Lane, Ward, Building, EliteMonster
 from .models import Player
@@ -75,8 +75,12 @@ class SeriesTeamInline(admin.TabularInline):
     model = SeriesTeam
     extra = 0
 
+class SeriesPlayerInline(admin.TabularInline):
+    model = SeriesPlayer
+    extra = 0
+
 class SeriesAdmin(admin.ModelAdmin):
-    inlines = [MatchInline, SeriesTeamInline]
+    inlines = [MatchInline, SeriesTeamInline, SeriesPlayerInline]
 
 class SeriesInline(admin.StackedInline):
     model = Series

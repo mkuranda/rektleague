@@ -1,0 +1,12 @@
+{% extends 'stats/base.html' %}
+
+{% block title %}Rekt League | Login{% endblock %}
+
+{% block content %}
+  <h2 style="padding:100px;">Login</h2>
+  <form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Login</button>
+  </form>
+{% endblock %}

@@ -195,7 +195,7 @@ font-family: verdana;
     th.centertableheader
     {
 	padding-bottom:20px;
-	padding-top:10px;
+	padding-top:15px;
 	font-size:24;
         color:#727272;
 	font-family: 'Noto Sans', sans-serif;
@@ -295,6 +295,7 @@ a:active {
 	bottom: 0;
 	width: 100%;
 	height: 133px;
+	margin-top:60px;
 }
 .col-centered {
     float: none;
@@ -423,6 +424,12 @@ a:active {
 
 .dropdown:hover .dropbtn {background-color: #bf1f2f;}
 
+.topbar-content{
+    position: relative;
+    display: inline-block;
+    float:right;
+    margin:15px;
+}
 
 
 
@@ -461,8 +468,19 @@ a:active {
     <p><a href="/stats/season/2">Season 2</a></p>
     <p><a href="/stats/season/1">Season 1</a></p>
     <p><a href="/stats/about">About</a></p>
+    {% if request.user.username %}
+    <p><a href="/logout">Logout</a></p>
+    {% else %}
+    <p><a href="/login">Login</a></p>
+    {% endif %}
+
   </div>
 </div>
+{% if request.user.username %}
+<div class="topbar-content">
+	<b>Logged in as {{ request.user.username }}</b>
+</div>
+{% endif %}
 
 
 

@@ -1,0 +1,120 @@
+{% extends "stats/base.html" %}
+
+{% block title %}Rekt League | {{ series }}{% endblock %}
+
+{% block content %}
+
+<a class="imglink" href="/stats/season/{{ season.id }}/"><img style="width: 100%; margin-top:190px; margin-bottom: 100px;" src="/static/stats/season2.png"></a>
+
+<div style="width: 75%; text-align: center; background-color: #303030; padding: 20px; margin: 0 auto;">
+	<h1 style="font-size: 48">Week {{ series.week.number }}</h1>
+	<h1 style="font-size: 48">{% for seriesteam in series.seriesteam_set.all %}<a href="/stats/season/{{ season.id }}/team/{{ seriesteam.team.id }}/">{{ seriesteam.team.name }}</a>{% if forloop.counter == 1 %} vs {% endif %}{% endfor %}</h1>
+
+	<div style="padding: 20px;">
+		<img style="margin-left: auto; margin-right: auto; display: block; width: 85%; box-shadow: 6px 6px 6px #212121;" src="{{ series.splash.url }}">
+	</div>
+</div>
+<p></p>
+
+{% if team != series.get_team_1 and team != series.get_team_2 %}
+
+<table class="centercontent" width="70%">
+	<tr>
+		<th style="padding-top:40px; font-size:24;">
+			{{ team }} is not participating in this series.
+		</th>
+	</tr>
+</table>
+
+{% elif team.user != request.user %}
+
+<table class="centercontent" width="70%">
+	<tr>
+		<th style="padding-top:40px; font-size:24;">
+			You are not logged in as the owner of {{ team }}.
+		</th>
+	</tr>
+</table>
+
+{% elif series.rosters_submitted %}
+
+<table class="centercontent" width="70%">
+	<tr>
+		<th style="padding-top:40px; font-size:24;">
+			Rosters have already been submitted for this series.
+		</th>
+	</tr>
+</table>
+
+{% else %}
+
+<table class="centercontent" width="70%">
+	<tr class="centercontent">
+		<th class="centertableheader">
+			{{ team.name }} Roster Signup
+		</th>
+	</tr>
+	<tr>
+		<td width="100%">
+				<form action="/stats/season/{{ season.id }}/series/{{ series.id }}/create_roster/{{ team.id }}/" method="post">
+					<font color="black">
+			    	{% csrf_token %}
+			    	{{ form.non_field_errors }}
+				<table class="centercontent" style="width:100% margin-bottom:10px; margin-top:10px;">
+					<tr class="alternating-back">
+						<td>
+				    			{{ form.top.errors }}
+				    			<label for="{{ form.top.id_for_label }}">Top:</label>
+				    		</td>
+						<td style="color:black;">
+				    			{{ form.top }}
+				    		</td>
+					</tr>
+					<tr class="alternating-back">
+						<td>
+				    			{{ form.jun.errors }}
+				    			<label for="{{ form.jun.id_for_label }}">Jungle:</label>
+				    		</td>
+						<td style="color:black;">
+				    			{{ form.jun }}
+				    		</td>
+					</tr>
+					<tr class="alternating-back">
+						<td>
+				    			{{ form.mid.errors }}
+				    			<label for="{{ form.mid.id_for_label }}">Mid:</label>
+				    		</td>
+						<td style="color:black;">
+				    			{{ form.mid }}
+				    		</td>
+					</tr>
+					<tr class="alternating-back">
+						<td>
+				    			{{ form.bot.errors }}
+				    			<label for="{{ form.bot.id_for_label }}">Bot:</label>
+				    		</td>
+						<td style="color:black;">
+				    			{{ form.bot }}
+				    		</td>
+					</tr>
+					<tr class="alternating-back">
+						<td>
+				    			{{ form.sup.errors }}
+				    			<label for="{{ form.sup.id_for_label }}">Support:</label>
+				    		</td>
+						<td style="color:black;">
+				    			{{ form.sup }}
+				    		</td>
+					</tr>
+				</table>
+			    	<input type="submit" value="Submit"\>
+					</font>
+				</form>
+		</td>
+	</tr>
+
+</table>
+
+{% endif %}
+{% endblock %}
+
