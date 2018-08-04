@@ -3,6 +3,7 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.db.models import Count, Avg, Sum, Q, Case, When, F, Value
 from django.utils import timezone
+from django.utils.encoding import python_2_unicode_compatible
 
 class Season(models.Model):
     tournament_id = models.IntegerField(default=0)
@@ -59,6 +60,7 @@ class Week(models.Model):
 class Role(models.Model):
     name = models.CharField(max_length=15)
     icon = models.ImageField(upload_to='stats/role/icon', default='')
+    isFill = models.BooleanField(default=False)
 
     def __str__(self):
         return self.name
@@ -151,6 +153,7 @@ class Match(models.Model):
         seriesTeams = SeriesTeam.objects.filter(series=self.series)
         return str(seriesTeams[0].team) + " v " + str(seriesTeams[1].team) + " (" + str(self.series.week) + " game " + str(self.game_num) + ")"
 
+@python_2_unicode_compatible
 class Player(models.Model):
     name = models.CharField(max_length=40)
     riot_id = models.IntegerField(default=0)
@@ -158,6 +161,15 @@ class Player(models.Model):
 
     def __str__(self):
         return self.name
+
+@python_2_unicode_compatible
+class Summoner(models.Model):
+    player = models.ForeignKey(Player)
+    name = models.CharField(max_length=75)
+    link = models.CharField(max_length=80)
+
+    def __str__(self):
+        return self.name + " (" + unicode(self.player) + ")"
 
 class Team(models.Model):
     name = models.CharField(max_length=40)
@@ -192,11 +204,15 @@ class Team(models.Model):
     def get_first_blood_percent(self):
         first_bloods = TeamMatch.objects.filter(team=self, first_blood=True).exclude(match__duration=0).count()
         games = TeamMatch.objects.filter(team=self).exclude(match__duration=0).count()
+        if games == 0:
+            return 0
         return float(first_bloods) * 100 / games
 
     def get_first_tower_percent(self):
         first_towers = TeamMatch.objects.filter(team=self, first_tower=True).exclude(match__duration=0).count()
         games = TeamMatch.objects.filter(team=self).exclude(match__duration=0).count()
+        if games == 0:
+            return 0 
         return float(first_towers) * 100 / games
 
     def get_tower_kills(self):
@@ -323,65 +339,107 @@ class TeamPlayer(models.Model):
         return Team.objects.filter(pk=self.team)
 
     def get_avg_kills(self):
-        avg_kills = Match.objects.select_related().filter(playermatch__player=self.player, teammatch__team=self.team, playermatch__role=self.role).aggregate(avg_kills=Avg('playermatch__kills'))['avg_kills']
+        if self.role.isFill == True:
+            avg_kills = Match.objects.select_related().filter(playermatch__player=self.player, teammatch__team=self.team).aggregate(avg_kills=Avg('playermatch__kills'))['avg_kills']
+        else: 
+            avg_kills = Match.objects.select_related().filter(playermatch__player=self.player, teammatch__team=self.team, playermatch__role=self.role).aggregate(avg_kills=Avg('playermatch__kills'))['avg_kills']
         if avg_kills == None:
             return 0
         return avg_kills
 
     def get_avg_deaths(self):
-        avg_deaths = Match.objects.select_related().filter(playermatch__player=self.player, teammatch__team=self.team, playermatch__role=self.role).aggregate(avg_deaths=Avg('playermatch__deaths'))['avg_deaths']
+        if self.role.isFill == True:
+            avg_deaths = Match.objects.select_related().filter(playermatch__player=self.player, teammatch__team=self.team).aggregate(avg_deaths=Avg('playermatch__deaths'))['avg_deaths']
+        else:
+            avg_deaths = Match.objects.select_related().filter(playermatch__player=self.player, teammatch__team=self.team, playermatch__role=self.role).aggregate(avg_deaths=Avg('playermatch__deaths'))['avg_deaths']
         if avg_deaths == None:
             return 0
         return avg_deaths
 
     def get_avg_assists(self):
-        avg_assists = Match.objects.select_related().filter(playermatch__player=self.player, teammatch__team=self.team, playermatch__role=self.role).aggregate(avg_assists=Avg('playermatch__assists'))['avg_assists']
+        if self.role.isFill == True:
+            avg_assists = Match.objects.select_related().filter(playermatch__player=self.player, teammatch__team=self.team).aggregate(avg_assists=Avg('playermatch__assists'))['avg_assists']
+        else:
+            avg_assists = Match.objects.select_related().filter(playermatch__player=self.player, teammatch__team=self.team, playermatch__role=self.role).aggregate(avg_assists=Avg('playermatch__assists'))['avg_assists']
         if avg_assists == None:
             return 0
         return avg_assists
 
     def get_kda(self):
-        kills = PlayerMatch.objects.filter(player=self.player, team=self.team, role=self.role).aggregate(sum_kills=Sum('kills'))['sum_kills']
-        deaths = PlayerMatch.objects.filter(player=self.player, team=self.team, role=self.role).aggregate(sum_deaths=Sum('deaths'))['sum_deaths']
-        assists = PlayerMatch.objects.filter(player=self.player, team=self.team, role=self.role).aggregate(sum_assists=Sum('assists'))['sum_assists']
+        if self.role.isFill == True:
+            kills = PlayerMatch.objects.filter(player=self.player, team=self.team).aggregate(sum_kills=Sum('kills'))['sum_kills']
+            deaths = PlayerMatch.objects.filter(player=self.player, team=self.team).aggregate(sum_deaths=Sum('deaths'))['sum_deaths']
+            assists = PlayerMatch.objects.filter(player=self.player, team=self.team).aggregate(sum_assists=Sum('assists'))['sum_assists']
+        else:
+            kills = PlayerMatch.objects.filter(player=self.player, team=self.team, role=self.role).aggregate(sum_kills=Sum('kills'))['sum_kills']
+            deaths = PlayerMatch.objects.filter(player=self.player, team=self.team, role=self.role).aggregate(sum_deaths=Sum('deaths'))['sum_deaths']
+            assists = PlayerMatch.objects.filter(player=self.player, team=self.team, role=self.role).aggregate(sum_assists=Sum('assists'))['sum_assists']
+
         if deaths == None:
             return 0
         return (float(kills) + assists) / deaths
 
     def get_cs_per_game(self):
-        cs = Match.objects.select_related().filter(playermatch__player=self.player, teammatch__team=self.team, playermatch__role=self.role).aggregate(cs=Avg((F('playermatch__neutral_minions_killed') + F('playermatch__total_minions_killed'))))['cs']
+        if self.role.isFill == True:
+            cs = Match.objects.select_related().filter(playermatch__player=self.player, teammatch__team=self.team).aggregate(cs=Avg((F('playermatch__neutral_minions_killed') + F('playermatch__total_minions_killed'))))['cs']
+        else:
+            cs = Match.objects.select_related().filter(playermatch__player=self.player, teammatch__team=self.team, playermatch__role=self.role).aggregate(cs=Avg((F('playermatch__neutral_minions_killed') + F('playermatch__total_minions_killed'))))['cs']
         if cs == None:
             return 0
         return cs 
     
     def get_distinct_champs_played(self):
-        return PlayerMatch.objects.filter(player=self.player, team=self.team, role=self.role).values('champion').aggregate(num_champs=Count('champion', distinct=True))['num_champs']
+        if self.role.isFill == True:
+            return PlayerMatch.objects.filter(player=self.player, team=self.team).values('champion').aggregate(num_champs=Count('champion', distinct=True))['num_champs']
+        else: 
+            return PlayerMatch.objects.filter(player=self.player, team=self.team, role=self.role).values('champion').aggregate(num_champs=Count('champion', distinct=True))['num_champs']
 
     def get_percent_team_damage(self):
-        matches = Match.objects.filter(playermatch__player=self.player, playermatch__role=self.role)
-        match_ids = [o.id for o in matches]
+        if self.role.isFill == True:
+            matches = Match.objects.filter(playermatch__player=self.player)
+            match_ids = [o.id for o in matches]
+    
+            total_dmg_to_champs = PlayerMatch.objects.filter(match__id__in=match_ids, team=self.team).aggregate(dmg__sum=Sum('total_damage_dealt_to_champions'))['dmg__sum']
+            player_dmg_to_champs = PlayerMatch.objects.select_related().filter(player=self.player, team=self.team).aggregate(dmg__sum=Sum('total_damage_dealt_to_champions'))['dmg__sum']
+        else:
+            matches = Match.objects.filter(playermatch__player=self.player, playermatch__role=self.role)
+            match_ids = [o.id for o in matches]
+    
+            total_dmg_to_champs = PlayerMatch.objects.filter(match__id__in=match_ids, team=self.team).aggregate(dmg__sum=Sum('total_damage_dealt_to_champions'))['dmg__sum']
+            player_dmg_to_champs = PlayerMatch.objects.select_related().filter(player=self.player, team=self.team, role=self.role).aggregate(dmg__sum=Sum('total_damage_dealt_to_champions'))['dmg__sum']
 
-        total_dmg_to_champs = PlayerMatch.objects.filter(match__id__in=match_ids, team=self.team).aggregate(dmg__sum=Sum('total_damage_dealt_to_champions'))['dmg__sum']
-        player_dmg_to_champs = PlayerMatch.objects.select_related().filter(player=self.player, team=self.team, role=self.role).aggregate(dmg__sum=Sum('total_damage_dealt_to_champions'))['dmg__sum']
         if total_dmg_to_champs == None:
             return 0
         return 100.0 * player_dmg_to_champs / total_dmg_to_champs 
 
     def get_kill_participation(self):
-        matches = Match.objects.filter(playermatch__player=self.player, playermatch__role=self.role)
-        match_ids = [o.id for o in matches]
-
-        total_kills = PlayerMatch.objects.filter(match__id__in=match_ids, team=self.team).aggregate(kills__sum=Sum('kills'))['kills__sum']
-        player_kills_assists = PlayerMatch.objects.select_related().filter(player=self.player, team=self.team, role=self.role).aggregate(kills__sum=Sum(F('kills') + F('assists')))['kills__sum']
+        if self.role.isFill == True:
+            matches = Match.objects.filter(playermatch__player=self.player)
+            match_ids = [o.id for o in matches]
+    
+            total_kills = PlayerMatch.objects.filter(match__id__in=match_ids, team=self.team).aggregate(kills__sum=Sum('kills'))['kills__sum']
+            player_kills_assists = PlayerMatch.objects.select_related().filter(player=self.player, team=self.team).aggregate(kills__sum=Sum(F('kills') + F('assists')))['kills__sum']
+        else:
+            matches = Match.objects.filter(playermatch__player=self.player, playermatch__role=self.role)
+            match_ids = [o.id for o in matches]
+    
+            total_kills = PlayerMatch.objects.filter(match__id__in=match_ids, team=self.team).aggregate(kills__sum=Sum('kills'))['kills__sum']
+            player_kills_assists = PlayerMatch.objects.select_related().filter(player=self.player, team=self.team, role=self.role).aggregate(kills__sum=Sum(F('kills') + F('assists')))['kills__sum']
         if player_kills_assists == None:
             return 0
         return 100.0 * player_kills_assists / total_kills
 
     def get_played_champion_list(self):
-        return Match.objects.select_related().filter(playermatch__player=self.player, teammatch__team=self.team, playermatch__role=self.role).values('playermatch__champion', 'playermatch__champion__name', 'playermatch__champion__icon').annotate(champion_count=Count('playermatch__champion'), average_vision_score=Avg('playermatch__vision_score'), avg_kills=Avg('playermatch__kills'), avg_deaths=Avg('playermatch__deaths'), avg_assists=Avg('playermatch__assists'), winrate=Avg(F('teammatch__win') * 100), average_cs=Avg(F('playermatch__neutral_minions_killed') + F('playermatch__total_minions_killed'))).order_by('-champion_count')
+        if self.role.isFill == True:
+            return Match.objects.select_related().filter(playermatch__player=self.player, teammatch__team=self.team).values('playermatch__champion', 'playermatch__champion__name', 'playermatch__champion__icon').annotate(champion_count=Count('playermatch__champion'), average_vision_score=Avg('playermatch__vision_score'), avg_kills=Avg('playermatch__kills'), avg_deaths=Avg('playermatch__deaths'), avg_assists=Avg('playermatch__assists'), winrate=Avg(F('teammatch__win') * 100), average_cs=Avg(F('playermatch__neutral_minions_killed') + F('playermatch__total_minions_killed'))).order_by('-champion_count')
+        else:
+            return Match.objects.select_related().filter(playermatch__player=self.player, teammatch__team=self.team, playermatch__role=self.role).values('playermatch__champion', 'playermatch__champion__name', 'playermatch__champion__icon').annotate(champion_count=Count('playermatch__champion'), average_vision_score=Avg('playermatch__vision_score'), avg_kills=Avg('playermatch__kills'), avg_deaths=Avg('playermatch__deaths'), avg_assists=Avg('playermatch__assists'), winrate=Avg(F('teammatch__win') * 100), average_cs=Avg(F('playermatch__neutral_minions_killed') + F('playermatch__total_minions_killed'))).order_by('-champion_count')
 
     def get_player_matches(self):
-        return PlayerMatch.objects.filter(player=self.player, team=self.team, role=self.role)
+        if self.role.isFill == True:
+            return PlayerMatch.objects.filter(player=self.player, team=self.team)
+        else:
+            return PlayerMatch.objects.filter(player=self.player, team=self.team, role=self.role)
 
 
 class TeamMatch(models.Model):

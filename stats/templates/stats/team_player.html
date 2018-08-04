@@ -1,0 +1,168 @@
+{% extends "stats/base.html" %}
+
+{% block title %}Rekt League | Team {{ team.name }} | {{ team_player_role.player.name }}{% endblock %}
+
+{% block content %}
+
+<a href="/season/{{ team.season.id }}/team/{{ team.id }}/">
+	<img style="width: 100%;" src="{{ team.splash.url }}">
+</a>
+<p> </p>
+
+<table class="centercontent" width="70%">
+	<tr class="centercontent">
+		<td>
+		</td>
+	</tr>
+	<tr class="centercontent">
+		<td>
+		<table class="centercontent" width="100%">
+			<tr>
+			{% for player in players %}
+			<td class="pagebutton" width="{% widthratio 1 players.count 100 %}%">
+					<div style="font-size:20">
+						<a href="/season/{{ season.id }}/team/{{ team.id }}/player/{{ player.id }}/"><b>{{ player.name }}</b></a>
+					</div>
+				</th>
+			{% endfor %}
+
+			</tr>
+		</table>
+		</td>
+	</tr>
+	<tr>
+		<td>
+			<table width="100%">
+				<tr>
+					<td width="50%" style="vertical-align:top;">
+						<table width="100%">
+							<tr class="centercontent">
+								<td>
+									<table width="100%">
+										<tr>
+											<th style="padding-bottom:30px; font-size:48; text-align: center;">
+												{{ team_player_role.player.name }}
+											</th>
+										</tr>
+										<tr>
+											<td>
+											<table class="centercontent">
+												<tr>
+													{% for team_player in team_players %}
+													{% if team_player.get_player_matches|length > 0 %}
+													<td>
+														<a href="/season/{{ season.id }}/team/{{ team.id }}/player/{{ team_player_role.player.id }}/role/{{ team_player.role.id }}/">
+															{% if team_player.role == team_player_role.role %}
+															<img src="{{ team_player.role.icon.url }}" title="All" height="70px" width="70px" style="padding:5px; border: 1px solid #6d6d6d;">
+															{% else %}
+															<img src="{{ team_player.role.icon.url }}" title="{{ team_player.role.name }}" height="70px" width="70px" style="padding:5px;">
+															{% endif %}
+														</a>
+													</td>
+													{% endif %}
+													{% endfor %}
+												</tr>
+											</table>
+											</td>
+										</tr>
+									</table>
+								</td>
+							</tr>
+							<tr>
+								<th class="centertableheader">
+									<p><b>Accounts</b></p>
+								</th>
+							</tr>
+									{% for summoner in team_player_role.player.summoner_set.all %}
+							<tr>
+								<th style="font-size:20;">
+									<a href="https://na.op.gg/summoner/userName={{ summoner.link }}">{{ summoner.name }}</a>
+								</th>
+							</tr>
+									{% endfor %}
+							<tr class="centercontent">
+								<td style="padding-bottom:30px;"></td>
+							</tr>
+							<tr>
+								<th class="centertableheader">
+									<p><b>Total KDA</b></p>
+								</th>
+							</tr>
+							<tr class="centercontent">
+								<th style="padding-bottom:20px; font-size:25;">
+									{{ team_player_role.get_kda|floatformat:"1" }}
+								</th>
+							</tr>
+							<tr>
+								<th class="centertableheader">
+									Average Score
+								</th>
+							</tr>
+							<tr class="centercontent">
+								<th style="padding-bottom:20px; font-size:25;">
+									{{ team_player_role.get_avg_kills|floatformat:"1" }}/{{ team_player_role.get_avg_deaths|floatformat:"1" }}/{{ team_player_role.get_avg_assists|floatformat:"1" }}
+								</th>
+							</tr>
+							<tr>
+								<th class="centertableheader">
+									Kill Participation
+								</th>
+							</tr>
+							<tr class="centercontent">
+								<th style="padding-bottom:20px; font-size:25;">
+									{{ team_player_role.get_kill_participation|floatformat:"1" }}%
+								</th>
+							</tr>
+							<tr>
+								<th class="centertableheader">
+									Percent of Team Damage
+								</th>
+							</tr>
+							<tr class="centercontent">
+								<th style="padding-bottom:20px; font-size:25;">
+									{{ team_player_role.get_percent_team_damage|floatformat:"1" }}%
+								</th>
+							</tr>
+						</table>
+					</td>
+					<td width="50%" style="vertical-align:top;">
+						<table class="centercontent">
+							<tr class="alternating-back">
+								<th class="centertableheader">
+									<p><b>Most Played Champions</b></p>
+								</th>
+							</tr>
+							<tr class="centercontent">
+								<table class="centercontent">
+									<tr>
+										<th width="16%"> </th>
+										<th width="16%">Games Played</th>
+										<th width="16%">KDA</th>
+										<th width="16%">Winrate</th>
+										<th width="16%">CS/Game</th>
+									</tr>
+									{% for champion in team_player_role.get_played_champion_list %}
+									<tr class="alternating-back">
+										<td><img src="{{ MEDIA_URL }}{{ champion.playermatch__champion__icon }}" height="50" width="50" title="{{ champion.playermatch__champion__name }}"></td>
+										<td>{{ champion.champion_count }}</td>
+										<td>{{ champion.avg_kills|floatformat:"1" }}/{{ champion.avg_deaths|floatformat:"1" }}/{{ champion.avg_assists|floatformat:"1" }}</td>
+										<td>{{ champion.winrate|floatformat:"1" }}%</td>
+										<td>{{ champion.average_cs|floatformat:"1" }}</td>
+							
+									</tr>
+									{% endfor %}
+								</table>
+							</tr>
+						</table>
+					</td>
+				</tr>
+			</table>
+		</td>
+        </tr>
+
+</table>
+
+
+
+	
+{% endblock %}

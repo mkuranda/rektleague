@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import Season
+from .models import Season, Summoner
 from .models import Team, Match, TeamMatch, PlayerMatch, Week, Series, SeriesTeam, TeamMatchBan, MatchCaster, HypeVideo, TeamRole, SeriesPlayer
 from .models import PlayerMatchTimeline, PlayerMatchKill, PlayerMatchAssist, PlayerMatchWardPlace, PlayerMatchWardKill, PlayerMatchBuildingKill, PlayerMatchBuildingAssist, PlayerMatchEliteMonsterKill
 from .models import Lane, Ward, Building, EliteMonster
@@ -34,6 +34,9 @@ class PlayerMatchBuildingAssistAdmin(admin.ModelAdmin):
 
 class PlayerMatchEliteMonsterKillAdmin(admin.ModelAdmin):
     model = PlayerMatchEliteMonsterKill
+
+class SummonerAdmin(admin.ModelAdmin):
+    model = Summoner 
 
 class TeamPlayerInline(admin.TabularInline):
     model = TeamPlayer
@@ -107,6 +110,7 @@ admin.site.register(PlayerMatchWardKill)
 admin.site.register(PlayerMatchBuildingKill)
 admin.site.register(PlayerMatchBuildingAssist)
 admin.site.register(PlayerMatchEliteMonsterKill)
+admin.site.register(Summoner)
 admin.site.register(Lane)
 admin.site.register(Ward)
 admin.site.register(Building)

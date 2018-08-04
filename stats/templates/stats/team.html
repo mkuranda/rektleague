@@ -5,264 +5,9 @@
 {% block content %}
 
 
-<script type="text/javascript"><!--
-function ReplacePlayerContent(id, content) {
-	var container = document.getElementById(id);
-	var contentMap = new Map();
-	{% for team_player in team_players %}
-	contentMap.set("{{ team_player.player.name }}+{{ team_player.role.id }}",
-		        '<table width="100%">' +
-		         '<tr>' +
-		          '<td width="50%" style="vertical-align:top;">' +
-		           '<table width="100%">' +
-	            	    '<tr class="centercontent">' +
-		             '<td>' +
-		              '<table width="100%">' +
-		               '<tr>' +
-		                '<th style="padding-bottom:30px; font-size:48; text-align: right;">' +
-		                 '{{ team_player.player.name }}' +
-		                '</th>' +
-		                '<th style="padding-left:10px; padding-bottom:25px; text-align: left;">' +
-		                 '<img src="{{ team_player.role.icon.url }}" height="70px" width="70px">' +
-		                '</th>' +
-		'<th width="10%">' +
-		                '</th>' +
-		               '</tr>' +
-		              '</table>' +
-		             '</td>' +
-	            	    '</tr>' +
-	            	    '<tr>' +
-		             '<th class="centertableheader">' +
-		              '<p><b>Total KDA</b></p>' +
-		             '</th>' +
-		            '</tr>' +
-		            '<tr class="centercontent">' +
-		             '<th style="padding-bottom:20px; font-size:25;">' +
-		              '{{ team_player.get_kda|floatformat:"1" }}' +
-		             '</th>' +
-		            '</tr>' +
-		            '<tr>' +
-		             '<th class="centertableheader">' +
-		              'Average Score' +
-		             '</th>' +
-		            '</tr>' +
-		            '<tr class="centercontent">' +
-		             '<th style="padding-bottom:20px; font-size:25;">' +
-		              '{{ team_player.get_avg_kills|floatformat:"1" }}/{{ team_player.get_avg_deaths|floatformat:"1" }}/{{ team_player.get_avg_assists|floatformat:"1" }}' +
-		             '</th>' +
-		            '</tr>' +
-		            '<tr>' +
-		             '<th class="centertableheader">' +
-		              'Kill Participation' +
-		             '</th>' +
-		            '</tr>' +
-		            '<tr class="centercontent">' +
-		             '<th style="padding-bottom:20px; font-size:25;">' +
-		              '{{ team_player.get_kill_participation|floatformat:"1" }}%' +
-		             '</th>' +
-		            '</tr>' +
-		            '<tr>' +
-		             '<th class="centertableheader">' +
-		              'Percent of Team Damage' +
-		             '</th>' +
-		            '</tr>' +
-		            '<tr class="centercontent">' +
-		             '<th style="padding-bottom:20px; font-size:25;">' +
-		              '{{ team_player.get_percent_team_damage|floatformat:"1" }}%' +
-		             '</th>' +
-		            '</tr>' +
-
-		           '</table>' +
-		          '</td>' +
-		          '<td width="50%" style="vertical-align:top;">' +
-		           '<table class="centercontent">' +
-		            '<tr class="alternating-back">' +
-		             '<th class="centertableheader">' +
-		              '<p><b>Most Played Champions</b></p>' +
-		             '</th>' +
-		            '</tr>' +
-		            '<tr class="centercontent">' +
-		             '<table class="centercontent">' +
-		              '<tr>' +
-		               '<th width="16%"> </th>' +
-		               '<th width="16%">Games Played</th>' +
-		               '<th width="16%">KDA</th>' +
-		               '<th width="16%">Winrate</th>' +
-		               '<th width="16%">CS/Game</th>' +
-		              '</tr>' +
-		              {% for champion in team_player.get_played_champion_list %}
-		              '<tr class="alternating-back">' +
-		               '<td><img src="{{ MEDIA_URL }}{{ champion.playermatch__champion__icon }}" height="50" width="50" title="{{ champion.playermatch__champion__name }}"></td>' +
-		               '<td>{{ champion.champion_count }}</td>' +
-		               '<td>{{ champion.avg_kills|floatformat:"1" }}/{{ champion.avg_deaths|floatformat:"1" }}/{{ champion.avg_assists|floatformat:"1" }}</td>' +
-		               '<td>{{ champion.winrate|floatformat:"1" }}%</td>' +
-		               '<td>{{ champion.average_cs|floatformat:"1" }}</td>' +
-		                
-		              '</tr>' +
-		              {% endfor %}
-		             '</table>' +
-		            '</tr>' +
-		           '</table>' +
-		          '</td>' +
-		         '</tr>' +
-		        '</table>' +
-			"");
-	{% endfor %}
-	contentMap.set("Overview",
-		'<table width="100%">' +
-		 '<tr>' +
-		  '<td width="50%" height="100%" style="vertical-align:top">' +
-		   '<table width="100%">' +
-	            '<tr>' +
-		     '<th class="centertableheader">' +
-		      'Roster' +
-		     '</th>' +
-		    '</tr>' +
-		    '<tr>' +
-		     '<td>' +
-		      '<table class="centercontent" width="60%">' +
-		       '<tr class="alternating-back"></tr>' +
-	        {% for player in players %}
-		    '<tr class="alternating-back">' +
-	             '<th style="padding:14px; font-size:24;">' +
-		      '{{ player.name }}' +
-		     '</th>' +
-		    '</tr>' +
-		{% endfor %}
-		     '</td>' +
-		    '</table>' +
-		    '</tr>' +
-		    '<tr class="centercontent">' +
-		     '<td></td>' +
-		    '</tr>' +
-		    '<tr>' +
-		     '<th class="centertableheader">' +
-		      'Record' +
-		     '</th>' +
-		    '</tr>' +
-		    '<tr class="centercontent">' +
-	             '<th style="padding-bottom:20px; font-size:24;">' +
-		      '{{ team.get_record }}' +
-		     '</th>' +
-		    '</tr>' +
-		    '<tr class="centercontent">' +
-		     '<td class="centercontent">' +
-		      '<table width="100%">' +
-		       '<tr>' +
-		        '<td>' +
-		         '<table width="100%">' +
-		          '<tr>' +
-		           '<th class="centertableheader">' +
-		            'Popular Bans' +
-		           '</th>' +
-		          '<tr>' +
-		           '<table width="100%">' +
-		            '<tr>' +
-		          {% for champion in team.get_top_banned %}
-          	  	     '<td width="60"><img src="{{ MEDIA_URL }}{{ champion.champion__icon }}" height="50" width="50" title="{{ champion.champion__name }}"></td>' +
-          	  	{% endfor %}
-		            '</tr><tr>' +
-		          {% for champion in team.get_top_banned %}
-  		    	     '<td width="60"><b>{{ champion.ban_rate }}%</b></td>' +
-          	  	{% endfor %}
-		            '</tr>' +
-		           '</table>' +
-		          '</td>' +
-		         '</tr>' +
-		        '</table>' +
-		     '</td>' +
-		    '</tr>' +
-		    '<tr>' +
-		     '<td>' +
-		      '<table width="100%">' +
-		       '<tr>' +
-		         '<th class="centertableheader">' +
-		          'First Blood %' +
-		         '</th>' +
-		       '</tr>' +
-		       '<tr>' +
-		        '<th style="padding-bottom:20px; font-size:25;">' +
-		         '{{ team.get_first_blood_percent|floatformat:"1" }}%' +
-		        '</th>' +
-		       '</tr>' +
-		      '</table>' +
-		     '</td>' +
-		    '</tr>' +
-		'<tr class="centercontent"><td width="100%"></td></tr><tr>' +
-		     '<td>' +
-		      '<table width="100%">' +
-		       '<tr>' +
-		         '<th class="centertableheader">' +
-		          'First Tower %' +
-		         '</th>' +
-		       '</tr>' +
-		       '<tr>' +
-		        '<th style="padding-bottom:20px; font-size:25;">' +
-		         '{{ team.get_first_tower_percent|floatformat:"1" }}%' +
-		        '</th>' +
-		       '</tr>' +
-
-		      '</table>' +
-		     '</td>' +
-		    '</tr>' +
-		   '</table>' +
-		  '</td>' +
-		  '<td width="50%" height="100%" style="vertical-align:top">' +
-		   '<table width="100%" class="centercontent">' +
-		    '<tr >' +
-		     '<th class="centertableheader">' +
-		      '<p><b>Schedule</b></p>' +
-		     '</th>' +
-			{% for series in series_list %}
-		    '<tr class="alternating-back">' +
-		     '<td>' +
-		      '<div class="linktable">' +
-		       '<a style="display: table-row;" href="/stats/season/{{ series.week.season.id }}/series/{{ series.id }}/">' +
-		        '<div class="linktablecell" style="width: 10%"></div>' +
-		        '<div class="linktablecell" style="width: 10%">' +
-		         '<i>Week {{ series.week.number }}</i>' +
-		        '</div>' +
-		        {% if series.get_team_1 == team %}
-		        '<div class="linktablecell" style="width: 10%">' +
-		         '{{ series.get_team_1_wins }}-{{ series.get_team_2_wins }}' +
-		        '</div>' +
-		        '<div class="linktablecell" style="width: 20%">' +
-   		         'vs <b>{{ series.get_team_2.name }}</b>' +
-		        '</div>' +
-		        '<div class="linktablecell" style="width: 10%">' +
-		         '<img src="{{ series.get_team_2.icon.url }}" height="40px" width="40px">' +
-		        '</div>' +
-		        {% elif series.get_team_2 == team %}
-		        '<div class="linktablecell" style="width: 10%">' +
-		         '{{ series.get_team_2_wins }}-{{ series.get_team_1_wins }}' +
-		        '</div>' +
-		        '<div class="linktablecell" style="width: 20%">' +
-   		         'vs <b>{{ series.get_team_1.name }}</b>' +
-		        '</div>' +
-		        '<div class="linktablecell" style="width: 10%">' +
-		         '<img src="{{ series.get_team_1.icon.url }}" height="40px" width="40px">' +
-		        '</div>' +
-		        {% endif %}
-		        '<div class="linktablecell" style="width: 10%"></div>' +
-		        '</div>' +
-		       '</a>' +
-			{% endfor %}
-		   '</table>' +
-		     '</td>' +
-		    '</tr>' +
-		   '</table>' +
-		  '</td>' +
-		 '</tr>' +
-		'</table>' +
-		        "");
-	container.innerHTML = contentMap.get(content);
-}
-window.onload = function() {
-	ReplacePlayerContent('pagecontent','Overview');
-}
-//--></script>
-
-<img style="width: 100%;" src="{{ team.splash.url }}">
+<a href="/season/{{ team.season.id }}/team/{{ team.id }}/">
+	<img style="width: 100%;" src="{{ team.splash.url }}">
+</a>
 <p> </p>
 
 <table class="centercontent" width="70%">
@@ -274,31 +19,145 @@ window.onload = function() {
 		<td>
 		<table class="centercontent" width="100%">
 			<tr>
-			{% for role in roles %}
-			<td>
-			<div class="dropdown">
-
-				<button class="dropbtn" style="background-color:#212121;"><img src="{{ role.role.icon.url }}" height="70px" width="70px"></button>
-			  	<div class="dropdown-content">
-				  {% for player in role.get_team_players %}
-				  	  {% if player.get_player_matches.count > 0 %}
-				  	<p><a href="javascript:ReplacePlayerContent('pagecontent','{{ player.player.name }}+{{ player.role.id }}')">{{ player.player.name }}</a></p>
-				  	  {% endif %}
-				  {% endfor %}
-			  	</div>
-			</div>
-			</td>
+			{% for player in players %}
+			<td class="pagebutton" width="{% widthratio 1 players.count 100 %}%">
+					<div style="font-size:20">
+						<a href="player/{{ player.id }}/"><b>{{ player.name }}</b></a>
+					</div>
+				</th>
 			{% endfor %}
+
 			</tr>
 		</table>
 		</td>
 	</tr>
 	<tr>
 		<td>
-			<div id="pagecontent" onload="ReplacePlayerContent('pagecontent','Overview')">
-        		</div>
+			<table width="100%">
+				<tr>
+					<td width="50%" height="100%" style="vertical-align:top">
+						<table width="100%">
+							<tr>
+								<th class="centertableheader">
+									Record
+								</th>
+							</tr>
+							<tr class="centercontent">
+								<th style="padding-bottom:20px; font-size:24;">
+									{{ team.get_record }}
+								</th>
+							</tr>
+							<tr class="centercontent">
+								<td class="centercontent">
+									<table width="100%">
+										<tr>
+											<td>
+												<table width="100%">
+													<tr>
+														<th class="centertableheader">
+															Popular Bans
+														</th>
+													<tr>
+														<table width="100%">
+															<tr>
+									{% for champion in team.get_top_banned %}
+											<td width="60"><img src="{{ MEDIA_URL }}{{ champion.champion__icon }}" height="50" width="50" title="{{ champion.champion__name }}"></td>
+									{% endfor %}
+															</tr><tr>
+									{% for champion in team.get_top_banned %}
+													<td width="60"><b>{{ champion.ban_rate }}%</b></td>
+									{% endfor %}
+															</tr>
+														</table>
+													</td>
+												</tr>
+											</table>
+								</td>
+							</tr>
+							<tr>
+								<td>
+									<table width="100%">
+										<tr>
+												<th class="centertableheader">
+													First Blood %
+												</th>
+										</tr>
+										<tr>
+											<th style="padding-bottom:20px; font-size:25;">
+												{{ team.get_first_blood_percent|floatformat:"1" }}%
+											</th>
+										</tr>
+									</table>
+								</td>
+							</tr>
+			                                <tr class="centercontent"><td width="100%"></td></tr><tr>
+								<td>
+									<table width="100%">
+										<tr>
+												<th class="centertableheader">
+													First Tower %
+												</th>
+										</tr>
+										<tr>
+											<th style="padding-bottom:20px; font-size:25;">
+												{{ team.get_first_tower_percent|floatformat:"1" }}%
+											</th>
+										</tr>
+									</table>
+								</td>
+							</tr>
+						</table>
+					</td>
+					<td width="50%" height="100%" style="vertical-align:top">
+						<table width="100%" class="centercontent">
+							<tr>
+								<th class="centertableheader">
+									<p><b>Schedule</b></p>
+								</th>
+							{% for series in series_list %}
+							<tr class="alternating-back">
+								<td>
+									<div class="linktable">
+										<a style="display: table-row;" href="/stats/season/{{ series.week.season.id }}/series/{{ series.id }}/">
+											<div class="linktablecell" style="width: 10%"></div>
+											<div class="linktablecell" style="width: 10%">
+												<i>Week {{ series.week.number }}</i>
+											</div>
+											{% if series.get_team_1 == team %}
+											<div class="linktablecell" style="width: 10%">
+												{{ series.get_team_1_wins }}-{{ series.get_team_2_wins }}
+											</div>
+											<div class="linktablecell" style="width: 20%">
+												vs <b>{{ series.get_team_2.name }}</b>
+											</div>
+											<div class="linktablecell" style="width: 10%">
+												<img src="{{ series.get_team_2.icon.url }}" height="40px" width="40px">
+											</div>
+											{% elif series.get_team_2 == team %}
+											<div class="linktablecell" style="width: 10%">
+												{{ series.get_team_2_wins }}-{{ series.get_team_1_wins }}
+											</div>
+											<div class="linktablecell" style="width: 20%">
+												vs <b>{{ series.get_team_1.name }}</b>
+											</div>
+											<div class="linktablecell" style="width: 10%">
+												<img src="{{ series.get_team_1.icon.url }}" height="40px" width="40px">
+											</div>
+											{% endif %}
+											<div class="linktablecell" style="width: 10%"></div>
+											</div>
+										</a>
+										{% endfor %}
+									</table>
+								</td>
+							</tr>
+						</table>
+					</td>
+				</tr>
+			</table>
+
 		</td>
-        </tr>
+	</tr>
 
 </table>
 

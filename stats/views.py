@@ -44,7 +44,7 @@ def season_players_detail(request, season_id):
         'latest_season': latest_season
     }
     season = get_object_or_404(Season, id=season_id)
-    team_players = TeamPlayer.objects.filter(team__season=season_id)
+    team_players = TeamPlayer.objects.filter(team__season=season_id, role__isFill=False)
     context = {
         'latest_season': latest_season,
         'season': season,
@@ -93,7 +93,7 @@ def player_detail(request, player_id):
 def team_detail(request, season_id, team_id):
     team = get_object_or_404(Team, id=team_id, season=season_id)
     team_players = TeamPlayer.objects.filter(team=team_id).annotate(avg_kills=Avg('player__playermatch__kills'), avg_deaths=Avg('player__playermatch__deaths'), avg_assists=Avg('player__playermatch__assists'), num_champs_played=Count('player__playermatch__champion')).order_by('role')
-    players = Player.objects.filter(teamplayer__team=team).values('name').distinct()
+    players = Player.objects.filter(teamplayer__team=team).values('id', 'name').distinct()
     series_list = Series.objects.filter(seriesteam__team = team).order_by('-week__number')
     team_roles = TeamRole.objects.filter(team=team).order_by('role')
     context = {
@@ -104,6 +104,39 @@ def team_detail(request, season_id, team_id):
 	'series_list': series_list
     }
     return render(request, 'stats/team.html', context)
+
+def team_player_detail(request, season_id, team_id, player_id):
+    role = get_object_or_404(Role, isFill=True)
+    season = get_object_or_404(Season, id=season_id)
+    team = get_object_or_404(Team, id=team_id, season=season_id)
+    team_players = TeamPlayer.objects.filter(player=player_id, team=team_id).annotate(avg_kills=Avg('player__playermatch__kills'), avg_deaths=Avg('player__playermatch__deaths'), avg_assists=Avg('player__playermatch__assists'), num_champs_played=Count('player__playermatch__champion')).order_by('-role__isFill')
+    team_player_role = TeamPlayer.objects.filter(player=player_id, team=team_id, role=role).annotate(avg_kills=Avg('player__playermatch__kills'), avg_deaths=Avg('player__playermatch__deaths'), avg_assists=Avg('player__playermatch__assists'), num_champs_played=Count('player__playermatch__champion'))[0]
+    players = Player.objects.filter(teamplayer__team=team).values('id', 'name').distinct()
+    series_list = Series.objects.filter(seriesteam__team = team).order_by('-week__number')
+    context = {
+        'season': season,
+        'team': team,
+        'team_players': team_players,
+        'team_player_role': team_player_role,
+        'players': players
+    }
+    return render(request, 'stats/team_player.html', context)
+
+def team_player_role_detail(request, season_id, team_id, player_id, role_id):
+    season = get_object_or_404(Season, id=season_id)
+    team = get_object_or_404(Team, id=team_id, season=season_id)
+    team_players = TeamPlayer.objects.filter(player=player_id, team=team_id).annotate(avg_kills=Avg('player__playermatch__kills'), avg_deaths=Avg('player__playermatch__deaths'), avg_assists=Avg('player__playermatch__assists'), num_champs_played=Count('player__playermatch__champion')).order_by('-role__isFill')
+    team_player_role = TeamPlayer.objects.filter(player=player_id, team=team_id, role=role_id).annotate(avg_kills=Avg('player__playermatch__kills'), avg_deaths=Avg('player__playermatch__deaths'), avg_assists=Avg('player__playermatch__assists'), num_champs_played=Count('player__playermatch__champion'))[0]
+    players = Player.objects.filter(teamplayer__team=team).values('id', 'name').distinct()
+    series_list = Series.objects.filter(seriesteam__team = team).order_by('-week__number')
+    context = {
+        'season': season,
+        'team': team,
+        'team_players': team_players,
+        'team_player_role': team_player_role,
+        'players': players
+    }
+    return render(request, 'stats/team_player.html', context)
 
 def champion_detail(request, champion_id):
     try:
