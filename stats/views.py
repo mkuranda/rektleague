@@ -16,12 +16,12 @@ def about(request):
     }
     return render(request, 'stats/about.html', context)
 
-def head-to-head(request):
+def head_to_head(request):
     latest_season = Season.objects.latest('id')
     context = {
         'latest_season': latest_season
     }
-    return render(request, 'stats/head-to-head.html', context)
+    return render(request, 'stats/head_to_head.html', context)
 
 def faq(request):
     latest_season = Season.objects.latest('id')
