@@ -346,7 +346,7 @@ function ReplaceMatchContent(id, content) {
 	{% endfor %}
 	contentMap.set("Overview",
 		'<table class="centercontent" width="50%">' +
-		{% if series.rosters_submitted and series.past_deadline %}
+		{% if series.rosters_submitted and series.past_deadline and season.id > 2 %}
 		'<table class="centercontent" width="80%">' +
 		 '<tr>' +
 		  '<td>' +
@@ -415,7 +415,7 @@ function ReplaceMatchContent(id, content) {
 		  '</td>' +
 		 '</tr>' +
 		'</table>' +
-		{% else %}
+		{% elif season.id > 2 %}
 		'<tr>' +
 		  '<th class="centertableheader" style="padding-bottom:15px" width="100%">' +
 		   'Rosters Pending' +
@@ -440,7 +440,7 @@ function ReplaceMatchContent(id, content) {
 		{% endif %}
 		{% if request.user == series.get_team_1.user %}
 
-		{% if series.get_team_1_roster_submitted and not series.past_deadline %}
+		{% if series.get_team_1_roster_submitted and season.id > 2 and not series.past_deadline %}
 		'<table class="centercontent" width="50%">' +
 		 '<tr class="centercontent">' +
 		  '<td style="padding-bottom: 40px">' +
@@ -484,7 +484,7 @@ function ReplaceMatchContent(id, content) {
 		  '</td>' +
 		 '</tr>' +
 		'</table>' +
-		{% elif series.past_deadline and not series.get_team_1_roster_submitted %}
+		{% elif series.past_deadline and season.id > 2 and not series.get_team_1_roster_submitted %}
 		'<table class="centercontent" width="70%">' +
 		'<tr>' +
 		  '<td class="centercontent" style="padding: 40px; margin-bottom: 20px; font-size: 24;" width="100%">' +
@@ -495,7 +495,7 @@ function ReplaceMatchContent(id, content) {
 		{% endif %}
 		{% endif %}
 		{% if request.user == series.get_team_2.user %}
-		{% if series.get_team_2_roster_submitted and not series.past_deadline %}
+		{% if series.get_team_2_roster_submitted and season.id > 2 and not series.past_deadline %}
 		'<table class="centercontent" width="50%">' +
 		 '<tr class="centercontent">' +
 		  '<td style="padding-bottom: 40px">' +
@@ -540,7 +540,7 @@ function ReplaceMatchContent(id, content) {
 		  '</td>' +
 		 '</tr>' +
 		'</table>' +
-		{% elif series.past_deadline and not series.get_team_2_roster_submitted %}
+		{% elif series.past_deadline and not series.get_team_2_roster_submitted and season.id > 2 %}
 		'<table class="centercontent" width="70%">' +
 		'<tr>' +
 		  '<td class="centercontent" style="padding: 40px; margin-bottom: 20px; font-size: 24;" width="100%">' +
