@@ -6,7 +6,6 @@ urlpatterns = [
     url(r'^$', views.index, name='index'),
     url(r'^news/', views.news, name='news'),
     url(r'^about/', views.about, name='about'),
-    url(r'^head_to_head/', views.head-to-head, name='head_to_head'),
     url(r'^faq/', views.faq, name='faq'),
     url(r'^get_items/', views.get_items, name='get_items'),
     url(r'^season/(?P<season_id>[0-9]+)/$', views.season_detail, name='season'),
