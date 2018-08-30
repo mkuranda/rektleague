@@ -11,6 +11,7 @@ class Season(models.Model):
     pick_type = models.CharField(max_length=30)
     map_type = models.CharField(max_length=30)
     spectator_type = models.CharField(max_length=30)
+    splash = models.ImageField(upload_to='stats/season_splashes', default='')
 
     def __str__(self):
         return "Season " + str(self.pk)
@@ -48,9 +49,10 @@ class Week(models.Model):
     number = models.IntegerField(default=1)
     regular = models.BooleanField(default=True)
     title = models.CharField(max_length=50, default="")
+    date = models.DateTimeField(null=True, blank=True)
 
     def name_w_title(self):
-        if self.title != "":
+        if self.title != "" and self.title != " ":
             return "Week " + str(self.number) + " - " + self.title
         return "Week " + str(self.number)
 
@@ -107,6 +109,7 @@ class Series(models.Model):
     youtube_link = models.CharField(max_length=100, default='')
     week = models.ForeignKey(Week)
     splash = models.ImageField(upload_to='stats/champion/matchup_splashes', default='')
+    date = models.DateTimeField(null=True, blank=True)
 
     def get_team_1(self):
 	teamSeries = SeriesTeam.objects.filter(series=self)
@@ -128,8 +131,29 @@ class Series(models.Model):
     def get_team_2_wins(self):
 	return TeamMatch.objects.filter(team=self.get_team_2(), win=True, match__series=self).count()
 
+    def get_team_1_roster_submitted(self):
+        if self.get_team_1_players().count() < 5:
+            return False
+        return True
+
+    def get_team_2_roster_submitted(self):
+        if self.get_team_2_players().count() < 5:
+            return False
+        return True
+
     def rosters_submitted(self):
-        return SeriesPlayer.objects.filter(series=self).count() == 10
+        return self.get_team_1_roster_submitted() and self.get_team_2_roster_submitted()
+
+    def deadline(self):
+        if self.week.date is None:
+            return None
+        return self.week.date - datetime.timedelta(days=5)
+
+    def past_deadline(self):
+        now = datetime.datetime.now(timezone.utc)
+        if self.deadline() is not None and self.deadline() < now:
+            return True
+        return False
 
     def __str__(self):
 	return str(self.week) + ": " + str(self.get_team_1()) + " v " + str(self.get_team_2())
@@ -460,7 +484,7 @@ class TeamMatch(models.Model):
         unique_together = (("team", "match"))
 
     def get_player_matches(self):
-        return PlayerMatch.objects.filter(match=self.match, player__team=self.team)
+        return PlayerMatch.objects.filter(match=self.match, team=self.team)
 
     def get_team_bans(self):
         return TeamMatchBan.objects.filter(match=self.match, team=self.team).order_by('-pickTurn')
@@ -480,8 +504,7 @@ class Item(models.Model):
     icon = models.ImageField(upload_to='stats/item/icon', default='')
 
 class PlayerMatchItem(models.Model):
-    player = models.ForeignKey(Player)
-    match = models.ForeignKey(Match)
+    playermatch = models.ForeignKey(PlayerMatch)
     item = models.ForeignKey(Item)
 
 class Lane(models.Model):
@@ -516,46 +539,40 @@ class EliteMonster(models.Model):
         return self.name
 
 class PlayerMatchKill(models.Model):
-    killer = models.ForeignKey(Player)
-    victim = models.ForeignKey(Player, related_name="victim")
-    match = models.ForeignKey(Match)
+    killer = models.ForeignKey(PlayerMatch)
+    victim = models.ForeignKey(PlayerMatch, related_name="victim")
     timestamp = models.IntegerField()
 
 class PlayerMatchAssist(models.Model):
     kill = models.ForeignKey(PlayerMatchKill)
-    player = models.ForeignKey(Player)
+    playermatch = models.ForeignKey(PlayerMatch)
 
 class PlayerMatchWardPlace(models.Model):
-    player = models.ForeignKey(Player)
-    match = models.ForeignKey(Match)
+    playermatch = models.ForeignKey(PlayerMatch)
     ward_type = models.ForeignKey(Ward)
     timestamp = models.IntegerField()
 
 class PlayerMatchWardKill(models.Model):
-    player = models.ForeignKey(Player)
-    match = models.ForeignKey(Match)
+    playermatch = models.ForeignKey(PlayerMatch)
     ward_type = models.ForeignKey(Ward)
     timestamp = models.IntegerField()
 
 class PlayerMatchBuildingKill(models.Model):
-    player = models.ForeignKey(Player)
-    match = models.ForeignKey(Match)
+    playermatch = models.ForeignKey(PlayerMatch)
     building_type = models.ForeignKey(Building)
     timestamp = models.IntegerField()
 
 class PlayerMatchBuildingAssist(models.Model):
     kill = models.ForeignKey(PlayerMatchBuildingKill)
-    player = models.ForeignKey(Player)
+    playermatch = models.ForeignKey(PlayerMatch)
 
 class PlayerMatchEliteMonsterKill(models.Model):
-    player = models.ForeignKey(Player)
-    match = models.ForeignKey(Match)
+    playermatch = models.ForeignKey(PlayerMatch)
     monster_type = models.ForeignKey(EliteMonster)
     timestamp = models.IntegerField()
 
 class PlayerMatchTimeline(models.Model):
-    player = models.ForeignKey(Player)
-    match = models.ForeignKey(Match)
+    playermatch = models.ForeignKey(PlayerMatch)
     timestamp = models.IntegerField()
     level = models.IntegerField(default=1)
     gold = models.IntegerField(default=0)

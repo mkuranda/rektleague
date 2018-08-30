@@ -2,7 +2,7 @@
 
 {% block content %}
 
-<a class="imglink" href="/stats/season/{{ season.id }}/"><img style="width: 100%; margin-top:190px; margin-bottom: 90px;" src="/static/stats/season2.png"></a>
+<div width="60%" style="text-align: center"><a class="imglink" href="/stats/season/{{ season.id }}/"><img style="width: 55%; margin-left: auto; margin-right: auto; margin-top:220px; margin-bottom: 100px;" src="{{ season.splash.url }}"></a></div>
 
 <p> </p>
 
@@ -61,7 +61,7 @@
 						Tower Kills
 					</th>
 					<th class="sortableheader" width="10%">
-						Baron Kills <span class="glyphicon glyphicon-chevron-down" aria-hidden="true"></span>
+						Baron Kills
 					</th>
 				</tr>
 				</thead>

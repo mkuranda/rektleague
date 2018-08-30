@@ -49,7 +49,7 @@
 											<table class="centercontent">
 												<tr>
 													{% for team_player in team_players %}
-													{% if team_player.get_player_matches|length > 0 %}
+													{% if team_player.get_player_matches|length > 0 or team_player.role.isFill %}
 													<td>
 														<a href="/season/{{ season.id }}/team/{{ team.id }}/player/{{ team_player_role.player.id }}/role/{{ team_player.role.id }}/">
 															{% if team_player.role == team_player_role.role %}

@@ -1,7 +1,7 @@
 from riot_request import *
 import urllib, shutil
 import math
-from .models import Item, Champion, Match, Team, TeamMatch, Role, TeamPlayer, PlayerMatch, Week, Series, SeriesTeam, TeamMatchBan
+from .models import Item, Champion, Match, Team, TeamMatch, Role, TeamPlayer, PlayerMatch, Week, Series, SeriesTeam, TeamMatchBan, SeriesPlayer
 from .models import PlayerMatchKill, PlayerMatchAssist, PlayerMatchWardPlace, PlayerMatchWardKill, PlayerMatchBuildingKill, PlayerMatchBuildingAssist, PlayerMatchEliteMonsterKill, PlayerMatchTimeline
 from .models import Lane, Ward, Building, EliteMonster
 
@@ -192,8 +192,9 @@ def get_match_timeline(match_id):
     for frame in frame_data:
         timestamp = frame['timestamp']
         for participant in participants:
-            data = frame['participantFrames'][str(participant.participant_id)]
-            timeline = PlayerMatchTimeline.objects.create(player=participant.player, match=participant.match, timestamp = timestamp)
+            a = participant.participant_id
+            data = frame['participantFrames'][str(participant.participant_id + 1)]
+            timeline = PlayerMatchTimeline.objects.create(playermatch=participant, timestamp = timestamp)
             timeline.level = data['level']
             timeline.gold = data['currentGold']
             timeline.totalGold = data['totalGold']
@@ -207,28 +208,26 @@ def get_match_timeline(match_id):
         for event_data in frame['events']:
             if event_data['type'] == 'CHAMPION_KILL':
                 if event_data['killerId'] > 0 and event_data['victimId'] > 0:
-                    killer = participants[event_data['killerId'] - 1].player
-                    victim = participants[event_data['victimId'] - 1].player
-                    event = PlayerMatchKill.objects.create(killer=killer, victim=victim, match=match, timestamp=timestamp)
+                    killer = participants[event_data['killerId'] - 1]
+                    victim = participants[event_data['victimId'] - 1]
+                    event = PlayerMatchKill.objects.create(killer=killer, victim=victim, timestamp=timestamp)
                     event.save()
                     for assist_id in event_data['assistingParticipantIds']:
-                        assist = PlayerMatchAssist.objects.create(kill=event, player=participants[assist_id - 1].player)
+                        assist = PlayerMatchAssist.objects.create(kill=event, playermatch=participants[assist_id - 1])
                         assist.save()
             elif event_data['type'] == 'WARD_PLACED':
                 if event_data['creatorId'] > 0:
-                    player = participants[event_data['creatorId'] - 1].player
                     ward_type = Ward.objects.get(riot_name=event_data['wardType'])
-                    event = PlayerMatchWardPlace.objects.create(player=player, match=match, timestamp=timestamp, ward_type=ward_type)
+                    event = PlayerMatchWardPlace.objects.create(playermatch=participants[event_data['creatorId'] - 1], timestamp=timestamp, ward_type=ward_type)
                     event.save()
             elif event_data['type'] == 'WARD_KILL':
                 if event_data['killerId'] > 0:
-                    player = participants[event_data['killerId'] - 1].player
                     ward_type = Ward.objects.get(riot_name=event_data['wardType'])
-                    event = PlayerMatchWardKill.objects.create(player=player, match=match, timestamp=timestamp, ward_type=ward_type)
+                    event = PlayerMatchWardKill.objects.create(playermatch=participants[event_data['killerId'] - 1], timestamp=timestamp, ward_type=ward_type)
                     event.save()
             elif event_data['type'] == 'BUILDING_KILL':
                 if event_data['killerId'] > 0:
-                    killer = participants[event_data['killerId'] - 1].player
+                    killer = participants[event_data['killerId'] - 1]
                     buildingSubtype = " "
                     if 'laneType' in event_data and 'towerType' in event_data:
                         building_type = Building.objects.get(riot_name=event_data['buildingType'], riot_subname=event_data['towerType'], lane__riot_name=event_data['laneType'])
@@ -239,20 +238,20 @@ def get_match_timeline(match_id):
                     else:
                         building_type = Building.objects.get(riot_name=event_data['buildingType'])
 
-                    event = PlayerMatchBuildingKill.objects.create(player=killer, match=match, timestamp=timestamp, building_type=building_type)
+                    event = PlayerMatchBuildingKill.objects.create(playermatch=killer, timestamp=timestamp, building_type=building_type)
                     event.save()
                     for assist_id in event_data['assistingParticipantIds']:
-                        assist = PlayerMatchBuildingAssist.objects.create(kill=event, player=participants[assist_id - 1].player)
+                        assist = PlayerMatchBuildingAssist.objects.create(kill=event, playermatch=participants[assist_id - 1])
                         assist.save()
             elif event_data['type'] == 'ELITE_MONSTER_KILL':
                 if event_data['killerId'] > 0:
-                    player = participants[event_data['killerId'] - 1].player
+                    playermatch = participants[event_data['killerId'] - 1]
                     if 'monsterSubType' in event_data:
                         monster_type = EliteMonster.objects.get(riot_name=event_data['monsterType'], riot_subname=event_data['monsterSubType'])
                     else: 
                         monster_type = EliteMonster.objects.get(riot_name=event_data['monsterType'])
 
-                    event = PlayerMatchEliteMonsterKill.objects.create(player=player, match=match, timestamp=timestamp, monster_type=monster_type)
+                    event = PlayerMatchEliteMonsterKill.objects.create(playermatch=playermatch, timestamp=timestamp, monster_type=monster_type)
                     event.save()
 
 

@@ -2,7 +2,7 @@
 
 {% block content %}
 
-<a class="imglink" href="/stats/season/{{ season.id }}/"><img style="width: 100%; margin-top:190px; margin-bottom: 90px;" src="/static/stats/season2.png"></a>
+<div width="60%" style="text-align: center"><a class="imglink" href="/stats/season/{{ season.id }}/"><img style="width: 55%; margin-left: auto; margin-right: auto; margin-top:220px; margin-bottom: 100px;" src="{{ season.splash.url }}"></a></div>
 
 <p> </p>
 
@@ -56,7 +56,11 @@
 	</tr>
 	<tr>
 		<td class="centercontent">
+			{% if season.get_weeks_desc.first.date %}
+			<div style="width: 100%; height: 425px; text-align:center;" class="container" style="margin: 10px; display: block;">
+			{% else %}
 			<div style="width: 100%; height: 375px; text-align:center;" class="container" style="margin: 10px; display: block;">
+			{% endif %}
 				<div class="row">
 					<div class="col-md-12 col-centered">
 						<div style="width: 80%; height: 300px; margin: auto;" id="carousel" class="carousel slide" data-type="single" data-interval="0">
@@ -75,6 +79,13 @@
 														<b>{{ week.name_w_title }}</b>
 													</td>
 												</tr>
+												{% if week.date %}
+												<tr>
+													<td>
+														{{ week.date|date:"F j, Y" }}
+													</td>
+												</tr>
+												{% endif %}
 												{% for series in week.series_set.all %}
 												<tr class="alternating-back">
 													<td>
