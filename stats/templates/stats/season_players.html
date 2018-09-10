@@ -73,7 +73,11 @@
 						Participation
 					</th>
 					<th class="sortableheader" width="10%">
-						CS/Game	
+						{% if season.id > 2 %}
+						CS/Min
+						{% else %}
+						CS/Game
+						{% endif %}
 					</th>
 					<th class="sortableheader" width="10%">
 						Team Damage %
@@ -116,7 +120,11 @@
 						{{ team_player.get_kill_participation|floatformat:"1" }}%
 					</td>
 					<td>
-						{{ team_player.get_cs_per_game|floatformat:"1" }}
+						{% if season.id > 2 %}
+							{{ team_player.get_cs_per_min|floatformat:"2" }}
+						{% else %}
+							{{ team_player.get_cs_per_game|floatformat:"1" }}
+						{% endif %}
 					</td>
 					<td>
 						{{ team_player.get_percent_team_damage|floatformat:"1" }}%

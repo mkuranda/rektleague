@@ -143,7 +143,11 @@
 										<th width="16%">Games Played</th>
 										<th width="16%">KDA</th>
 										<th width="16%">Winrate</th>
+										{% if season.id > 2 %}
+										<th width="16%">CS/Min</th>
+										{% else %}
 										<th width="16%">CS/Game</th>
+										{% endif %}
 									</tr>
 									{% for champion in team_player_role.get_played_champion_list %}
 									<tr class="alternating-back">
@@ -151,7 +155,11 @@
 										<td>{{ champion.champion_count }}</td>
 										<td>{{ champion.avg_kills|floatformat:"1" }}/{{ champion.avg_deaths|floatformat:"1" }}/{{ champion.avg_assists|floatformat:"1" }}</td>
 										<td>{{ champion.winrate|floatformat:"1" }}%</td>
-										<td>{{ champion.average_cs|floatformat:"1" }}</td>
+										{% if season.id > 2 %}
+										<td>{{ champion.cs_per_min|floatformat:"2" }}</td>
+										{% else %}
+										<td>{{ champion.average_cs|floatformat:"2" }}</td>
+										{% endif %}
 							
 									</tr>
 									{% endfor %}
