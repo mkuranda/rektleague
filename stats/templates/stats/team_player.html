@@ -90,7 +90,11 @@
 							</tr>
 							<tr class="centercontent">
 								<th style="padding-bottom:20px; font-size:25;">
-									{{ team_player_role.get_kda|floatformat:"1" }}
+									{% if team_player_role.get_kda == 1000000 %}
+										Perfect
+									{% else %}
+										{{ team_player_role.get_kda|floatformat:"1" }}
+									{% endif %}
 								</th>
 							</tr>
 							<tr>

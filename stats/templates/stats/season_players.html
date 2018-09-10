@@ -85,7 +85,7 @@
 				{% if team_player.get_player_matches.count > 0 %}
 				<tr class="alternating-back">
 					<td>
-						{{ team_player.player.name }}
+						<a href="/stats/season/{{ season.id }}/team/{{ team_player.team.id }}/player/{{ team_player.player.id }}/role/{{ team_player.role.id }}/">{{ team_player.player.name }}</a>
 					</td>
 					<td>
 						<div style="position: absolute; opacity: 0.0;">{{ team_player.team.id }}</div>
