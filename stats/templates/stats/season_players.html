@@ -106,6 +106,7 @@
 					</td>
 					<td>
 						{% if team_player.get_kda == 1000000 %}
+							<div style="position: absolute; opacity: 0.0;">{{ team_player.get_kda|floatformat:"2" }}</div>
 							Perfect
 						{% else %}
 							{{ team_player.get_kda|floatformat:"2" }}
