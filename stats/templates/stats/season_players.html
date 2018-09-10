@@ -105,7 +105,11 @@
 						{{ team_player.get_avg_assists|floatformat:"1" }}
 					</td>
 					<td>
-						{{ team_player.get_kda|floatformat:"2" }}
+						{% if team_player.get_kda == 1000000 %}
+							Perfect
+						{% else %}
+							{{ team_player.get_kda|floatformat:"2" }}
+						{% endif %}
 					</td>
 					<td>
 						{{ team_player.get_kill_participation|floatformat:"1" }}%

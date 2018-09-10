@@ -6,7 +6,7 @@ from django.db.models import Avg, Count, Sum, F, When, Q
 from riot_request import RiotRequester
 from .models import Player, TeamPlayer, Team, Season, Champion, Match, Week, Series, SeriesTeam, TeamMatch, MatchCaster, SeasonChampion, PlayerMatch, HypeVideo, Role, TeamRole, SeriesPlayer
 from .forms import TournamentCodeForm, InitializeMatchForm, CreateRosterForm
-from get_riot_object import ObjectNotFound, get_item, get_champion, get_match, get_all_items, get_match_timeline
+from get_riot_object import ObjectNotFound, get_item, get_champions, get_match, get_all_items, get_match_timeline
 from datetime import datetime
 import json
 
@@ -148,7 +148,7 @@ def team_player_role_detail(request, season_id, team_id, player_id, role_id):
 
 def champion_detail(request, champion_id):
     try:
-        champion = get_champion(champion_id)
+        champion = get_champions()
     except ObjectNotFound:
         raise Http404("Champion does not exist")
     context = {

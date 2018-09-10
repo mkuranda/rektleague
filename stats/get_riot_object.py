@@ -3,7 +3,7 @@ import urllib, shutil
 import math
 from .models import Item, Champion, Match, Team, TeamMatch, Role, TeamPlayer, PlayerMatch, Week, Series, SeriesTeam, TeamMatchBan, SeriesPlayer
 from .models import PlayerMatchKill, PlayerMatchAssist, PlayerMatchWardPlace, PlayerMatchWardKill, PlayerMatchBuildingKill, PlayerMatchBuildingAssist, PlayerMatchEliteMonsterKill, PlayerMatchTimeline
-from .models import Lane, Ward, Building, EliteMonster
+from .models import Lane, Ward, Building, EliteMonster, Season, SeasonChampion
 
 class ObjectNotFound(Exception) :
     """Raised when we can't find an object in db or from riot API"""
@@ -99,6 +99,35 @@ def get_item(riot_id):
         item.save()
     return item
 
+def get_champions():
+    url = 'http://ddragon.leagueoflegends.com/cdn/8.17.1/data/en_US/champion.json'
+    r = requests.get(url).json()
+    for champion_name in r['data']:
+        champion_data = r['data'][champion_name]
+        name = champion_data['name']
+        key = champion_data['key']
+        title = champion_data['title']
+        try:
+            champion = Champion.objects.get(id=key)
+        except Champion.DoesNotExist:
+            champion = Champion.objects.create(id=key, name=name, title=title)
+        champion.name = name
+        champion.title = title
+	result = requests.get("http://ddragon.leagueoflegends.com/cdn/8.17.1/img/champion/" + champion_data["image"]["full"], stream=True)
+        with open("media/stats/champion/icon/" + champion_data["image"]["full"], 'wb') as f:
+            result.raw.decode_content = True
+            shutil.copyfileobj(result.raw, f)
+	champion.icon = "stats/champion/icon/" + champion_data["image"]["full"]
+        champion.save()
+        seasons = Season.objects.all()
+        for season in seasons:
+            try:
+                champion_season = SeasonChampion.objects.get(season=season, champion=champion)
+            except SeasonChampion.DoesNotExist:
+                champion_season = SeasonChampion.objects.create(season=season, champion=champion)
+                champion_season.save()
+    return r
+
 def get_champion(riot_id):
     champion_exists = True
     try:
@@ -117,7 +146,7 @@ def get_champion(riot_id):
             champion = Champion.objects.create(id=riot_id)
         champion.name = champion_data["name"]
         champion.title = champion_data["title"]
-	r = requests.get("http://ddragon.leagueoflegends.com/cdn/8.6.1/img/champion/" + champion_data["image"]["full"], stream=True)
+	r = requests.get("http://ddragon.leagueoflegends.com/cdn/8.17.1/img/champion/" + champion_data["image"]["full"], stream=True)
         if r.status_code == 200:
             with open("media/stats/champion/icon/" + champion_data["image"]["full"], 'wb') as f:
                 r.raw.decode_content = True

@@ -401,6 +401,8 @@ class TeamPlayer(models.Model):
 
         if deaths == None:
             return 0
+        if deaths == 0:
+            return 1000000
         return (float(kills) + assists) / deaths
 
     def get_cs_per_game(self):
