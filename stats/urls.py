@@ -8,6 +8,7 @@ urlpatterns = [
     url(r'^about/', views.about, name='about'),
     url(r'^faq/', views.faq, name='faq'),
     url(r'^get_items/', views.get_items, name='get_items'),
+    url(r'^create_roster_error/(?P<series_id>[0-9]+)/$', views.create_roster_error, name='create_roster_error'),
     url(r'^season/(?P<season_id>[0-9]+)/$', views.season_detail, name='season'),
     url(r'^season/(?P<season_id>[0-9]+)/players/$', views.season_players_detail, name='season_players'),
     url(r'^season/(?P<season_id>[0-9]+)/teams/$', views.season_teams_detail, name='season_teams'),

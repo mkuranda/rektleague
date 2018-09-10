@@ -10,6 +10,16 @@ from get_riot_object import ObjectNotFound, get_item, get_champions, get_match, 
 from datetime import datetime
 import json
 
+def create_roster_error(request, series_id):
+    latest_season = Season.objects.latest('id')
+    series = get_object_or_404(Series, id=series_id)
+    context = {
+        'season': latest_season,
+        'series': series
+    }
+    return render(request, 'stats/create_roster_error.html', context)
+
+
 def about(request):
     latest_season = Season.objects.latest('id')
     context = {
@@ -235,7 +245,7 @@ def create_roster(request, season_id, series_id, team_id):
             s.add(sub)
 
             if failed:
-                return HttpResponseRedirect('/create_roster_error/')
+                return HttpResponseRedirect('/create_roster_error/' + str(series_id) + '/')
             else:
                 team = Team.objects.get(id=team_id)
                 series = Series.objects.get(id=series_id)
