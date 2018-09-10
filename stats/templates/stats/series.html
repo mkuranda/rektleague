@@ -439,8 +439,15 @@ function ReplaceMatchContent(id, content) {
 		 '</tr>' +
 		{% endif %}
 		{% if request.user == series.get_team_1.user %}
-
-		{% if series.get_team_1_roster_submitted and season.id > 2 and not series.past_deadline %}
+		{% if season.id > 2 and not series.get_team_1_roster_submitted and not series.past_deadline %}
+		'<table class="centercontent" width="70%">' +
+		'<tr>' +
+		  '<td class="centercontent" style="padding: 20px; margin-bottom: 20px; font-size: 24;" width="100%">' +
+		'<a href="create_roster/{{ series.get_team_1.id }}/"><b>Create Roster for {{ series.get_team_1.name }}</b></a>' +
+		  '</td>' +
+		 '</tr>' +
+		'</table>' +
+		{% elif series.get_team_1_roster_submitted and season.id > 2 and not series.past_deadline %}
 		'<table class="centercontent" width="50%">' +
 		 '<tr class="centercontent">' +
 		  '<td style="padding-bottom: 40px">' +
@@ -495,7 +502,15 @@ function ReplaceMatchContent(id, content) {
 		{% endif %}
 		{% endif %}
 		{% if request.user == series.get_team_2.user %}
-		{% if series.get_team_2_roster_submitted and season.id > 2 and not series.past_deadline %}
+		{% if season.id > 2 and not series.get_team_2_roster_submitted and not series.past_deadline %}
+		'<table class="centercontent" width="70%">' +
+		'<tr>' +
+		  '<td class="centercontent" style="padding: 20px; margin-bottom: 20px; font-size: 24;" width="100%">' +
+		'<a href="create_roster/{{ series.get_team_2.id }}/"><b>Create Roster for {{ series.get_team_2.name }}</b></a>' +
+		  '</td>' +
+		 '</tr>' +
+		'</table>' +
+		{% elif series.get_team_2_roster_submitted and season.id > 2 and not series.past_deadline %}
 		'<table class="centercontent" width="50%">' +
 		 '<tr class="centercontent">' +
 		  '<td style="padding-bottom: 40px">' +

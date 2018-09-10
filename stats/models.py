@@ -150,7 +150,7 @@ class Series(models.Model):
         return self.week.date - datetime.timedelta(days=5)
 
     def past_deadline(self):
-        now = datetime.datetime.now(timezone.utc)
+        now = datetime.datetime.now()
         if self.deadline() is not None and self.deadline() < now:
             return True
         return False
