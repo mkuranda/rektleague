@@ -222,7 +222,7 @@ def get_match_timeline(match_id):
         timestamp = frame['timestamp']
         for participant in participants:
             a = participant.participant_id
-            data = frame['participantFrames'][str(participant.participant_id + 1)]
+            data = frame['participantFrames'][str(participant.participant_id)]
             timeline = PlayerMatchTimeline.objects.create(playermatch=participant, timestamp = timestamp)
             timeline.level = data['level']
             timeline.gold = data['currentGold']
@@ -362,9 +362,9 @@ def get_match(match_id):
         try:
             player_match = PlayerMatch.objects.get(player=series_player.player, team=series_player.team, match=match)
             player_match.champion=champion
-            player_match.participant_id=participant_data['participantId']
         except PlayerMatch.DoesNotExist:
             player_match = PlayerMatch.objects.create(player=series_player.player, team=series_player.team, match=match, champion=champion)
+        player_match.participant_id=participant_data['participantId']
         player_match.role = roles[i % 5]
         i=i+1
         player_match.kills = participant_stats['kills']

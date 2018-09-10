@@ -476,6 +476,14 @@ class TeamPlayer(models.Model):
         else:
             return PlayerMatch.objects.filter(player=self.player, team=self.team, role=self.role)
 
+    def get_cs_diff_at_15(self):
+        player_matches = self.get_player_matches()
+        result = 0
+        for playermatch in player_matches:
+            timeline = PlayerMatchTimeline.objects.filter(playermatch=playermatch, timestamp__lt=910000).values('timestamp', 'minions_killed', 'monsters_killed', 'playermatch').annotate(cs=F('minions_killed')+F('monsters_killed')).order_by('-timestamp')[0]
+            enemy_timeline = PlayerMatchTimeline.objects.filter(playermatch__match=playermatch.match, playermatch__role=playermatch.role, timestamp__lt=910000).exclude(playermatch__team=playermatch.team).values('timestamp', 'minions_killed', 'monsters_killed', 'playermatch').annotate(cs=F('minions_killed')+F('monsters_killed')).order_by('-timestamp')[0]
+            result = result + timeline['cs'] - enemy_timeline['cs']
+        return 1.0 * result / player_matches.count()
 
 class TeamMatch(models.Model):
     team = models.ForeignKey(Team)

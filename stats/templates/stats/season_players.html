@@ -73,6 +73,11 @@
 						Participation
 					</th>
 					<th class="sortableheader" width="10%">
+						CS Diff
+						</br>
+						@ 15
+					</th>
+					<th class="sortableheader" width="10%">
 						{% if season.id > 2 %}
 						CS/Min
 						{% else %}
@@ -118,6 +123,10 @@
 					</td>
 					<td>
 						{{ team_player.get_kill_participation|floatformat:"1" }}%
+					</td>
+					<td>
+						{% if team_player.get_cs_diff_at_15 > 0 %}
+						+{% endif %}{{ team_player.get_cs_diff_at_15|floatformat:"1" }}
 					</td>
 					<td>
 						{% if season.id > 2 %}
