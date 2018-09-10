@@ -477,6 +477,8 @@ class TeamPlayer(models.Model):
             return PlayerMatch.objects.filter(player=self.player, team=self.team, role=self.role)
 
     def get_cs_diff_at_15(self):
+        if self.team.season.id < 3:
+            return 0
         player_matches = self.get_player_matches()
         result = 0
         for playermatch in player_matches:
