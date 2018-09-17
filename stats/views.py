@@ -3,12 +3,14 @@ from django.contrib.auth import authenticate, login
 from django.http import HttpResponse, HttpResponseRedirect, Http404
 from django.template import loader
 from django.db.models import Avg, Count, Sum, F, When, Q
+from django.utils.timezone import utc
 from riot_request import RiotRequester
 from .models import Player, TeamPlayer, Team, Season, Champion, Match, Week, Series, SeriesTeam, TeamMatch, MatchCaster, SeasonChampion, PlayerMatch, HypeVideo, Role, TeamRole, SeriesPlayer
 from .forms import TournamentCodeForm, InitializeMatchForm, CreateRosterForm
 from get_riot_object import ObjectNotFound, get_item, get_champions, get_match, get_all_items, get_match_timeline
 from datetime import datetime
 import json
+import pytz
 
 def create_roster_error(request, series_id):
     latest_season = Season.objects.latest('id')
@@ -210,7 +212,7 @@ def series_detail(request, season_id, series_id):
         'num_match_links': num_match_links,
         'team1': team1,
         'team2': team2,
-        'now': datetime.now()
+        'now': datetime.utcnow().replace(tzinfo=utc)
     }
     return render(request, 'stats/series.html', context)
 
