@@ -43,6 +43,11 @@ class Season(models.Model):
     def get_winner(self):
         return Team.objects.filter(season=self, season_win=True)
 
+    def next_week(self):
+        if self.id > 2:
+            return Week.objects.filter(season=self, date__gte=datetime.datetime.now())
+        return self.get_weeks()
+
 
 class Week(models.Model):
     season = models.ForeignKey(Season)

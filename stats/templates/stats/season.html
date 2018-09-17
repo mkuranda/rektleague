@@ -66,7 +66,7 @@
 						<div style="width: 80%; height: 300px; margin: auto;" id="carousel" class="carousel slide" data-type="single" data-interval="0">
 							<div class="carousel-inner" >
 									{% for week in season.get_weeks_desc %}
-									{% if forloop.counter == 1 %}
+									{% if forloop.counter == season.next_week.first.number %}
 								<div class="item active">
 									{% else %}
 								<div class="item">
