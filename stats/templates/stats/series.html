@@ -259,7 +259,7 @@ function ReplaceMatchContent(id, content) {
 		'<td>{{ playermatch.neutral_minions_killed_enemy_jungle }}</td>' +
 		{% endfor %}
 		{% else %}
-		 {% if match.tournament_code %}
+		 {% if match.tournament_code or match.riot_id %}
 		'<table class="centercontent" width="80%">' +
 		 '<tr>' +
 		  '<td>' +

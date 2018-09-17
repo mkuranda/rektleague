@@ -10,7 +10,6 @@ from .forms import TournamentCodeForm, InitializeMatchForm, CreateRosterForm
 from get_riot_object import ObjectNotFound, get_item, get_champions, get_match, get_all_items, get_match_timeline
 from datetime import datetime
 import json
-import pytz
 
 def create_roster_error(request, series_id):
     latest_season = Season.objects.latest('id')
