@@ -156,7 +156,7 @@ class Series(models.Model):
 
     def past_deadline(self):
         now = datetime.datetime.now()
-        if self.deadline() is not None and self.deadline() < now:
+        if self.deadline() is not None and self.deadline() + datetime.timedelta(hours=4) < now:
             return True
         return False
 
