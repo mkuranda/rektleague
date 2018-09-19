@@ -44,9 +44,6 @@ def faq(request):
 
 def season_detail(request, season_id):
     latest_season = Season.objects.latest('id')
-    context = {
-        'latest_season': latest_season
-    }
     season = get_object_or_404(Season, id=season_id)
     teams = Team.objects.filter(season=season_id)
     sorted_teams = sorted(teams, key= lambda t: t.get_sort_record())
