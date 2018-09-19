@@ -96,13 +96,13 @@
 																<img src="{{ series.get_team_1.icon.url }}" height="50" width="50">
 															</div>
 															<div class="linktablecell" style="width: 30%; padding-left:10px; padding-right:10px;">
-																{{ series.get_team_1.name }}
+																{{ series.get_team_1.name }} ({{ series.get_series_team_1.get_record_before }})
 															</div>
-															<div class="linktablecell" style="width: 10%;">
-																{{ series.get_team_1_wins }} - {{ series.get_team_2_wins }}
+															<div class="linktablecell" style="width: 10%; font-size:20;">
+																<b>{{ series.get_team_1_wins }} - {{ series.get_team_2_wins }}
 															</div>
 															<div class="linktablecell" style="width: 30%; padding-left:10px; padding-right:10px;">
-																{{ series.get_team_2.name }}
+																{{ series.get_team_2.name }} ({{ series.get_series_team_2.get_record_before }})
 															</div>
 															<div class="linktablecell" style="width: 10%;">
 																<img src="{{ series.get_team_2.icon.url }}" height="50" width="50">

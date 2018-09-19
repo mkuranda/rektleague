@@ -116,6 +116,14 @@ class Series(models.Model):
     splash = models.ImageField(upload_to='stats/champion/matchup_splashes', default='')
     date = models.DateTimeField(null=True, blank=True)
 
+    def get_series_team_1(self):
+	teamSeries = SeriesTeam.objects.filter(series=self)
+	return teamSeries[0]
+
+    def get_series_team_2(self):
+	teamSeries = SeriesTeam.objects.filter(series=self)
+	return teamSeries[1]
+
     def get_team_1(self):
 	teamSeries = SeriesTeam.objects.filter(series=self)
 	return teamSeries[0].team
@@ -271,7 +279,13 @@ class SeriesTeam(models.Model):
         unique_together = (("team", "series"))
     
     def get_wins(self):
-	return TeamMatch.objects.filter(team=self.team, win=True, match__series=series).exclude(match__duration=0).count()
+	return TeamMatch.objects.filter(team=self.team, win=True, match__series=series).exclude(match__duration=0).count()    
+    
+    def get_record_before(self):
+	wins = TeamMatch.objects.filter(team=self.team, win=True, match__series__week__regular=True, match__series__week__number__lt=self.series.week.number).count()
+	losses = TeamMatch.objects.filter(team=self.team, win=False, match__series__week__regular=True, match__series__week__number__lt=self.series.week.number).exclude(match__duration=0).count()
+	return str(wins) + "-" + str(losses)
+
 
 
 class PlayerRole(models.Model):
