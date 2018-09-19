@@ -52,19 +52,19 @@
 					<th class="sortableheader" width="10%">
 						Position	
 					</th>
-					<th class="sortableheader" width="10%">
+					<th class="sortableheader" width="8%">
 						Avg<br>
 						Kills
 					</th>
-					<th class="sortableheader" width="10%">
+					<th class="sortableheader" width="8%">
 						Avg<br>
 						Deaths
 					</th>
-					<th class="sortableheader" width="10%">
+					<th class="sortableheader" width="8%">
 						Avg<br>
 						Assists
 					</th>
-					<th class="sortableheader" width="10%">
+					<th class="sortableheader" width="8%">
 						KDA
 					</th>
 					<th class="sortableheader" width="10%">
@@ -77,7 +77,7 @@
 						</br>
 						@ 15
 					</th>
-					<th class="sortableheader" width="10%">
+					<th class="sortableheader" width="8%">
 						{% if season.id > 2 %}
 						CS/Min
 						{% else %}
@@ -86,6 +86,9 @@
 					</th>
 					<th class="sortableheader" width="10%">
 						Team Damage %
+					</th>
+					<th class="sortableheader" width="10%">
+						Vision Score
 					</th>
 				</tr>
 				</thead>
@@ -137,6 +140,9 @@
 					</td>
 					<td>
 						{{ team_player.get_percent_team_damage|floatformat:"1" }}%
+					</td>
+					<td>
+						{{ team_player.get_avg_vision|floatformat:"1" }}
 					</td>
 
 				</tr>

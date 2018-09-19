@@ -381,6 +381,15 @@ class TeamPlayer(models.Model):
     def get_team(self):
         return Team.objects.filter(pk=self.team)
 
+    def get_avg_vision(self):
+        if self.role.isFill == True:
+            avg_vision = Match.objects.select_related().filter(playermatch__player=self.player, teammatch__team=self.team).aggregate(avg_vision=Avg('playermatch__vision_score'))['avg_vision']
+        else: 
+            avg_vision = Match.objects.select_related().filter(playermatch__player=self.player, teammatch__team=self.team, playermatch__role=self.role).aggregate(avg_vision=Avg('playermatch__vision_score'))['avg_vision']
+        if avg_vision == None:
+            return 0
+        return avg_vision
+
     def get_avg_kills(self):
         if self.role.isFill == True:
             avg_kills = Match.objects.select_related().filter(playermatch__player=self.player, teammatch__team=self.team).aggregate(avg_kills=Avg('playermatch__kills'))['avg_kills']
