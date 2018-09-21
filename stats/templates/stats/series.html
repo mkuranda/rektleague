@@ -126,6 +126,16 @@ function ReplaceMatchContent(id, content) {
 		 '</tr>' +
 		'</table>' +
 		'<table class="centercontent" width="100%">' +
+		'<tr>' +
+		  '<th class="centertableheader">' +
+		   'Total Team Gold' +
+		  '</th>' +
+		 '</tr>' +
+		 '<tr class="centercontent">' +
+		  '<td>' +
+		   '<div id="goldGraph{{ match.game_num }}" style="height: 370px; width: 100%; margin: auto; margin-bottom:80px;"></div>' +
+		  '</td>' +
+		 '</tr>' +
 		 '<tr>' +
 		  '<th class="centertableheader">Full Statistics</th>' +
 		 '</tr>' +
@@ -259,7 +269,7 @@ function ReplaceMatchContent(id, content) {
 		'<td>{{ playermatch.neutral_minions_killed_enemy_jungle }}</td>' +
 		{% endfor %}
 		{% else %}
-		 {% if match.tournament_code %}
+		 {% if match.tournament_code or match.riot_id %}
 		'<table class="centercontent" width="80%">' +
 		 '<tr>' +
 		  '<td>' +
@@ -572,9 +582,89 @@ function ReplaceMatchContent(id, content) {
                 "<a href=\"/stats/season/{{ season.id }}/series/{{ series.id }}/load_match/\">Load Match</a>");
 
 	container.innerHTML = contentMap.get(content);
+       {% for match in matches %}
+	if (content == "{{ match.game_num }}") {
+       var chart{{ match.game_num }} = new CanvasJS.Chart("goldGraph{{ match.game_num }}", {
+	animationEnabled: true,
+	backgroundColor: "#212121",
+	title: {
+		fontColor: "#727272",
+		fontFamily: 'Noto Sans',
+		fontSize: 24,
+	},
+	axisX: {
+		minimum: 0,
+		maximum: {{ match.get_max_timeline_minute }},
+		labelFontColor: "#727272",
+	},
+	axisY: {
+		labelFontColor: "#727272",
+	},
+	data: [{
+		labelFontColor: "#727272",
+		fillOpacity: "0.3",
+		name: "views",
+		type: "area",
+		dataPoints: [
+			{% for timeline in match.get_blue_team.get_timelines %}
+			{ x: {{ timeline.minute }}, y: {{ timeline.sumGold }}, label: "{{ timeline.minute }}:00" },
+                        {% endfor %}
+		]
+	},{
+		labelFontColor: "#727272",
+		fillOpacity: "0.3",
+		name: "views",
+		type: "area",
+		dataPoints: [
+			{% for timeline in match.get_red_team.get_timelines %}
+			{ x: {{ timeline.minute }}, y: {{ timeline.sumGold }}, label: "{{ timeline.minute }}:00" },
+                        {% endfor %}
+		]
+	}
+	]
+        });
+
+        chart{{ match.game_num }}.render();
+											  
+	var diffChart{{ match.game_num }} = new CanvasJS.Chart("diffGoldGraph{{ match.game_num }}", {
+	animationEnabled: true,
+	backgroundColor: "#212121",
+	title: {
+		fontColor: "#727272",
+		fontFamily: 'Noto Sans',
+		fontSize: 24,
+	},
+	axisX: {
+		minimum: 0,
+		maximum: {{ match.get_max_timeline_minute }},
+		labelFontColor: "#727272",
+	},
+	axisY: {
+		labelFontColor: "#727272",
+	},
+	data: [{
+		labelFontColor: "#727272",
+		fillOpacity: "0.3",
+		name: "views",
+		type: "area",
+		dataPoints: [
+			{% for timeline in match.get_timeline_diffs %}
+			{ x: {{ timeline.minute }}, y: {{ timeline.sumGold }}, label: "{{ timeline.minute }}:00" },
+                        {% endfor %}
+		]
+	}
+	]
+        });
+
+        diffChart{{ match.game_num }}.render();
+
+	}
+        {% endfor %}
 }
 window.onload = function() {
 	ReplaceMatchContent('pagecontent','Overview');
+											  
+
 }
 //--></script>
 
@@ -582,7 +672,7 @@ window.onload = function() {
 
 <div style="width: 75%; text-align: center; background-color: #303030; padding: 20px; margin: 0 auto;">
 	<h1 style="font-size: 48">Week {{ series.week.number }}</h1>
-	<h1 style="font-size: 48">{% for seriesteam in series.seriesteam_set.all %}<a href="/stats/season/{{ season.id }}/team/{{ seriesteam.team.id }}/">{{ seriesteam.team.name }}</a>{% if forloop.counter == 1 %} vs {% endif %}{% endfor %}</h1>
+	<h1 style="font-size: 48">{% for seriesteam in series.seriesteam_set.all %}<a href="/stats/season/{{ season.id }}/team/{{ seriesteam.team.id }}/">{{ seriesteam.team.name }} ({{ seriesteam.get_record_before }})</a>{% if forloop.counter == 1 %} vs {% endif %}{% endfor %}</h1>
 	{% if series.date %}
 	<div style="font-size: 36; padding-top: 36px;">{{ series.date|date:"g:i a"}}</div>
 	<div style="font-size: 36; padding-bottom: 36px;">{{ series.date|date:"F j, Y"}}</div>
@@ -624,5 +714,6 @@ window.onload = function() {
 	</tr>
 
 </table>
+                       <script type="text/javascript" src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>
 {% endblock %}
 

@@ -66,7 +66,7 @@
 						<div style="width: 80%; height: 300px; margin: auto;" id="carousel" class="carousel slide" data-type="single" data-interval="0">
 							<div class="carousel-inner" >
 									{% for week in season.get_weeks_desc %}
-									{% if forloop.counter == 1 %}
+									{% if forloop.counter == season.next_week.first.number %}
 								<div class="item active">
 									{% else %}
 								<div class="item">
@@ -96,13 +96,13 @@
 																<img src="{{ series.get_team_1.icon.url }}" height="50" width="50">
 															</div>
 															<div class="linktablecell" style="width: 30%; padding-left:10px; padding-right:10px;">
-																{{ series.get_team_1.name }}
+																{{ series.get_team_1.name }} ({{ series.get_series_team_1.get_record_before }})
 															</div>
-															<div class="linktablecell" style="width: 10%;">
-																{{ series.get_team_1_wins }} - {{ series.get_team_2_wins }}
+															<div class="linktablecell" style="width: 10%; font-size:20;">
+																<b>{{ series.get_team_1_wins }} - {{ series.get_team_2_wins }}
 															</div>
 															<div class="linktablecell" style="width: 30%; padding-left:10px; padding-right:10px;">
-																{{ series.get_team_2.name }}
+																{{ series.get_team_2.name }} ({{ series.get_series_team_2.get_record_before }})
 															</div>
 															<div class="linktablecell" style="width: 10%;">
 																<img src="{{ series.get_team_2.icon.url }}" height="50" width="50">

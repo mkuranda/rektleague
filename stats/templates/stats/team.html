@@ -4,6 +4,223 @@
 
 {% block content %}
 
+<script>
+window.onload = function () {
+
+var chart = new CanvasJS.Chart("killsByTime", {
+	animationEnabled: true,
+	backgroundColor: "#212121",
+	title: {
+		fontColor: "#727272",
+		fontFamily: 'Noto Sans',
+		fontSize: 24,
+	},
+	axisX: {
+		minimum: 0,
+		maximum: {{ team.get_max_timeline_minute }},
+		labelFontColor: "#727272",
+	},
+	axisY: {
+		labelFontColor: "#727272",
+	},
+	data: [{
+		labelFontColor: "#727272",
+		fillOpacity: "0.3",
+		name: "views",
+		type: "area",
+		dataPoints: [
+			{% for timeline in kill_timelines %}
+			{ x: {{ timeline.minute }}, y: {{ timeline.kills }}, label: "{{ timeline.minute }}:00" },
+                        {% endfor %}
+		]
+	},{
+		labelFontColor: "#727272",
+		fillOpacity: "0.3",
+		name: "views",
+		type: "area",
+		dataPoints: [
+			{% for timeline in killed_timelines %}
+			{ x: {{ timeline.minute }}, y: {{ timeline.kills }}, label: "{{ timeline.minute }}:00" },
+                        {% endfor %}
+		]
+	},{
+		labelFontColor: "#727272",
+		fillOpacity: "0",
+		name: "views",
+		type: "area",
+		dataPoints: [
+			{% for timeline in overall_timelines %}
+			{ x: {{ timeline.minute }}, y: {{ timeline.kills }}, label: "{{ timeline.minute }}:00" },
+                        {% endfor %}
+		]
+	}
+
+
+	]
+});
+chart.render();
+
+var chart2 = new CanvasJS.Chart("buildingKillsByTime", {
+	animationEnabled: true,
+	backgroundColor: "#212121",
+	title: {
+		fontColor: "#727272",
+		fontFamily: 'Noto Sans',
+		fontSize: 24,
+	},
+	axisX: {
+		minimum: 0,
+		maximum: {{ team.get_max_timeline_minute }},
+		labelFontColor: "#727272",
+	},
+	axisY: {
+		labelFontColor: "#727272",
+	},
+	data: [{
+		labelFontColor: "#727272",
+		fillOpacity: "0.3",
+		name: "views",
+		type: "area",
+		dataPoints: [
+			{% for timeline in kill_timelines %}
+			{ x: {{ timeline.minute }}, y: {{ timeline.building_kills }}, label: "{{ timeline.minute }}:00" },
+                        {% endfor %}
+		]
+	},{
+		labelFontColor: "#727272",
+		fillOpacity: "0.3",
+		name: "views",
+		type: "area",
+		dataPoints: [
+			{% for timeline in killed_timelines %}
+			{ x: {{ timeline.minute }}, y: {{ timeline.building_kills }}, label: "{{ timeline.minute }}:00" },
+                        {% endfor %}
+		]
+	},{
+		labelFontColor: "#727272",
+		fillOpacity: "0",
+		name: "views",
+		type: "area",
+		dataPoints: [
+			{% for timeline in overall_timelines %}
+			{ x: {{ timeline.minute }}, y: {{ timeline.building_kills }}, label: "{{ timeline.minute }}:00" },
+                        {% endfor %}
+		]
+	}
+
+
+	]
+});
+chart2.render();
+
+var chart3 = new CanvasJS.Chart("wardsPlacedByTime", {
+	animationEnabled: true,
+	backgroundColor: "#212121",
+	title: {
+		fontColor: "#727272",
+		fontFamily: 'Noto Sans',
+		fontSize: 24,
+	},
+	axisX: {
+		minimum: 0,
+		maximum: {{ team.get_max_timeline_minute }},
+		labelFontColor: "#727272",
+	},
+	axisY: {
+		labelFontColor: "#727272",
+	},
+	data: [{
+		labelFontColor: "#727272",
+		fillOpacity: "0.3",
+		name: "views",
+		type: "area",
+		dataPoints: [
+			{% for timeline in kill_timelines %}
+			{ x: {{ timeline.minute }}, y: {{ timeline.wards_placed }}, label: "{{ timeline.minute }}:00" },
+                        {% endfor %}
+		]
+	},{
+		labelFontColor: "#727272",
+		fillOpacity: "0.3",
+		name: "views",
+		type: "area",
+		dataPoints: [
+			{% for timeline in killed_timelines %}
+			{ x: {{ timeline.minute }}, y: {{ timeline.wards_placed }}, label: "{{ timeline.minute }}:00" },
+                        {% endfor %}
+		]
+	},{
+		labelFontColor: "#727272",
+		fillOpacity: "0",
+		name: "views",
+		type: "area",
+		dataPoints: [
+			{% for timeline in overall_timelines %}
+			{ x: {{ timeline.minute }}, y: {{ timeline.wards_placed }}, label: "{{ timeline.minute }}:00" },
+                        {% endfor %}
+		]
+	}
+
+
+	]
+});
+chart3.render();
+
+var chart4 = new CanvasJS.Chart("wardsKilledByTime", {
+	animationEnabled: true,
+	backgroundColor: "#212121",
+	title: {
+		fontColor: "#727272",
+		fontFamily: 'Noto Sans',
+		fontSize: 24,
+	},
+	axisX: {
+		minimum: 0,
+		maximum: {{ team.get_max_timeline_minute }},
+		labelFontColor: "#727272",
+	},
+	axisY: {
+		labelFontColor: "#727272",
+	},
+	data: [{
+		labelFontColor: "#727272",
+		fillOpacity: "0.3",
+		name: "views",
+		type: "area",
+		dataPoints: [
+			{% for timeline in kill_timelines %}
+			{ x: {{ timeline.minute }}, y: {{ timeline.wards_killed }}, label: "{{ timeline.minute }}:00" },
+                        {% endfor %}
+		]
+	},{
+		labelFontColor: "#727272",
+		fillOpacity: "0.3",
+		name: "views",
+		type: "area",
+		dataPoints: [
+			{% for timeline in killed_timelines %}
+			{ x: {{ timeline.minute }}, y: {{ timeline.wards_killed }}, label: "{{ timeline.minute }}:00" },
+                        {% endfor %}
+		]
+	},{
+		labelFontColor: "#727272",
+		fillOpacity: "0",
+		name: "views",
+		type: "area",
+		dataPoints: [
+			{% for timeline in overall_timelines %}
+			{ x: {{ timeline.minute }}, y: {{ timeline.wards_killed }}, label: "{{ timeline.minute }}:00" },
+                        {% endfor %}
+		]
+	}
+
+
+	]
+});
+chart4.render();
+}
+</script>
+
 
 <a href="/season/{{ team.season.id }}/team/{{ team.id }}/">
 	<img style="width: 100%;" src="{{ team.splash.url }}">
@@ -154,6 +371,157 @@
 						</table>
 					</td>
 				</tr>
+				<tr class="centercontent">
+					<td></td>
+				</tr>
+				<tr>
+					<th class="centertableheader">
+						Kills
+					</th>
+				</tr>
+				<tr class="centercontent">
+					<td>
+						<table class="centercontent" width="100%">
+							<tr>
+								<td>
+									<table width="10%" class="centercontent" style="margin-bottom:20px;">
+										<tr>
+											<td style="font-size: 14; color: #4f81bc; width: 20%;">
+												<b>Team {{ team.name }}</b>
+											</td>
+										</tr>
+										<tr>
+											<td style="font-size: 14; color: #c0504e; width: 10%">
+												<b>Opposing Team</b>
+											</td>
+										</tr>
+										<tr>
+											<td style="font-size: 14; color: #9bbb58; width: 20%">
+												<b>Season Average</b>
+											</td>
+										</tr>
+									</table>
+								</td>
+								<td width="90%">
+						<div id="killsByTime" style="height: 370px; width: 100%; margin: auto; margin-bottom:80px;"></div>
+					</td>
+
+							</tr>
+						</table>
+					</td>
+
+				</tr>
+
+				<tr>
+					<th class="centertableheader">
+						Building Kills
+					</th>
+				</tr>
+				<tr class="centercontent">
+					<td>
+						<table class="centercontent" width="100%">
+							<tr>
+								<td>
+									<table width="10%" class="centercontent" style="margin-bottom:20px;">
+										<tr>
+											<td style="font-size: 14; color: #4f81bc; width: 20%;">
+												<b>Team {{ team.name }}</b>
+											</td>
+										</tr>
+										<tr>
+											<td style="font-size: 14; color: #c0504e; width: 10%">
+												<b>Opposing Team</b>
+											</td>
+										</tr>
+										<tr>
+											<td style="font-size: 14; color: #9bbb58; width: 20%">
+												<b>Season Average</b>
+											</td>
+										</tr>
+									</table>
+								</td>
+								<td width="90%">
+						<div id="buildingKillsByTime" style="height: 370px; width: 100%; margin: auto; margin-bottom:80px;"></div>
+					</td>
+
+							</tr>
+						</table>
+					</td>
+
+				</tr>
+				<tr>
+					<th class="centertableheader">
+						Wards Placed
+					</th>
+				</tr>
+				<tr class="centercontent">
+					<td>
+						<table class="centercontent" width="100%">
+							<tr>
+								<td>
+									<table width="10%" class="centercontent" style="margin-bottom:20px;">
+										<tr>
+											<td style="font-size: 14; color: #4f81bc; width: 20%;">
+												<b>Team {{ team.name }}</b>
+											</td>
+										</tr>
+										<tr>
+											<td style="font-size: 14; color: #c0504e; width: 10%">
+												<b>Opposing Team</b>
+											</td>
+										</tr>
+										<tr>
+											<td style="font-size: 14; color: #9bbb58; width: 20%">
+												<b>Season Average</b>
+											</td>
+										</tr>
+									</table>
+								</td>
+								<td width="90%">
+						<div id="wardsPlacedByTime" style="height: 370px; width: 100%; margin: auto; margin-bottom:80px;"></div>
+					</td>
+							</tr>
+						</table>
+					</td>
+
+				</tr>
+
+				<tr>
+					<th class="centertableheader">
+						Wards Killed
+					</th>
+				</tr>
+				<tr class="centercontent">
+					<td>
+						<table class="centercontent" width="100%">
+							<tr>
+								<td>
+									<table width="10%" class="centercontent" style="margin-bottom:20px;">
+										<tr>
+											<td style="font-size: 14; color: #4f81bc; width: 20%;">
+												<b>Team {{ team.name }}</b>
+											</td>
+										</tr>
+										<tr>
+											<td style="font-size: 14; color: #c0504e; width: 10%">
+												<b>Opposing Team</b>
+											</td>
+										</tr>
+										<tr>
+											<td style="font-size: 14; color: #9bbb58; width: 20%">
+												<b>Season Average</b>
+											</td>
+										</tr>
+									</table>
+								</td>
+								<td width="90%">
+									<div id="wardsKilledByTime" style="height: 370px; width: 100%; margin: auto; margin-bottom:80px;"></div>
+								</td>
+							</tr>
+						</table>
+					</td>
+
+				</tr>
 			</table>
 
 		</td>
@@ -161,4 +529,5 @@
 
 </table>
 
+<script type="text/javascript" src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>
 {% endblock %}
