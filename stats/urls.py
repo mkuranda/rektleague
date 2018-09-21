@@ -6,6 +6,7 @@ urlpatterns = [
     url(r'^$', views.index, name='index'),
     url(r'^news/', views.news, name='news'),
     url(r'^about/', views.about, name='about'),
+    url(r'^head_to_head/', views.head_to_head, name='head_to_head'),
     url(r'^faq/', views.faq, name='faq'),
     url(r'^get_items/', views.get_items, name='get_items'),
     url(r'^create_roster_error/(?P<series_id>[0-9]+)/$', views.create_roster_error, name='create_roster_error'),
