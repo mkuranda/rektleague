@@ -39,8 +39,8 @@ var chart = new CanvasJS.Chart("averageGoldVsLaneOpponent", {
 		name: "views",
 		type: "area",
 		dataPoints: [
-			{% for timeline in enemy_timelines %}
-			{ x: {{ timeline.minute }}, y: {{ timeline.avgGold|floatformat:"0" }}, label: "{{ timeline.minute }}:00" },
+			{% for timeline in timelines %}
+			{ x: {{ timeline.minute }}, y: {{ timeline.avgOppGold|floatformat:"0" }}, label: "{{ timeline.minute }}:00" },
                         {% endfor %}
 		]
 	}
@@ -48,6 +48,37 @@ var chart = new CanvasJS.Chart("averageGoldVsLaneOpponent", {
 	]
 });
 chart.render();
+
+var chart2 = new CanvasJS.Chart("goldDiffVsLaneOpponent", {
+	animationEnabled: true,
+	backgroundColor: "#212121",
+	title: {
+		fontColor: "#727272",
+		fontFamily: 'Noto Sans',
+		fontSize: 24,
+	},
+	axisX: {
+		minimum: 0,
+		maximum: {{ max_duration }},
+		labelFontColor: "#727272",
+	},
+	axisY: {
+		labelFontColor: "#727272",
+	},
+	data: [{
+		labelFontColor: "#727272",
+		fillOpacity: "0.3",
+		name: "views",
+		type: "area",
+		dataPoints: [
+			{% for timeline in timelines %}
+			{ x: {{ timeline.minute }}, y: {{ timeline.goldDiff|floatformat:"0" }}, label: "{{ timeline.minute }}:00" },
+                        {% endfor %}
+		]
+	}
+	]
+});
+chart2.render();
 
 }
 </script>
@@ -218,7 +249,7 @@ chart.render();
 			</table>
 		</td>
         </tr>
-	<tr>
+	<tr>		
 		<table class="centercontent" width="70%" style="margin-top: 80px;">
 			<tr class="centercontent">
 				<td></td>
@@ -231,7 +262,22 @@ chart.render();
 			<tr>
 				<td class="centercontent">
 					<div id="averageGoldVsLaneOpponent" style="height: 370px; width: 100%; margin: auto; margin-bottom:20px;"></div>
-					<script type="text/javascript" src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>
+				<td>
+			</tr>
+		</table>
+
+		<table class="centercontent" width="70%" style="margin-top: 80px;">
+			<tr class="centercontent">
+				<td></td>
+			</tr>
+			<tr>
+				<th class="centertableheader">
+					<p><b>Gold Difference vs Lane Opponent</b></p>
+				</th>
+			</tr>
+			<tr>
+				<td class="centercontent">
+					<div id="goldDiffVsLaneOpponent" style="height: 370px; width: 100%; margin: auto; margin-bottom:20px;"></div>
 				<td>
 			</tr>
 		</table>
@@ -240,5 +286,6 @@ chart.render();
 </table>
 
 
+<script type="text/javascript" src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>
 	
 {% endblock %}

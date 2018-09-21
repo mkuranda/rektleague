@@ -126,14 +126,24 @@ function ReplaceMatchContent(id, content) {
 		 '</tr>' +
 		'</table>' +
 		'<table class="centercontent" width="100%">' +
-		 '<tr>' +
+		'<tr>' +
 		  '<th class="centertableheader">' +
 		   'Total Team Gold' +
 		  '</th>' +
 		 '</tr>' +
 		 '<tr class="centercontent">' +
 		  '<td>' +
-		   '<div id="goldGraph{{ match.game_num }}" style="height: 370px; width: 100%; margin: auto; margin-bottom:20px;"></div>' +
+		   '<div id="goldGraph{{ match.game_num }}" style="height: 370px; width: 100%; margin: auto; margin-bottom:80px;"></div>' +
+		  '</td>' +
+		 '</tr>' +
+		 '<tr>' +
+		  '<th class="centertableheader">' +
+		   'Gold Difference over Time' +
+		  '</th>' +
+		 '</tr>' +
+		 '<tr class="centercontent">' +
+		  '<td>' +
+		   '<div id="diffGoldGraph{{ match.game_num }}" style="height: 370px; width: 100%; margin: auto; margin-bottom:80px;"></div>' +
 		  '</td>' +
 		 '</tr>' +
 		 '<tr>' +
@@ -625,6 +635,39 @@ function ReplaceMatchContent(id, content) {
         });
 
         chart{{ match.game_num }}.render();
+											  
+	var diffChart{{ match.game_num }} = new CanvasJS.Chart("diffGoldGraph{{ match.game_num }}", {
+	animationEnabled: true,
+	backgroundColor: "#212121",
+	title: {
+		fontColor: "#727272",
+		fontFamily: 'Noto Sans',
+		fontSize: 24,
+	},
+	axisX: {
+		minimum: 0,
+		maximum: {{ match.get_max_timeline_minute }},
+		labelFontColor: "#727272",
+	},
+	axisY: {
+		labelFontColor: "#727272",
+	},
+	data: [{
+		labelFontColor: "#727272",
+		fillOpacity: "0.3",
+		name: "views",
+		type: "area",
+		dataPoints: [
+			{% for timeline in match.get_timeline_diffs %}
+			{ x: {{ timeline.minute }}, y: {{ timeline.sumGold }}, label: "{{ timeline.minute }}:00" },
+                        {% endfor %}
+		]
+	}
+	]
+        });
+
+        diffChart{{ match.game_num }}.render();
+
 	}
         {% endfor %}
 }
