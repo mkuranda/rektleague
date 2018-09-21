@@ -194,7 +194,10 @@ class Match(models.Model):
 
     def get_max_timeline_minute(self):
         if self.series.week.season.id > 2:
-            return PlayerMatchTimeline.objects.filter(playermatch__match=self).annotate(minute=F('timestamp') / 1000 / 60).order_by('-minute')[0].minute
+            playermatchtimelines = PlayerMatchTimeline.objects.filter(playermatch__match=self).annotate(minute=F('timestamp') / 1000 / 60).order_by('-minute')
+            if playermatchtimelines:
+                return playermatchtimelines[0].minute
+            return 0
         else:
             return 0
 
@@ -516,10 +519,6 @@ class TeamPlayer(models.Model):
 
         timelines = timelines.values('minute').annotate(avgGold=Avg('totalGold'))
         return timelines
-
-#    def get_team_timelines(self):
-#        timelines
-
 
     def get_avg_vision(self):
         if self.role.isFill == True:
