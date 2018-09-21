@@ -8,9 +8,14 @@
 <link rel="stylesheet" type="text/css" href="slick/slick.css"/>
   <link rel="stylesheet" type="text/css" href="slick/slick-theme.css"/>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
-  <script type="text/javascript" src="https://bowercdn.net/c/jquery.tablesorter-2.1.4/js/jquery.tablesorter.js"></script> 
+  <script type="text/javascript" src="https://bowercdn.net/c/jquery.tablesorter-2.1.4/js/jquery.tablesorter.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1">
     <style>
+#defaultCountdown { width: 240px; height: 45px; }
+
+input {
+	color: black;
+}
 
 .navbar1 {
     
@@ -435,6 +440,7 @@ a:active {
 
 
     </style>
+
     <title>{% block title %}Rekt League{% endblock %}</title>
 
 
@@ -464,7 +470,6 @@ a:active {
 
   <button class="dropbtn"><span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span> MENU</button>
   <div class="dropdown-content">
-    <p><a href="/stats/news">News</a></p>
     <p><a href="/stats/season/3">Season 3</a></p>
     <p><a href="/stats/season/2">Season 2</a></p>
     <p><a href="/stats/season/1">Season 1</a></p>
@@ -509,8 +514,6 @@ a:active {
 </script>
 
 
-	<script type="text/javascript" src="{% static 'js/slick.min.js' %}"></script>
-
     <div id="content">
         {% block content %}{% endblock %}
     </div>
@@ -519,29 +522,31 @@ a:active {
 
     <div class="bottombar">
 
-	<div style="text-align:center; float: right; padding-top:38px;width:33%;">
+	<div style="text-align:center; float: right; padding-top:38px;width:25%;">
 		<p><b>Follow The Rekt League</b></p>
 		<a class="mediaicon" href="https://twitter.com/therektleague"><img style="padding:5px;" src="/media/stats/media_icons/twitter.png"></a>
 		<a class="mediaicon" href="https://twitch.tv/therektleague"><img style="padding:5px;" src="/media/stats/media_icons/twitch.png"></a>
 		<a class="mediaicon" href="https://www.youtube.com/channel/UC79qzlDqxImPG49FKiChe0Q"><img style="padding:5px;" src="/media/stats/media_icons/youtube.png"></a>
 		<a class="mediaicon" href="https://instagram.com/therektleague"><img style="padding:5px;" src="/media/stats/media_icons/instagram.png"></a>
 	</div>
-	<div style="text-align: center; float: right; padding-top:38px;width:33%;">
+	<div style="text-align: center; float: right; padding-top:38px;width:42%;">
 		<p><b>Contact Us</b></p>
 		<p><a style="color:#bf1f2f;" href="mailto:therektleague@gmail.com">therektleague@gmail.com</a></p>
     
 	</div>
 
-    <div style="text-align: center; float: right; padding-top:9px;width:33%;">
-    <p style="margin-bottom: -15px;"><b>Explore</b></p>
-    <hr style="width: 20%;margin-bottom: 2px;">
-    <a style="color:#ffffff;font-size:14px;" href="/stats/news">News</a><br>
-    <a style="color:#ffffff;font-size:14px;" href="/stats/season/2">Season 2</a><br>
-    <a style="color:#ffffff;font-size:14px;" href="/stats/season/1">Season 1</a><br>
-    <a style="color:#ffffff;font-size:14px;" href="/stats/about">About</a>
-    
-    
+    <div style="text-align: center; padding-top:9px;width:25%;">
+    	<p style="margin-bottom: -15px; width:129%;"><b>Explore</b></p>
+    	<hr style="width: 59%;margin-bottom: 2px; margin-left: 37%;">
+     	<div style="text-align: center; float: right; padding-top:7px;width:42%;">
+		<a style="color:#ffffff;font-size:14px;" href="/stats/season/3">Season 3</a><br>
+    		<a style="color:#ffffff;font-size:14px;" href="/stats/season/2">Season 2</a><br>
+    		<a style="color:#ffffff;font-size:14px;" href="/stats/season/1">Season 1</a><br>
+    	</div>
 
+     	<div style="text-align: center; float: right; padding-top:18px;width:15%;">
+    		<a style="color:#ffffff;font-size:14px;" href="/stats/about">About</a>
+     	</div>
     </div>
 
 </body>

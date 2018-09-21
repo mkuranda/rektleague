@@ -2,7 +2,7 @@
 
 {% block content %}
 
-<a class="imglink" href="/stats/season/{{ season.id }}/"><img style="width: 100%; margin-top:190px; margin-bottom: 90px;" src="/static/stats/season2.png"></a>
+<div width="60%" style="text-align: center"><a class="imglink" href="/stats/season/{{ season.id }}/"><img style="width: 55%; margin-left: auto; margin-right: auto; margin-top:220px; margin-bottom: 100px;" src="{{ season.splash.url }}"></a></div>
 
 <p> </p>
 
@@ -73,7 +73,16 @@
 						Participation
 					</th>
 					<th class="sortableheader" width="10%">
-						CS/Game	
+						CS Diff
+						</br>
+						@ 15
+					</th>
+					<th class="sortableheader" width="10%">
+						{% if season.id > 2 %}
+						CS/Min
+						{% else %}
+						CS/Game
+						{% endif %}
 					</th>
 					<th class="sortableheader" width="10%">
 						Team Damage %
@@ -85,7 +94,7 @@
 				{% if team_player.get_player_matches.count > 0 %}
 				<tr class="alternating-back">
 					<td>
-						{{ team_player.player.name }}
+						<a href="/stats/season/{{ season.id }}/team/{{ team_player.team.id }}/player/{{ team_player.player.id }}/role/{{ team_player.role.id }}/">{{ team_player.player.name }}</a>
 					</td>
 					<td>
 						<div style="position: absolute; opacity: 0.0;">{{ team_player.team.id }}</div>
@@ -105,13 +114,26 @@
 						{{ team_player.get_avg_assists|floatformat:"1" }}
 					</td>
 					<td>
-						{{ team_player.get_kda|floatformat:"2" }}
+						{% if team_player.get_kda == 1000000 %}
+							<div style="position: absolute; opacity: 0.0;">{{ team_player.get_kda|floatformat:"2" }}</div>
+							Perfect
+						{% else %}
+							{{ team_player.get_kda|floatformat:"2" }}
+						{% endif %}
 					</td>
 					<td>
 						{{ team_player.get_kill_participation|floatformat:"1" }}%
 					</td>
 					<td>
-						{{ team_player.get_cs_per_game|floatformat:"1" }}
+						{% if team_player.get_cs_diff_at_15 > 0 %}
+						+{% endif %}{{ team_player.get_cs_diff_at_15|floatformat:"1" }}
+					</td>
+					<td>
+						{% if season.id > 2 %}
+							{{ team_player.get_cs_per_min|floatformat:"2" }}
+						{% else %}
+							{{ team_player.get_cs_per_game|floatformat:"1" }}
+						{% endif %}
 					</td>
 					<td>
 						{{ team_player.get_percent_team_damage|floatformat:"1" }}%

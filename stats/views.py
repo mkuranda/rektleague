@@ -6,8 +6,19 @@ from django.db.models import Avg, Count, Sum, F, When, Q
 from riot_request import RiotRequester
 from .models import Player, TeamPlayer, Team, Season, Champion, Match, Week, Series, SeriesTeam, TeamMatch, MatchCaster, SeasonChampion, PlayerMatch, HypeVideo, Role, TeamRole, SeriesPlayer
 from .forms import TournamentCodeForm, InitializeMatchForm, CreateRosterForm
-from get_riot_object import ObjectNotFound, get_item, get_champion, get_match, get_all_items, get_match_timeline
+from get_riot_object import ObjectNotFound, get_item, get_champions, get_match, get_all_items, get_match_timeline
+from datetime import datetime
 import json
+
+def create_roster_error(request, series_id):
+    latest_season = Season.objects.latest('id')
+    series = get_object_or_404(Series, id=series_id)
+    context = {
+        'season': latest_season,
+        'series': series
+    }
+    return render(request, 'stats/create_roster_error.html', context)
+
 
 def about(request):
     latest_season = Season.objects.latest('id')
@@ -147,7 +158,7 @@ def team_player_role_detail(request, season_id, team_id, player_id, role_id):
 
 def champion_detail(request, champion_id):
     try:
-        champion = get_champion(champion_id)
+        champion = get_champions()
     except ObjectNotFound:
         raise Http404("Champion does not exist")
     context = {
@@ -198,7 +209,8 @@ def series_detail(request, season_id, series_id):
         'matches': matches,
         'num_match_links': num_match_links,
         'team1': team1,
-        'team2': team2 
+        'team2': team2,
+        'now': datetime.now()
     }
     return render(request, 'stats/series.html', context)
 
@@ -212,6 +224,7 @@ def create_roster(request, season_id, series_id, team_id):
             mid = form.cleaned_data['mid']
             bot = form.cleaned_data['bot']
             sup = form.cleaned_data['sup']
+            sub = form.cleaned_data['sub']
 
             failed = False
             s.add(top)
@@ -227,9 +240,12 @@ def create_roster(request, season_id, series_id, team_id):
             if sup in s: 
                 failed=True
             s.add(sup)
+            if sub in s: 
+                failed=True
+            s.add(sub)
 
             if failed:
-                return HttpResponseRedirect('/create_roster_error/')
+                return HttpResponseRedirect('/create_roster_error/' + str(series_id) + '/')
             else:
                 team = Team.objects.get(id=team_id)
                 series = Series.objects.get(id=series_id)
@@ -239,11 +255,13 @@ def create_roster(request, season_id, series_id, team_id):
                 p3 = SeriesPlayer.objects.create(player=mid, team=team, series=series, role=Role.objects.get(name='Mid'))
                 p4 = SeriesPlayer.objects.create(player=bot, team=team, series=series, role=Role.objects.get(name='Bot'))
                 p5 = SeriesPlayer.objects.create(player=sup, team=team, series=series, role=Role.objects.get(name='Support'))
+                p6 = SeriesPlayer.objects.create(player=sub, team=team, series=series, role=Role.objects.get(name='Substitute'))
                 p1.save()
                 p2.save()
                 p3.save()
                 p4.save()
                 p5.save()
+                p6.save()
                 return HttpResponseRedirect('/season/' + str(season_id) + '/series/' + str(series.id) + '/')
     else:
         form = CreateRosterForm(series_id=series_id, team_id=team_id)

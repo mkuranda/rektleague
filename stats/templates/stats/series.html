@@ -346,7 +346,7 @@ function ReplaceMatchContent(id, content) {
 	{% endfor %}
 	contentMap.set("Overview",
 		'<table class="centercontent" width="50%">' +
-		{% if series.rosters_submitted %}
+		{% if series.rosters_submitted and series.past_deadline and season.id > 2 %}
 		'<table class="centercontent" width="80%">' +
 		 '<tr>' +
 		  '<td>' +
@@ -362,9 +362,16 @@ function ReplaceMatchContent(id, content) {
 		         '<table class="centercontent" width="100%">' +
 		          '<tr class="alternating-back"></tr>' +
 		    {% for seriesplayer in series.get_team_1_players %}
+		     {% if seriesplayer.role.name == "Substitute" %}
+	        	  '<tr class="alternating-back">' +
+		           '<td width="50%" height="30px"></td>' +
+		           '<td width="50%" height="30px"></td>' +
+		          '</tr>' +
+		     {% endif %}
+
 		          '<tr class="alternating-back">' +
 		           '<td width="40%"><img src="{{ seriesplayer.role.icon.url }}" height="30" width="30" title="{{ seriesplayer.role.name }}"></td>' +
-		           '<td style="font-size:20; text-align:left">{{ seriesplayer.player.name }}</td>' +
+		           '<td style="font-size:20; text-align:left"><a href="/season/{{ season.id }}/team/{{ series.get_team_1.id }}/player/{{ seriesplayer.player.id }}/">{{ seriesplayer.player.name }}</a></td>' +
 		          '</tr>' +
 		    {% endfor %}
 		         '</table>' +
@@ -382,8 +389,15 @@ function ReplaceMatchContent(id, content) {
 		         '<table class="centercontent" width="100%">' +
 		          '<tr class="alternating-back"></tr>' +
 		    {% for seriesplayer in series.get_team_2_players %}
+		     {% if seriesplayer.role.name == "Substitute" %}
+	        	  '<tr class="alternating-back">' +
+		           '<td width="50%" height="30px"></td>' +
+		           '<td width="50%" height="30px"></td>' +
+		          '</tr>' +
+		     {% endif %}
+
 		          '<tr class="alternating-back">' +
-		           '<td style="font-size:20; text-align:right">{{ seriesplayer.player.name }}</td>' +
+		           '<td style="font-size:20; text-align:right"><a href="/season/{{ season.id }}/team/{{ series.get_team_2.id }}/player/{{ seriesplayer.player.id }}/">{{ seriesplayer.player.name }}</a></td>' +
 		           '<td width="40%"><img src="{{ seriesplayer.role.icon.url }}" height="30" width="30" title="{{ seriesplayer.role.name }}"></td>' +
 		          '</tr>' +
 		    {% endfor %}
@@ -401,7 +415,7 @@ function ReplaceMatchContent(id, content) {
 		  '</td>' +
 		 '</tr>' +
 		'</table>' +
-		{% else %}
+		{% elif season.id > 2 %}
 		'<tr>' +
 		  '<th class="centertableheader" style="padding-bottom:15px" width="100%">' +
 		   'Rosters Pending' +
@@ -412,8 +426,20 @@ function ReplaceMatchContent(id, content) {
 		   '<p>Not all rosters have been submitted yet for this series!</p> <p>Check back later.</p>' +
 		  '</td>' +
 		 '</tr>' +
+		 '<tr>' +
+		'<th class="centertableheader" style="padding-bottom:15px" width="100%">' +
+		   'Submission Deadline' +
+		  '</th>' +
+		 '</tr>' +
+		 '<tr class="centercontent">' +
+		  '<td style="padding:20px;">' +
+	           '<div style="font-size: 24;">{{ series.deadline|date:"g:i a"}}</div>' +
+	           '<div style="font-size: 24;">{{ series.deadline|date:"F j, Y"}}</div>' +
+		  '</td>' +
+		 '</tr>' +
 		{% endif %}
 		{% if request.user == series.get_team_1.user %}
+		{% if season.id > 2 and not series.get_team_1_roster_submitted and not series.past_deadline %}
 		'<table class="centercontent" width="70%">' +
 		'<tr>' +
 		  '<td class="centercontent" style="padding: 20px; margin-bottom: 20px; font-size: 24;" width="100%">' +
@@ -421,8 +447,62 @@ function ReplaceMatchContent(id, content) {
 		  '</td>' +
 		 '</tr>' +
 		'</table>' +
+		{% elif series.get_team_1_roster_submitted and season.id > 2 and not series.past_deadline %}
+		'<table class="centercontent" width="50%">' +
+		 '<tr class="centercontent">' +
+		  '<td style="padding-bottom: 40px">' +
+		   '<table class="centercontent" width="100%">' +
+		    '<tr>' +
+		     '<td width="100%">' +
+		      '<table class="centercontent" width="100%">' +
+		       '<tr>' +
+		        '<th class="centertableheader" style="border-bottom: 1px solid #4a56b2">{{ series.get_team_1.name }} - Current Roster</th>' +
+		       '</tr>' +
+		       '<tr>' +
+		        '<td style="border-bottom: 1px solid #4a56b2">' +
+		         '<table class="centercontent" width="100%">' +
+		          '<tr class="alternating-back"></tr>' +
+		    {% for seriesplayer in series.get_team_1_players %}
+		    {% if seriesplayer.role.name == "Substitute" %}
+	        	  '<tr class="alternating-back">' +
+		           '<td width="50%" height="30px"></td>' +
+		           '<td width="50%" height="30px"></td>' +
+		          '</tr>' +
+		    {% endif %}
+		          '<tr class="alternating-back">' +
+		           '<td width="50%"><img src="{{ seriesplayer.role.icon.url }}" height="30" width="30" title="{{ seriesplayer.role.name }}"></td>' +
+		           '<td style="font-size:20; text-align:left">{{ seriesplayer.player.name }}</td>' +
+		          '</tr>' +
+		    {% endfor %}
+		         '</table>' +
+		        '</td>' +
+		       '</tr>' +	
+		      '</table>' +
+		     '</td>' +
+		    '</tr>' +
+		   '</table>' +
+		  '</td>' +
+		 '</tr>' +
+		'<table>' +
+		'<table class="centercontent" width="70%">' +
+		'<tr>' +
+		  '<td class="centercontent" style="padding: 20px; margin-bottom: 20px; font-size: 24;" width="100%">' +
+		'<a href="create_roster/{{ series.get_team_1.id }}/"><b>Create Roster for {{ series.get_team_1.name }}</b></a>' +
+		  '</td>' +
+		 '</tr>' +
+		'</table>' +
+		{% elif series.past_deadline and season.id > 2 and not series.get_team_1_roster_submitted %}
+		'<table class="centercontent" width="70%">' +
+		'<tr>' +
+		  '<td class="centercontent" style="padding: 40px; margin-bottom: 20px; font-size: 24;" width="100%">' +
+		  'You missed the deadline, contact one of the Founding Fathers to submit' +
+		  '</td>' +
+		 '</tr>' +
+		'</table>' +
+		{% endif %}
 		{% endif %}
 		{% if request.user == series.get_team_2.user %}
+		{% if season.id > 2 and not series.get_team_2_roster_submitted and not series.past_deadline %}
 		'<table class="centercontent" width="70%">' +
 		'<tr>' +
 		  '<td class="centercontent" style="padding: 20px; margin-bottom: 20px; font-size: 24;" width="100%">' +
@@ -430,6 +510,61 @@ function ReplaceMatchContent(id, content) {
 		  '</td>' +
 		 '</tr>' +
 		'</table>' +
+		{% elif series.get_team_2_roster_submitted and season.id > 2 and not series.past_deadline %}
+		'<table class="centercontent" width="50%">' +
+		 '<tr class="centercontent">' +
+		  '<td style="padding-bottom: 40px">' +
+		   '<table class="centercontent" width="100%">' +
+		    '<tr>' +
+		     '<td width="100%">' +
+		      '<table class="centercontent" width="100%">' +
+		       '<tr>' +
+		        '<th class="centertableheader" style="border-bottom: 1px solid #b24a58">{{ series.get_team_2.name }} - Current Roster</th>' +
+		       '</tr>' +
+		       '<tr>' +
+		        '<td style="border-bottom: 1px solid #b24a58">' +
+		         '<table class="centercontent" width="100%">' +
+		          '<tr class="alternating-back"></tr>' +
+		    {% for seriesplayer in series.get_team_2_players %}
+		    {% if seriesplayer.role.name == "Substitute" %}
+	        	  '<tr class="alternating-back">' +
+		           '<td width="50%" height="30px"></td>' +
+		           '<td width="50%" height="30px"></td>' +
+		          '</tr>' +
+		    {% endif %}
+		          '<tr class="alternating-back">' +
+		           '<td width="50%"><img src="{{ seriesplayer.role.icon.url }}" height="30" width="30" title="{{ seriesplayer.role.name }}"></td>' +
+		           '<td style="font-size:20; text-align:left">{{ seriesplayer.player.name }}</td>' +
+		          '</tr>' +
+		    {% endfor %}
+		         '</table>' +
+		        '</td>' +
+		       '</tr>' +	
+		      '</table>' +
+		     '</td>' +
+		    '</tr>' +
+		   '</table>' +
+		  '</td>' +
+		 '</tr>' +
+		'<table>' +
+
+		'<table class="centercontent" width="70%">' +
+		'<tr>' +
+		  '<td class="centercontent" style="padding: 20px; margin-bottom: 20px; font-size: 24;" width="100%">' +
+		'<a href="create_roster/{{ series.get_team_2.id }}/"><b>Create Roster for {{ series.get_team_2.name }}</b></a>' +
+		  '</td>' +
+		 '</tr>' +
+		'</table>' +
+		{% elif series.past_deadline and not series.get_team_2_roster_submitted and season.id > 2 %}
+		'<table class="centercontent" width="70%">' +
+		'<tr>' +
+		  '<td class="centercontent" style="padding: 40px; margin-bottom: 20px; font-size: 24;" width="100%">' +
+		  'You missed the deadline, contact one of the Founding Fathers to submit' +
+		  '</td>' +
+		 '</tr>' +
+		'</table>' +
+
+		{% endif %}
 		{% endif %}
 		'</table>' +
 		        "");
@@ -443,11 +578,15 @@ window.onload = function() {
 }
 //--></script>
 
-<a class="imglink" href="/stats/season/{{ season.id }}/"><img style="width: 100%; margin-top:190px; margin-bottom: 100px;" src="/static/stats/season2.png"></a>
+<div width="60%" style="text-align: center"><a class="imglink" href="/stats/season/{{ season.id }}/"><img style="width: 55%; margin-left: auto; margin-right: auto; margin-top:220px; margin-bottom: 100px;" src="{{ season.splash.url }}"></a></div>
 
 <div style="width: 75%; text-align: center; background-color: #303030; padding: 20px; margin: 0 auto;">
 	<h1 style="font-size: 48">Week {{ series.week.number }}</h1>
 	<h1 style="font-size: 48">{% for seriesteam in series.seriesteam_set.all %}<a href="/stats/season/{{ season.id }}/team/{{ seriesteam.team.id }}/">{{ seriesteam.team.name }}</a>{% if forloop.counter == 1 %} vs {% endif %}{% endfor %}</h1>
+	{% if series.date %}
+	<div style="font-size: 36; padding-top: 36px;">{{ series.date|date:"g:i a"}}</div>
+	<div style="font-size: 36; padding-bottom: 36px;">{{ series.date|date:"F j, Y"}}</div>
+	{% endif %}
 
 	<div style="padding: 20px;">
 		{% if series.youtube_link != '' and series.youtube_link != ' ' %}
@@ -458,6 +597,8 @@ window.onload = function() {
 	</div>
 </div>
 <p></p>
+
+<div id="defaultCountdown"></div>
 
 <table class="centercontent" width="70%">
 	<tr class="centercontent">

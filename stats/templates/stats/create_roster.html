@@ -4,7 +4,7 @@
 
 {% block content %}
 
-<a class="imglink" href="/stats/season/{{ season.id }}/"><img style="width: 100%; margin-top:190px; margin-bottom: 100px;" src="/static/stats/season2.png"></a>
+<div width="60%" style="text-align: center"><a class="imglink" href="/stats/season/{{ season.id }}/"><img style="width: 55%; margin-left: auto; margin-right: auto; margin-top:220px; margin-bottom: 100px;" src="{{ season.splash.url }}"></a></div>
 
 <div style="width: 75%; text-align: center; background-color: #303030; padding: 20px; margin: 0 auto;">
 	<h1 style="font-size: 48">Week {{ series.week.number }}</h1>
@@ -104,6 +104,16 @@
 				    		</td>
 						<td style="color:black;">
 				    			{{ form.sup }}
+				    		</td>
+					</tr>
+
+					<tr class="alternating-back">
+						<td>
+				    			{{ form.sub.errors }}
+				    			<label for="{{ form.sub.id_for_label }}">Substitute:</label>
+				    		</td>
+						<td style="color:black;">
+				    			{{ form.sub }}
 				    		</td>
 					</tr>
 				</table>

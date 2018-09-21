@@ -9,6 +9,7 @@ class CreateRosterForm(forms.Form):
     mid = forms.ModelChoiceField(queryset=Team.objects.none())
     bot = forms.ModelChoiceField(queryset=Team.objects.none())
     sup = forms.ModelChoiceField(queryset=Team.objects.none())
+    sub = forms.ModelChoiceField(queryset=Team.objects.none())
 
     def __init__(self, *args, **kwargs):
         team_id = kwargs.pop('team_id')
@@ -19,11 +20,13 @@ class CreateRosterForm(forms.Form):
         mid_role = Role.objects.get(name="Mid")
         bot_role = Role.objects.get(name="Bot")
         sup_role = Role.objects.get(name="Support")
+        sub_role = Role.objects.get(name="Substitute")
         self.fields["top"].queryset = Player.objects.filter(teamplayer__team=team_id, teamplayer__role=top_role)
         self.fields["jun"].queryset = Player.objects.filter(teamplayer__team=team_id, teamplayer__role=jun_role)
         self.fields["mid"].queryset = Player.objects.filter(teamplayer__team=team_id, teamplayer__role=mid_role)
         self.fields["bot"].queryset = Player.objects.filter(teamplayer__team=team_id, teamplayer__role=bot_role)
         self.fields["sup"].queryset = Player.objects.filter(teamplayer__team=team_id, teamplayer__role=sup_role)
+        self.fields["sub"].queryset = Player.objects.filter(teamplayer__team=team_id, teamplayer__role=sub_role)
 
 
 class TournamentCodeForm(forms.Form):

@@ -11,6 +11,7 @@ class Season(models.Model):
     pick_type = models.CharField(max_length=30)
     map_type = models.CharField(max_length=30)
     spectator_type = models.CharField(max_length=30)
+    splash = models.ImageField(upload_to='stats/season_splashes', default='')
 
     def __str__(self):
         return "Season " + str(self.pk)
@@ -48,9 +49,10 @@ class Week(models.Model):
     number = models.IntegerField(default=1)
     regular = models.BooleanField(default=True)
     title = models.CharField(max_length=50, default="")
+    date = models.DateTimeField(null=True, blank=True)
 
     def name_w_title(self):
-        if self.title != "":
+        if self.title != "" and self.title != " ":
             return "Week " + str(self.number) + " - " + self.title
         return "Week " + str(self.number)
 
@@ -107,6 +109,7 @@ class Series(models.Model):
     youtube_link = models.CharField(max_length=100, default='')
     week = models.ForeignKey(Week)
     splash = models.ImageField(upload_to='stats/champion/matchup_splashes', default='')
+    date = models.DateTimeField(null=True, blank=True)
 
     def get_team_1(self):
 	teamSeries = SeriesTeam.objects.filter(series=self)
@@ -128,8 +131,29 @@ class Series(models.Model):
     def get_team_2_wins(self):
 	return TeamMatch.objects.filter(team=self.get_team_2(), win=True, match__series=self).count()
 
+    def get_team_1_roster_submitted(self):
+        if self.get_team_1_players().count() < 5:
+            return False
+        return True
+
+    def get_team_2_roster_submitted(self):
+        if self.get_team_2_players().count() < 5:
+            return False
+        return True
+
     def rosters_submitted(self):
-        return SeriesPlayer.objects.filter(series=self).count() == 10
+        return self.get_team_1_roster_submitted() and self.get_team_2_roster_submitted()
+
+    def deadline(self):
+        if self.week.date is None:
+            return None
+        return self.week.date - datetime.timedelta(days=5)
+
+    def past_deadline(self):
+        now = datetime.datetime.now()
+        if self.deadline() is not None and self.deadline() < now:
+            return True
+        return False
 
     def __str__(self):
 	return str(self.week) + ": " + str(self.get_team_1()) + " v " + str(self.get_team_2())
@@ -377,7 +401,18 @@ class TeamPlayer(models.Model):
 
         if deaths == None:
             return 0
+        if deaths == 0:
+            return 1000000
         return (float(kills) + assists) / deaths
+
+    def get_cs_per_min(self):
+        if self.role.isFill == True:
+            cs = Match.objects.select_related().filter(playermatch__player=self.player, teammatch__team=self.team).aggregate(cs=Avg((F('playermatch__neutral_minions_killed') + F('playermatch__total_minions_killed')) * 60.0 / F('duration')))['cs']
+        else:
+            cs = Match.objects.select_related().filter(playermatch__player=self.player, teammatch__team=self.team, playermatch__role=self.role).aggregate(cs=Avg((F('playermatch__neutral_minions_killed') + F('playermatch__total_minions_killed')) * 60.0 / F('duration')))['cs']
+        if cs == None:
+            return 0
+        return cs 
 
     def get_cs_per_game(self):
         if self.role.isFill == True:
@@ -431,9 +466,9 @@ class TeamPlayer(models.Model):
 
     def get_played_champion_list(self):
         if self.role.isFill == True:
-            return Match.objects.select_related().filter(playermatch__player=self.player, teammatch__team=self.team).values('playermatch__champion', 'playermatch__champion__name', 'playermatch__champion__icon').annotate(champion_count=Count('playermatch__champion'), average_vision_score=Avg('playermatch__vision_score'), avg_kills=Avg('playermatch__kills'), avg_deaths=Avg('playermatch__deaths'), avg_assists=Avg('playermatch__assists'), winrate=Avg(F('teammatch__win') * 100), average_cs=Avg(F('playermatch__neutral_minions_killed') + F('playermatch__total_minions_killed'))).order_by('-champion_count')
+            return Match.objects.select_related().filter(playermatch__player=self.player, teammatch__team=self.team).values('playermatch__champion', 'playermatch__champion__name', 'playermatch__champion__icon').annotate(champion_count=Count('playermatch__champion'), average_vision_score=Avg('playermatch__vision_score'), avg_kills=Avg('playermatch__kills'), avg_deaths=Avg('playermatch__deaths'), avg_assists=Avg('playermatch__assists'), winrate=Avg(F('teammatch__win') * 100), cs_per_min=Avg((F('playermatch__neutral_minions_killed') + F('playermatch__total_minions_killed')) * 60.0 / F('duration')), average_cs=Avg(F('playermatch__neutral_minions_killed') + F('playermatch__total_minions_killed'))).order_by('-champion_count')
         else:
-            return Match.objects.select_related().filter(playermatch__player=self.player, teammatch__team=self.team, playermatch__role=self.role).values('playermatch__champion', 'playermatch__champion__name', 'playermatch__champion__icon').annotate(champion_count=Count('playermatch__champion'), average_vision_score=Avg('playermatch__vision_score'), avg_kills=Avg('playermatch__kills'), avg_deaths=Avg('playermatch__deaths'), avg_assists=Avg('playermatch__assists'), winrate=Avg(F('teammatch__win') * 100), average_cs=Avg(F('playermatch__neutral_minions_killed') + F('playermatch__total_minions_killed'))).order_by('-champion_count')
+            return Match.objects.select_related().filter(playermatch__player=self.player, teammatch__team=self.team, playermatch__role=self.role).values('playermatch__champion', 'playermatch__champion__name', 'playermatch__champion__icon').annotate(champion_count=Count('playermatch__champion'), average_vision_score=Avg('playermatch__vision_score'), avg_kills=Avg('playermatch__kills'), avg_deaths=Avg('playermatch__deaths'), avg_assists=Avg('playermatch__assists'), winrate=Avg(F('teammatch__win') * 100), cs_per_min=Avg((F('playermatch__neutral_minions_killed') + F('playermatch__total_minions_killed')) * 60.0 / F('duration')), average_cs=Avg(F('playermatch__neutral_minions_killed') + F('playermatch__total_minions_killed'))).order_by('-champion_count')
 
     def get_player_matches(self):
         if self.role.isFill == True:
@@ -441,6 +476,16 @@ class TeamPlayer(models.Model):
         else:
             return PlayerMatch.objects.filter(player=self.player, team=self.team, role=self.role)
 
+    def get_cs_diff_at_15(self):
+        if self.team.season.id < 3:
+            return 0
+        player_matches = self.get_player_matches()
+        result = 0
+        for playermatch in player_matches:
+            timeline = PlayerMatchTimeline.objects.filter(playermatch=playermatch, timestamp__lt=910000).values('timestamp', 'minions_killed', 'monsters_killed', 'playermatch').annotate(cs=F('minions_killed')+F('monsters_killed')).order_by('-timestamp')[0]
+            enemy_timeline = PlayerMatchTimeline.objects.filter(playermatch__match=playermatch.match, playermatch__role=playermatch.role, timestamp__lt=910000).exclude(playermatch__team=playermatch.team).values('timestamp', 'minions_killed', 'monsters_killed', 'playermatch').annotate(cs=F('minions_killed')+F('monsters_killed')).order_by('-timestamp')[0]
+            result = result + timeline['cs'] - enemy_timeline['cs']
+        return 1.0 * result / player_matches.count()
 
 class TeamMatch(models.Model):
     team = models.ForeignKey(Team)
@@ -460,7 +505,7 @@ class TeamMatch(models.Model):
         unique_together = (("team", "match"))
 
     def get_player_matches(self):
-        return PlayerMatch.objects.filter(match=self.match, player__team=self.team)
+        return PlayerMatch.objects.filter(match=self.match, team=self.team)
 
     def get_team_bans(self):
         return TeamMatchBan.objects.filter(match=self.match, team=self.team).order_by('-pickTurn')
@@ -480,8 +525,7 @@ class Item(models.Model):
     icon = models.ImageField(upload_to='stats/item/icon', default='')
 
 class PlayerMatchItem(models.Model):
-    player = models.ForeignKey(Player)
-    match = models.ForeignKey(Match)
+    playermatch = models.ForeignKey(PlayerMatch)
     item = models.ForeignKey(Item)
 
 class Lane(models.Model):
@@ -516,46 +560,40 @@ class EliteMonster(models.Model):
         return self.name
 
 class PlayerMatchKill(models.Model):
-    killer = models.ForeignKey(Player)
-    victim = models.ForeignKey(Player, related_name="victim")
-    match = models.ForeignKey(Match)
+    killer = models.ForeignKey(PlayerMatch)
+    victim = models.ForeignKey(PlayerMatch, related_name="victim")
     timestamp = models.IntegerField()
 
 class PlayerMatchAssist(models.Model):
     kill = models.ForeignKey(PlayerMatchKill)
-    player = models.ForeignKey(Player)
+    playermatch = models.ForeignKey(PlayerMatch)
 
 class PlayerMatchWardPlace(models.Model):
-    player = models.ForeignKey(Player)
-    match = models.ForeignKey(Match)
+    playermatch = models.ForeignKey(PlayerMatch)
     ward_type = models.ForeignKey(Ward)
     timestamp = models.IntegerField()
 
 class PlayerMatchWardKill(models.Model):
-    player = models.ForeignKey(Player)
-    match = models.ForeignKey(Match)
+    playermatch = models.ForeignKey(PlayerMatch)
     ward_type = models.ForeignKey(Ward)
     timestamp = models.IntegerField()
 
 class PlayerMatchBuildingKill(models.Model):
-    player = models.ForeignKey(Player)
-    match = models.ForeignKey(Match)
+    playermatch = models.ForeignKey(PlayerMatch)
     building_type = models.ForeignKey(Building)
     timestamp = models.IntegerField()
 
 class PlayerMatchBuildingAssist(models.Model):
     kill = models.ForeignKey(PlayerMatchBuildingKill)
-    player = models.ForeignKey(Player)
+    playermatch = models.ForeignKey(PlayerMatch)
 
 class PlayerMatchEliteMonsterKill(models.Model):
-    player = models.ForeignKey(Player)
-    match = models.ForeignKey(Match)
+    playermatch = models.ForeignKey(PlayerMatch)
     monster_type = models.ForeignKey(EliteMonster)
     timestamp = models.IntegerField()
 
 class PlayerMatchTimeline(models.Model):
-    player = models.ForeignKey(Player)
-    match = models.ForeignKey(Match)
+    playermatch = models.ForeignKey(PlayerMatch)
     timestamp = models.IntegerField()
     level = models.IntegerField(default=1)
     gold = models.IntegerField(default=0)
