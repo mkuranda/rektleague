@@ -132,12 +132,21 @@ def team_player_detail(request, season_id, team_id, player_id):
     team_player_role = TeamPlayer.objects.filter(player=player_id, team=team_id, role=role).annotate(avg_kills=Avg('player__playermatch__kills'), avg_deaths=Avg('player__playermatch__deaths'), avg_assists=Avg('player__playermatch__assists'), num_champs_played=Count('player__playermatch__champion'))[0]
     players = Player.objects.filter(teamplayer__team=team).values('id', 'name').distinct()
     series_list = Series.objects.filter(seriesteam__team = team).order_by('-week__number')
+    timelines = team_player_role.get_timelines()
+    enemy_timelines = team_player_role.get_enemy_timelines()
+    if not timelines:
+        max_duration = 0
+    else:
+        max_duration = timelines.order_by('-minute')[0]['minute']
     context = {
         'season': season,
         'team': team,
         'team_players': team_players,
         'team_player_role': team_player_role,
-        'players': players
+        'players': players,
+        'timelines': timelines,
+        'enemy_timelines': enemy_timelines,
+        'max_duration': max_duration
     }
     return render(request, 'stats/team_player.html', context)
 

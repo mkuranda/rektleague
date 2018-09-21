@@ -186,6 +186,18 @@ class Match(models.Model):
     def get_loser(self):
 	return TeamMatch.objects.get(match=self, win=False)
 
+    def get_blue_team(self):
+	return TeamMatch.objects.get(match=self, side="Blue")
+
+    def get_red_team(self):
+	return TeamMatch.objects.get(match=self, side="Red")
+
+    def get_max_timeline_minute(self):
+        if self.series.week.season.id > 2:
+            return PlayerMatchTimeline.objects.filter(playermatch__match=self).annotate(minute=F('timestamp') / 1000 / 60).order_by('-minute')[0].minute
+        else:
+            return 0
+
     def __str__(self):
         seriesTeams = SeriesTeam.objects.filter(series=self.series)
         return str(seriesTeams[0].team) + " v " + str(seriesTeams[1].team) + " (" + str(self.series.week) + " game " + str(self.game_num) + ")"
@@ -369,6 +381,12 @@ class PlayerMatch(models.Model):
     def get_cs(self):
         return self.neutral_minions_killed + self.total_minions_killed
 
+    def get_timelines(self):
+        return PlayerMatchTimeline.objects.filter(playermatch=self).annotate(minute=F('timestamp') / 1000 / 60)
+
+    def get_opponent(self):
+        return PlayerMatch.objects.filter(match=self.match, role=self.role).exclude(team=self.team)[0]
+
 class TeamPlayer(models.Model):
     team = models.ForeignKey(Team, on_delete=models.CASCADE)
     player = models.ForeignKey(Player)
@@ -380,6 +398,27 @@ class TeamPlayer(models.Model):
 
     def get_team(self):
         return Team.objects.filter(pk=self.team)
+
+    def get_timelines(self):
+        if self.role.isFill == True:
+            timelines = PlayerMatchTimeline.objects.filter(playermatch__player=self.player, playermatch__team=self.team).annotate(minute=F('timestamp') / 1000 / 60)
+        else: 
+            timelines = PlayerMatchTimeline.objects.filter(playermatch__player=self.player, playermatch__team=self.team, playermatch__role=self.role).annotate(minute=F('timestamp') / 1000 / 60)
+        if timelines == None:
+            return None
+
+        timelines = timelines.values('minute').annotate(avgGold=Avg('totalGold'))
+        return timelines
+
+    def get_enemy_timelines(self):
+        timelines = PlayerMatchTimeline.objects.filter(playermatch__in=self.get_enemy_player_matches()).annotate(minute=F('timestamp') / 1000 / 60)
+
+        timelines = timelines.values('minute').annotate(avgGold=Avg('totalGold'))
+        return timelines
+
+#    def get_team_timelines(self):
+#        timelines
+
 
     def get_avg_vision(self):
         if self.role.isFill == True:
@@ -504,6 +543,12 @@ class TeamPlayer(models.Model):
         else:
             return PlayerMatch.objects.filter(player=self.player, team=self.team, role=self.role)
 
+    def get_enemy_player_matches(self):
+        results = []
+        for player_match in self.get_player_matches():
+            results.append(player_match.get_opponent())
+        return results
+
     def get_cs_diff_at_15(self):
         if self.team.season.id < 3:
             return 0
@@ -537,6 +582,10 @@ class TeamMatch(models.Model):
 
     def get_team_bans(self):
         return TeamMatchBan.objects.filter(match=self.match, team=self.team).order_by('-pickTurn')
+
+    def get_timelines(self):
+        return PlayerMatchTimeline.objects.filter(playermatch__match=self.match, playermatch__team=self.team).annotate(minute=F('timestamp') / 1000 / 60).values('minute').annotate(sumGold=Sum('totalGold'))
+
 
 class TeamMatchBan(models.Model):
     team = models.ForeignKey(Team)
