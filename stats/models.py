@@ -276,6 +276,25 @@ class Team(models.Model):
                 })
         return results
 
+    def get_overall_timelines(self):
+        max_minute = self.get_max_timeline_minute()
+        building_kills = PlayerMatchBuildingKill.objects.filter(playermatch__team__season=self.season)
+        kills = PlayerMatchKill.objects.filter(killer__team__season=self.season)
+        wards_placed = PlayerMatchWardPlace.objects.filter(playermatch__team__season=self.season).exclude(ward_type=Ward.objects.get(name='Undefined'))
+        wards_killed = PlayerMatchWardKill.objects.filter(playermatch__team__season=self.season).exclude(ward_type=Ward.objects.get(name='Undefined'))
+        num_matches = Match.objects.filter(series__week__season=self.season).exclude(duration=0).count() * 2
+        results = []
+        for i in range(0, max_minute):
+            timestamp = i * 60000
+            results.append({
+                'minute': i, 
+                'kills': 1.0 * kills.filter(timestamp__lt = timestamp).count() / num_matches, 
+                'building_kills': 1.0 * building_kills.filter(timestamp__lt = timestamp).count() / num_matches,
+                'wards_placed': 1.0 * wards_placed.filter(timestamp__lt = timestamp).count() / num_matches,
+                'wards_killed': 1.0 * wards_killed.filter(timestamp__lt = timestamp).count() / num_matches 
+                })
+        return results
+
     def get_max_timeline_minute(self):
         if self.season.id > 2:
             return PlayerMatchTimeline.objects.filter(playermatch__player__team=self).annotate(minute=F('timestamp') / 1000 / 60).order_by('-minute')[0].minute
@@ -461,6 +480,7 @@ class TeamPlayer(models.Model):
         player_matches = self.get_player_matches()
         enemy_player_matches = self.get_enemy_player_matches()
         results = []
+        total_matches = Match.objects.filter(series__week__season=self.team.season).exclude(duration=0).count() * 2
         for i in range(0, max_minute):
             timestamp = i * 60000
             goldSum = 0
@@ -469,7 +489,6 @@ class TeamPlayer(models.Model):
             enemyGoldSum = 0
             for player_match in enemy_player_matches:
                 enemyGoldSum += PlayerMatchTimeline.objects.filter(playermatch=player_match, timestamp__lte=timestamp).order_by('-timestamp')[0].totalGold
-
             goldSum /= self.team.get_num_matches()
             enemyGoldSum /= self.team.get_num_matches()
             results.append({

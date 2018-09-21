@@ -114,6 +114,7 @@ def team_detail(request, season_id, team_id):
     team_roles = TeamRole.objects.filter(team=team).order_by('role')
     kill_timelines = team.get_kill_timelines()
     killed_timelines = team.get_killed_timelines()
+    overall_timelines = team.get_overall_timelines()
     context = {
         'team': team,
         'team_players': team_players,
@@ -121,7 +122,8 @@ def team_detail(request, season_id, team_id):
         'roles': team_roles,
 	'series_list': series_list,
         'kill_timelines': kill_timelines,
-        'killed_timelines': killed_timelines
+        'killed_timelines': killed_timelines,
+        'overall_timelines': overall_timelines
     }
     return render(request, 'stats/team.html', context)
 

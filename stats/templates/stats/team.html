@@ -43,7 +43,18 @@ var chart = new CanvasJS.Chart("killsByTime", {
 			{ x: {{ timeline.minute }}, y: {{ timeline.kills }}, label: "{{ timeline.minute }}:00" },
                         {% endfor %}
 		]
+	},{
+		labelFontColor: "#727272",
+		fillOpacity: "0",
+		name: "views",
+		type: "area",
+		dataPoints: [
+			{% for timeline in overall_timelines %}
+			{ x: {{ timeline.minute }}, y: {{ timeline.kills }}, label: "{{ timeline.minute }}:00" },
+                        {% endfor %}
+		]
 	}
+
 
 	]
 });
@@ -85,7 +96,18 @@ var chart2 = new CanvasJS.Chart("buildingKillsByTime", {
 			{ x: {{ timeline.minute }}, y: {{ timeline.building_kills }}, label: "{{ timeline.minute }}:00" },
                         {% endfor %}
 		]
+	},{
+		labelFontColor: "#727272",
+		fillOpacity: "0",
+		name: "views",
+		type: "area",
+		dataPoints: [
+			{% for timeline in overall_timelines %}
+			{ x: {{ timeline.minute }}, y: {{ timeline.building_kills }}, label: "{{ timeline.minute }}:00" },
+                        {% endfor %}
+		]
 	}
+
 
 	]
 });
@@ -127,7 +149,18 @@ var chart3 = new CanvasJS.Chart("wardsPlacedByTime", {
 			{ x: {{ timeline.minute }}, y: {{ timeline.wards_placed }}, label: "{{ timeline.minute }}:00" },
                         {% endfor %}
 		]
+	},{
+		labelFontColor: "#727272",
+		fillOpacity: "0",
+		name: "views",
+		type: "area",
+		dataPoints: [
+			{% for timeline in overall_timelines %}
+			{ x: {{ timeline.minute }}, y: {{ timeline.wards_placed }}, label: "{{ timeline.minute }}:00" },
+                        {% endfor %}
+		]
 	}
+
 
 	]
 });
@@ -169,7 +202,18 @@ var chart4 = new CanvasJS.Chart("wardsKilledByTime", {
 			{ x: {{ timeline.minute }}, y: {{ timeline.wards_killed }}, label: "{{ timeline.minute }}:00" },
                         {% endfor %}
 		]
+	},{
+		labelFontColor: "#727272",
+		fillOpacity: "0",
+		name: "views",
+		type: "area",
+		dataPoints: [
+			{% for timeline in overall_timelines %}
+			{ x: {{ timeline.minute }}, y: {{ timeline.wards_killed }}, label: "{{ timeline.minute }}:00" },
+                        {% endfor %}
+		]
 	}
+
 
 	]
 });
@@ -332,45 +376,152 @@ chart4.render();
 				</tr>
 				<tr>
 					<th class="centertableheader">
-						Kills over Time
+						Kills
 					</th>
 				</tr>
 				<tr class="centercontent">
 					<td>
+						<table class="centercontent" width="100%">
+							<tr>
+								<td>
+									<table width="10%" class="centercontent" style="margin-bottom:20px;">
+										<tr>
+											<td style="font-size: 14; color: #4f81bc; width: 20%;">
+												<b>Team {{ team.name }}</b>
+											</td>
+										</tr>
+										<tr>
+											<td style="font-size: 14; color: #c0504e; width: 10%">
+												<b>Opposing Team</b>
+											</td>
+										</tr>
+										<tr>
+											<td style="font-size: 14; color: #9bbb58; width: 20%">
+												<b>Season Average</b>
+											</td>
+										</tr>
+									</table>
+								</td>
+								<td width="90%">
 						<div id="killsByTime" style="height: 370px; width: 100%; margin: auto; margin-bottom:80px;"></div>
 					</td>
-				</tr>
-				<tr>
-					<th class="centertableheader">
-						Building Kills over Time
-					</th>
-				</tr>
-				<tr class="centercontent">
-					<td>
-						<div id="buildingKillsByTime" style="height: 370px; width: 100%; margin: auto; margin-bottom:80px;"></div>
+
+							</tr>
+						</table>
 					</td>
-				</tr>
-				<tr>
-					<th class="centertableheader">
-						Wards Placed over Time
-					</th>
-				</tr>
-				<tr class="centercontent">
-					<td>
-						<div id="wardsPlacedByTime" style="height: 370px; width: 100%; margin: auto; margin-bottom:80px;"></div>
-					</td>
-				</tr>
-				<tr>
-					<th class="centertableheader">
-						Wards Killed over Time
-					</th>
-				</tr>
-				<tr class="centercontent">
-					<td>
-						<div id="wardsKilledByTime" style="height: 370px; width: 100%; margin: auto; margin-bottom:80px;"></div>
-					</td>
+
 				</tr>
 
+				<tr>
+					<th class="centertableheader">
+						Building Kills
+					</th>
+				</tr>
+				<tr class="centercontent">
+					<td>
+						<table class="centercontent" width="100%">
+							<tr>
+								<td>
+									<table width="10%" class="centercontent" style="margin-bottom:20px;">
+										<tr>
+											<td style="font-size: 14; color: #4f81bc; width: 20%;">
+												<b>Team {{ team.name }}</b>
+											</td>
+										</tr>
+										<tr>
+											<td style="font-size: 14; color: #c0504e; width: 10%">
+												<b>Opposing Team</b>
+											</td>
+										</tr>
+										<tr>
+											<td style="font-size: 14; color: #9bbb58; width: 20%">
+												<b>Season Average</b>
+											</td>
+										</tr>
+									</table>
+								</td>
+								<td width="90%">
+						<div id="buildingKillsByTime" style="height: 370px; width: 100%; margin: auto; margin-bottom:80px;"></div>
+					</td>
+
+							</tr>
+						</table>
+					</td>
+
+				</tr>
+				<tr>
+					<th class="centertableheader">
+						WardsPlaced
+					</th>
+				</tr>
+				<tr class="centercontent">
+					<td>
+						<table class="centercontent" width="100%">
+							<tr>
+								<td>
+									<table width="10%" class="centercontent" style="margin-bottom:20px;">
+										<tr>
+											<td style="font-size: 14; color: #4f81bc; width: 20%;">
+												<b>Team {{ team.name }}</b>
+											</td>
+										</tr>
+										<tr>
+											<td style="font-size: 14; color: #c0504e; width: 10%">
+												<b>Opposing Team</b>
+											</td>
+										</tr>
+										<tr>
+											<td style="font-size: 14; color: #9bbb58; width: 20%">
+												<b>Season Average</b>
+											</td>
+										</tr>
+									</table>
+								</td>
+								<td width="90%">
+						<div id="wardsPlacedByTime" style="height: 370px; width: 100%; margin: auto; margin-bottom:80px;"></div>
+					</td>
+							</tr>
+						</table>
+					</td>
+
+				</tr>
+
+				<tr>
+					<th class="centertableheader">
+						WardsKilled
+					</th>
+				</tr>
+				<tr class="centercontent">
+					<td>
+						<table class="centercontent" width="100%">
+							<tr>
+								<td>
+									<table width="10%" class="centercontent" style="margin-bottom:20px;">
+										<tr>
+											<td style="font-size: 14; color: #4f81bc; width: 20%;">
+												<b>Team {{ team.name }}</b>
+											</td>
+										</tr>
+										<tr>
+											<td style="font-size: 14; color: #c0504e; width: 10%">
+												<b>Opposing Team</b>
+											</td>
+										</tr>
+										<tr>
+											<td style="font-size: 14; color: #9bbb58; width: 20%">
+												<b>Season Average</b>
+											</td>
+										</tr>
+									</table>
+								</td>
+								<td width="90%">
+									<div id="wardsKilledByTime" style="height: 370px; width: 100%; margin: auto; margin-bottom:80px;"></div>
+								</td>
+							</tr>
+						</table>
+					</td>
+
+				</tr>
 			</table>
 
 		</td>
