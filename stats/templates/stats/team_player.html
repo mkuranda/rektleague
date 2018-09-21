@@ -254,6 +254,12 @@ chart2.render();
 			<tr class="centercontent">
 				<td></td>
 			</tr>
+			<tr>
+				<th class="centertableheader">
+					<p><b>Gold</b></p>
+				</th>
+			</tr>
+
 			<tr class="centercontent">
 					<td>
 						<table class="centercontent" width="100%">
@@ -283,19 +289,35 @@ chart2.render();
 
 		</table>
 
-		<table class="centercontent" width="70%" style="margin-top: 80px;">
-			<tr class="centercontent">
-				<td></td>
-			</tr>
+		<table class="centercontent" width="70%">
 			<tr>
 				<th class="centertableheader">
-					<p><b>Gold Difference vs Lane Opponent</b></p>
+					<p><b>Gold Difference</b></p>
 				</th>
 			</tr>
-			<tr>
-				<td class="centercontent">
-					<div id="goldDiffVsLaneOpponent" style="height: 370px; width: 100%; margin: auto; margin-bottom:20px;"></div>
+			<tr class="centercontent">
 				<td>
+					<table class="centercontent" width="100%">
+						<tr>
+							<td>
+								<table width="10%" class="centercontent" style="margin-bottom:20px;">
+									<tr>
+										<td style="font-size: 14; color: #4f81bc; width: 20%;">
+											<b>{{ team_player_role.player.name }}</b>
+										</td>
+									</tr>
+								</table>
+							</td>
+							<td width="90%">
+								<div id="goldDiffVsLaneOpponent" style="height: 370px; width: 100%; margin: auto; margin-bottom:80px;"></div>
+							</td>
+						</tr>
+					</table>
+				</td>
+
+			</tr>
+
+			<tr>
 			</tr>
 		</table>
 	</tr>
