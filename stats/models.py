@@ -469,6 +469,9 @@ class TeamPlayer(models.Model):
             enemyGoldSum = 0
             for player_match in enemy_player_matches:
                 enemyGoldSum += PlayerMatchTimeline.objects.filter(playermatch=player_match, timestamp__lte=timestamp).order_by('-timestamp')[0].totalGold
+
+            goldSum /= self.team.get_num_matches()
+            enemyGoldSum /= self.team.get_num_matches()
             results.append({
                 'minute': i, 
                 'avgGold': 1.0 * goldSum,
