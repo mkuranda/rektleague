@@ -7,7 +7,7 @@
 <script>
 window.onload = function () {
 
-var chart = new CanvasJS.Chart("averageGoldVsLaneOpponent", {
+var chart = new CanvasJS.Chart("averageGold", {
 	animationEnabled: true,
 	backgroundColor: "#212121",
 	title: {
@@ -254,16 +254,33 @@ chart2.render();
 			<tr class="centercontent">
 				<td></td>
 			</tr>
-			<tr>
-				<th class="centertableheader">
-					<p><b>Average Gold vs Lane Opponent</b></p>
-				</th>
-			</tr>
-			<tr>
-				<td class="centercontent">
-					<div id="averageGoldVsLaneOpponent" style="height: 370px; width: 100%; margin: auto; margin-bottom:20px;"></div>
-				<td>
-			</tr>
+			<tr class="centercontent">
+					<td>
+						<table class="centercontent" width="100%">
+							<tr>
+								<td>
+									<table width="10%" class="centercontent" style="margin-bottom:20px;">
+										<tr>
+											<td style="font-size: 14; color: #4f81bc; width: 20%;">
+												<b>{{ team_player_role.player.name }}</b>
+											</td>
+										</tr>
+										<tr>
+											<td style="font-size: 14; color: #c0504e; width: 10%">
+												<b>Lane Opponent</b>
+											</td>
+										</tr>
+									</table>
+								</td>
+								<td width="90%">
+									<div id="averageGold" style="height: 370px; width: 100%; margin: auto; margin-bottom:80px;"></div>
+								</td>
+							</tr>
+						</table>
+					</td>
+
+				</tr>
+
 		</table>
 
 		<table class="centercontent" width="70%" style="margin-top: 80px;">
