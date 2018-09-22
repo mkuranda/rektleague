@@ -213,6 +213,7 @@ class Player(models.Model):
     name = models.CharField(max_length=40)
     riot_id = models.IntegerField(default=0)
     matches = models.ManyToManyField(Match, through='PlayerMatch')
+    photo = models.ImageField(upload_to='stats/player_photos', default='')
 
     def __str__(self):
         return self.name
