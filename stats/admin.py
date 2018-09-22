@@ -44,7 +44,7 @@ class TeamPlayerInline(admin.TabularInline):
 
 class PlayerAdmin(admin.ModelAdmin):
     fieldsets = [
-        ('Player Info', {'fields': ['name', 'riot_id']}),
+        ('Player Info', {'fields': ['name', 'riot_id', 'photo']}),
     ]
     inlines = [TeamPlayerInline]
 
