@@ -485,6 +485,9 @@ class TeamPlayer(models.Model):
         enemy_player_matches = self.get_enemy_player_matches()
         results = []
         total_matches = Match.objects.filter(series__week__season=self.team.season).exclude(duration=0).count() * 2
+
+        if player_matches.count() == 0:
+            return results
         for i in range(0, max_minute):
             timestamp = i * 60000
             goldSum = 0
