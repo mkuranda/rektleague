@@ -1,4 +1,4 @@
-
+{% load static %}
 
 
 <style>
@@ -12,16 +12,15 @@
 
 .rektlogo
 {
-	    width: 20%;
-    padding-left: 39%;
+	    width: 100%;
 }
 
 .playerleft
 
 {
 
-	margin-left: 12%;
-    margin-top: 37px;
+	    width: 100%;
+	    height: auto;
 
 }
 
@@ -30,119 +29,209 @@
 {
 	    color: white;
     font-weight: 800;
-    font-size: 34px;
+    font-size: 28px;
     font-family: sans-serif;
-    margin-left: 2%;
 
 }
+
+.teamname
+
+{
+	    color: white;
+    font-weight: 800;
+    font-size: 48px;
+    font-family: sans-serif;
+
+}
+
+.column-one
+{
+	width:9%; 
+	height:10%; 
+	padding-left:10px;
+	padding-top:15px;
+}
+.column-two
+{
+	padding-top:15px;
+	text-align:center;
+}
+.column-three
+{
+	padding-top:15px;
+	width:9%; 
+}
+.column-four
+{
+	padding-top:15px;
+	text-align:center;
+}
+.column-five
+{
+	padding-top:15px;
+	width:9%; 
+	padding-right:10px;
+}
+
 
 .laneicon
 
 {
-margin-left: 9%;
 
+	    width: 80%;
+	    height: auto;
 }
 </style>
 
 <div class="background">
 <!--Header-->
-<div>
-<img class="rektlogo" src="/static/stats/RektLogo.png">
-</div>
+<table width="100%" style="margin: auto;">
+	<tr>
+		<th width="41%" class="teamname" style="color: #4a56b2;">
+			Team {{ series.get_series_team_1.team.name }}
+		</th>
+		<th width="18%">
+			<img class="rektlogo" src="/static/stats/RektLogo.png">
+		</th>
+		<th width="41%" class="teamname" style="color: #b24a58;">
+			Team {{ series.get_series_team_2.team.name }}
+		</th>
+	</tr>
 
-<!--Row 1-->
-<div style="width:20%;float:left;text-align: center;margin-top: -30px;">
-<img class="playerleft" src="/static/stats/player-photos/enraged-ovary.png">
-</div>
-<div style="width:25%;float:left;text-align: center;margin-top: 50px;">
-<span class="playernameleft">ENRAGED OVARY</span>
-</div>
-<div style="width:10%;float:left;text-align: center;">
-<img class="laneicon" src="/static/stats/Top_icon.png">
-</div>
-<div style="width:25%;float:left;text-align: center;margin-top: 50px;">
-<span class="playernameleft">ENRAGED OVARY</span>
-</div>
-<div style="width:20%;float:left;text-align: center;margin-top: -30px;">
-<img class="playerleft" src="/static/stats/player-photos/enraged-ovary.png">
-</div>
-
-<!--END Row 1-->
+</table>
 
 
-<!--Row 2-->
-<div style="width:20%;float:left;text-align: center;margin-top: -30px;">
-<img class="playerleft" src="/static/stats/player-photos/enraged-ovary.png">
-</div>
-<div style="width:25%;float:left;text-align: center;margin-top: 50px;">
-<span class="playernameleft">ENRAGED OVARY</span>
-</div>
-<div style="width:10%;float:left;text-align: center;">
-<img class="laneicon" src="/static/stats/Jungle_icon.png">
-</div>
-<div style="width:25%;float:left;text-align: center;margin-top: 50px;">
-<span class="playernameleft">ENRAGED OVARY</span>
-</div>
-<div style="width:20%;float:left;text-align: center;margin-top: -30px;">
-<img class="playerleft" src="/static/stats/player-photos/enraged-ovary.png">
+<table style="height: 70%;">
+	<tr>
+		<th class="column-one">
+			{% if series.get_team_1_players.0.player.photo %}
+			<img class="playerleft" src="{{ series.get_team_1_players.0.player.photo.url }}">
+			{% else %}
+			<img class="playerleft" src="/static/stats/player-photos/missing.png">
+			{% endif %}
+		</th>
+		<th class="column-two">
+			<span class="playernameleft">{{ series.get_team_1_players.0.player.name }}</span>
+		</th>
+		<th class="column-three">
+			<img class="laneicon" src="{{ series.get_team_1_players.0.role.icon.url }}">
+		</th>
+		<th class="column-four">
+			<span class="playernameleft">{{ series.get_team_2_players.0.player.name }}</span>
+		</th>
+		<th class="column-five">
+			{% if series.get_team_2_players.0.player.photo %}
+			<img class="playerleft" src="{{ series.get_team_2_players.0.player.photo.url }}">
+			{% else %}
+			<img class="playerleft" src="/static/stats/player-photos/missing.png">
+			{% endif %}
+		</th>
+	</tr>
+
+	<tr>
+		<th class="column-one">
+			{% if series.get_team_1_players.1.player.photo %}
+			<img class="playerleft" src="{{ series.get_team_1_players.1.player.photo.url }}">
+			{% else %}
+			<img class="playerleft" src="/static/stats/player-photos/missing.png">
+			{% endif %}
+		</th>
+		<th class="column-two">
+			<span class="playernameleft">{{ series.get_team_1_players.1.player.name }}</span>
+		</th>
+		<th class="column-three">
+			<img class="laneicon" src="{{ series.get_team_1_players.1.role.icon.url }}">
+		</th>
+		<th class="column-four">
+			<span class="playernameleft">{{ series.get_team_2_players.1.player.name }}</span>
+		</th>
+		<th class="column-five">
+			{% if series.get_team_2_players.1.player.photo %}
+			<img class="playerleft" src="{{ series.get_team_2_players.1.player.photo.url }}">
+			{% else %}
+			<img class="playerleft" src="/static/stats/player-photos/missing.png">
+			{% endif %}
+		</th>
+	</tr>
+
+	<tr>
+		<th class="column-one">
+			{% if series.get_team_1_players.2.player.photo %}
+			<img class="playerleft" src="{{ series.get_team_1_players.2.player.photo.url }}">
+			{% else %}
+			<img class="playerleft" src="/static/stats/player-photos/missing.png">
+			{% endif %}
+		</th>
+		<th class="column-two">
+			<span class="playernameleft">{{ series.get_team_1_players.2.player.name }}</span>
+		</th>
+		<th class="column-three">
+			<img class="laneicon" src="{{ series.get_team_1_players.2.role.icon.url }}">
+		</th>
+		<th class="column-four">
+			<span class="playernameleft">{{ series.get_team_2_players.2.player.name }}</span>
+		</th>
+		<th class="column-five">
+			{% if series.get_team_2_players.2.player.photo %}
+			<img class="playerleft" src="{{ series.get_team_2_players.2.player.photo.url }}">
+			{% else %}
+			<img class="playerleft" src="/static/stats/player-photos/missing.png">
+			{% endif %}
+		</th>
+	</tr>
+
+	<tr>
+		<th class="column-one">
+			{% if series.get_team_1_players.3.player.photo %}
+			<img class="playerleft" src="{{ series.get_team_1_players.3.player.photo.url }}">
+			{% else %}
+			<img class="playerleft" src="/static/stats/player-photos/missing.png">
+			{% endif %}
+		</th>
+		<th class="column-two">
+			<span class="playernameleft">{{ series.get_team_1_players.3.player.name }}</span>
+		</th>
+		<th class="column-three">
+			<img class="laneicon" src="{{ series.get_team_1_players.3.role.icon.url }}">
+		</th>
+		<th class="column-four">
+			<span class="playernameleft">{{ series.get_team_2_players.3.player.name }}</span>
+		</th>
+		<th class="column-five">
+			{% if series.get_team_2_players.3.player.photo %}
+			<img class="playerleft" src="{{ series.get_team_2_players.3.player.photo.url }}">
+			{% else %}
+			<img class="playerleft" src="/static/stats/player-photos/missing.png">
+			{% endif %}
+		</th>
+	</tr>
+
+	<tr>
+		<th class="column-one">
+			{% if series.get_team_1_players.4.player.photo %}
+			<img class="playerleft" src="{{ series.get_team_1_players.4.player.photo.url }}">
+			{% else %}
+			<img class="playerleft" src="/static/stats/player-photos/missing.png">
+			{% endif %}
+		</th>
+		<th class="column-two">
+			<span class="playernameleft">{{ series.get_team_1_players.4.player.name }}</span>
+		</th>
+		<th class="column-three">
+			<img class="laneicon" src="{{ series.get_team_1_players.4.role.icon.url }}">
+		</th>
+		<th class="column-four">
+			<span class="playernameleft">{{ series.get_team_2_players.4.player.name }}</span>
+		</th>
+		<th class="column-five">
+			{% if series.get_team_2_players.4.player.photo %}
+			<img class="playerleft" src="{{ series.get_team_2_players.4.player.photo.url }}">
+			{% else %}
+			<img class="playerleft" src="/static/stats/player-photos/missing.png">
+			{% endif %}
+		</th>
+	</tr>
+</table>
+
 </div>
 
-<!--END Row 2-->
-
-<!--Row 3-->
-<div style="width:20%;float:left;text-align: center;margin-top: -30px;">
-<img class="playerleft" src="/static/stats/player-photos/enraged-ovary.png">
-</div>
-<div style="width:25%;float:left;text-align: center;margin-top: 50px;">
-<span class="playernameleft">ENRAGED OVARY</span>
-</div>
-<div style="width:10%;float:left;text-align: center;">
-<img class="laneicon" src="/static/stats/Mid_icon.png">
-</div>
-<div style="width:25%;float:left;text-align: center;margin-top: 50px;">
-<span class="playernameleft">ENRAGED OVARY</span>
-</div>
-<div style="width:20%;float:left;text-align: center;margin-top: -30px;">
-<img class="playerleft" src="/static/stats/player-photos/enraged-ovary.png">
-</div>
-
-<!--END Row 3-->
-
-<!--Row 4-->
-<div style="width:20%;float:left;text-align: center;margin-top: -30px;">
-<img class="playerleft" src="/static/stats/player-photos/enraged-ovary.png">
-</div>
-<div style="width:25%;float:left;text-align: center;margin-top: 50px;">
-<span class="playernameleft">ENRAGED OVARY</span>
-</div>
-<div style="width:10%;float:left;text-align: center;">
-<img class="laneicon" src="/static/stats/Bottom_icon.png">
-</div>
-<div style="width:25%;float:left;text-align: center;margin-top: 50px;">
-<span class="playernameleft">ENRAGED OVARY</span>
-</div>
-<div style="width:20%;float:left;text-align: center;margin-top: -30px;">
-<img class="playerleft" src="/static/stats/player-photos/enraged-ovary.png">
-</div>
-
-<!--END Row 4-->
-
-<!--Row 5-->
-<div style="width:20%;float:left;text-align: center;margin-top: -30px;">
-<img class="playerleft" src="/static/stats/player-photos/enraged-ovary.png">
-</div>
-<div style="width:25%;float:left;text-align: center;margin-top: 50px;">
-<span class="playernameleft">ENRAGED OVARY</span>
-</div>
-<div style="width:10%;float:left;text-align: center;">
-<img class="laneicon" src="/static/stats/Support_icon.png">
-</div>
-<div style="width:25%;float:left;text-align: center;margin-top: 50px;">
-<span class="playernameleft">ENRAGED OVARY</span>
-</div>
-<div style="width:20%;float:left;text-align: center;margin-top: -30px;">
-<img class="playerleft" src="/static/stats/player-photos/enraged-ovary.png">
-</div>
-
-<!--END Row 5-->
-</div>

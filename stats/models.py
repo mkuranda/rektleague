@@ -132,6 +132,12 @@ class Series(models.Model):
 	teamSeries = SeriesTeam.objects.filter(series=self)
 	return teamSeries[1].team
 
+    def get_team_1_cast_players(self):
+        return SeriesCastPlayer.objects.filter(series=self, team=self.get_team_1)
+
+    def get_team_2_cast_players(self):
+        return SeriesCastPlayer.objects.filter(series=self, team=self.get_team_2)
+
     def get_team_1_players(self):
         return SeriesPlayer.objects.filter(series=self, team=self.get_team_1)
 
@@ -385,6 +391,16 @@ class PlayerRole(models.Model):
 
     class Meta:
         unique_together = (("player", "role"))
+
+class SeriesCastTeam(models.Model):
+    series = models.ForeignKey(Series)
+    team = models.ForeignKey(Team)
+
+class SeriesCastPlayer(models.Model):
+    player = models.ForeignKey(Player)
+    team = models.ForeignKey(Team)
+    role = models.ForeignKey(Role)
+    series = models.ForeignKey(Series)
 
 class SeriesPlayer(models.Model):
     player = models.ForeignKey(Player)

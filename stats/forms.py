@@ -29,6 +29,45 @@ class CreateRosterForm(forms.Form):
         self.fields["sub"].queryset = Player.objects.filter(teamplayer__team=team_id, teamplayer__role=sub_role)
 
 
+class CasterLineupForm(forms.Form):
+    blue_top = forms.ModelChoiceField(queryset=Team.objects.none())
+    blue_jun = forms.ModelChoiceField(queryset=Team.objects.none())
+    blue_mid = forms.ModelChoiceField(queryset=Team.objects.none())
+    blue_bot = forms.ModelChoiceField(queryset=Team.objects.none())
+    blue_sup = forms.ModelChoiceField(queryset=Team.objects.none())
+
+    red_top = forms.ModelChoiceField(queryset=Team.objects.none())
+    red_jun = forms.ModelChoiceField(queryset=Team.objects.none())
+    red_mid = forms.ModelChoiceField(queryset=Team.objects.none())
+    red_bot = forms.ModelChoiceField(queryset=Team.objects.none())
+    red_sup = forms.ModelChoiceField(queryset=Team.objects.none())
+
+    def __init__(self, *args, **kwargs):
+        series_id = kwargs.pop('series_id')
+	super(CasterLineupForm, self).__init__(*args, **kwargs)
+        top_role = Role.objects.get(name="Top")
+        jun_role = Role.objects.get(name="Jungle")
+        mid_role = Role.objects.get(name="Mid")
+        bot_role = Role.objects.get(name="Bot")
+        sup_role = Role.objects.get(name="Support")
+
+        blue_team = SeriesCastTeam.objects.get(series=series_id, side='Blue')
+        red_team = SeriesCastTeam.objects.get(series=series_id, side='Red')
+
+        self.fields["blue_top"].queryset = Player.objects.filter(teamplayer__team=blue_team.team, teamplayer__role=top_role)
+        self.fields["blue_jun"].queryset = Player.objects.filter(teamplayer__team=blue_team.team, teamplayer__role=jun_role)
+        self.fields["blue_mid"].queryset = Player.objects.filter(teamplayer__team=blue_team.team, teamplayer__role=mid_role)
+        self.fields["blue_bot"].queryset = Player.objects.filter(teamplayer__team=blue_team.team, teamplayer__role=bot_role)
+        self.fields["blue_sup"].queryset = Player.objects.filter(teamplayer__team=blue_team.team, teamplayer__role=sup_role)
+
+        self.fields["red_top"].queryset = Player.objects.filter(teamplayer__team=red_team.team, teamplayer__role=top_role)
+        self.fields["red_jun"].queryset = Player.objects.filter(teamplayer__team=red_team.team, teamplayer__role=jun_role)
+        self.fields["red_mid"].queryset = Player.objects.filter(teamplayer__team=red_team.team, teamplayer__role=mid_role)
+        self.fields["red_bot"].queryset = Player.objects.filter(teamplayer__team=red_team.team, teamplayer__role=bot_role)
+        self.fields["red_sup"].queryset = Player.objects.filter(teamplayer__team=red_team.team, teamplayer__role=sup_role)
+
+
+
 class TournamentCodeForm(forms.Form):
 
     team_1 = forms.ModelChoiceField(queryset=Team.objects.none())

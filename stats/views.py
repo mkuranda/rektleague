@@ -208,6 +208,33 @@ def index(request):
     latest_season = Season.objects.latest('id')
     return HttpResponseRedirect('season/' + str(latest_season.id))
 
+def series_caster_tools(request, season_id, series_id):
+    season = get_object_or_404(Season, id=season_id)
+    series = get_object_or_404(Series, id=series_id)
+    roles = Role.objects.all()
+    seriesteams = SeriesTeam.objects.prefetch_related('team__teamplayer_set').filter(series=series)
+
+    context = {
+        'season': season,
+        'series': series,
+        'roles': roles
+    }
+    return render(request, 'stats/caster_tools.html', context)
+
+def series_head_to_head(request, season_id, series_id):
+    series = get_object_or_404(Series, id=series_id)
+    seriesteams = SeriesTeam.objects.prefetch_related('team__teamplayer_set').filter(series=series)
+    team1 = seriesteams[0]
+    team2 = seriesteams[1]
+
+    context = {
+        'series': series,
+        'team1': team1,
+        'team2': team2
+    }
+    return render(request, 'stats/head_to_head.html', context)
+
+
 def series_detail(request, season_id, series_id):
     season = get_object_or_404(Season, id=season_id)
     series = get_object_or_404(Series, id=series_id)

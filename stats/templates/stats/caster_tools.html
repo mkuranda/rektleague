@@ -1,0 +1,123 @@
+{% extends "stats/base.html" %}
+
+{% block title %}Rekt League | Team {{ team.name }} | {{ team_player_role.player.name }}{% endblock %}
+
+{% block content %}
+
+<div width="60%" style="text-align: center"><a class="imglink" href="/stats/season/{{ season.id }}/"><img style="width: 55%; margin-left: auto; margin-right: auto; margin-top:220px; margin-bottom: 100px;" src="{{ season.splash.url }}"></a></div>
+
+<form action="/stats/season/{{ season.id }}/series/{{ series.id }}/caster_lineup/" method="post">
+	<font color="black">
+		{% csrf_token %}
+<table class="centercontent" width="70%">
+	<tr class="centercontent">
+		<td><td>
+	</tr>
+	<tr class="centercontent">
+		<th>
+			<h1 style="font-size: 36">Week {{ series.week.number }}</h1>
+			<h1 style="font-size: 36">{% for seriesteam in series.seriesteam_set.all %}<a href="/stats/season/{{ season.id }}/team/{{ seriesteam.team.id }}/">{{ seriesteam.team.name }} ({{ seriesteam.get_record_before }})</a>{% if forloop.counter == 1 %} vs {% endif %}{% endfor %}</h1>
+			<h1 style="font-size: 36">Caster Tools</h1>
+		</th>
+	</tr>
+	<tr class="centercontent">
+		<td>
+			{% if series.rosters_submitted and series.past_deadline and season.id > 2 %}
+			<table class="centercontent" width="80%">
+				<tr>
+					<td>
+						<table class="centercontent" width="100%">
+							<tr>
+								<td width="45%">
+									<table class="centercontent" width="100%">
+										<tr>
+											<th class="centertableheader" style="border-bottom: 1px solid #4a56b2">{{ series.get_team_1.name }}</th>
+										</tr>
+										<tr>
+											<td style="border-bottom: 1px solid #4a56b2">
+												<table class="centercontent" width="100%">
+													<tr class="alternating-back"></tr>
+												    {% for seriesplayer in series.get_team_1_players %}
+												     {% if seriesplayer.role.name == "Substitute" %}
+												     {% else %}
+				
+													<tr class="alternating-back">
+														<td style="font-size:20; text-align:center"><a href="/season/{{ season.id }}/team/{{ series.get_team_1.id }}/player/{{ seriesplayer.player.id }}/">{{ seriesplayer.player.name }}</a></td>
+													</tr>
+												     {% endif %}
+												    {% endfor %}
+												</table>
+											</td>
+										</tr>
+									</table>
+								</td>
+								<td width="10%">
+									<table class="centercontent" width="100%">
+										<tr>
+											<th>Swap</th>
+										</tr>
+
+										<tr>
+											<td width="40%"><img src="{{ roles.0.icon.url }}" height="30" width="30" title="{{ roles.0.name }}"></td>
+										</tr>
+										<tr>
+											<td width="40%"><img src="{{ roles.1.icon.url }}" height="30" width="30" title="{{ roles.0.name }}"></td>
+										</tr>
+
+										<tr>
+											<td width="40%"><img src="{{ roles.2.icon.url }}" height="30" width="30" title="{{ roles.0.name }}"></td>
+										</tr>
+
+										<tr>
+											<td width="40%"><img src="{{ roles.3.icon.url }}" height="30" width="30" title="{{ roles.0.name }}"></td>
+										</tr>
+
+										<tr>
+											<td width="40%"><img src="{{ roles.4.icon.url }}" height="30" width="30" title="{{ roles.0.name }}"></td>
+										</tr>
+
+									</table>
+								</td>
+								<td width="45%">
+									<table class="centercontent" width="100%">
+										<tr>
+											<th class="centertableheader" style="border-bottom: 1px solid #b24a58">{{ series.get_team_2.name }}</th>
+										</tr>
+										<tr>
+											<td style="border-bottom: 1px solid #b24a58">
+												<table class="centercontent" width="100%">
+													<tr class="alternating-back"></tr>
+											    {% for seriesplayer in series.get_team_2_players %}
+											     {% if seriesplayer.role.name == "Substitute" %}
+											     {% else %}
+			
+													<tr class="alternating-back">
+														<td style="font-size:20; text-align:center"><a href="/season/{{ season.id }}/team/{{ series.get_team_2.id }}/player/{{ seriesplayer.player.id }}/">{{ seriesplayer.player.name }}</a></td>
+													</tr>
+											     {% endif %}
+											    {% endfor %}
+												</table>
+											</td>
+										</tr>
+									</table>
+								</td>
+							</tr>
+						</table>
+					</td>
+				</tr>
+				<tr class="centercontent">
+					<td>
+						<input type="submit" vaue="Submit"\>
+						</form>
+					</td>
+				</tr>
+			</table>
+			{% endif %}
+
+		</td>
+	</tr>
+
+</table>
+
+	
+{% endblock %}
