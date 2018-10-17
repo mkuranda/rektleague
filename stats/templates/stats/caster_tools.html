@@ -4,6 +4,35 @@
 
 {% block content %}
 
+<script type="text/javascript"><!--
+
+var player_1 = "0";
+var player_2 = "0";
+var role = "0";
+
+function ResetBorders() {
+	{% for team_player in team_players %}
+	document.getElementById("{{ team_player.id }}").style.borderColor = "#212121";
+	{% endfor %}
+}
+function ReplacePlayer1(content) {
+	player_1 = content;
+	document.getElementById(content).style.borderColor = "#727272";
+}
+function ReplacePlayer2(content) {
+	player_2 = content;
+	document.getElementById(content).style.borderColor = "#727272";
+}
+function ReplaceRole(content) {
+	role = content;
+	document.getElementById(content).style.borderColor = "#727272";
+}
+window.onload = function() {
+
+}
+//--></script>
+	
+
 <div width="60%" style="text-align: center"><a class="imglink" href="/stats/season/{{ season.id }}/"><img style="width: 55%; margin-left: auto; margin-right: auto; margin-top:220px; margin-bottom: 100px;" src="{{ season.splash.url }}"></a></div>
 
 <form action="/stats/season/{{ season.id }}/series/{{ series.id }}/caster_lineup/" method="post">
@@ -107,8 +136,7 @@
 				</tr>
 				<tr class="centercontent">
 					<td>
-						<input type="submit" vaue="Submit"\>
-						</form>
+						<div id="player_matchup_link"></div>
 					</td>
 				</tr>
 			</table>

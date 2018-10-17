@@ -17,7 +17,7 @@
 .rektlogo
 {
 	width: 100%;
-	padding-bottom: 20px;
+	padding-bottom: 15px;
 }
 
 .playerleft
@@ -200,48 +200,60 @@ chart.render();
 
 <table class="centercontent" style="padding-top: 30px;">
 	<tr>
-		<td style="padding-bottom:10px;">
+		<td style="padding-bottom:7px;">
 			{{ blue_player.get_kda | floatformat:"1" }}
 		</td>
 		<td style="font-size: 18px;">
 			TOTAL KDA
 		</td>
-		<td style="padding-bottom:10px;">
+		<td style="padding-bottom:7px;">
 			{{ red_player.get_kda | floatformat:"1"  }}
 		</td>
 	</tr>
 	<tr>
-		<td style="padding-bottom:10px;">
+		<td style="padding-bottom:7px;">
+			{{ blue_player.get_kill_participation | floatformat:"1" }}%
+		</td>
+		<td style="font-size: 18;">
+			KILL PARTICIPATION	
+		</td>
+		<td style="padding-bottom:7px;">
+			{{ red_player.get_kill_participation | floatformat:"1" }}%
+		</td>
+	</tr>
+
+	<tr>
+		<td style="padding-bottom:7px;">
 			{{ blue_player.get_percent_team_damage | floatformat:"1" }}%
 		</td>
 		<td style="font-size: 18;">
 			PERCENT OF TEAM DAMAGE	
 		</td>
-		<td style="padding-bottom:10px;">
+		<td style="padding-bottom:7px;">
 			{{ red_player.get_percent_team_damage | floatformat:"1" }}%
 		</td>
 	</tr>
 	<tr>
-		<td style="padding-bottom:10px;">
+		<td style="padding-bottom:7px;">
 			{% if blue_player.get_cs_diff_at_15 > 0 %}
 			+{% endif %}{{ blue_player.get_cs_diff_at_15 | floatformat:"1" }}
 		</td>
 		<td style="font-size: 18;">
 			CS DIFF @ 15
 		</td>
-		<td style="padding-bottom:10px;">
+		<td style="padding-bottom:7px;">
 			{% if red_player.get_cs_diff_at_15 > 0 %}
 			+{% endif %}{{ red_player.get_cs_diff_at_15 | floatformat:"1"  }}
 		</td>
 	</tr>
 	<tr>
-		<td style="padding-bottom:10px;">
+		<td style="padding-bottom:7px;">
 			{{ blue_player.get_avg_vision | floatformat:"1" }}
 		</td>
 		<td style="font-size: 18;">
 			VISION SCORE
 		</td>
-		<td style="padding-bottom:10px;">
+		<td style="padding-bottom:7px;">
 			{{ red_player.get_avg_vision | floatformat:"1"  }}
 		</td>
 	</tr>
@@ -305,8 +317,8 @@ chart.render();
 		</td>
 </table>
 
-<div class="centercontent" style="font-size: 18px; padding-top:25px;">GOLD DIFF VS LANE OPPONENT</div>
-<div id="goldDiffVsLaneOpponent" style="height: 26%; width: 70%; margin: auto; margin-bottom:80px;padding-top:5px;"></div>
+<div class="centercontent" style="font-size: 18px; padding-top:20px;">GOLD DIFF VS LANE OPPONENT</div>
+<div id="goldDiffVsLaneOpponent" style="height: 26%; width: 60%; margin: auto; margin-bottom:80px;padding-top:5px;"></div>
 
 </div>
 <script type="text/javascript" src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>
