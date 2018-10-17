@@ -221,6 +221,21 @@ def series_caster_tools(request, season_id, series_id):
     }
     return render(request, 'stats/caster_tools.html', context)
 
+def player_matchup(request, season_id, series_id, blue_player_id, red_player_id):
+    series = get_object_or_404(Series, id=series_id)
+    blue_player = get_object_or_404(TeamPlayer, id=blue_player_id)
+    red_player = get_object_or_404(TeamPlayer, id=red_player_id)
+
+    max_duration = min(blue_player.team.get_max_timeline_minute(), red_player.team.get_max_timeline_minute()) - 1
+    context = {
+        'series': series,
+        'blue_player': blue_player,
+        'red_player': red_player,
+        'max_duration': max_duration
+    }
+    return render(request, 'stats/player_matchup.html', context)
+
+
 def series_head_to_head(request, season_id, series_id):
     series = get_object_or_404(Series, id=series_id)
     seriesteams = SeriesTeam.objects.prefetch_related('team__teamplayer_set').filter(series=series)
