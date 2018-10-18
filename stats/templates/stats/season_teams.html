@@ -63,6 +63,10 @@
 					<th class="sortableheader" width="10%">
 						Baron Kills
 					</th>
+					<th class="sortableheader" width="10%">
+						Average Win Time
+					</th>
+
 				</tr>
 				</thead>
 				<tbody>
@@ -97,6 +101,10 @@
 					</td>
 					<td>
 						{{ team.get_baron_kills.baron_kills__sum }}
+					</td>
+					<td>
+						<div style="opacity:0; font-size:0px;">{{ team.get_average_win_duration }}</div>
+						{{ team.get_average_win_duration_str }}
 					</td>
 
 				</tr>

@@ -1,4 +1,5 @@
 import datetime
+import time
 from django.db import models
 from django.contrib.auth.models import User
 from django.db.models import Count, Avg, Sum, Q, Case, When, F, Value, ExpressionWrapper
@@ -242,6 +243,18 @@ class Team(models.Model):
     icon = models.ImageField(upload_to='stats')
     splash = models.ImageField(upload_to='stats/team_splashes', default='')
     season_win = models.BooleanField(default=False)
+
+    def get_average_match_duration(self):
+        return TeamMatch.objects.filter(team=self).aggregate(Avg('match__duration'))['match__duration__avg']
+
+    def get_average_match_duration_str(self):
+        return time.strftime('%M:%S', time.gmtime(TeamMatch.objects.filter(team=self).aggregate(Avg('match__duration'))['match__duration__avg']))
+
+    def get_average_win_duration(self):
+        return TeamMatch.objects.filter(team=self, win=True).aggregate(Avg('match__duration'))['match__duration__avg']
+
+    def get_average_win_duration_str(self):
+        return time.strftime('%M:%S', time.gmtime(TeamMatch.objects.filter(team=self, win=True).aggregate(Avg('match__duration'))['match__duration__avg']))
 
     def get_kill_timelines(self):
         max_minute = self.get_max_timeline_minute()
