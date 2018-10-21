@@ -222,6 +222,8 @@ def series_caster_tools(request, season_id, series_id):
     return render(request, 'stats/caster_tools.html', context)
 
 def player_matchup(request, blue_player_id, red_player_id, blue_team_id, red_team_id, role_id):
+    role = get_object_or_404(Role, id=role_id)
+
     blue_player = get_object_or_404(TeamPlayer, player=blue_player_id, team=blue_team_id, role=role_id)
     red_player = get_object_or_404(TeamPlayer, player=red_player_id, team=red_team_id, role=role_id)
 
@@ -229,7 +231,8 @@ def player_matchup(request, blue_player_id, red_player_id, blue_team_id, red_tea
     context = {
         'blue_player': blue_player,
         'red_player': red_player,
-        'max_duration': max_duration
+        'max_duration': max_duration,
+        'role': role
     }
     return render(request, 'stats/player_matchup.html', context)
 
