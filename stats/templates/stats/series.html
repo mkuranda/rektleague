@@ -291,20 +291,6 @@ function ReplaceMatchContent(id, content) {
 		     {% else %}
 		        '<td style="border-bottom: 1px solid #b24a58">' +
 		     {% endif %}
-		         '<table class="centercontent" width="100%">' +
-		          '<tr class="alternating-back"></tr>' +
-		    {% for teamplayer in teammatch.team.teamplayer_set.all %}
-		          '<tr class="alternating-back">' +
-		      {% if forloop.parentloop.counter == 1 %}
-		           '<td width="40%"><img src="{{ teamplayer.role.icon.url }}" height="30" width="30" title="{{ teamplayer.role.name }}"></td>' +
-		           '<td style="font-size:20; text-align:left">{{ teamplayer.player.name }}</td>' +
-		      {% else %}
-		           '<td style="font-size:20; text-align:right">{{ teamplayer.player.name }}</td>' +
-		           '<td width="40%"><img src="{{ teamplayer.role.icon.url }}" height="30" width="30" title="{{ teamplayer.role.name }}"></td>' +
-		      {% endif %}
-		          '</tr>' +
-		    {% endfor %}
-		         '</table>' +
 		        '</td>' +
 		       '</tr>' +	
 		      '</table>' +
@@ -341,14 +327,6 @@ function ReplaceMatchContent(id, content) {
                    {% endif %}
 		'</table>' +
 		 {% else %}
-		  '<table width="100%">' +
-		  '<tr>' +
-		  '<td>No Tournament Code Configured.</td>' +
-		 '</tr>' +
-		 '<tr>' +
-		'<td><a href="/stats/create_code/{{ match.id }}">Create Tournament Code</a></td>' +
-		 '</tr>' +
-		 '</table>' +
 		 {% endif %}
 		{% endif %}
 		'</tr></table>' +
