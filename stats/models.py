@@ -45,9 +45,10 @@ class Season(models.Model):
         return Team.objects.filter(season=self, season_win=True)
 
     def next_week(self):
-        if self.id > 2:
-            return Week.objects.filter(season=self, date__gte=datetime.datetime.now())
-        return self.get_weeks()
+        ret = Week.objects.filter(season=self, date__gte=datetime.datetime.now())
+        if self.id > 2 and len(ret) > 0:
+            return ret[0]
+        return self.get_weeks()[0]
 
 
 class Week(models.Model):
