@@ -10,25 +10,49 @@ var player_1 = "0";
 var player_2 = "0";
 var role = "0";
 
-function ResetBorders() {
-	{% for team_player in team_players %}
-	document.getElementById("{{ team_player.id }}").style.borderColor = "#212121";
+function ResetLinks() {
+	document.getElementById('player_matchup_link').href = "/caster_tools/player_matchup/" + player_1 + "/" + player_2 + "/team/{{ series.get_team_1.id }}/{{ series.get_team_2.id }}/role/" + role;
+}
+function ResetPlayer1Borders() {
+	{% for teamplayer in series.get_team_1.get_players %}
+	document.getElementById('player1_{{ teamplayer.player.id }}').style.border = "";
+	{% endfor %}
+}
+function ResetPlayer2Borders() {
+	{% for teamplayer in series.get_team_2.get_players %}
+	document.getElementById('player2_{{ teamplayer.player.id }}').style.border = "";
+	{% endfor %}
+}
+function ResetRoleBorders() {
+	{% for role in roles %}
+	document.getElementById('role_{{ role.id }}').style.border = "";
 	{% endfor %}
 }
 function ReplacePlayer1(content) {
+	ResetPlayer1Borders();
 	player_1 = content;
-	document.getElementById(content).style.borderColor = "#727272";
+	document.getElementById("player1_" + content).style.border = "1px solid #727272";
+	ResetLinks();
 }
 function ReplacePlayer2(content) {
+	ResetPlayer2Borders();
 	player_2 = content;
-	document.getElementById(content).style.borderColor = "#727272";
+	document.getElementById("player2_" + content).style.border = "1px solid #727272";
+	ResetLinks();
 }
 function ReplaceRole(content) {
+	ResetRoleBorders();
 	role = content;
-	document.getElementById(content).style.borderColor = "#727272";
+	document.getElementById("role_" + content).style.border = "1px solid #727272";
+	ResetLinks();
 }
 window.onload = function() {
-
+	player_1 = "0";
+	player_2 = "0";
+	role = "0";
+	ReplacePlayer1('{{ series.get_team_1.get_players.first.player.id }}');
+	ReplacePlayer2('{{ series.get_team_2.get_players.first.player.id }}');
+	ReplaceRole('1');
 }
 //--></script>
 	
@@ -49,16 +73,15 @@ window.onload = function() {
 			<h1 style="font-size: 36">Caster Tools</h1>
 		</th>
 	</tr>
-	<tr class="centercontent">
+	<tr>
 		<td>
-			{% if series.rosters_submitted and series.past_deadline and season.id > 2 %}
 			<table class="centercontent" width="80%">
-				<tr>
-					<td>
+				<tr class="centercontent">
+					<td style="padding-bottom:40px;">
 						<table class="centercontent" width="100%">
 							<tr>
 								<td width="45%">
-									<table class="centercontent" width="100%">
+									<table class="centercontent" width="80%">
 										<tr>
 											<th class="centertableheader" style="border-bottom: 1px solid #4a56b2">{{ series.get_team_1.name }}</th>
 										</tr>
@@ -66,14 +89,10 @@ window.onload = function() {
 											<td style="border-bottom: 1px solid #4a56b2">
 												<table class="centercontent" width="100%">
 													<tr class="alternating-back"></tr>
-												    {% for seriesplayer in series.get_team_1_players %}
-												     {% if seriesplayer.role.name == "Substitute" %}
-												     {% else %}
-				
+												    {% for teamplayer in series.get_team_1.get_players %}
 													<tr class="alternating-back">
-														<td style="font-size:20; text-align:center"><a href="/season/{{ season.id }}/team/{{ series.get_team_1.id }}/player/{{ seriesplayer.player.id }}/">{{ seriesplayer.player.name }}</a></td>
+														<td id="player1_{{ teamplayer.player.id }}" style="font-size:20; text-align:center"><a href="javascript:ReplacePlayer1('{{ teamplayer.player.id }}')">{{ teamplayer.player.name }}</a></td>
 													</tr>
-												     {% endif %}
 												    {% endfor %}
 												</table>
 											</td>
@@ -82,33 +101,17 @@ window.onload = function() {
 								</td>
 								<td width="10%">
 									<table class="centercontent" width="100%">
+										{% for role in roles %}
 										<tr>
-											<th>Swap</th>
+											<td id="role_{{ role.id }}" width="40%"><a href="javascript:ReplaceRole('{{ role.id }}')"><img src="{{ role.icon.url }}" height="30" width="30" title="{{ role.name }}"></a></td>
 										</tr>
 
-										<tr>
-											<td width="40%"><img src="{{ roles.0.icon.url }}" height="30" width="30" title="{{ roles.0.name }}"></td>
-										</tr>
-										<tr>
-											<td width="40%"><img src="{{ roles.1.icon.url }}" height="30" width="30" title="{{ roles.0.name }}"></td>
-										</tr>
-
-										<tr>
-											<td width="40%"><img src="{{ roles.2.icon.url }}" height="30" width="30" title="{{ roles.0.name }}"></td>
-										</tr>
-
-										<tr>
-											<td width="40%"><img src="{{ roles.3.icon.url }}" height="30" width="30" title="{{ roles.0.name }}"></td>
-										</tr>
-
-										<tr>
-											<td width="40%"><img src="{{ roles.4.icon.url }}" height="30" width="30" title="{{ roles.0.name }}"></td>
-										</tr>
+										{% endfor %}
 
 									</table>
 								</td>
 								<td width="45%">
-									<table class="centercontent" width="100%">
+									<table class="centercontent" width="80%">
 										<tr>
 											<th class="centertableheader" style="border-bottom: 1px solid #b24a58">{{ series.get_team_2.name }}</th>
 										</tr>
@@ -116,14 +119,11 @@ window.onload = function() {
 											<td style="border-bottom: 1px solid #b24a58">
 												<table class="centercontent" width="100%">
 													<tr class="alternating-back"></tr>
-											    {% for seriesplayer in series.get_team_2_players %}
-											     {% if seriesplayer.role.name == "Substitute" %}
-											     {% else %}
+											    {% for teamplayer in series.get_team_2.get_players %}
 			
 													<tr class="alternating-back">
-														<td style="font-size:20; text-align:center"><a href="/season/{{ season.id }}/team/{{ series.get_team_2.id }}/player/{{ seriesplayer.player.id }}/">{{ seriesplayer.player.name }}</a></td>
+														<td id="player2_{{ teamplayer.player.id }}" style="font-size:20; text-align:center"><a href="javascript:ReplacePlayer2('{{ teamplayer.player.id }}')">{{ teamplayer.player.name }}</a></td>
 													</tr>
-											     {% endif %}
 											    {% endfor %}
 												</table>
 											</td>
@@ -135,12 +135,11 @@ window.onload = function() {
 					</td>
 				</tr>
 				<tr class="centercontent">
-					<td>
-						<div id="player_matchup_link"></div>
-					</td>
+					<th class="pagebutton" style="font-size:20; padding:20px;">
+						<a id="player_matchup_link" href="">Player Matchup</a>
+					</th>
 				</tr>
 			</table>
-			{% endif %}
 
 		</td>
 	</tr>

@@ -245,6 +245,9 @@ class Team(models.Model):
     splash = models.ImageField(upload_to='stats/team_splashes', default='')
     season_win = models.BooleanField(default=False)
 
+    def get_players(self):
+        return TeamPlayer.objects.filter(team=self, role__isFill=True)
+
     def get_average_match_duration(self):
         return TeamMatch.objects.filter(team=self).aggregate(Avg('match__duration'))['match__duration__avg']
 
