@@ -46,11 +46,15 @@
 					<th class="sortableheader" width="10%">
 						Player
 					</th>
-					<th class="sortableheader" width="10%">
+					<th class="sortableheader" width="8%">
 						Team
 					</th>
-					<th class="sortableheader" width="10%">
+					<th class="sortableheader" width="8%">
 						Position	
+					</th>
+					<th class="sortableheader" width="8%">
+						Games<br>
+						Played
 					</th>
 					<th class="sortableheader" width="8%">
 						Avg<br>
@@ -72,7 +76,7 @@
 						</br>
 						Participation
 					</th>
-					<th class="sortableheader" width="10%">
+					<th class="sortableheader" width="8%">
 						CS Diff
 						</br>
 						@ 15
@@ -107,6 +111,10 @@
 						<div style="position: absolute; opacity: 0.0;">{{ team_player.role.id }}</div>
 						<img height="40" width="40" src="{{ team_player.role.icon.url }}" title="{{ team_player.role.name }}">
 					</td>
+					<td>
+						{{ team_player.get_num_matches }}
+					</td>
+
 					<td>
 						{{ team_player.get_avg_kills|floatformat:"1" }}
 					</td>
