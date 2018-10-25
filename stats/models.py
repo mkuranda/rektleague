@@ -1,5 +1,6 @@
 import datetime
 import time
+import math
 from django.db import models
 from django.contrib.auth.models import User
 from django.db.models import Count, Avg, Sum, Q, Case, When, F, Value, ExpressionWrapper
@@ -509,6 +510,87 @@ class TeamPlayer(models.Model):
 
     def get_team(self):
         return Team.objects.filter(pk=self.team)
+    
+    def get_proximity_timeline(self):
+        all_timelines = PlayerMatchTimeline.objects.filter(playermatch__player=self.player, playermatch__role=self.role, playermatch__team=self.team).annotate(minute=F('timestamp') / 1000 / 60).order_by('minute')
+        num_games = self.get_player_matches().count()
+        results = []
+        for i in range(0, 25):
+            timelines = all_timelines.filter(minute=i)
+            topSum = 0
+            midSum = 0
+            botSum = 0
+            for timeline in timelines:
+                #if math.hypot(timeline.position_x - 1800, timeline.position_y - 13000) < 6500:
+                if timeline.position_x < 5000 and timeline.position_y > 9500:
+#                    topSum = topSum + ((6000 - math.hypot(timeline.position_x - 1800, timeline.position_y - 13000)) ** 2) / 10000
+                    topSum = topSum + (6500 - math.hypot(timeline.position_x - 1800, timeline.position_y - 13000)) / num_games
+                if timeline.position_x > 5000 and timeline.position_x < 10500 and timeline.position_y > 4800 and timeline.position_y < 9500:
+                #if math.hypot(timeline.position_x - 7500, timeline.position_y - 7500) < 5000:
+#                    midSum = midSum + ((6000 - math.hypot(timeline.position_x - 7500, timeline.position_y - 7500)) ** 2) / 10000
+                    midSum = midSum + (6500 - math.hypot(timeline.position_x - 7500, timeline.position_y - 7500)) / num_games
+                #if math.hypot(timeline.position_x - 13000, timeline.position_y - 1800) < 6500:
+
+                if timeline.position_x > 10500 and timeline.position_y < 4800:
+#                    botSum = botSum + ((6000 - math.hypot(timeline.position_x - 13000, timeline.position_y - 1800)) ** 2) / 10000
+                    botSum = botSum + (6500 - math.hypot(timeline.position_x - 13000, timeline.position_y - 1800)) / num_games
+            results.append({
+                'minute': i,
+                'top': topSum,
+                'mid': midSum,
+                'bot': botSum
+            })
+        return results
+
+    def get_proximity_timeline_max(self):
+        timelines = self.get_proximity_timeline()
+
+        result = 0
+        for timeline in timelines:
+            if max(timeline['top'], timeline['mid'], timeline['bot']) > result:
+                result = max(timeline['top'], timeline['mid'], timeline['bot'])
+
+        return result
+
+    def get_num_matches(self):
+        return PlayerMatch.objects.filter(team=self.team, player=self.player, role=self.role).count()
+
+    def get_percent_teams_control_wards(self):
+        if self.role.isFill == True:
+            matches = Match.objects.filter(playermatch__player=self.player)
+            match_ids = [o.id for o in matches]
+    
+            total_control_wards = PlayerMatch.objects.filter(match__id__in=match_ids, team=self.team).aggregate(control_wards=Sum('vision_wards_bought_in_game'))['control_wards']
+            player_control_wards= PlayerMatch.objects.select_related().filter(player=self.player, team=self.team).aggregate(control_wards=Sum('vision_wards_bought_in_game'))['control_wards']
+        else:
+            matches = Match.objects.filter(playermatch__player=self.player, playermatch__role=self.role)
+            match_ids = [o.id for o in matches]
+    
+            total_control_wards = PlayerMatch.objects.filter(match__id__in=match_ids, team=self.team).aggregate(control_wards=Sum('vision_wards_bought_in_game'))['control_wards']
+            player_control_wards = PlayerMatch.objects.select_related().filter(player=self.player, team=self.team, role=self.role).aggregate(control_wards=Sum('vision_wards_bought_in_game'))['control_wards']
+
+        if total_control_wards == None:
+            return 0
+        return 100.0 * player_control_wards / total_control_wards
+
+    def get_percent_control_ward_gold(self):
+        playermatches = self.get_player_matches().aggregate(total_gold_earned=Sum('gold_earned'), control_wards=Sum('vision_wards_bought_in_game'))
+        return 100.0 * playermatches['control_wards'] * 75.0 / playermatches['total_gold_earned']
+
+    def get_vision_timeline(self):
+        max_minute = self.team.get_max_timeline_minute()
+        wards_placed = PlayerMatchWardPlace.objects.filter(playermatch__team=self.team, playermatch__player=self.player, playermatch__role=self.role, ward_type__in=(Ward.objects.filter(name='Control Ward')|Ward.objects.filter(name='Yellow Trinket Ward')|Ward.objects.filter(name='Sight Ward')|Ward.objects.filter(name='Blue Trinket')))
+        wards_killed = PlayerMatchWardKill.objects.filter(playermatch__team=self.team, playermatch__player=self.player, playermatch__role=self.role, ward_type__in=(Ward.objects.filter(name='Control Ward')|Ward.objects.filter(name='Yellow Trinket Ward')|Ward.objects.filter(name='Sight Ward')|Ward.objects.filter(name='Blue Trinket')))
+        results = []
+        for i in range(0, max_minute):
+            timestamp = i * 60000
+            results.append({
+                'minute': i, 
+                'wards_placed': 1.0 * wards_placed.filter(timestamp__lt = timestamp).count() / self.get_num_matches(),
+                'wards_killed': 1.0 * wards_killed.filter(timestamp__lt = timestamp).count() / self.get_num_matches()
+                })
+
+        return results
 
     def get_gold_timeline(self):
         max_minute = self.team.get_max_timeline_minute()
