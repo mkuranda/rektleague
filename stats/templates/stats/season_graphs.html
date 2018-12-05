@@ -1,0 +1,500 @@
+{% extends "stats/base.html" %}
+
+{% block title %}Rekt League | {{ season }} Graphs{% endblock %}
+
+{% block content %}
+
+<script type="text/javascript"><!--
+
+var RoleMaps = new Map();
+{% for role in roles %}
+var {{ role.role.name }}PlayerMap = new Map();
+RoleMaps.set("{{ role.role.name }}", {{ role.role.name }}PlayerMap);
+{% endfor %}
+
+var IdMap = new Map();
+
+{% for role in roles %}
+{% for player in role.player_set %}
+{% if player.get_num_matches > 0 %}
+IdMap.set("{{ player.player.name }}_{{ player.role.name }}", {{ player.id }});
+{% endif %}
+{% endfor %}
+{% endfor %}
+
+var graph_type = "{{ graph_type }}";
+
+function SetGraphType(content) {
+	document.getElementById("gold_button").style.border = "";
+	document.getElementById("gold_diff_button").style.border = "";
+	document.getElementById("wards_placed_button").style.border = "";
+	document.getElementById("wards_killed_button").style.border = "";
+	graph_type = content;
+	console.log(content)
+	document.getElementById(content + "_button").style.border = "1px solid #727272";
+	ResetGenerateButton();
+}
+
+function ReplaceContent(id, content) {
+	var container = document.getElementById(id);
+	var contentMap = new Map();
+	{% for role in roles %}
+	contentMap.set("{{ role.role.name }}",
+		'<table class="centercontent" width="70%">' +
+			'<tr>' +
+				'<td width="50%">' +
+					'<table class="centercontent" width="60%" style="margin-right: 20px;">' +
+						'<tr class="alternating-back"><td></td></tr>' +
+						{% for player in role.player_set %}
+						{% if player.get_num_matches > 0 and not forloop.counter|divisibleby:2 %}
+						'<tr class="alternating-back">' +
+							'<td>' +
+								'<a href="javascript:SelectPlayerButton(\'{{ player.player.name }}\', \'{{ player.role.name }}\')">' +
+									'<table width="100%" style="padding: 5px;" id="{{ player.player.name }}_{{ player.role.name }}_button">'+
+										'<tr>' +
+											'<td width="50px">' +
+												'<img height="40px" style="padding-left: 40px;" src="{{ player.team.icon.url }}">' +
+											'</td>' +
+											'<td>' +
+												'{{ player.player.name }}' +
+											'</td>' +
+											'<td width="50px">' +
+												'{{ player.get_num_matches }} Games' +
+											'</td>' +
+
+										'</tr>' +
+									'</table>'+
+								'</a>' +
+							'</td>' +
+						'</tr>' +
+						{% endif %}
+					        {% endfor %}
+					'</table>' +
+				'</td>' +
+
+				'<td width="50%">' +
+					'<table class="centercontent" width="60%" style="margin-left: 20px;">' +
+						'<tr class="alternating-back"><td></td></tr>' +
+						{% for player in role.player_set %}
+						{% if player.get_num_matches > 0 and forloop.counter|divisibleby:2 %}
+						'<tr class="alternating-back">' +
+							'<td>' +
+								'<a href="javascript:SelectPlayerButton(\'{{ player.player.name }}\', \'{{ player.role.name }}\')">' +
+									'<table width="100%" style="padding: 5px;" id="{{ player.player.name }}_{{ player.role.name }}_button">'+
+										'<tr>' +
+											'<td width="50px">' +
+												'<img height="40px" style="padding-left: 40px;" src="{{ player.team.icon.url }}">' +
+											'</td>' +
+											'<td>' +
+												'{{ player.player.name }}' +
+											'</td>' +
+											'<td width="50px">' +
+												'{{ player.get_num_matches }} Games' +
+											'</td>' +
+										'</tr>' +
+									'</table>'+
+								'</a>' +
+							'</td>' +
+						'</tr>' +
+						{% if forloop.counter|add:"1" == role.player_set.count %}
+						'<tr class="alternating-back"><td></td></tr>' +
+						{% endif %}
+						{% endif %}
+					        {% endfor %}
+					'</table>' +
+				'</td>' +
+			'</tr>' +
+		'</table>' +
+		"");
+	{% endfor %}
+	container.innerHTML = contentMap.get(content);
+}
+
+function ResetButtons() {
+	{% for role in roles %}
+	document.getElementById("{{ role.role.name }}_button").style.height = "70px";
+	{% endfor %}
+}
+
+function SelectRoleButton(role) {
+	ResetButtons();
+	document.getElementById(role + '_button').style.height = "140px";
+	ReplaceContent('pagecontent', role);
+	SelectActiveButtons(role);
+}
+
+function SelectActiveButtons(role) {
+	{% for role in roles %}
+	if (role == "{{ role.role.name }}")
+	{
+		for (const key of {{ role.role.name }}PlayerMap.keys())
+		{
+			if ({{ role.role.name }}PlayerMap.get(key))
+			{
+				if (document.contains(document.getElementById(key + '_' + role + '_button')))
+				{
+					document.getElementById(key + '_' + role + '_button').style.border = "1px solid #727272";
+				}
+			}
+		}
+	}
+	{% endfor %}
+}
+
+function SelectPlayerButton(player, role) {
+	if (RoleMaps.get(role).get(player))
+	{
+		RoleMaps.get(role).set(player, false);
+		if (document.contains(document.getElementById(player + '_' + role + '_button')))
+		{
+			document.getElementById(player + '_' + role + '_button').style.border = "";
+		}
+	}
+	else
+	{
+		RoleMaps.get(role).set(player, true);
+		if (document.contains(document.getElementById(player + '_' + role + '_button')))
+		{
+			document.getElementById(player + '_' + role + '_button').style.border = "1px solid #727272";
+		}
+	}
+	ResetGenerateButton();
+}
+
+function ClearPlayerSelections() {
+	{% for role in roles %}
+	for (const key of {{ role.role.name }}PlayerMap.keys())
+	{
+		if ({{ role.role.name }}PlayerMap.get(key))
+		{
+			if (document.contains(document.getElementById(key + '_{{ role.role.name }}_button')))
+			{
+				document.getElementById(key + '_{{ role.role.name }}_button').style.border = "";
+			}
+			{{ role.role.name }}PlayerMap.set(key, false);
+		}
+	}
+	{% endfor %}
+}
+
+function ResetGenerateButton() {
+	var id_str = "";
+	{% for role in roles %}
+	for (const key of {{ role.role.name }}PlayerMap.keys())
+	{
+		if ({{ role.role.name }}PlayerMap.get(key))
+		{
+			id_str += IdMap.get(key + "_{{ role.role.name }}") + "_";
+		}
+	}
+	{% endfor %}
+
+	if (id_str != "")
+	{
+		id_str = id_str.slice(0, -1);
+	}
+	
+	document.getElementById("generate_button").href = "/season/{{ season.id }}/graphs/" + graph_type + "/" + id_str;
+}
+
+//function ResetCurrentSelection() {
+//	var content = "<table>";
+//	{% for role in roles %}
+//	for (const key of {{ role.role.name }}PlayerMap.keys())
+//	{
+//		if ({{ role.role.name }}PlayerMap.get(key))
+//		{
+//			content +=	'<tr>' +
+//						'<td width="50px;" style="margin: auto;">' +
+//							'<img height="40px" style="padding-left: 40px;" src="">' +
+//						'</td>' +
+//						'<td width="40px;" style="margin: auto;">' +
+//							'<img height="30px" src="{{ role.role.icon.url }}">' +
+//						'</td>' +
+//						'<td id="label_' + IdMap.get(key + "_{{ role.role.name }}") + '" style="margin: left; font-size: 18px;">' +
+//							'<b>' + key + '</b>' +
+//						'</td>' +
+//					'</tr>';
+//
+//		}
+//	}
+//	{% endfor %}
+//	content += "</table>";
+//
+//	document.getElementById("current_selection").innerHTML = content; 
+//
+//}
+
+window.onload = function() {
+
+	{% for role in roles %}
+	{% for player in role.player_set %}
+	{% if player.get_num_matches > 0 %}
+	{{ role.role.name }}PlayerMap.set("{{ player.player.name }}", false);
+	{% endif %}
+	{% endfor %}
+	{% endfor %}
+
+
+	SelectRoleButton("{{ roles.0.role.name }}");
+
+	SetGraphType("{{ graph_type }}");
+
+	{% for player in selected_players %}
+	SelectPlayerButton("{{ player.player.name }}", "{{ player.role.name }}");
+	{% endfor %}
+
+	var chart = new CanvasJS.Chart("graph", {
+		animationEnabled: false,
+		backgroundColor: "#212121",
+		title: {
+			fontColor: "#727272",
+			fontFamily: 'Noto Sans',
+			fontSize: 24,
+		},
+		axisX: {
+			minimum: 0,
+			maximum: {{ max_duration }}, 
+			labelFontColor: "#727272",
+		},
+		axisY: {
+			labelFontColor: "#727272",
+		},
+		data: [	
+			{% if graph_type == "gold" %}
+			{% for player in selected_players %}
+			{
+			labelFontColor: "#727272",
+			fillOpacity: "0.1",
+			name: "views",
+			type: "area",
+			dataPoints: [
+				{% for timeline in player.get_gold_timeline %}
+				{ x: {{ timeline.minute }}, y: {{ timeline.avgGold|floatformat:"0" }}, label: "{{ timeline.minute }}:00" },
+				{% endfor %}
+			],
+			},
+			{% endfor %}
+			{% elif graph_type == "gold_diff" %}
+			{% for player in selected_players %}
+			{
+			labelFontColor: "#727272",
+			fillOpacity: "0.1",
+			name: "views",
+			type: "area",
+			dataPoints: [
+				{% for timeline in player.get_gold_timeline %}
+				{ x: {{ timeline.minute }}, y: {{ timeline.goldDiff|floatformat:"0" }}, label: "{{ timeline.minute }}:00" },
+				{% endfor %}
+			],
+			},
+			{% endfor %}
+
+			{% elif graph_type == "wards_placed" %}
+			{% for player in selected_players %}
+			{
+			labelFontColor: "#727272",
+			fillOpacity: "0.1",
+			name: "views",
+			type: "area",
+			dataPoints: [
+				{% for timeline in player.get_vision_timeline %}
+				{ x: {{ timeline.minute }}, y: {{ timeline.wards_placed|floatformat:"0" }}, label: "{{ timeline.minute }}:00" },
+				{% endfor %}
+			],
+			},
+			{% endfor %}
+
+			{% elif graph_type == "wards_killed" %}
+			{% for player in selected_players %}
+			{
+			labelFontColor: "#727272",
+			fillOpacity: "0.1",
+			name: "views",
+			type: "area",
+			dataPoints: [
+				{% for timeline in player.get_vision_timeline %}
+				{ x: {{ timeline.minute }}, y: {{ timeline.wards_killed|floatformat:"0" }}, label: "{{ timeline.minute }}:00" },
+				{% endfor %}
+			],
+			},
+			{% endfor %}
+
+			{% endif %}
+			{% if not selected_players.all %}
+			{
+			labelFontColor: "#727272",
+			fillOpacity: "0.0",
+			name: "views",
+			type: "area",
+			dataPoints: [
+				{ x: 0, y: 0, label: "0:00" },
+			],
+			}
+			{% endif %}
+		]
+	});
+	chart.render();
+	{% for player in selected_players %}
+	document.getElementById("label_{{ player.id }}").style.color = chart._selectedColorSet[{{ forloop.counter }} - 1];
+	{% endfor %}
+
+}
+
+//--></script>
+<div width="60%" style="text-align: center"><a class="imglink" href="/stats/season/{{ season.id }}/"><img style="width: 55%; margin-left: auto; margin-right: auto; margin-top:220px; margin-bottom: 100px;" src="{{ season.splash.url }}"></a></div>
+
+<p> </p>
+
+<table class="centercontent" width="70%">
+	<tr class="centercontent">
+		<td>
+		</td>
+	</tr>
+	<tr class="centercontent">
+		<td>
+		<table class="centercontent" width="100%">
+			<td class="pagebutton" width="25%">
+				<div style="font-size:20;">
+					<a href="/stats/season/{{ season.id }}/players/"><b>Players</b></a>
+				</div>
+			</td>
+			<td class="pagebutton" width="25%">
+				<div style="font-size:20;">
+					<a href="/stats/season/{{ season.id }}/teams/"><b>Teams</b></a>
+				</div>
+			</td>
+			<td class="pagebutton" width="25%">
+				<div style="font-size:20;">
+					<a href="/stats/season/{{ season.id }}/champions/"><b>Champions</b></a>
+				</div>
+			</td>
+			<td class="pagebutton" width="25%">
+				<div style="font-size:20;">
+					<a href="/stats/season/{{ season.id }}/graphs/"><b>Graphs</b></a>
+				</div>
+			</td>
+
+		</table>
+		</td>
+	</tr>
+	<tr>
+		<th class="centertableheader" style="padding-top: 40px;">
+		{% if graph_type == "gold" %}
+			Total Gold Earned
+		{% elif graph_type == "gold_diff" %}
+			Gold Diff vs Lane Opponent
+		{% elif graph_type == "wards_placed" %}
+			Wards Placed
+		{% elif graph_type == "wards_killed" %}
+			Wards Killed
+		{% endif %}
+		</th>
+	</tr>
+</table>
+
+<div id="graph" style="height: 370px; width: 70%; margin: auto; margin-bottom:20px; margin-top: 40px;"></div>
+
+<table class="centercontent" width="70%">
+	<tr>
+		<td width="70%">
+			<table class="centercontent" width="60%">
+				{% if selected_players.all %}
+				<tr class="centercontent">
+					<th class="centertableheader">Players</th>
+				</tr>
+				{% endif %}
+				{% for player in selected_players %}
+				<tr class="centercontent">
+					<td width="{% widthratio 1 selected_players.count 100%}%">
+						<a href="/season/{{ season.id }}/team/{{ player.team.id }}/player/{{ player.player.id }}/role/{{ player.role.id }}/">
+						<table>
+							<tr>
+								<td width="50px;" style="margin: auto;">
+									<img height="40px" style="padding-left: 40px;" src="{{ player.team.icon.url }}">
+								</td>
+								<td width="40px;" style="margin: auto;">
+									<img height="30px" src="{{ player.role.icon.url }}">
+								</td>
+								<td id="label_{{ player.id }}" style="margin: left; font-size: 18px;">
+									<b>{{ player.player.name }}</b>
+								</td>
+							</tr>
+						</table>
+						</a>
+					</td>
+				</tr>
+				{% endfor %}
+			</table>
+		</td>
+		<td width="30%">
+			<table class="centercontent" width="60%">
+				<tr class="alternating-back">
+					<td>
+					</td>
+				</tr>
+			</table>
+		</td>
+	</tr>
+</table>
+
+<table class="centercontent" width="70%" style="margin-top:60px; margin-bottom:30px;">
+	<tr class="centercontent">
+		{% for role in roles %}
+		<td>
+		</td>
+		{% endfor %}
+	</tr>
+	<tr class="centercontent">
+		{% for role in roles %}
+		<td width="20%">
+			<a href="javascript:SelectRoleButton('{{ role.role.name }}')"><img id="{{ role.role.name}}_button" height="80px" src="{{ role.role.icon.url }}"></a>
+		</td>
+		{% endfor %}
+	</tr>
+</table>
+
+<div id="pagecontent" onload="ReplaceContent('pagecontent', 'Top')">
+</div>
+
+<div width="60%" style="text-align: center"><a class="imglink" href="javascript:ClearPlayerSelections()"><img style="width: 30px; opacity: .6; margin-left: auto; margin-right: auto; margin-top:30px;" src="/static/stats/X.png"></a></div>
+
+<table class="centercontent" width="60%" style="margin-top: 20px;">
+	<tr class="centercontent">
+		<td></td>
+	</tr>
+	<tr class="centercontent">
+		<td>
+			<table class="centercontent" width="100%">
+				<tr>
+					<td id="gold_button" class="pagebutton" width="25%"><a href="javascript:SetGraphType('gold')"><b>Gold Earned</b></a></td>
+					<td id="gold_diff_button" class="pagebutton" width="25%"><a href="javascript:SetGraphType('gold_diff')"><b>Gold Diff</b></a></td>
+					<td id="wards_placed_button" class="pagebutton" width="25%"><a href="javascript:SetGraphType('wards_placed')"><b>Wards Placed</b></a></td>
+					<td id="wards_killed_button" class="pagebutton" width="25%"><a href="javascript:SetGraphType('wards_killed')"><b>Wards Killed</b></a></td>
+				</tr>
+			</table>
+		</td>
+	</tr>
+</table>
+
+<table class="centercontent" width="70%" style="margin-top:60px;">
+	<tr class="centercontent">
+		<td></td>
+	</tr>
+	<tr class="centercontent">
+		<td>
+			<table class="centercontent">
+				<tr>
+					<td class="pagebutton" style="font-size: 28px;">
+						<a id="generate_button" href="/season/{{ season.id }}/graphs/"><b>Generate</b></a>
+					</td>
+				</tr>
+			</table>
+		</td>
+	</tr>
+</table>
+
+
+<script type="text/javascript" src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>
+	
+{% endblock %}

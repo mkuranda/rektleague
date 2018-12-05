@@ -71,6 +71,55 @@ def season_players_detail(request, season_id):
     return render(request, 'stats/season_players.html', context)
 
 
+def season_graphs_empty_detail(request, season_id):
+    return season_graphs_detail(request, season_id, "gold", "")
+
+def season_graphs_detail(request, season_id, graph_type, selected_player_id_str):
+    if season_id < 3:
+        season_id = 3
+    selected_players = []
+    max_duration = 1
+    if selected_player_id_str != "":
+        selected_player_ids = selected_player_id_str.split('_')
+        selected_players = TeamPlayer.objects.filter(id__in=selected_player_ids)
+        for player in selected_players:
+            if max_duration == 1 or player.team.get_max_timeline_minute() < max_duration:
+                max_duration = player.team.get_max_timeline_minute() 
+    max_duration -= 1
+
+    latest_season = Season.objects.latest('id')
+    context = {
+        'latest_season': latest_season
+    }
+    season = get_object_or_404(Season, id=season_id)
+    roles = Role.objects.filter(isFill=False)
+    roles_set = []
+    for role in roles:
+        roles_set.append({
+            'player_set': sorted(TeamPlayer.objects.filter(team__season=season_id, role=role), key= lambda t: t.get_num_matches() * -1),
+            'role': role
+        })
+    top_role = Role.objects.get(name="Top")
+    jun_role = Role.objects.get(name="Jungle")
+    mid_role = Role.objects.get(name="Mid")
+    bot_role = Role.objects.get(name="Bot")
+    sup_role = Role.objects.get(name="Support")
+    top_players = sorted(TeamPlayer.objects.filter(team__season=season_id, role=top_role), key= lambda t: t.get_num_matches() * -1)
+    jun_players = sorted(TeamPlayer.objects.filter(team__season=season_id, role=jun_role), key= lambda t: t.get_num_matches() * -1)
+    mid_players = sorted(TeamPlayer.objects.filter(team__season=season_id, role=mid_role), key= lambda t: t.get_num_matches() * -1)
+    bot_players = sorted(TeamPlayer.objects.filter(team__season=season_id, role=bot_role), key= lambda t: t.get_num_matches() * -1)
+    sup_players = sorted(TeamPlayer.objects.filter(team__season=season_id, role=sup_role), key= lambda t: t.get_num_matches() * -1)
+    context = {
+        'latest_season': latest_season,
+        'season': season,
+        'roles': roles_set,
+        'selected_players': selected_players,
+        'max_duration': max_duration,
+        'graph_type': graph_type
+    }
+    return render(request, 'stats/season_graphs.html', context)
+
+
 def season_teams_detail(request, season_id):
     latest_season = Season.objects.latest('id')
     context = {
