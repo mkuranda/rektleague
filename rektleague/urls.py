@@ -23,6 +23,7 @@ urlpatterns = [
     url(r'^login/$', auth_views.login, name='login'),
     url(r'^logout/$', auth_views.logout, {'next_page': '/'}, name='logout'),
     url(r'^', include('stats.urls')),
+    url(r'^news/', include('news.urls')),
     url(r'^stats/', include('stats.urls')),
     url(r'^admin/', include(admin.site.urls)),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

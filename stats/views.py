@@ -6,6 +6,7 @@ from django.db.models import Avg, Count, Sum, F, When, Q
 from django.utils.timezone import utc
 from riot_request import RiotRequester
 from .models import Player, TeamPlayer, Team, Season, Champion, Match, Week, Series, SeriesTeam, TeamMatch, MatchCaster, SeasonChampion, PlayerMatch, HypeVideo, Role, TeamRole, SeriesPlayer
+from .models import HomePagePosition, HomePageCarousel, HomePageCarouselPosition, ArticlePage, HomePageCarouselArticleLink, HomePageStaticContent, HomePageStaticImage, HomePageSchedule
 from .forms import TournamentCodeForm, InitializeMatchForm, CreateRosterForm
 from get_riot_object import ObjectNotFound, get_item, get_champions, get_match, get_all_items, get_match_timeline
 from datetime import datetime
@@ -244,14 +245,39 @@ def news(request):
     teams = Team.objects.filter(season=season)
     sorted_teams = sorted(teams, key= lambda t: t.get_sort_record())
     series_list = Series.objects.filter(week=week)
-    hype_videos = HypeVideo.objects.filter(season=season).order_by('-id')
+    positions = HomePagePosition.objects.all().order_by('number')
+    content = []
+    for position in positions:
+        carousel = HomePageCarousel.objects.filter(position=position)
+        if carousel:
+            content.append(['Carousel', []])
+            for carousel_position in HomePageCarouselPosition.objects.filter(carousel=carousel).order_by('number'):
+                article = HomePageCarouselArticleLink.objects.filter(position=carousel_position)
+                if article:
+                    content[-1][1].append(['Article', article[0]])
+        else:
+            static_content = HomePageStaticContent.objects.filter(position=position)
+            if static_content:
+                content.append(['Text', static_content[0].content.read()])
+            else:
+                static_image = HomePageStaticImage.objects.filter(position=position)
+                if static_image:
+                    content.append(['Image', static_image[0]])
+                else:
+                    schedule = HomePageSchedule.objects.filter(position=position)
+                    if schedule:
+                        content.append(['Schedule', schedule[0]])
+                    else:
+                        standings = HomePageStandings.objects.filter(position=position)
+                        if standings:
+                            content.append(['Standings', standings[0]])
 
     context = {
         'latest_season': season,
         'week': week,
         'teams': sorted_teams,
 	'series_list': series_list,
-        'hype_videos': hype_videos
+        'content_list': content
     }
     return render(request, 'stats/news.html', context)
 
@@ -480,6 +506,16 @@ def login(request):
             return HttpResponseRedirect('stats/disabled_account')
     else:
         return HttpResponseRedirect('stats/invalid_login')
+
+def article(request, url_name):
+    content = get_object_or_404(ArticlePage, url_name=url_name)
+    file_content = content.content.read()
+    context = {
+        'content': content,
+        'file_content': file_content
+    }
+    return render(request, 'stats/article.html', context)
+    
 
 
 

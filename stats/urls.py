@@ -28,4 +28,5 @@ urlpatterns = [
     url(r'^champion/(?P<champion_id>[0-9]+)/$', views.champion_detail, name='champion_detail'),
     url(r'^create_code/(?P<match_id>[0-9]+)/$', views.create_code, name='create_code'),
     url(r'^caster_tools/player_matchup/(?P<blue_player_id>[0-9]+)/(?P<red_player_id>[0-9]+)/team/(?P<blue_team_id>[0-9]+)/(?P<red_team_id>[0-9]+)/role/(?P<role_id>[0-9]+)/$', views.player_matchup, name='player_matchup'),
+    url(r'^(?P<url_name>[a-zA-Z0-9_]+)/$', views.article, name='article')
 ]

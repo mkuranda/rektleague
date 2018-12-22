@@ -935,3 +935,70 @@ class HypeVideo(models.Model):
     creator = models.ForeignKey(Player)
     youtube_link = models.CharField(max_length=100, default='')
 
+
+
+# PAGE STUFF
+
+class HomePagePosition(models.Model):
+    number = models.IntegerField(unique=True)
+
+    def __str__(self):
+        return "Home Page Position " + str(self.number)
+
+class HomePageStaticImage(models.Model):
+    position = models.ForeignKey(HomePagePosition, blank=True, null=True)
+    image = models.ImageField(upload_to='stats/announcement_splashes', default='', blank=True, null=True)
+    style = models.CharField(max_length=100, default="")
+
+    def __str__(self):
+        return "Image at " + str(self.position)
+
+class HomePageStaticContent(models.Model):
+    position = models.ForeignKey(HomePagePosition, blank=True, null=True)
+    content = models.FileField(upload_to='stats/articles', blank=True, null=True)
+
+    def __str__(self):
+        return "Content at " + str(self.position)
+
+class HomePageCarousel(models.Model):
+    position = models.ForeignKey(HomePagePosition, blank=True, null=True)
+
+    def __str__(self):
+        return "Carousel at " + str(self.position)
+
+class HomePageSchedule(models.Model):
+    position = models.ForeignKey(HomePagePosition, blank=True, null=True)
+    season = models.ForeignKey(Season)
+
+    def __str__(self):
+        return "Schedule for Season " + str(self.season.id) + " at " + str(self.position)
+
+class HomePageCarouselPosition(models.Model):
+    number = models.IntegerField()
+    carousel = models.ForeignKey(HomePageCarousel)
+
+    class Meta:
+        unique_together = (("number", "carousel"))
+
+    def __str__(self):
+        return "Carousel at " + str(self.carousel.position) + ": Position " + str(self.number)
+
+
+class ArticlePage(models.Model):
+    url_name = models.CharField(max_length=50, unique=True)
+    title = models.CharField(max_length=100)
+    synopsis = models.CharField(max_length=100)
+    content = models.FileField(upload_to='stats/articles', blank=True, null=True)
+    splash = models.ImageField(upload_to='stats/announcement_splashes', default='', blank=True, null=True)
+    header = models.ImageField(upload_to='stats/announcement_headers', default='', blank=True, null=True)
+
+    def __str__(self):
+        return self.title
+
+class HomePageCarouselArticleLink(models.Model):
+    position = models.ForeignKey(HomePageCarouselPosition)
+    announcement = models.ForeignKey(ArticlePage)
+
+    class Meta:
+        unique_together = (("position", "announcement"))
+

@@ -1,0 +1,46 @@
+{% extends "stats/base.html" %}
+
+{% block title %}Rekt League | {{ content }}{% endblock %}
+
+{% block content %}
+
+<style>
+
+.article-title
+{
+	font-size: 36;
+	color: white;
+	font-weight: 800;
+	text-align: center;
+	padding-top: 50px;
+	padding-bottom: 20px;
+}
+
+.content-holder
+{
+	width: 60%;
+	margin: auto;
+}
+
+
+.article-content
+{
+	padding: 40px;
+}
+
+</style>
+
+<img width="100%" src="{{ content.header.url }}">
+
+<div class="content-holder">
+<div class="article-title">
+	{{ content }}
+</div>
+<div class="bar-below"></div>
+<div class="article-content">
+	{% autoescape off %}{{ file_content }}{% endautoescape %}
+</div>
+</div>
+
+
+{% endblock %}
