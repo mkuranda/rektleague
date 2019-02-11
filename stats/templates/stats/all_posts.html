@@ -1,0 +1,290 @@
+{% extends "stats/base.html" %}
+
+{% block title %}Rekt League | News{% endblock %}
+
+{% block content %}
+<style>
+
+p
+
+{
+
+	font-size: 16px;
+    font-weight: 200;
+}
+
+.post-container {
+	padding-left: 50px;
+	padding-top: 50px;
+	height: 150px;
+}
+
+.post-header {
+	font-size: 32;
+	font-weight: 600;
+	color: white;
+	padding-left: 40px;
+	position: absolute;
+	float: left;
+	font-family: 'Noto Sans', sans-serif;
+}
+
+.post-synopsis {
+	width: 100%;
+	font-size: 18;
+	color: white;
+	padding-left: 60px;
+	padding-top: 60px;
+	float: left;
+	font-family: 'Open Sans', sans-serif;
+}
+
+.post-thumbnail {
+	height: 100px;
+	width: 100px;
+	float: right;
+	margin: 20px;
+}
+
+.player-photo {
+	float: left;
+	margin: 0;
+	margin-left: 125px;
+}
+
+.featured-player-team-icon {
+	position: relative;
+	height: 150px;
+	width: 150px;
+	float: left;
+	margin-left: 425px;
+	margin-top: 25px;
+}
+
+.champ-icon {
+	position: relative;
+	height: 80px;
+	width: 80px;
+	float: left;
+	margin-left: 25px;
+}
+
+.featured-player-role-icon {
+	position: relative;
+	height: 80px;
+	width: 80px;
+	float: left;
+	margin-left: 25px;
+	margin-top: 10px;
+}
+
+.dim-header
+{
+	padding-bottom:20px;
+	padding-top:15px;
+	font-weight: 600;
+	font-size:24;
+	color:#727272;
+	font-family: 'Noto Sans', sans-serif;
+}
+
+th.player-stat-table-header {
+	padding-left: 40px;
+	font-size: 32;
+	font-weight: 600;
+	color: white;
+	font-family: 'Noto Sans', sans-serif;
+}
+
+td.stat-header {
+	font-weight: 600;
+	float: left;
+	font-size:24;
+	padding-left: 80px;
+        color:#727272;
+	font-family: 'Noto Sans', sans-serif;
+}
+
+td.stat-header-mini {
+	font-weight: 600;
+	float: left;
+	font-size:16;
+	padding-left: 20px;
+        color:#727272;
+	font-family: 'Noto Sans', sans-serif;
+}
+
+td.stat {
+	font-size: 20;
+	font-weight: 600;
+	text-align: center;
+	color: white;
+	font-family: 'Open Sans', sans-serif;
+}
+
+td.stat-mini {
+	font-size: 14;
+	font-weight: 600;
+	text-align: center;
+	color: white;
+	font-family: 'Open Sans', sans-serif;
+}
+
+.bottom-text{
+	font-weight: 800;
+	font-size: 18;
+	color: white;
+	padding-top: 20px;
+	text-align: center;
+	font-family: 'Noto Sans', sans-serif;
+}
+
+.carousel-container {
+	width: 80%;
+	padding-top: 120px;
+	padding-bottom: 200px;
+  	height: 1000px;
+	margin: auto;
+	margin-bottom: 100px;
+}
+
+.container {
+  	margin: 0 auto;
+  	padding: 0;
+  	width: 70%;
+	margin-bottom: 50px;
+}
+
+.left-container {
+  	margin: 0 auto;
+	float: left;
+  	width: 60%;
+	padding-left: 20px;
+	margin-left: -60px;
+}
+
+.right-container {
+  	margin: 0 auto;
+	float: right;
+  	width: 40%;
+	padding-right: 20px;
+}
+
+.home-header {
+	text-align: center;
+	padding-bottom: 45px;
+	font-weight: 800;
+	font-size: 36;
+	font-family: 'Noto Sans', sans-serif;
+	color: white;
+}
+
+.carousel-item-header {
+	font-size: 36;
+	font-weight: 800;
+	color: white;
+	padding-left: 40px;
+	padding-top: 10px;
+	position: absolute;
+	float: left;
+	font-family: 'Noto Sans', sans-serif;
+}
+
+
+.carousel-item-synopsis{
+	font-size: 24;
+	color: white;
+	padding-left: 60px;
+	padding-top: 70px;
+	float: left;
+	position: absolute;
+	font-family: 'Open Sans', sans-serif;
+}
+
+.slick-dots {
+	bottom: 25px;
+}
+
+.slick-dots li button:before {
+	color: white;
+	font-size: 8px;
+	line-height: 0px;
+}
+
+.slick-dots li.slick-active button:before {
+	color: red;
+	font-size: 15px;
+	line-height: 0px;
+}
+
+.splash-img {
+	width: 100%;
+  	padding-left: 20;
+  	padding-right: 20;
+}
+
+.slider-img {
+ 	float: left;
+	padding: 0;
+	width: 100%;
+  padding-left: 15;
+  padding-right: 15;
+}
+
+.slick-slide {
+  text-align: center;
+  color: #419be0;
+}
+
+.slider-for{
+  width: 100%;
+  height: 800px;
+  padding: 40;
+  margin: 0;
+  background-color: #303030;
+}
+.slider-nav{
+  width: 100%;
+  height: 220px;
+  margin: 0;
+}
+.vid-frame {
+	margin: 0 auto;
+	display: block;
+	margin-top: 30px;
+	
+}
+
+</style>
+
+<div class='container' style="width: 60%; padding-top: 150px;">
+	<div class='home-header'>
+		All Posts
+	</div>
+	<div class="linktable" style="padding-top: 15px;">
+	{% for article in articles %}
+	{% if forloop.counter|divisibleby:2 %}
+	<a style="display: table-row" href="/{{ article.url_name }}">
+	{% else %}
+	<a style="display: table-row; background-color: #303030;" href="/{{ article.url_name }}">
+	{% endif %}
+		<div class="linktablecell" style="width: 80%;">
+			<div class='post-header'>
+				{{ article.title }}
+			</div>
+			<div class='post-synopsis'>
+				<div style="float: left;">{{ article.clean_content|truncatechars:100 }}</div><div style="color: #bf1f2f; float: right; margin-right: 0px; font-weight:600;">Read more</div>
+			</div>
+		</div>
+		<div class="linktablecell" style="width: 20%;">
+			<img class='post-thumbnail' src="{{ article.splash.url }}">
+		</div>
+
+	</a>
+	{% endfor %}
+	</div>
+</div>
+
+{% endblock %}
+
+

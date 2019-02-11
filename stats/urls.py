@@ -4,10 +4,12 @@ from . import views
 
 urlpatterns = [
     url(r'^$', views.index, name='index'),
-    url(r'^news/', views.news, name='news'),
-    url(r'^about/', views.about, name='about'),
-    url(r'^faq/', views.faq, name='faq'),
-    url(r'^get_items/', views.get_items, name='get_items'),
+    url(r'^news/$', views.news, name='news'),
+    url(r'^all_posts/$', views.all_posts, name='all_posts'),
+    url(r'^about/$', views.about, name='about'),
+    url(r'^faq/$', views.faq, name='faq'),
+    url(r'^propagate_teams/$', views.propagate_teams, name='propagate_teams'),
+    url(r'^get_items/$', views.get_items, name='get_items'),
     url(r'^create_roster_error/(?P<series_id>[0-9]+)/$', views.create_roster_error, name='create_roster_error'),
     url(r'^season/(?P<season_id>[0-9]+)/$', views.season_detail, name='season'),
     url(r'^season/(?P<season_id>[0-9]+)/players/$', views.season_players_detail, name='season_players'),
@@ -28,5 +30,5 @@ urlpatterns = [
     url(r'^champion/(?P<champion_id>[0-9]+)/$', views.champion_detail, name='champion_detail'),
     url(r'^create_code/(?P<match_id>[0-9]+)/$', views.create_code, name='create_code'),
     url(r'^caster_tools/player_matchup/(?P<blue_player_id>[0-9]+)/(?P<red_player_id>[0-9]+)/team/(?P<blue_team_id>[0-9]+)/(?P<red_team_id>[0-9]+)/role/(?P<role_id>[0-9]+)/$', views.player_matchup, name='player_matchup'),
-    url(r'^(?P<url_name>[a-zA-Z0-9_]+)/$', views.article, name='article')
+    url(r'^post/(?P<url_name>[a-zA-Z0-9_]+)/$', views.article, name='article')
 ]

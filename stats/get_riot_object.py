@@ -212,7 +212,7 @@ def get_match_timeline(match_id):
     except:
         raise ObjectNotFound("Match " + str(match_id))
     
-    match_timeline_requester = RiotRequester('/lol/match/v3/timelines/by-match/')
+    match_timeline_requester = RiotRequester('/lol/match/v4/timelines/by-match/')
     match_timeline_data = match_timeline_requester.request(str(match.riot_id))
 
     participants = PlayerMatch.objects.filter(match=match).order_by('participant_id')
@@ -292,7 +292,7 @@ def get_match(match_id):
         raise ObjectNotFound("Match " + str(match_id))
 
     if match.riot_id == 0:
-        match_id_requester = RiotRequester('/lol/match/v3/matches/by-tournament-code/')
+        match_id_requester = RiotRequester('/lol/match/v4/matches/by-tournament-code/')
         match.riot_id = match_id_requester.request(match.tournament_code + '/ids')[0]
         match.save()
 
@@ -313,7 +313,7 @@ def get_match(match_id):
     except Series.DoesNotExist:
 	raise ObjectNotFound("Series")
 
-    requester = RiotRequester('/lol/match/v3/matches/')
+    requester = RiotRequester('/lol/match/v4/matches/')
     try:
         match_data = requester.request(str(match.riot_id))
     except RiotNotFound:

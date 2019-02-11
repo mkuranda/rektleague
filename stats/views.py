@@ -6,10 +6,11 @@ from django.db.models import Avg, Count, Sum, F, When, Q
 from django.utils.timezone import utc
 from riot_request import RiotRequester
 from .models import Player, TeamPlayer, Team, Season, Champion, Match, Week, Series, SeriesTeam, TeamMatch, MatchCaster, SeasonChampion, PlayerMatch, HypeVideo, Role, TeamRole, SeriesPlayer
-from .models import HomePagePosition, HomePageCarousel, HomePageCarouselPosition, ArticlePage, HomePageCarouselArticleLink, HomePageStaticContent, HomePageStaticImage, HomePageSchedule
+from .models import HomePageCarouselObject, ArticlePage
 from .forms import TournamentCodeForm, InitializeMatchForm, CreateRosterForm
 from get_riot_object import ObjectNotFound, get_item, get_champions, get_match, get_all_items, get_match_timeline
 from datetime import datetime
+import random
 import json
 
 def create_roster_error(request, series_id):
@@ -245,41 +246,33 @@ def news(request):
     teams = Team.objects.filter(season=season)
     sorted_teams = sorted(teams, key= lambda t: t.get_sort_record())
     series_list = Series.objects.filter(week=week)
-    positions = HomePagePosition.objects.all().order_by('number')
-    content = []
-    for position in positions:
-        carousel = HomePageCarousel.objects.filter(position=position)
-        if carousel:
-            content.append(['Carousel', []])
-            for carousel_position in HomePageCarouselPosition.objects.filter(carousel=carousel).order_by('number'):
-                article = HomePageCarouselArticleLink.objects.filter(position=carousel_position)
-                if article:
-                    content[-1][1].append(['Article', article[0]])
-        else:
-            static_content = HomePageStaticContent.objects.filter(position=position)
-            if static_content:
-                content.append(['Text', static_content[0].content.read()])
-            else:
-                static_image = HomePageStaticImage.objects.filter(position=position)
-                if static_image:
-                    content.append(['Image', static_image[0]])
-                else:
-                    schedule = HomePageSchedule.objects.filter(position=position)
-                    if schedule:
-                        content.append(['Schedule', schedule[0]])
-                    else:
-                        standings = HomePageStandings.objects.filter(position=position)
-                        if standings:
-                            content.append(['Standings', standings[0]])
-
+    carousel_objects = HomePageCarouselObject.objects.all().exclude(number__isnull=True).order_by('number')
+    articles = ArticlePage.objects.all().order_by('-id')[:4]
+    featured_players = TeamPlayer.objects.filter(role__isFill=True, team__season=season).exclude(player__photo__isnull=True).exclude(player__photo__exact='').annotate(avg_kills=Avg('player__playermatch__kills'), avg_deaths=Avg('player__playermatch__deaths'), avg_assists=Avg('player__playermatch__assists'), num_champs_played=Count('player__playermatch__champion')).order_by('-role__isFill')
+    now = datetime.now()
+    random.seed(a=(now.day+now.month+now.year+3))
+    if len(featured_players) > 0:
+        rand = random.randint(0, len(featured_players))
+        featured_player = featured_players[rand - 1]
+        featured_player_roles = TeamPlayer.objects.filter(player=featured_player.player, team=featured_player.team).annotate(avg_kills=Avg('player__playermatch__kills'), avg_deaths=Avg('player__playermatch__deaths'), avg_assists=Avg('player__playermatch__assists'), num_champs_played=Count('player__playermatch__champion')).order_by('-role__isFill')
     context = {
         'latest_season': season,
         'week': week,
-        'teams': sorted_teams,
-	'series_list': series_list,
-        'content_list': content
+        'teams': teams,
+        'carousel_objects': carousel_objects,
+        'articles': articles,
+        'featured_player': featured_player,
+        'featured_player_roles': featured_player_roles
     }
     return render(request, 'stats/news.html', context)
+
+def all_posts(request):
+    season = Season.objects.latest('id')
+    articles = ArticlePage.objects.all().order_by('-id')
+    context = {
+        'articles': articles
+    }
+    return render(request, 'stats/all_posts.html', context)
 
 def index(request):
     latest_season = Season.objects.latest('id')
@@ -424,7 +417,7 @@ def create_code(request, match_id):
     result = {}
 
     form = InitializeMatchForm(request.POST, series_id=match.series.id)
-    code_requester = RiotRequester('/lol/tournament/v3/codes')
+    code_requester = RiotRequester('/lol/tournament/v4/codes')
     result = code_requester.post('?count=1&tournamentId=' + str(match.series.week.season.tournament_id), jsonRequest)
     match.tournament_code = result[0]
     match.save()
@@ -480,9 +473,18 @@ def load_match(request, season_id, match_id):
     }
     return render(request, 'stats/load_match.html', context)
 
+def propagate_teams(request):
+    teamplayers = TeamPlayer.objects.filter(team__season__id = 4)
+    for teamplayer in teamplayers:
+        for role in Role.objects.all():
+            teamplayerrole = TeamPlayer.objects.filter(team=teamplayer.team, player=teamplayer.player, role=role)
+            if not teamplayerrole:
+                tpr = TeamPlayer.objects.create(player=teamplayer.player, team=teamplayer.team, role=role)
+                tpr.save()
+    return render(request, 'stats/index.html')
 
 def match_data_results(request, season_id, series_id, team_1_id, team_2_id, match_id):
-    match_result_requester = RiotRequester('/lol/match/v3/matches/')
+    match_result_requester = RiotRequester('/lol/match/v4/matches/')
 #    result = match_result_requester.request(str(match_id))
     match = get_match(team_1_id, team_2_id, match_id, series_id)
     context = {
@@ -516,6 +518,3 @@ def article(request, url_name):
     }
     return render(request, 'stats/article.html', context)
     
-
-
-

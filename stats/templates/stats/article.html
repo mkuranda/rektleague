@@ -28,9 +28,34 @@
 	padding: 40px;
 }
 
+.carousel-container {
+	width: 80%;
+	padding-top: 120px;
+	padding-bottom: 200px;
+  	height: 1000px;
+	margin: auto;
+	margin-bottom: 100px;
+}
+
+.container {
+  	margin: 0 auto;
+  	padding: 0;
+  	width: 70%;
+	margin-bottom: 50px;
+}
+.vid-frame {
+	margin: 0 auto;
+	display: block;
+	padding-top: 150px;
+	
+}
 </style>
 
+{% if content.youtube_link %}
+<iframe class='vid-frame' width="900" height="700" src="https://www.youtube.com/embed/T5WDb4oSb4U" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+{% else %}
 <img width="100%" src="{{ content.header.url }}">
+{% endif %}
 
 <div class="content-holder">
 <div class="article-title">

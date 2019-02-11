@@ -10,7 +10,7 @@ from .models import Role
 from .models import Item
 from .models import Champion
 from .models import SummonerSpell
-from .models import HomePagePosition, HomePageCarousel, HomePageCarouselPosition, ArticlePage, HomePageCarouselArticleLink, HomePageStaticContent, HomePageStaticImage, HomePageSchedule
+from .models import HomePageCarouselObject, ArticlePage
 
 class PlayerMatchTimelineAdmin(admin.ModelAdmin):
     model = PlayerMatchTimeline
@@ -96,45 +96,6 @@ class WeekAdmin(admin.ModelAdmin):
 class HypeVideoAdmin(admin.ModelAdmin):
     model = HypeVideo
 
-class HomePageCarouselInline(admin.TabularInline):
-    model = HomePageCarousel
-    extra = 0
-
-class HomePageStaticContentInline(admin.TabularInline):
-    model = HomePageStaticContent
-    extra = 0
-
-class HomePageStaticImageInline(admin.TabularInline):
-    model = HomePageStaticImage
-    extra = 0
-
-class HomePageScheduleInline(admin.TabularInline):
-    model = HomePageSchedule
-    extra = 0
-
-class HomePagePositionAdmin(admin.ModelAdmin):
-    model = HomePagePosition
-    inlines = [HomePageCarouselInline, HomePageStaticContentInline, HomePageStaticImageInline, HomePageScheduleInline]
-
-class HomePageCarouselPositionInline(admin.TabularInline):
-    model = HomePageCarouselPosition
-    extra = 0
-
-class HomePageCarouselAdmin(admin.ModelAdmin):
-    model = HomePageCarousel
-    inlines = [HomePageCarouselPositionInline]
-
-class HomePageCarouselArticleLinkInline(admin.TabularInline):
-    model = HomePageCarouselArticleLink
-    extra = 0
-
-class HomePageCarouselPositionAdmin(admin.ModelAdmin):
-    model = HomePageCarouselPosition
-
-class ArticlePageAdmin(admin.ModelAdmin):
-    model = ArticlePage
-    inlines = [HomePageCarouselArticleLinkInline]
-
 admin.site.register(Role)
 admin.site.register(TeamRole)
 admin.site.register(Season)
@@ -160,10 +121,5 @@ admin.site.register(Match, MatchAdmin)
 admin.site.register(Week, WeekAdmin)
 admin.site.register(Series, SeriesAdmin)
 admin.site.register(HypeVideo, HypeVideoAdmin)
-admin.site.register(HomePagePosition, HomePagePositionAdmin)
-admin.site.register(ArticlePage, ArticlePageAdmin)
-admin.site.register(HomePageCarousel, HomePageCarouselAdmin)
-admin.site.register(HomePageCarouselPosition, HomePageCarouselPositionAdmin)
-admin.site.register(HomePageStaticContent)
-admin.site.register(HomePageStaticImage)
-admin.site.register(HomePageSchedule)
+admin.site.register(HomePageCarouselObject)
+admin.site.register(ArticlePage)

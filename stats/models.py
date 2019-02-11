@@ -1,6 +1,7 @@
 import datetime
 import time
 import math
+import re
 from django.db import models
 from django.contrib.auth.models import User
 from django.db.models import Count, Avg, Sum, Q, Case, When, F, Value, ExpressionWrapper
@@ -114,9 +115,9 @@ class SeasonChampion(models.Model):
 
 class Series(models.Model):
     twitch_vod_num = models.IntegerField(default=0)
-    youtube_link = models.CharField(max_length=100, default='')
+    youtube_link = models.CharField(max_length=100, null=True, blank=True)
     week = models.ForeignKey(Week)
-    splash = models.ImageField(upload_to='stats/champion/matchup_splashes', default='')
+    splash = models.ImageField(upload_to='stats/champion/matchup_splashes', null=True, blank=True)
     date = models.DateTimeField(null=True, blank=True)
 
     def get_series_team_1(self):
@@ -169,7 +170,7 @@ class Series(models.Model):
     def deadline(self):
         if self.week.date is None:
             return None
-        return self.week.date - datetime.timedelta(days=5)
+        return self.week.date - datetime.timedelta(days=4)
 
     def past_deadline(self):
         now = datetime.datetime.now()
@@ -222,7 +223,7 @@ class Player(models.Model):
     name = models.CharField(max_length=40)
     riot_id = models.IntegerField(default=0)
     matches = models.ManyToManyField(Match, through='PlayerMatch')
-    photo = models.ImageField(upload_to='stats/player_photos', default='')
+    photo = models.ImageField(upload_to='stats/player_photos', blank=True, null=True)
 
     def __str__(self):
         return self.name
@@ -244,6 +245,8 @@ class Team(models.Model):
     season = models.ForeignKey(Season)
     icon = models.ImageField(upload_to='stats')
     splash = models.ImageField(upload_to='stats/team_splashes', default='')
+    left_splash = models.ImageField(upload_to='stats/team_splashes', blank=True, null=True)
+    right_splash = models.ImageField(upload_to='stats/team_splashes', blank=True, null=True)
     season_win = models.BooleanField(default=False)
 
     def get_players(self):
@@ -270,13 +273,14 @@ class Team(models.Model):
         results = []
         for i in range(0, max_minute):
             timestamp = i * 60000
-            results.append({
-                'minute': i, 
-                'kills': 1.0 * kills.filter(timestamp__lt = timestamp).count() / self.get_num_matches(),
-                'building_kills': 1.0 *building_kills.filter(timestamp__lt = timestamp).count() / self.get_num_matches(),
-                'wards_placed': 1.0 * wards_placed.filter(timestamp__lt = timestamp).count() / self.get_num_matches(),
-                'wards_killed': 1.0 * wards_killed.filter(timestamp__lt = timestamp).count() / self.get_num_matches()
-                })
+            if self.get_num_matches() > 0:
+                results.append({
+                    'minute': i, 
+                    'kills': 1.0 * kills.filter(timestamp__lt = timestamp).count() / self.get_num_matches(),
+                    'building_kills': 1.0 *building_kills.filter(timestamp__lt = timestamp).count() / self.get_num_matches(),
+                    'wards_placed': 1.0 * wards_placed.filter(timestamp__lt = timestamp).count() / self.get_num_matches(),
+                    'wards_killed': 1.0 * wards_killed.filter(timestamp__lt = timestamp).count() / self.get_num_matches()
+                    })
 
         return results
 
@@ -295,13 +299,14 @@ class Team(models.Model):
         results = []
         for i in range(0, max_minute):
             timestamp = i * 60000
-            results.append({
-                'minute': i, 
-                'kills': 1.0 * kills.filter(timestamp__lt = timestamp).count() / self.get_num_matches(), 
-                'building_kills': 1.0 * building_kills.filter(timestamp__lt = timestamp).count() / self.get_num_matches(),
-                'wards_placed': 1.0 * wards_placed.filter(timestamp__lt = timestamp).count() / self.get_num_matches(),
-                'wards_killed': 1.0 * wards_killed.filter(timestamp__lt = timestamp).count() / self.get_num_matches()
-                })
+            if self.get_num_matches() > 0:
+                results.append({
+                    'minute': i, 
+                    'kills': 1.0 * kills.filter(timestamp__lt = timestamp).count() / self.get_num_matches(), 
+                    'building_kills': 1.0 * building_kills.filter(timestamp__lt = timestamp).count() / self.get_num_matches(),
+                    'wards_placed': 1.0 * wards_placed.filter(timestamp__lt = timestamp).count() / self.get_num_matches(),
+                    'wards_killed': 1.0 * wards_killed.filter(timestamp__lt = timestamp).count() / self.get_num_matches()
+                    })
         return results
 
     def get_overall_timelines(self):
@@ -314,20 +319,24 @@ class Team(models.Model):
         results = []
         for i in range(0, max_minute):
             timestamp = i * 60000
-            results.append({
-                'minute': i, 
-                'kills': 1.0 * kills.filter(timestamp__lt = timestamp).count() / num_matches, 
-                'building_kills': 1.0 * building_kills.filter(timestamp__lt = timestamp).count() / num_matches,
-                'wards_placed': 1.0 * wards_placed.filter(timestamp__lt = timestamp).count() / num_matches,
-                'wards_killed': 1.0 * wards_killed.filter(timestamp__lt = timestamp).count() / num_matches 
-                })
+            if num_matches > 0:
+                results.append({
+                    'minute': i, 
+                    'kills': 1.0 * kills.filter(timestamp__lt = timestamp).count() / num_matches, 
+                    'building_kills': 1.0 * building_kills.filter(timestamp__lt = timestamp).count() / num_matches,
+                    'wards_placed': 1.0 * wards_placed.filter(timestamp__lt = timestamp).count() / num_matches,
+                    'wards_killed': 1.0 * wards_killed.filter(timestamp__lt = timestamp).count() / num_matches 
+                    })
         return results
 
     def get_max_timeline_minute(self):
         if self.season.id > 2:
-            return PlayerMatchTimeline.objects.filter(playermatch__player__team=self).annotate(minute=F('timestamp') / 1000 / 60).order_by('-minute')[0].minute
+            ret = PlayerMatchTimeline.objects.filter(playermatch__player__team=self).annotate(minute=F('timestamp') / 1000 / 60).order_by('-minute')
+            if len(ret) > 0:
+                return ret[0].minute
         else:
             return 0
+        return 0
 
     def get_record(self):
 	wins = TeamMatch.objects.filter(team=self, win=True, match__series__week__regular=True).count()
@@ -939,66 +948,82 @@ class HypeVideo(models.Model):
 
 # PAGE STUFF
 
-class HomePagePosition(models.Model):
-    number = models.IntegerField(unique=True)
+class HomePageCarouselObject(models.Model):
+    number = models.IntegerField(unique=True, blank=True, null=True)
+    url_name = models.CharField(max_length=100, blank=True, null=True)
+    splash = models.ImageField(upload_to='stats/carousel_images', blank=True, null=True)
 
     def __str__(self):
-        return "Home Page Position " + str(self.number)
+        return "Carousel Position " + str(self.number)
 
-class HomePageStaticImage(models.Model):
-    position = models.ForeignKey(HomePagePosition, blank=True, null=True)
-    image = models.ImageField(upload_to='stats/announcement_splashes', default='', blank=True, null=True)
-    style = models.CharField(max_length=100, default="")
 
-    def __str__(self):
-        return "Image at " + str(self.position)
 
-class HomePageStaticContent(models.Model):
-    position = models.ForeignKey(HomePagePosition, blank=True, null=True)
-    content = models.FileField(upload_to='stats/articles', blank=True, null=True)
-
-    def __str__(self):
-        return "Content at " + str(self.position)
-
-class HomePageCarousel(models.Model):
-    position = models.ForeignKey(HomePagePosition, blank=True, null=True)
-
-    def __str__(self):
-        return "Carousel at " + str(self.position)
-
-class HomePageSchedule(models.Model):
-    position = models.ForeignKey(HomePagePosition, blank=True, null=True)
-    season = models.ForeignKey(Season)
-
-    def __str__(self):
-        return "Schedule for Season " + str(self.season.id) + " at " + str(self.position)
-
-class HomePageCarouselPosition(models.Model):
-    number = models.IntegerField()
-    carousel = models.ForeignKey(HomePageCarousel)
-
-    class Meta:
-        unique_together = (("number", "carousel"))
-
-    def __str__(self):
-        return "Carousel at " + str(self.carousel.position) + ": Position " + str(self.number)
+#class HomePagePosition(models.Model):
+#    number = models.IntegerField(unique=True)
+#
+#    def __str__(self):
+#        return "Home Page Position " + str(self.number)
+#
+#class HomePageStaticImage(models.Model):
+#    position = models.ForeignKey(HomePagePosition, blank=True, null=True)
+#    image = models.ImageField(upload_to='stats/announcement_splashes', default='', blank=True, null=True)
+#    style = models.CharField(max_length=100, default="")
+#
+#    def __str__(self):
+#        return "Image at " + str(self.position)
+#
+#class HomePageStaticContent(models.Model):
+#    position = models.ForeignKey(HomePagePosition, blank=True, null=True)
+#    content = models.FileField(upload_to='stats/articles', blank=True, null=True)
+#
+#    def __str__(self):
+#        return "Content at " + str(self.position)
+#
+#class HomePageCarousel(models.Model):
+#    position = models.ForeignKey(HomePagePosition, blank=True, null=True)
+#
+#    def __str__(self):
+#        return "Carousel at " + str(self.position)
+#
+#class HomePageSchedule(models.Model):
+#    position = models.ForeignKey(HomePagePosition, blank=True, null=True)
+#    season = models.ForeignKey(Season)
+#
+#    def __str__(self):
+#        return "Schedule for Season " + str(self.season.id) + " at " + str(self.position)
+#
+#class HomePageCarouselPosition(models.Model):
+#    number = models.IntegerField()
+#    carousel = models.ForeignKey(HomePageCarousel)
+#
+#    class Meta:
+#        unique_together = (("number", "carousel"))
+#
+#    def __str__(self):
+#        return "Carousel at " + str(self.carousel.position) + ": Position " + str(self.number)
 
 
 class ArticlePage(models.Model):
     url_name = models.CharField(max_length=50, unique=True)
     title = models.CharField(max_length=100)
     synopsis = models.CharField(max_length=100)
+    youtube_link = models.CharField(max_length=100, blank=True, null=True)
     content = models.FileField(upload_to='stats/articles', blank=True, null=True)
     splash = models.ImageField(upload_to='stats/announcement_splashes', default='', blank=True, null=True)
     header = models.ImageField(upload_to='stats/announcement_headers', default='', blank=True, null=True)
+    team_tag = models.ManyToManyField(Team)
+
+    def clean_content(self):
+        if self.content:
+            file_content = self.content.read()
+            cleanr = re.compile('<.*?>')
+            cleantext = re.sub(cleanr, '', file_content)
+            cleantext = cleantext.strip('\n')
+            cleantext = cleantext.strip('\t')
+            return cleantext
+        else:
+            return ""
 
     def __str__(self):
         return self.title
-
-class HomePageCarouselArticleLink(models.Model):
-    position = models.ForeignKey(HomePageCarouselPosition)
-    announcement = models.ForeignKey(ArticlePage)
-
-    class Meta:
-        unique_together = (("position", "announcement"))
 

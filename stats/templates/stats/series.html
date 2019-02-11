@@ -3,7 +3,6 @@
 {% block title %}Rekt League | {{ series }}{% endblock %}
 
 {% block content %}
-
 <script type="text/javascript"><!--
 function ReplaceMatchContent(id, content) {
 	var container = document.getElementById(id);
@@ -653,7 +652,7 @@ window.onload = function() {
 
 <div width="60%" style="text-align: center"><a class="imglink" href="/stats/season/{{ season.id }}/"><img style="width: 55%; margin-left: auto; margin-right: auto; margin-top:220px; margin-bottom: 100px;" src="{{ season.splash.url }}"></a></div>
 
-<div style="width: 75%; text-align: center; background-color: #303030; padding: 20px; margin: 0 auto;">
+<div style="width: 75%; text-align: center; background-color: #303030; padding: 20px; margin: 0 auto; height: 1050px;">
 	<h1 style="font-size: 48">Week {{ series.week.number }}</h1>
 	<h1 style="font-size: 48">{% for seriesteam in series.seriesteam_set.all %}<a href="/stats/season/{{ season.id }}/team/{{ seriesteam.team.id }}/">{{ seriesteam.team.name }} ({{ seriesteam.get_record_before }})</a>{% if forloop.counter == 1 %} vs {% endif %}{% endfor %}</h1>
 	{% if series.date %}
@@ -661,12 +660,14 @@ window.onload = function() {
 	<div style="font-size: 36; padding-bottom: 36px;">{{ series.date|date:"F j, Y"}}</div>
 	{% endif %}
 
-	<div style="padding: 20px;">
+	<div style="padding: 20px; padding-left: 150px; margin-left: 60px;">
 		{% if series.youtube_link != '' and series.youtube_link != ' ' %}
         	<iframe class="videoplayer" src="{{ series.youtube_link }}" frameborder="0" allowfullscreen="true" scrolling="no" height="441" width="784"></iframe>
 		{% else %}
-		<img style="margin-left: auto; margin-right: auto; display: block; width: 85%; box-shadow: 6px 6px 6px #212121;" src="{{ series.splash.url }}">
-		   {% endif %}
+		<img style="z-index: 0; position: absolute; display: block; margin-left: 0; float: left; width: 50%; " src="{{ series.seriesteam_set.all.0.team.left_splash.url }}">
+		<img style="z-index: 2; position: absolute; display: block; margin-left: 0; float: left; width: 50%; " src="/static/stats/vs_frame.png">
+		<img style="z-index: 1; position: absolute; display: block; margin-left: 0; float: left; width: 50%; " src="{{ series.seriesteam_set.all.1.team.right_splash.url }}">
+		{% endif %}
 	</div>
 </div>
 <p></p>

@@ -42,14 +42,14 @@ input {
     top: 0;
     width: 100%;
     height: 55px;
-    z-index: 2;
+    z-index: 3;
 }
 
 .overlay {
     height: 0%;
     width: 100%;
     position: fixed;
-    z-index: 1;
+    z-index: 5;
     top: 0;
     left: 0;
     background-color: rgba(121, 121, 121, 0.94);
@@ -139,6 +139,11 @@ overflow: hidden;
 	}
 	
 	.linktablecell {
+		display: table-cell;
+		text-align: center;
+		vertical-align: middle;
+	}
+	.linktablecell-alternating {
 		display: table-cell;
 		text-align: center;
 		vertical-align: middle;
@@ -462,6 +467,11 @@ a:active {
 	outline: none;
 }
 
+.thin-line {
+	width: 100%;
+	border-bottom: 1px solid #6d6d6d; 
+}
+
 
     </style>
 
@@ -494,6 +504,7 @@ a:active {
 
   <button class="dropbtn"><span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span> MENU</button>
   <div class="dropdown-content">
+    <p><a href="/stats/season/4">Season 4</a></p>
     <p><a href="/stats/season/3">Season 3</a></p>
     <p><a href="/stats/season/2">Season 2</a></p>
     <p><a href="/stats/season/1">Season 1</a></p>
@@ -515,7 +526,7 @@ a:active {
 
 
 </div>
-<a href="/stats/"><img src="/static/stats/logoogsize.png" style="width:300px;position: fixed; z-index:3;" id='Logo'></a>
+<a href="/stats/"><img src="/static/stats/logoogsize.png" style="width:300px;position: fixed; z-index:4;" id='Logo'></a>
 
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous">
 	$('.carousel[data-type="multi"] .item').each(function() {
@@ -561,6 +572,7 @@ a:active {
     	<p style="margin-bottom: -15px; width:129%;"><b>Explore</b></p>
     	<hr style="width: 59%;margin-bottom: 2px; margin-left: 37%;">
      	<div style="text-align: center; float: right; padding-top:7px;width:42%;">
+		<a style="color:#ffffff;font-size:14px;" href="/stats/season/4">Season 4</a><br>
 		<a style="color:#ffffff;font-size:14px;" href="/stats/season/3">Season 3</a><br>
     		<a style="color:#ffffff;font-size:14px;" href="/stats/season/2">Season 2</a><br>
     		<a style="color:#ffffff;font-size:14px;" href="/stats/season/1">Season 1</a><br>
