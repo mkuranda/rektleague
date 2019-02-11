@@ -9,7 +9,7 @@ class CreateRosterForm(forms.Form):
     mid = forms.ModelChoiceField(queryset=Team.objects.none())
     bot = forms.ModelChoiceField(queryset=Team.objects.none())
     sup = forms.ModelChoiceField(queryset=Team.objects.none())
-    sub = forms.ModelChoiceField(queryset=Team.objects.none())
+    sub = forms.ModelChoiceField(queryset=Team.objects.none(), required=False)
 
     def __init__(self, *args, **kwargs):
         team_id = kwargs.pop('team_id')

@@ -382,13 +382,14 @@ def create_roster(request, season_id, series_id, team_id):
                 p3 = SeriesPlayer.objects.create(player=mid, team=team, series=series, role=Role.objects.get(name='Mid'))
                 p4 = SeriesPlayer.objects.create(player=bot, team=team, series=series, role=Role.objects.get(name='Bot'))
                 p5 = SeriesPlayer.objects.create(player=sup, team=team, series=series, role=Role.objects.get(name='Support'))
-                p6 = SeriesPlayer.objects.create(player=sub, team=team, series=series, role=Role.objects.get(name='Substitute'))
+                if sub is not None:
+                    p6 = SeriesPlayer.objects.create(player=sub, team=team, series=series, role=Role.objects.get(name='Substitute'))
+                    p6.save()
                 p1.save()
                 p2.save()
                 p3.save()
                 p4.save()
                 p5.save()
-                p6.save()
                 return HttpResponseRedirect('/season/' + str(season_id) + '/series/' + str(series.id) + '/')
     else:
         form = CreateRosterForm(series_id=series_id, team_id=team_id)
