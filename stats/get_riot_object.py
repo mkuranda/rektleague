@@ -100,7 +100,7 @@ def get_item(riot_id):
     return item
 
 def get_champions():
-    url = 'http://ddragon.leagueoflegends.com/cdn/8.17.1/data/en_US/champion.json'
+    url = 'http://ddragon.leagueoflegends.com/cdn/9.2.1/data/en_US/champion.json'
     r = requests.get(url).json()
     for champion_name in r['data']:
         champion_data = r['data'][champion_name]
@@ -113,7 +113,7 @@ def get_champions():
             champion = Champion.objects.create(id=key, name=name, title=title)
         champion.name = name
         champion.title = title
-	result = requests.get("http://ddragon.leagueoflegends.com/cdn/8.17.1/img/champion/" + champion_data["image"]["full"], stream=True)
+	result = requests.get("http://ddragon.leagueoflegends.com/cdn/9.2.1/img/champion/" + champion_data["image"]["full"], stream=True)
         with open("media/stats/champion/icon/" + champion_data["image"]["full"], 'wb') as f:
             result.raw.decode_content = True
             shutil.copyfileobj(result.raw, f)
@@ -135,27 +135,34 @@ def get_champion(riot_id):
     except Champion.DoesNotExist:
         champion_exists = False
 
+    url = 'http://ddragon.leagueoflegends.com/cdn/9.2.1/data/en_US/champion.json'
+    r = requests.get(url).json()
     if champion_exists == False or champion.name == "" or champion.title == "" or champion.icon == "":
-        requester = RiotRequester('/lol/static-data/v3/champions/')
-	requester.add_tag("image")
-        try:
-            champion_data = requester.request(str(riot_id))
-        except RiotNotFound:
-            raise ObjectNotFound("Champion " + str(riot_id))
-        if champion_exists == False:
-            champion = Champion.objects.create(id=riot_id)
-        champion.name = champion_data["name"]
-        champion.title = champion_data["title"]
-	r = requests.get("http://ddragon.leagueoflegends.com/cdn/8.17.1/img/champion/" + champion_data["image"]["full"], stream=True)
-        if r.status_code == 200:
-            with open("media/stats/champion/icon/" + champion_data["image"]["full"], 'wb') as f:
-                r.raw.decode_content = True
-                shutil.copyfileobj(r.raw, f)
-	else:
-	    raise ObjectNotFound("Champion Image " + champion_data["image"]["full"])
-#	urllib.urlretrieve(, "media/stats/" + champion_data["image"]["full"])
-	champion.icon = "stats/champion/icon/" + champion_data["image"]["full"]
-        champion.save()
+        for champion_name in r['data']:
+            champion_data = r['data'][champion_name]
+            name = champion_data['name']
+            key = champion_data['key']
+            title = champion_data['title']
+            if key == riot_id:
+                try:
+                    champion = Champion.objects.get(id=key)
+                except Champion.DoesNotExist:
+                    champion = Champion.objects.create(id=key, name=name, title=title)
+                champion.name = name
+                champion.title = title
+                result = requests.get("http://ddragon.leagueoflegends.com/cdn/9.2.1/img/champion/" + champion_data["image"]["full"], stream=True)
+                with open("media/stats/champion/icon/" + champion_data["image"]["full"], 'wb') as f:
+                    result.raw.decode_content = True
+                    shutil.copyfileobj(result.raw, f)
+                champion.icon = "stats/champion/icon/" + champion_data["image"]["full"]
+                champion.save()
+                seasons = Season.objects.all()
+                for season in seasons:
+                    try:
+                        champion_season = SeasonChampion.objects.get(season=season, champion=champion)
+                    except SeasonChampion.DoesNotExist:
+                        champion_season = SeasonChampion.objects.create(season=season, champion=champion)
+                        champion_season.save()
     return champion
 
 def get_ward_type(riot_ward_type):
