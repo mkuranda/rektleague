@@ -123,6 +123,16 @@ function ReplaceMatchContent(id, content) {
 		  '</td>' +
 		 {% endfor %}
 		 '</tr>' +
+		 '<tr>' +
+		  '<th colspan=2 class="centertableheader">' +
+		   'Duration' +
+		  '</th>' +
+		 '</tr>' +
+		 '<tr class="centercontent">' +
+		  '<td colspan=2 style="font-size: 20; font-weight: 600; padding-bottom: 20px;">' +
+        	   '{{ match.duration_str }}' +
+		  '</td>' +
+		 '</tr>' +
 		'</table>' +
 		'<table class="centercontent" width="100%">' +
 		'<tr>' +

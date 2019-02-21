@@ -174,7 +174,7 @@ class Series(models.Model):
 
     def past_deadline(self):
         now = datetime.datetime.now()
-        if self.deadline() is not None and self.deadline() + datetime.timedelta(hours=4) < now:
+        if self.deadline() is not None and self.deadline() + datetime.timedelta(hours=5) < now:
             return True
         return False
 
@@ -210,6 +210,9 @@ class Match(models.Model):
             return 0
         else:
             return 0
+
+    def duration_str(self):
+        return time.strftime("%M:%S", time.gmtime(self.duration))
 
     def __str__(self):
         seriesTeams = SeriesTeam.objects.filter(series=self.series)

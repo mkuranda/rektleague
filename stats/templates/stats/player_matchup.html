@@ -16,7 +16,7 @@
 
 .rektlogo
 {
-	width: 100%;
+	margin:auto;
 	padding-bottom: 15px;
 }
 
@@ -171,8 +171,8 @@ chart.render();
 				</tr>
 			</table>
 		</th>
-		<th width="30%">
-			<img class="rektlogo" width="30%" src="/static/stats/RektLogo.png">
+		<th style="text-align: center" width="20%">
+			<img class="rektlogo" height="120" src="{{ role.icon.url }}">
 		</th>
 		<th width="30%" class="teamname-right">
 			<table style="margin-right:auto; margin-left:auto;">
@@ -317,11 +317,8 @@ chart.render();
 		</td>
 </table>
 
-<div class="centercontent" style="font-size: 18px; padding-top:20px;">GOLD DIFF VS LANE OPPONENT</div>
-<div id="goldDiffVsLaneOpponent" style="height: 26%; width: 60%; margin: auto; margin-bottom:-160px;padding-top:5px;"></div>
-
-<div style="display: inline-block; float: right; padding-right:50px;"> <img src="{{ role.icon.url }}"></div>
-
+<div class="centercontent" style="font-size: 18px; padding-top:10px;">GOLD DIFF VS LANE OPPONENT</div>
+<div id="goldDiffVsLaneOpponent" style="height: 26%; width: 60%; margin: auto; margin-bottom:-180px;padding-top:0px;padding-bottom:20px;"></div>
 
 <script type="text/javascript" src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>
 

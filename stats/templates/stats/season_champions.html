@@ -72,7 +72,7 @@
 				</thead>
 				<tbody>
 				{% for champion in champions %}
-				{% if champion.get_matches > 0 %}
+				{% if champion.get_matches > 0 or champion.get_bans > 0 %}
 				<tr class="alternating-back">
 					<td>
 						<table width="100%">
