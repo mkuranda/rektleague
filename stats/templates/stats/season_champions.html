@@ -96,6 +96,7 @@
 						{{ champion.get_winrate|floatformat:"1" }}%
 					</td>
 					<td>
+						{% if champion.get_matches > 0 %}
 						<table width="100%">
 							<tr>
 								<td style="text-align: right;" width="40%">
@@ -106,6 +107,9 @@
 								</td>
 							</tr>
 						</table>
+						{% else %}
+						None
+						{% endif %}
 
 					</td>
 					<td>
