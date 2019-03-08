@@ -321,6 +321,20 @@ def series_head_to_head(request, season_id, series_id):
     return render(request, 'stats/head_to_head.html', context)
 
 
+def series_head_to_head_2(request, season_id, series_id):
+    series = get_object_or_404(Series, id=series_id)
+    seriesteams = SeriesTeam.objects.prefetch_related('team__teamplayer_set').filter(series=series)
+    team1 = seriesteams[1]
+    team2 = seriesteams[0]
+
+    context = {
+        'series': series,
+        'team1': team1,
+        'team2': team2
+    }
+    return render(request, 'stats/head_to_head.html', context)
+
+
 def series_detail(request, season_id, series_id):
     season = get_object_or_404(Season, id=season_id)
     series = get_object_or_404(Series, id=series_id)

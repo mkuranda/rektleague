@@ -77,7 +77,7 @@ window.onload = function() {
 		<td>
 			<table class="centercontent" width="80%">
 				<tr class="centercontent">
-					<td style="padding-bottom:40px;">
+					<td style="padding-bottom:40px;" colspan=2>
 						<table class="centercontent" width="100%">
 							<tr>
 								<td width="45%">
@@ -135,10 +135,19 @@ window.onload = function() {
 					</td>
 				</tr>
 				<tr class="centercontent">
-					<th class="pagebutton" style="font-size:20; padding:20px;">
+					<th class="pagebutton" style="font-size:20; padding:20px;" colspan=2>
 						<a id="player_matchup_link" href="">Player Matchup</a>
 					</th>
 				</tr>
+				<tr class="centercontent">
+					<th class="pagebutton" style="font-size:20; padding:20px;">
+						<a href="/stats/season/{{ season.id }}/series/{{ series.id }}/head_to_head/">Rosters 1</a>
+					</th>
+					<th class="pagebutton" style="font-size:20; padding:20px;">
+						<a href="/stats/season/{{ season.id }}/series/{{ series.id }}/head_to_head_2/">Rosters 2</a>
+					</th>
+				</tr>
+
 			</table>
 
 		</td>

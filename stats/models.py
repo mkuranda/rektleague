@@ -412,6 +412,9 @@ class SeriesTeam(models.Model):
 	losses = TeamMatch.objects.filter(team=self.team, win=False, match__series__week__regular=True, match__series__week__number__lt=self.series.week.number).exclude(match__duration=0).count()
 	return str(wins) + "-" + str(losses)
 
+    def get_players(self):
+        return SeriesPlayer.objects.filter(team=self.team, series=self.series).order_by('role')
+
 
 
 class PlayerRole(models.Model):
