@@ -96,6 +96,12 @@ tr.centercontent
 	padding-right:10px;
 }
 
+.player-photo
+{
+	height: 120px;
+	width: 120px;
+}
+
 </style>
 
 </head>
@@ -152,9 +158,9 @@ chart.render();
 	<tr>
 		<th width="10%" class="left-img">
 			{% if blue_player.player.photo %}
-			<img height="60%" src="{{ blue_player.player.photo.url }}">
+			<img class="player-photo" src="{{ blue_player.player.photo.url }}">
 			{% else %}
-			<img height="60%" src="/static/stats/player-photos/missing.png">
+			<img class="player-photo" src="/static/stats/player-photos/missing.png">
 			{% endif %}
 		</th>
 		<th width="30%" class="teamname-left">
@@ -190,9 +196,9 @@ chart.render();
 		</th>
 		<th width="10%" class="right-img">
 			{% if red_player.player.photo %}
-			<img height="60%" src="{{ red_player.player.photo.url }}">
+			<img class="player-photo" src="{{ red_player.player.photo.url }}">
 			{% else %}
-			<img height="60%" src="/static/stats/player-photos/missing.png">
+			<img class="player-photo" src="/static/stats/player-photos/missing.png">
 			{% endif %}
 		</th>
 	</tr>
