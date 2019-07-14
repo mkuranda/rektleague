@@ -8,7 +8,7 @@ from riot_request import RiotRequester
 from .models import Player, TeamPlayer, Team, Season, Champion, Match, Week, Series, SeriesTeam, TeamMatch, MatchCaster, SeasonChampion, PlayerMatch, HypeVideo, Role, TeamRole, SeriesPlayer
 from .models import HomePageCarouselObject, ArticlePage
 from .forms import TournamentCodeForm, InitializeMatchForm, CreateRosterForm
-from get_riot_object import ObjectNotFound, get_item, get_champions, get_champion, get_match, get_all_items, get_match_timeline
+from get_riot_object import ObjectNotFound, get_item, get_champions, get_champion, get_match, get_all_items, get_match_timeline, update_playermatchkills
 from datetime import datetime
 import random
 import json
@@ -57,6 +57,18 @@ def season_detail(request, season_id):
         'next_week': next_week
     }
     return render(request, 'stats/season.html', context)
+
+def season_test_detail(request, season_id):
+    latest_season = Season.objects.latest('id')
+    season = get_object_or_404(Season, id=season_id)
+    teams = Team.objects.filter(season=season_id)
+    sorted_teams = sorted(teams, key= lambda t: t.get_sort_record())
+    next_week = season.next_week()
+    context = {
+        'season': season.id,
+        'winner': season.get_winner()[0].name
+    }
+    return HttpResponse(json.dumps(context))
 
 def season_players_detail(request, season_id):
     latest_season = Season.objects.latest('id')
@@ -305,6 +317,15 @@ def player_matchup(request, blue_player_id, red_player_id, blue_team_id, red_tea
         'role': role
     }
     return render(request, 'stats/player_matchup.html', context)
+
+
+def questions(request, season_id):
+    season = get_object_or_404(Season, id=season_id)
+
+    context = {
+        'season': season
+    }
+    return render(request, 'stats/questions.html', context)
 
 
 def series_head_to_head(request, season_id, series_id):

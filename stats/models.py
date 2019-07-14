@@ -51,7 +51,186 @@ class Season(models.Model):
         if self.id > 2 and len(ret) > 0:
             return ret[0]
         return self.get_weeks()[0]
+    
+    def get_top_counterjunglers(self):
+        results = []
+        players = TeamPlayer.objects.filter(team__season=self, role__name="Jungle")
+        for teamplayer in players:
+            playermatches = teamplayer.get_player_matches()
+            if playermatches:
+                team_cs_total = 0
+                enemy_cs_total = 0
+                for playermatch in playermatches:
+                    team_cs_total += playermatch.neutral_minions_killed_team_jungle
+                    enemy_cs_total += playermatch.neutral_minions_killed_enemy_jungle
+                results.append({
+                    'name': teamplayer.player.name,
+                    'counterjungle_percent': 1.0 * enemy_cs_total / (team_cs_total + enemy_cs_total),
+                    'total_games': playermatches.count()
+                    })
+        return sorted(results, key = lambda t: t['counterjungle_percent'])
+    
+    def get_earliest_avg_kill(self):
+        results = []
+        players = TeamPlayer.objects.filter(team__season=self, role__isFill=True)
+        for teamplayer in players:
+            playermatches = teamplayer.get_player_matches()
+            if playermatches:
+                kill_timestamp_total = 0
+                num_matches = 0
+                for playermatch in playermatches:
+                    kill = PlayerMatchKill.objects.filter(killer=playermatch).order_by('timestamp')
+                    if kill:
+                        kill_timestamp_total += kill[0].timestamp
+                        num_matches += 1
+                if num_matches > 0:
+                    results.append({
+                        'name': teamplayer.player.name,
+                        'kill_timestamp': 1.0 * kill_timestamp_total / num_matches,
+                        'total_games': num_matches
+                        })
+        return sorted(results, key = lambda t: t['kill_timestamp'])
+     
+    def get_baron_prox_kill_percent(self):
+        results = []
+        teams = Team.objects.filter(season=self)
+        for team in teams:
+            playermatches = team.get_player_matches()
+            if playermatches:
+                kill_count = 0
+                total_kills = 0
+                for playermatch in playermatches:
+                    kills = PlayerMatchKill.objects.filter(killer=playermatch)
+                    for kill in kills:
+                        if kill and kill.position_x > 3300 and kill.position_x < 6500 and kill.position_y > 8700 and kill.position_y < 11800:
+                            kill_count += 1
+                        if kill:
+                            total_kills += 1
+                if total_kills > 0:
+                    results.append({
+                        'name': team.name,
+                        'kill_percent': 1.0 * kill_count / total_kills
+                        })
+        return sorted(results, key = lambda t: t['kill_percent'])
 
+    def get_dragon_prox_kill_percent(self):
+        results = []
+        teams = Team.objects.filter(season=self)
+        for team in teams:
+            playermatches = team.get_player_matches()
+            if playermatches:
+                kill_count = 0
+                total_kills = 0
+                for playermatch in playermatches:
+                    kills = PlayerMatchKill.objects.filter(killer=playermatch)
+                    for kill in kills:
+                        if kill and kill.position_y > 3300 and kill.position_y < 6500 and kill.position_x > 8700 and kill.position_x < 11800:
+                            kill_count += 1
+                        if kill:
+                            total_kills += 1
+                if total_kills > 0:
+                    results.append({
+                        'name': team.name,
+                        'kill_percent': 1.0 * kill_count / total_kills
+                        })
+        return sorted(results, key = lambda t: t['kill_percent'])
+
+    def get_wards_placed_before_barons(self):
+        results = []
+        teams = Team.objects.filter(season=self)
+        for team in teams:
+            playermatches = team.get_player_matches()
+            if playermatches:
+                total_kills = 0
+                wards_placed = 0
+                wards_killed = 0
+                for playermatch in playermatches:
+                    kills = PlayerMatchEliteMonsterKill.objects.filter(playermatch=playermatch, monster_type__name="Baron Nashor")
+                    for kill in kills:
+                        ward_kills = PlayerMatchWardKill.objects.filter(playermatch__team=playermatch.team, playermatch__match=playermatch.match, timestamp__lt=kill.timestamp, timestamp__gt=kill.timestamp - 60000)
+                        ward_placed = PlayerMatchWardPlace.objects.filter(playermatch__team=playermatch.team, playermatch__match=playermatch.match, timestamp__lt=kill.timestamp, timestamp__gt=kill.timestamp - 60000)
+                        wards_killed += ward_kills.count()
+                        wards_placed += ward_placed.count()
+                        total_kills += 1
+                if total_kills > 0:
+                    results.append({
+                        'name': team.name,
+                        'total_kills': total_kills,
+                        'wards_placed': 1.0 * wards_placed / total_kills,
+                        'wards_killed': 1.0 * wards_killed / total_kills
+                        })
+        return sorted(results, key = lambda t: t['wards_killed'])
+
+    def get_wards_placed_before_dragons(self):
+        results = []
+        teams = Team.objects.filter(season=self)
+        for team in teams:
+            playermatches = team.get_player_matches()
+            if playermatches:
+                total_kills = 0
+                wards_placed = 0
+                wards_killed = 0
+                for playermatch in playermatches:
+                    kills = PlayerMatchEliteMonsterKill.objects.filter(playermatch=playermatch).exclude(monster_type__name="Baron Nashor").exclude(monster_type__name="Rift Herald")
+                    for kill in kills:
+                        ward_kills = PlayerMatchWardKill.objects.filter(playermatch__team=playermatch.team, playermatch__match=playermatch.match, timestamp__lt=kill.timestamp, timestamp__gt=kill.timestamp - 30000)
+                        ward_placed = PlayerMatchWardPlace.objects.filter(playermatch__team=playermatch.team, playermatch__match=playermatch.match, timestamp__lt=kill.timestamp, timestamp__gt=kill.timestamp - 30000)
+                        wards_killed += ward_kills.count()
+                        wards_placed += ward_placed.count()
+                        total_kills += 1
+                if total_kills > 0:
+                    results.append({
+                        'name': team.name,
+                        'total_kills': total_kills,
+                        'wards_placed': 1.0 * wards_placed / total_kills,
+                        'wards_killed': 1.0 * wards_killed / total_kills
+                        })
+        return sorted(results, key = lambda t: t['wards_killed'])
+
+    def get_jungler_lane_kill_percent(self):
+        results = []
+        teamplayers = TeamPlayer.objects.filter(team__season=self, role__name="Jungle")
+        for teamplayer in teamplayers:
+            playermatches = teamplayer.get_player_matches()
+            if playermatches:
+                top_count = 0
+                mid_count = 0
+                bot_count = 0
+                total_kills = 0
+                for playermatch in playermatches:
+                    kills = PlayerMatchKill.objects.filter(killer=playermatch, timestamp__lt=910000)
+                    assists = PlayerMatchAssist.objects.filter(playermatch=playermatch, kill__timestamp__lt=910000)
+                    for kill in kills:
+#                        if kill.position_x < 5000 and kill.position_y > 9500:
+                        if math.hypot(kill.position_x - 1800, kill.position_y - 13000) < 2500:
+                            top_count += 1
+                        if math.hypot(kill.position_x - 7500, kill.position_y - 7500) < 2500:
+                        #if kill.position_x > 5000 and kill.position_x < 10500 and kill.position_y < 9500 and kill.position_x > 4800:
+                            mid_count += 1
+                        if math.hypot(kill.position_x - 13000, kill.position_y - 1800) < 2500:
+                        #if kill.position_x > 10500 and kill.position_y < 4800:
+                            bot_count += 1
+                        total_kills += 1
+                    for assist in assists:
+                        #if assist.kill.position_x < 5000 and assist.kill.position_y > 9500:
+                        if math.hypot(assist.kill.position_x - 1800, assist.kill.position_y - 13000) < 2500:
+                            top_count += 1
+                        if math.hypot(assist.kill.position_x - 7500, assist.kill.position_y - 7500) < 2500:
+                        #if assist.kill.position_x > 5000 and assist.kill.position_x < 10500 and assist.kill.position_y < 9500 and assist.kill.position_x > 4800:
+                            mid_count += 1
+                        if math.hypot(assist.kill.position_x - 13000, assist.kill.position_y - 1800) < 2500:
+                        #if assist.kill.position_x > 10500 and assist.kill.position_y < 4800:
+                            bot_count += 1
+                        total_kills += 1
+                if total_kills > 0:
+                    results.append({
+                        'name': teamplayer.player.name,
+                        'top_percent': 1.0 * top_count / total_kills,
+                        'mid_percent': 1.0 * mid_count / total_kills,
+                        'bot_percent': 1.0 * bot_count / total_kills,
+                        'laneless_percent': 1.0 * (total_kills - top_count - mid_count - bot_count) / total_kills
+                        })
+        return sorted(results, key = lambda t: t['mid_percent'])
 
 class Week(models.Model):
     season = models.ForeignKey(Season)
@@ -286,6 +465,9 @@ class Team(models.Model):
                     })
 
         return results
+
+    def get_player_matches(self):
+        return PlayerMatch.objects.filter(team=self)
 
     def get_enemy_player_matches(self):
         results = []
@@ -889,6 +1071,8 @@ class PlayerMatchKill(models.Model):
     killer = models.ForeignKey(PlayerMatch)
     victim = models.ForeignKey(PlayerMatch, related_name="victim")
     timestamp = models.IntegerField()
+    position_x = models.IntegerField(default=0)
+    position_y = models.IntegerField(default=0)
 
 class PlayerMatchAssist(models.Model):
     kill = models.ForeignKey(PlayerMatchKill)

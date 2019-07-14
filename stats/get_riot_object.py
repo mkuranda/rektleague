@@ -246,7 +246,10 @@ def get_match_timeline(match_id):
                 if event_data['killerId'] > 0 and event_data['victimId'] > 0:
                     killer = participants[event_data['killerId'] - 1]
                     victim = participants[event_data['victimId'] - 1]
-                    event = PlayerMatchKill.objects.create(killer=killer, victim=victim, timestamp=timestamp)
+                    event = PlayerMatchKill.objects.create(killer=killer, victim=victim, timestamp=event_data['timestamp'])
+                    if 'position' in event_data:
+                        event.position_x = event_data['position']['x']
+                        event.position_y = event_data['position']['y']
                     event.save()
                     for assist_id in event_data['assistingParticipantIds']:
                         assist = PlayerMatchAssist.objects.create(kill=event, playermatch=participants[assist_id - 1])
@@ -254,12 +257,12 @@ def get_match_timeline(match_id):
             elif event_data['type'] == 'WARD_PLACED':
                 if event_data['creatorId'] > 0:
                     ward_type = Ward.objects.get(riot_name=event_data['wardType'])
-                    event = PlayerMatchWardPlace.objects.create(playermatch=participants[event_data['creatorId'] - 1], timestamp=timestamp, ward_type=ward_type)
+                    event = PlayerMatchWardPlace.objects.create(playermatch=participants[event_data['creatorId'] - 1], timestamp=event_data['timestamp'], ward_type=ward_type)
                     event.save()
             elif event_data['type'] == 'WARD_KILL':
                 if event_data['killerId'] > 0:
                     ward_type = Ward.objects.get(riot_name=event_data['wardType'])
-                    event = PlayerMatchWardKill.objects.create(playermatch=participants[event_data['killerId'] - 1], timestamp=timestamp, ward_type=ward_type)
+                    event = PlayerMatchWardKill.objects.create(playermatch=participants[event_data['killerId'] - 1], timestamp=event_data['timestamp'], ward_type=ward_type)
                     event.save()
             elif event_data['type'] == 'BUILDING_KILL':
                 if event_data['killerId'] > 0:
@@ -274,7 +277,7 @@ def get_match_timeline(match_id):
                     else:
                         building_type = Building.objects.get(riot_name=event_data['buildingType'])
 
-                    event = PlayerMatchBuildingKill.objects.create(playermatch=killer, timestamp=timestamp, building_type=building_type)
+                    event = PlayerMatchBuildingKill.objects.create(playermatch=killer, timestamp=event_data['timestamp'], building_type=building_type)
                     event.save()
                     for assist_id in event_data['assistingParticipantIds']:
                         assist = PlayerMatchBuildingAssist.objects.create(kill=event, playermatch=participants[assist_id - 1])
@@ -287,10 +290,33 @@ def get_match_timeline(match_id):
                     else: 
                         monster_type = EliteMonster.objects.get(riot_name=event_data['monsterType'])
 
-                    event = PlayerMatchEliteMonsterKill.objects.create(playermatch=playermatch, timestamp=timestamp, monster_type=monster_type)
+                    event = PlayerMatchEliteMonsterKill.objects.create(playermatch=playermatch, timestamp=event_data['timestamp'], monster_type=monster_type)
                     event.save()
 
+def update_playermatchkills():
+    matches = Match.objects.filter(series__week__season__id=4)
 
+    for match in matches:
+        playermatchkills = PlayerMatchKill.objects.filter(killer__match=match)
+        count = 0
+        for playermatchkill in playermatchkills:
+            if playermatchkill.position_x == 0:
+                count += 1
+        if count > 0:
+            a = 5/0
+#    for match in matches:
+#
+#            PlayerMatchTimeline.objects.filter(playermatch__match=match).delete()
+#            PlayerMatchKill.objects.filter(killer__match=match).delete()
+#            PlayerMatchAssist.objects.filter(playermatch__match=match).delete()
+#            PlayerMatchWardPlace.objects.filter(playermatch__match=match).delete()
+#            PlayerMatchWardKill.objects.filter(playermatch__match=match).delete()
+#            PlayerMatchBuildingKill.objects.filter(playermatch__match=match).delete()
+#            PlayerMatchBuildingAssist.objects.filter(playermatch__match=match).delete()
+#            PlayerMatchEliteMonsterKill.objects.filter(playermatch__match=match).delete()
+#        
+#            get_match_timeline(match.id)
+    
 
 def get_match(match_id):
     try:

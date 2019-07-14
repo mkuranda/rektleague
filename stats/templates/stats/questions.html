@@ -1,0 +1,55 @@
+{% extends "stats/base.html" %}
+
+{% block title %}Rekt League | Questions{% endblock %}
+
+{% block content %}
+
+<style>
+
+
+</style>
+
+<div style="padding-top: 200px;">
+{% for player in season.get_top_counterjunglers %}
+{{ player }}
+{% endfor %}
+</div>
+
+<div style="padding-top: 20px;">
+{% for player in season.get_earliest_avg_kill %}
+{{ player }}
+{% endfor %}
+</div>
+
+<div style="padding-top: 20px;">
+{% for player in season.get_baron_prox_kill_percent %}
+{{ player }}
+{% endfor %}
+</div>
+
+<div style="padding-top: 20px;">
+{% for player in season.get_dragon_prox_kill_percent %}
+{{ player }}
+{% endfor %}
+</div>
+
+<div style="padding-top: 20px;">
+{% for player in season.get_jungler_lane_kill_percent %}
+{{ player }}
+{% endfor %}
+</div>
+
+<div style="padding-top: 20px;">
+{% for player in season.get_wards_placed_before_barons %}
+{{ player }}
+{% endfor %}
+</div>
+
+<div style="padding-top: 20px;">
+{% for player in season.get_wards_placed_before_dragons %}
+{{ player }}
+{% endfor %}
+</div>
+
+
+{% endblock %}
