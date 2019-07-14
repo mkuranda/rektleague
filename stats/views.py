@@ -70,7 +70,7 @@ def season_test_detail(request, season_id):
     for team in sorted_teams:
         standings.append({
             'rank' : i,
-            'team' : team.name,
+            'team' : { 'id' : team.id, 'name' : team.name, 'icon' : team.icon.url },
             'wins' : team.get_wins(),
             'losses' : team.get_losses()
             })
