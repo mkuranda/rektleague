@@ -71,8 +71,8 @@ def season_test_detail(request, season_id):
         standings.append({
             'rank' : i,
             'team' : { 'id' : team.id, 'name' : team.name, 'icon' : team.icon.url },
-            'wins' : team.get_wins(),
-            'losses' : team.get_losses()
+            'wins' : team.get_regular_wins(),
+            'losses' : team.get_regular_losses()
             })
         i = i + 1
 
@@ -103,16 +103,16 @@ def season_test_detail(request, season_id):
                     'id' : team_1.id,
                     'name' : team_1.name,
                     'wins' : series_team_1.get_wins(),
-                    'season_wins' : team_1.get_wins(),
-                    'season_losses' : team_1.get_losses(),
+                    'season_wins' : series_team_1.get_wins_before(),
+                    'season_losses' : series_team_1.get_losses_before(),
                     'icon' : team_1.icon.url
                     },
                 'team_2' : { 
                     'id' : team_2.id,
                     'name' : team_2.name,
                     'wins' : series_team_2.get_wins(),
-                    'season_wins' : team_2.get_wins(),
-                    'season_losses' : team_2.get_losses(),
+                    'season_wins' : series_team_2.get_wins_before(),
+                    'season_losses' : series_team_2.get_losses_before(),
                     'icon' : team_2.icon.url
                     }
                 })

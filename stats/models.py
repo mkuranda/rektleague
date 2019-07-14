@@ -546,6 +546,12 @@ class Team(models.Model):
     def get_losses(self):
         return TeamMatch.objects.filter(team=self, win=False).exclude(match__duration=0).count()
 
+    def get_regular_wins(self):
+        return TeamMatch.objects.filter(team=self, win=True, match__series__week__regular=True).exclude(match__duration=0).count()
+
+    def get_regular_losses(self):
+        return TeamMatch.objects.filter(team=self, win=False, match__series__week__regular=True).exclude(match__duration=0).count()
+
     def get_first_blood_percent(self):
         first_bloods = TeamMatch.objects.filter(team=self, first_blood=True).exclude(match__duration=0).count()
         games = TeamMatch.objects.filter(team=self).exclude(match__duration=0).count()
@@ -588,7 +594,13 @@ class SeriesTeam(models.Model):
     
     def get_wins(self):
 	return TeamMatch.objects.filter(team=self.team, win=True, match__series=self.series).exclude(match__duration=0).count()    
-    
+
+    def get_wins_before(self):
+	return TeamMatch.objects.filter(team=self.team, win=True, match__series__week__regular=True, match__series__week__number__lt=self.series.week.number).count()
+   
+    def get_losses_before(self):
+	return TeamMatch.objects.filter(team=self.team, win=False, match__series__week__regular=True, match__series__week__number__lt=self.series.week.number).exclude(match__duration=0).count()
+
     def get_record_before(self):
 	wins = TeamMatch.objects.filter(team=self.team, win=True, match__series__week__regular=True, match__series__week__number__lt=self.series.week.number).count()
 	losses = TeamMatch.objects.filter(team=self.team, win=False, match__series__week__regular=True, match__series__week__number__lt=self.series.week.number).exclude(match__duration=0).count()
