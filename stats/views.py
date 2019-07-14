@@ -78,13 +78,16 @@ def season_test_detail(request, season_id):
 
     schedule = []
 
+    i = 0
     weeks = season.get_weeks_desc()
     for week in weeks:
         schedule.append({
+            'id' : i,
             'name' : week.name_w_title(),
             'date' : week.date.date().strftime('%B %d, %Y'),
             'series' : [] 
             })
+        i = i + 1
         for series in Series.objects.filter(week=week):
             team_1 = series.get_team_1()
             team_2 = series.get_team_2()
@@ -98,7 +101,7 @@ def season_test_detail(request, season_id):
                     'wins' : series_team_1.get_wins(),
                     'season_wins' : team_1.get_wins(),
                     'season_losses' : team_1.get_losses(),
-                    'icon' : team_1.icon.url,
+                    'icon' : team_1.icon.url
                     },
                 'team_2' : { 
                     'id' : team_2.id,
@@ -106,7 +109,7 @@ def season_test_detail(request, season_id):
                     'wins' : series_team_2.get_wins(),
                     'season_wins' : team_2.get_wins(),
                     'season_losses' : team_2.get_losses(),
-                    'icon' : team_2.icon.url,
+                    'icon' : team_2.icon.url
                     }
                 })
 
