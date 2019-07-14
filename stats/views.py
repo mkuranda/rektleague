@@ -75,12 +75,47 @@ def season_test_detail(request, season_id):
             'losses' : team.get_losses()
             })
         i = i + 1
-        
+
+    schedule = []
+
+    weeks = season.get_weeks_desc()
+    for week in weeks:
+        schedule.append({
+            'name' : week.name_w_title(),
+            'date' : week.date.date().strftime('%B %d, %Y'),
+            'series' : [] 
+            })
+        for series in Series.objects.filter(week=week):
+            team_1 = series.get_team_1()
+            team_2 = series.get_team_2()
+            series_team_1 = series.get_series_team_1()
+            series_team_2 = series.get_series_team_2()
+            schedule[-1]['series'].append({
+                'id' : series.id,
+                'team_1' : { 
+                    'id' : team_1.id,
+                    'name' : team_1.name,
+                    'wins' : series_team_1.get_wins(),
+                    'season_wins' : team_1.get_wins(),
+                    'season_losses' : team_1.get_losses(),
+                    'icon' : team_1.icon.url,
+                    },
+                'team_2' : { 
+                    'id' : team_2.id,
+                    'name' : team_2.name,
+                    'wins' : series_team_2.get_wins(),
+                    'season_wins' : team_2.get_wins(),
+                    'season_losses' : team_2.get_losses(),
+                    'icon' : team_2.icon.url,
+                    }
+                })
+
     context = {
         'season': season.id,
         'banner': season.splash.url,
         'winner': season.get_winner()[0].name,
-        'standings': standings
+        'standings': standings,
+        'schedule': schedule
     }
     return HttpResponse(json.dumps(context))
 

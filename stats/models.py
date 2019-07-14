@@ -587,7 +587,7 @@ class SeriesTeam(models.Model):
         unique_together = (("team", "series"))
     
     def get_wins(self):
-	return TeamMatch.objects.filter(team=self.team, win=True, match__series=series).exclude(match__duration=0).count()    
+	return TeamMatch.objects.filter(team=self.team, win=True, match__series=self.series).exclude(match__duration=0).count()    
     
     def get_record_before(self):
 	wins = TeamMatch.objects.filter(team=self.team, win=True, match__series__week__regular=True, match__series__week__number__lt=self.series.week.number).count()
