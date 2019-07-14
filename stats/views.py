@@ -84,9 +84,13 @@ def season_test_detail(request, season_id):
         schedule.append({
             'id' : i,
             'name' : week.name_w_title(),
-            'date' : week.date.date().strftime('%B %d, %Y'),
             'series' : [] 
             })
+        if week.date:
+            schedule[-1].update({'date' : week.date.date().strftime('%B %d, %Y')})
+        else:
+            schedule[-1].update({'date' : None})
+
         i = i + 1
         for series in Series.objects.filter(week=week):
             team_1 = series.get_team_1()
@@ -113,10 +117,20 @@ def season_test_detail(request, season_id):
                     }
                 })
 
+    if season.get_winner():
+        winning_team = season.get_winner()[0]
+        winner = {
+            'id' : winning_team.id,
+            'name' : winning_team.name,
+            'splash' : winning_team.splash.url
+        }
+    else:
+        winner = None
+
     context = {
         'season': season.id,
         'banner': season.splash.url,
-        'winner': season.get_winner()[0].name,
+        'winner': winner,
         'standings': standings,
         'schedule': schedule
     }
