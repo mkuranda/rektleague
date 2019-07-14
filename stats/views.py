@@ -59,13 +59,10 @@ def season_detail(request, season_id):
     return render(request, 'stats/season.html', context)
 
 def season_test_detail(request, season_id):
-    latest_season = Season.objects.latest('id')
     season = get_object_or_404(Season, id=season_id)
-    teams = Team.objects.filter(season=season_id)
-    sorted_teams = sorted(teams, key= lambda t: t.get_sort_record())
-    next_week = season.next_week()
     context = {
         'season': season.id,
+        'banner': season.splash.url,
         'winner': season.get_winner()[0].name
     }
     return HttpResponse(json.dumps(context))
