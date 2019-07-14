@@ -60,10 +60,27 @@ def season_detail(request, season_id):
 
 def season_test_detail(request, season_id):
     season = get_object_or_404(Season, id=season_id)
+
+    teams = Team.objects.filter(season=season_id)
+    sorted_teams = sorted(teams, key= lambda t: t.get_sort_record())
+
+    standings = []
+
+    i = 1
+    for team in sorted_teams:
+        standings.append({
+            'rank' : i,
+            'team' : team.name,
+            'wins' : team.get_wins(),
+            'losses' : team.get_losses()
+            })
+        i = i + 1
+        
     context = {
         'season': season.id,
         'banner': season.splash.url,
-        'winner': season.get_winner()[0].name
+        'winner': season.get_winner()[0].name,
+        'standings': standings
     }
     return HttpResponse(json.dumps(context))
 
