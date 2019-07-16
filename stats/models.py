@@ -477,10 +477,10 @@ class Team(models.Model):
 
     def get_killed_timelines(self):
         max_minute = self.get_max_timeline_minute()
-        building_kills = PlayerMatchBuildingKill.objects.filter(playermatch__in=self.get_enemy_player_matches)
+        building_kills = PlayerMatchBuildingKill.objects.filter(playermatch__in=self.get_enemy_player_matches())
         kills = PlayerMatchKill.objects.filter(victim__team=self)
-        wards_placed = PlayerMatchWardPlace.objects.filter(playermatch__in=self.get_enemy_player_matches).exclude(ward_type=Ward.objects.get(name='Undefined'))
-        wards_killed = PlayerMatchWardKill.objects.filter(playermatch__in=self.get_enemy_player_matches).exclude(ward_type=Ward.objects.get(name='Undefined'))
+        wards_placed = PlayerMatchWardPlace.objects.filter(playermatch__in=self.get_enemy_player_matches()).exclude(ward_type=Ward.objects.get(name='Undefined'))
+        wards_killed = PlayerMatchWardKill.objects.filter(playermatch__in=self.get_enemy_player_matches()).exclude(ward_type=Ward.objects.get(name='Undefined'))
         results = []
         for i in range(0, max_minute):
             timestamp = i * 60000

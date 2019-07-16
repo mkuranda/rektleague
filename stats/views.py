@@ -58,6 +58,24 @@ def season_detail(request, season_id):
     }
     return render(request, 'stats/season.html', context)
 
+def team_test_detail(request, season_id, team_id):
+    season = get_object_or_404(Season, id=season_id)
+    team = get_object_or_404(Team, id=team_id)
+
+    team_players = team.get_players()
+
+    players_json = []
+
+    for team_player in team_players:
+        players.append({
+            'id' : team_player.player.id,
+            'name' : team_player.player.name,
+            'role' : {
+                }
+            })
+
+
+
 def season_test_detail(request, season_id):
     season = get_object_or_404(Season, id=season_id)
 
