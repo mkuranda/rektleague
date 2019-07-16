@@ -116,6 +116,7 @@ def team_test_detail(request, season_id, team_id):
     team_json = {
         'id' : team.id,
         'name' : team.name,
+        'splash' : team.splash.url,
         'wins' : team.get_wins(),
         'losses' : team.get_losses(),
         'first_blood_pct' : team.get_first_blood_percent(),
