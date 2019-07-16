@@ -67,13 +67,67 @@ def team_test_detail(request, season_id, team_id):
     players_json = []
 
     for team_player in team_players:
-        players.append({
+        team_player_roles = TeamPlayer.objects.filter(player=team_player.player, team=team)
+        roles = []
+        for team_player_role in team_player_roles:
+            if team_player_role.get_num_matches() > 0:
+                champions = []
+                for champion in team_player_role.get_played_champion_list():
+                    champions.append({
+                        'id' : champion['playermatch__champion'],
+                        'name' : champion['playermatch__champion__name'],
+                        'icon' : champion['playermatch__champion__icon'],
+                        'num_matches' : champion['champion_count'],
+                        'avg_kills' : champion['avg_kills'],
+                        'avg_deaths' : champion['avg_deaths'],
+                        'avg_assists' : champion['avg_assists'],
+                        'winrate' : champion['winrate'],
+                        'cs_per_min' : champion['cs_per_min']
+                        })
+                roles.append({
+                    'name' : team_player_role.role.name,
+                    'icon' : team_player_role.role.icon.url,
+                    'kda' : team_player_role.get_kda(),
+                    'avg_kills' : team_player_role.get_avg_kills(),
+                    'avg_deaths' : team_player_role.get_avg_deaths(),
+                    'avg_assists' : team_player_role.get_avg_assists(),
+                    'kill_participation' : team_player_role.get_kill_participation(),
+                    'pct_team_damage' : team_player_role.get_percent_team_damage(),
+                    'champions' : champions
+                })
+
+
+        players_json.append({
             'id' : team_player.player.id,
             'name' : team_player.player.name,
-            'role' : {
-                }
+            'roles' : roles
             })
 
+    popular_bans_json = []
+
+    for champion in team.get_top_banned():
+        popular_bans_json.append({
+            'id' : champion['champion'],
+            'name' : champion['champion__name'],
+            'icon' : champion['champion__icon'],
+            'ban_rate' : champion['ban_rate'],
+            })
+
+    team_json = {
+        'id' : team.id,
+        'name' : team.name,
+        'wins' : team.get_wins(),
+        'losses' : team.get_losses(),
+        'first_blood_pct' : team.get_first_blood_percent(),
+        'first_tower_pct' : team.get_first_tower_percent(),
+        'popular_bans' : popular_bans_json
+    }
+
+    context = {
+        'team' : team_json,
+        'players': players_json
+    }
+    return HttpResponse(json.dumps(context))
 
 
 def season_test_detail(request, season_id):
