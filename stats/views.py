@@ -5,7 +5,7 @@ from django.template import loader
 from django.db.models import Avg, Count, Sum, F, When, Q
 from django.utils.timezone import utc
 from riot_request import RiotRequester
-from .models import Player, TeamPlayer, Team, Season, Champion, Match, Week, Series, SeriesTeam, TeamMatch, MatchCaster, SeasonChampion, PlayerMatch, HypeVideo, Role, TeamRole, SeriesPlayer
+from .models import Player, TeamPlayer, Team, Season, Champion, Match, Week, Series, SeriesTeam, TeamMatch, MatchCaster, SeasonChampion, PlayerMatch, HypeVideo, Role, TeamRole, SeriesPlayer, Summoner
 from .models import HomePageCarouselObject, ArticlePage
 from .forms import TournamentCodeForm, InitializeMatchForm, CreateRosterForm
 from get_riot_object import ObjectNotFound, get_item, get_champions, get_champion, get_match, get_all_items, get_match_timeline, update_playermatchkills
@@ -58,49 +58,107 @@ def season_detail(request, season_id):
     }
     return render(request, 'stats/season.html', context)
 
-def team_test_detail(request, season_id, team_id):
-    season = get_object_or_404(Season, id=season_id)
+def player_api_detail(request, player_id):
+    player = get_object_or_404(Player, id=player_id)
+
+    summoners_json = []
+
+    for summoner in Summoner.objects.filter(player=player):
+        summoners_json.append({
+            'name' : summoner.name,
+            'link' : 'https://na.op.gg/summoner/userName=' + summoner.link
+        })
+
+    team_roles_json = []
+    
+    for team_role in TeamPlayer.objects.filter(player=player, role__isFill=False):
+        if team_role.get_num_matches() > 0:
+            champions = []
+            for champion in team_role.get_played_champion_list():
+                champions.append({
+                    'id' : champion['playermatch__champion'],
+                    'name' : champion['playermatch__champion__name'],
+                    'icon' : champion['playermatch__champion__icon'],
+                    'num_matches' : champion['champion_count'],
+                    'avg_kills' : champion['avg_kills'],
+                    'avg_deaths' : champion['avg_deaths'],
+                    'avg_assists' : champion['avg_assists'],
+                    'winrate' : champion['winrate'],
+                    'cs_per_min' : champion['cs_per_min']
+                    })
+                if champion['cs_per_min'] > 100:
+                    champions[-1].update({
+                        'cs_per_min' : None
+                        })
+            team = {
+                'id' : team_role.team.id,
+                'season' : team_role.team.season.id,
+                'name' : team_role.team.name
+                }
+            team_roles_json.append({
+                'team' : team,
+                'role' : team_role.role.name,
+                'icon' : team_role.role.icon.url,
+                'kda' : team_role.get_kda(),
+                'avg_kills' : team_role.get_avg_kills(),
+                'avg_deaths' : team_role.get_avg_deaths(),
+                'avg_assists' : team_role.get_avg_assists(),
+                'kill_participation' : team_role.get_kill_participation(),
+                'pct_team_damage' : team_role.get_percent_team_damage(),
+                'champions' : champions
+            })
+
+    
+    context = {
+        'name' : player.name,
+        'summoners' : summoners_json,
+        'team_roles' : team_roles_json
+    }
+    return HttpResponse(json.dumps(context))
+
+
+def team_api_detail(request, team_id):
     team = get_object_or_404(Team, id=team_id)
+
+#    for team_player in team_players:
+#        team_player_roles = TeamPlayer.objects.filter(player=team_player.player, team=team)
+#        roles = []
+#        for team_player_role in team_player_roles:
+#            if team_player_role.get_num_matches() > 0:
+#                champions = []
+#                for champion in team_player_role.get_played_champion_list():
+#                    champions.append({
+#                        'id' : champion['playermatch__champion'],
+#                        'name' : champion['playermatch__champion__name'],
+#                        'icon' : champion['playermatch__champion__icon'],
+#                        'num_matches' : champion['champion_count'],
+#                        'avg_kills' : champion['avg_kills'],
+#                        'avg_deaths' : champion['avg_deaths'],
+#                        'avg_assists' : champion['avg_assists'],
+#                        'winrate' : champion['winrate'],
+#                        'cs_per_min' : champion['cs_per_min']
+#                        })
+#                roles.append({
+#                    'name' : team_player_role.role.name,
+#                    'icon' : team_player_role.role.icon.url,
+#                    'kda' : team_player_role.get_kda(),
+#                    'avg_kills' : team_player_role.get_avg_kills(),
+#                    'avg_deaths' : team_player_role.get_avg_deaths(),
+#                    'avg_assists' : team_player_role.get_avg_assists(),
+#                    'kill_participation' : team_player_role.get_kill_participation(),
+#                    'pct_team_damage' : team_player_role.get_percent_team_damage(),
+#                    'champions' : champions
+#                })
 
     team_players = team.get_players()
 
     players_json = []
 
     for team_player in team_players:
-        team_player_roles = TeamPlayer.objects.filter(player=team_player.player, team=team)
-        roles = []
-        for team_player_role in team_player_roles:
-            if team_player_role.get_num_matches() > 0:
-                champions = []
-                for champion in team_player_role.get_played_champion_list():
-                    champions.append({
-                        'id' : champion['playermatch__champion'],
-                        'name' : champion['playermatch__champion__name'],
-                        'icon' : champion['playermatch__champion__icon'],
-                        'num_matches' : champion['champion_count'],
-                        'avg_kills' : champion['avg_kills'],
-                        'avg_deaths' : champion['avg_deaths'],
-                        'avg_assists' : champion['avg_assists'],
-                        'winrate' : champion['winrate'],
-                        'cs_per_min' : champion['cs_per_min']
-                        })
-                roles.append({
-                    'name' : team_player_role.role.name,
-                    'icon' : team_player_role.role.icon.url,
-                    'kda' : team_player_role.get_kda(),
-                    'avg_kills' : team_player_role.get_avg_kills(),
-                    'avg_deaths' : team_player_role.get_avg_deaths(),
-                    'avg_assists' : team_player_role.get_avg_assists(),
-                    'kill_participation' : team_player_role.get_kill_participation(),
-                    'pct_team_damage' : team_player_role.get_percent_team_damage(),
-                    'champions' : champions
-                })
-
 
         players_json.append({
             'id' : team_player.player.id,
-            'name' : team_player.player.name,
-            'roles' : roles
+            'name' : team_player.player.name
             })
 
     popular_bans_json = []
@@ -131,7 +189,7 @@ def team_test_detail(request, season_id, team_id):
     return HttpResponse(json.dumps(context))
 
 
-def season_test_detail(request, season_id):
+def season_api_detail(request, season_id):
     season = get_object_or_404(Season, id=season_id)
 
     teams = Team.objects.filter(season=season_id)
