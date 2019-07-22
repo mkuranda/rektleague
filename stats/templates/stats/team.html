@@ -39,8 +39,8 @@ var chart = new CanvasJS.Chart("killsByTime", {
 		name: "views",
 		type: "area",
 		dataPoints: [
-			{% for timeline in killed_timelines %}
-			{ x: {{ timeline.minute }}, y: {{ timeline.kills }}, label: "{{ timeline.minute }}:00" },
+			{% for timeline in kill_timelines %}
+			{ x: {{ timeline.minute }}, y: {{ timeline.enemy_kills }}, label: "{{ timeline.minute }}:00" },
                         {% endfor %}
 		]
 	},{
@@ -92,8 +92,8 @@ var chart2 = new CanvasJS.Chart("buildingKillsByTime", {
 		name: "views",
 		type: "area",
 		dataPoints: [
-			{% for timeline in killed_timelines %}
-			{ x: {{ timeline.minute }}, y: {{ timeline.building_kills }}, label: "{{ timeline.minute }}:00" },
+			{% for timeline in kill_timelines %}
+			{ x: {{ timeline.minute }}, y: {{ timeline.enemy_building_kills }}, label: "{{ timeline.minute }}:00" },
                         {% endfor %}
 		]
 	},{
@@ -145,8 +145,8 @@ var chart3 = new CanvasJS.Chart("wardsPlacedByTime", {
 		name: "views",
 		type: "area",
 		dataPoints: [
-			{% for timeline in killed_timelines %}
-			{ x: {{ timeline.minute }}, y: {{ timeline.wards_placed }}, label: "{{ timeline.minute }}:00" },
+			{% for timeline in kill_timelines %}
+			{ x: {{ timeline.minute }}, y: {{ timeline.enemy_wards_placed }}, label: "{{ timeline.minute }}:00" },
                         {% endfor %}
 		]
 	},{
@@ -198,8 +198,8 @@ var chart4 = new CanvasJS.Chart("wardsKilledByTime", {
 		name: "views",
 		type: "area",
 		dataPoints: [
-			{% for timeline in killed_timelines %}
-			{ x: {{ timeline.minute }}, y: {{ timeline.wards_killed }}, label: "{{ timeline.minute }}:00" },
+			{% for timeline in kill_timelines %}
+			{ x: {{ timeline.minute }}, y: {{ timeline.enemy_wards_killed }}, label: "{{ timeline.minute }}:00" },
                         {% endfor %}
 		]
 	},{

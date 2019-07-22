@@ -8,7 +8,7 @@ from riot_request import RiotRequester
 from .models import Player, TeamPlayer, Team, Season, Champion, Match, Week, Series, SeriesTeam, TeamMatch, MatchCaster, SeasonChampion, PlayerMatch, HypeVideo, Role, TeamRole, SeriesPlayer, Summoner
 from .models import HomePageCarouselObject, ArticlePage
 from .forms import TournamentCodeForm, InitializeMatchForm, CreateRosterForm
-from get_riot_object import ObjectNotFound, get_item, get_champions, get_champion, get_match, get_all_items, get_match_timeline, update_playermatchkills
+from get_riot_object import ObjectNotFound, get_item, get_champions, get_champion, get_match, get_all_items, get_match_timeline, update_playermatchkills, update_team_timelines, update_season_timelines, update_team_player_timelines
 from datetime import datetime
 import random
 import json
@@ -50,6 +50,13 @@ def season_detail(request, season_id):
     teams = Team.objects.filter(season=season_id)
     sorted_teams = sorted(teams, key= lambda t: t.get_sort_record())
     next_week = season.next_week()
+#    for team in teams:
+#        for team_player in team.get_players():
+#            for role in Role.objects.all():
+#                update_team_player_timelines(team, team_player.player, role)
+#    update_season_timelines(season.id)
+#    for team in teams:
+#        update_team_timelines(team.id)
     context = {
         'latest_season': latest_season,
         'season': season,
@@ -375,7 +382,6 @@ def team_detail(request, season_id, team_id):
     series_list = Series.objects.filter(seriesteam__team = team).order_by('-week__number')
     team_roles = TeamRole.objects.filter(team=team).order_by('role')
     kill_timelines = team.get_kill_timelines()
-    killed_timelines = team.get_killed_timelines()
     overall_timelines = team.get_overall_timelines()
     context = {
         'team': team,
@@ -384,7 +390,6 @@ def team_detail(request, season_id, team_id):
         'roles': team_roles,
 	'series_list': series_list,
         'kill_timelines': kill_timelines,
-        'killed_timelines': killed_timelines,
         'overall_timelines': overall_timelines
     }
     return render(request, 'stats/team.html', context)

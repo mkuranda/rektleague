@@ -447,6 +447,51 @@ class Team(models.Model):
         return time.strftime('%M:%S', time.gmtime(TeamMatch.objects.filter(team=self, win=True).aggregate(Avg('match__duration'))['match__duration__avg']))
 
     def get_kill_timelines(self):
+        return TeamTimeline.objects.filter(team=self)
+
+    def get_overall_timelines(self):
+        return SeasonTimeline.objects.filter(season=self.season)
+
+#    def get_kill_timelines(self):
+#        team_timelines = TeamTimeline.objects.filter(team=self)
+#        results = []
+#        for team_timeline in team_timelines:
+#            results.append({
+#                'minute' : team_timeline.minute,
+#                'kills' : team_timeline.kills,
+#                'building_kills' : team_timeline.building_kills,
+#                'wards_placed' : team_timeline.wards_placed,
+#                'wards_killed' : team_timeline.wards_killed
+#                })
+#        return results
+#
+#    def get_killed_timelines(self):
+#        team_timelines = TeamTimeline.objects.filter(team=self)
+#        results = []
+#        for team_timeline in team_timelines:
+#            results.append({
+#                'minute' : team_timeline.minute,
+#                'kills' : team_timeline.enemy_kills,
+#                'building_kills' : team_timeline.enemy_building_kills,
+#                'wards_placed' : team_timeline.enemy_wards_placed,
+#                'wards_killed' : team_timeline.enemy_wards_killed
+#                })
+#        return results
+#
+#    def get_overall_timelines(self):
+#        team_timelines = SeasonTimeline.objects.filter(season=self.season)
+#        results = []
+#        for team_timeline in team_timelines:
+#            results.append({
+#                'minute' : team_timeline.minute,
+#                'kills' : team_timeline.kills,
+#                'building_kills' : team_timeline.building_kills,
+#                'wards_placed' : team_timeline.wards_placed,
+#                'wards_killed' : team_timeline.wards_killed
+#                })
+#        return results
+
+    def generate_kill_timelines(self):
         max_minute = self.get_max_timeline_minute()
         building_kills = PlayerMatchBuildingKill.objects.filter(playermatch__team=self)
         kills = PlayerMatchKill.objects.filter(killer__team=self)
@@ -475,7 +520,7 @@ class Team(models.Model):
             results.append(player_match.get_opponent())
         return results
 
-    def get_killed_timelines(self):
+    def generate_killed_timelines(self):
         max_minute = self.get_max_timeline_minute()
         building_kills = PlayerMatchBuildingKill.objects.filter(playermatch__in=self.get_enemy_player_matches())
         kills = PlayerMatchKill.objects.filter(victim__team=self)
@@ -494,7 +539,7 @@ class Team(models.Model):
                     })
         return results
 
-    def get_overall_timelines(self):
+    def generate_overall_timelines(self):
         max_minute = self.get_max_timeline_minute()
         building_kills = PlayerMatchBuildingKill.objects.filter(playermatch__team__season=self.season)
         kills = PlayerMatchKill.objects.filter(killer__team__season=self.season)
@@ -574,6 +619,32 @@ class Team(models.Model):
 
     def __str__(self):
         return self.name + " (" + str(self.season) + ")"
+
+class SeasonTimeline(models.Model):
+    season = models.ForeignKey(Season)
+    minute = models.IntegerField()
+    kills = models.FloatField(default=0)
+    building_kills = models.FloatField(default=0)
+    wards_placed = models.FloatField(default=0)
+    wards_killed = models.FloatField(default=0)
+
+    def __str__(self):
+        return str(self.season) + " " + str(self.minute) + " minute timeline"
+
+class TeamTimeline(models.Model):
+    team = models.ForeignKey(Team)
+    minute = models.IntegerField()
+    kills = models.FloatField(default=0)
+    building_kills = models.FloatField(default=0)
+    wards_placed = models.FloatField(default=0)
+    wards_killed = models.FloatField(default=0)
+    enemy_kills = models.FloatField(default=0)
+    enemy_building_kills = models.FloatField(default=0)
+    enemy_wards_placed = models.FloatField(default=0)
+    enemy_wards_killed = models.FloatField(default=0)
+
+    def __str__(self):
+        return self.team.name + " " + str(self.minute) + " minute timeline"
 
 class TeamRole(models.Model):
     team = models.ForeignKey(Team)
@@ -713,9 +784,13 @@ class TeamPlayer(models.Model):
     player = models.ForeignKey(Player)
     role = models.ForeignKey(Role)
     isLeader = models.BooleanField(default=False)
+    csDiffAt15 = models.FloatField(default=0)
+    csPerMin = models.FloatField(default=0)
+    killParticipation = models.FloatField(default=0)
+    teamDamagePercent = models.FloatField(default=0)
 
     def get_player(self):
-        return Player.objects.filter(pk=self.player)
+        return Playerercent .objects.filter(pk=self.player)
 
     def get_team(self):
         return Team.objects.filter(pk=self.team)
@@ -901,11 +976,14 @@ class TeamPlayer(models.Model):
         return (float(kills) + assists) / deaths
 
     def get_cs_per_min(self):
+        return self.csPerMin
+
+    def generate_cs_per_min(self):
         if self.role.isFill == True:
             cs = Match.objects.select_related().filter(playermatch__player=self.player, teammatch__team=self.team).aggregate(cs=Avg((F('playermatch__neutral_minions_killed') + F('playermatch__total_minions_killed')) * 60.0 / F('duration')))['cs']
         else:
             cs = Match.objects.select_related().filter(playermatch__player=self.player, teammatch__team=self.team, playermatch__role=self.role).aggregate(cs=Avg((F('playermatch__neutral_minions_killed') + F('playermatch__total_minions_killed')) * 60.0 / F('duration')))['cs']
-        if cs == None:
+        if cs == None or cs > 100:
             return 0
         return cs 
 
@@ -925,6 +1003,9 @@ class TeamPlayer(models.Model):
             return PlayerMatch.objects.filter(player=self.player, team=self.team, role=self.role).values('champion').aggregate(num_champs=Count('champion', distinct=True))['num_champs']
 
     def get_percent_team_damage(self):
+        return self.teamDamagePercent
+
+    def generate_percent_team_damage(self):
         if self.role.isFill == True:
             matches = Match.objects.filter(playermatch__player=self.player)
             match_ids = [o.id for o in matches]
@@ -943,6 +1024,9 @@ class TeamPlayer(models.Model):
         return 100.0 * player_dmg_to_champs / total_dmg_to_champs 
 
     def get_kill_participation(self):
+        return self.killParticipation
+
+    def generate_kill_participation(self):
         if self.role.isFill == True:
             matches = Match.objects.filter(playermatch__player=self.player)
             match_ids = [o.id for o in matches]
@@ -978,6 +1062,9 @@ class TeamPlayer(models.Model):
         return results
 
     def get_cs_diff_at_15(self):
+        return self.csDiffAt15
+
+    def generate_cs_diff_at_15(self):
         if self.team.season.id < 3:
             return 0
         player_matches = self.get_player_matches()

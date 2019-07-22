@@ -11,6 +11,7 @@ from .models import Item
 from .models import Champion
 from .models import SummonerSpell
 from .models import HomePageCarouselObject, ArticlePage
+from .models import TeamTimeline, SeasonTimeline
 
 class PlayerMatchTimelineAdmin(admin.ModelAdmin):
     model = PlayerMatchTimeline
@@ -123,3 +124,5 @@ admin.site.register(Series, SeriesAdmin)
 admin.site.register(HypeVideo, HypeVideoAdmin)
 admin.site.register(HomePageCarouselObject)
 admin.site.register(ArticlePage)
+admin.site.register(TeamTimeline)
+admin.site.register(SeasonTimeline)

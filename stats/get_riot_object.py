@@ -3,7 +3,7 @@ import urllib, shutil
 import math
 from .models import Item, Champion, Match, Team, TeamMatch, Role, TeamPlayer, PlayerMatch, Week, Series, SeriesTeam, TeamMatchBan, SeriesPlayer
 from .models import PlayerMatchKill, PlayerMatchAssist, PlayerMatchWardPlace, PlayerMatchWardKill, PlayerMatchBuildingKill, PlayerMatchBuildingAssist, PlayerMatchEliteMonsterKill, PlayerMatchTimeline
-from .models import Lane, Ward, Building, EliteMonster, Season, SeasonChampion
+from .models import Lane, Ward, Building, EliteMonster, Season, SeasonChampion, TeamTimeline, SeasonTimeline
 
 class ObjectNotFound(Exception) :
     """Raised when we can't find an object in db or from riot API"""
@@ -316,7 +316,52 @@ def update_playermatchkills():
 #            PlayerMatchEliteMonsterKill.objects.filter(playermatch__match=match).delete()
 #        
 #            get_match_timeline(match.id)
-    
+
+def update_season_timelines(season_id):
+    season = Season.objects.get(id=season_id)
+    for team in season.team_set.all():
+        team_kill_timelines = team.generate_overall_timelines()
+
+        for team_kill_timeline in team_kill_timelines:
+            team_timeline = SeasonTimeline.objects.filter(season=season, minute=team_kill_timeline['minute'])
+            if team_timeline:
+                team_timeline = team_timeline[0]
+            else:
+                team_timeline = SeasonTimeline.objects.create(season=season, minute=team_kill_timeline['minute'])
+            team_timeline.kills = team_kill_timeline['kills']
+            team_timeline.building_kills = team_kill_timeline['building_kills']
+            team_timeline.wards_placed = team_kill_timeline['wards_placed']
+            team_timeline.wards_killed = team_kill_timeline['wards_killed']
+            team_timeline.save()
+   
+def update_team_timelines(team_id):
+    team = Team.objects.get(id=team_id)
+    team_kill_timelines = team.generate_kill_timelines()
+    enemy_kill_timelines = team.generate_killed_timelines()
+
+    for team_kill_timeline, enemy_kill_timeline in zip(team_kill_timelines, enemy_kill_timelines):
+        team_timeline = TeamTimeline.objects.filter(team=team, minute=team_kill_timeline['minute'])
+        if team_timeline:
+            team_timeline = team_timeline[0]
+        else:
+            team_timeline = TeamTimeline.objects.create(team=team, minute=team_kill_timeline['minute'])
+        team_timeline.kills = team_kill_timeline['kills']
+        team_timeline.building_kills = team_kill_timeline['building_kills']
+        team_timeline.wards_placed = team_kill_timeline['wards_placed']
+        team_timeline.wards_killed = team_kill_timeline['wards_killed']
+        team_timeline.enemy_kills = enemy_kill_timeline['kills']
+        team_timeline.enemy_building_kills = enemy_kill_timeline['building_kills']
+        team_timeline.enemy_wards_placed = enemy_kill_timeline['wards_placed']
+        team_timeline.enemy_wards_killed = enemy_kill_timeline['wards_killed']
+        team_timeline.save()
+
+def update_team_player_timelines(team_id, player_id, role_id):
+    team_player = TeamPlayer.objects.get(team=team_id, player=player_id, role=role_id)
+    team_player.csDiffAt15 = team_player.generate_cs_diff_at_15()
+    team_player.csPerMin = team_player.generate_cs_per_min()
+    team_player.killParticipation = team_player.generate_kill_participation()
+    team_player.teamDamagePercent = team_player.generate_percent_team_damage()
+    team_player.save()
 
 def get_match(match_id):
     try:
