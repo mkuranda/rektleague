@@ -1335,5 +1335,8 @@ class ArticlePage(models.Model):
 
 
 class TestObject(models.Model):
-    content = models.CharField(max_length=5000)
+    shortCode = models.CharField(max_length=100)
+    winningTeam = models.CharField(max_length=3000)
+    losingTeam = models.CharField(max_length=3000)
+    gameId = models.IntegerField()
 
