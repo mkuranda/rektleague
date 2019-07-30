@@ -3,7 +3,7 @@ import urllib, shutil
 import math
 from .models import Item, Champion, Match, Team, TeamMatch, Role, TeamPlayer, PlayerMatch, Week, Series, SeriesTeam, TeamMatchBan, SeriesPlayer
 from .models import PlayerMatchKill, PlayerMatchAssist, PlayerMatchWardPlace, PlayerMatchWardKill, PlayerMatchBuildingKill, PlayerMatchBuildingAssist, PlayerMatchEliteMonsterKill, PlayerMatchTimeline
-from .models import Lane, Ward, Building, EliteMonster, Season, SeasonChampion, TeamTimeline, SeasonTimeline
+from .models import Lane, Ward, Building, EliteMonster, Season, SeasonChampion, TeamTimeline, SeasonTimeline, TeamPlayerTimeline
 
 class ObjectNotFound(Exception) :
     """Raised when we can't find an object in db or from riot API"""
@@ -362,6 +362,20 @@ def update_team_player_timelines(team_id, player_id, role_id):
     team_player.killParticipation = team_player.generate_kill_participation()
     team_player.teamDamagePercent = team_player.generate_percent_team_damage()
     team_player.save()
+    vision_timelines = team_player.generate_vision_timeline()
+    gold_timelines = team_player.generate_gold_timeline()
+    for vision_timeline, gold_timeline in zip(vision_timelines, gold_timelines):
+        timeline = TeamPlayerTimeline.objects.filter(team=team_player.team, player=team_player.player, role=team_player.role, minute=gold_timeline['minute'])
+        if timeline:
+            timeline = timeline[0]
+        else:
+            timeline = TeamPlayerTimeline.objects.create(team=team_player.team, player=team_player.player, role=team_player.role, minute=gold_timeline['minute'])
+        timeline.gold = gold_timeline['avgGold']
+        timeline.enemy_gold = gold_timeline['avgOppGold']
+        timeline.gold_diff = gold_timeline['goldDiff']
+        timeline.wards_placed = vision_timeline['wards_placed']
+        timeline.wards_killed = vision_timeline['wards_killed']
+        timeline.save()
 
 def get_match(match_id):
     try:

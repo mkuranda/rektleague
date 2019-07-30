@@ -6,7 +6,7 @@ from django.db.models import Avg, Count, Sum, F, When, Q
 from django.utils.timezone import utc
 from riot_request import RiotRequester
 from .models import Player, TeamPlayer, Team, Season, Champion, Match, Week, Series, SeriesTeam, TeamMatch, MatchCaster, SeasonChampion, PlayerMatch, HypeVideo, Role, TeamRole, SeriesPlayer, Summoner
-from .models import HomePageCarouselObject, ArticlePage
+from .models import HomePageCarouselObject, ArticlePage, TestObject
 from .forms import TournamentCodeForm, InitializeMatchForm, CreateRosterForm
 from get_riot_object import ObjectNotFound, get_item, get_champions, get_champion, get_match, get_all_items, get_match_timeline, update_playermatchkills, update_team_timelines, update_season_timelines, update_team_player_timelines
 from datetime import datetime
@@ -733,6 +733,14 @@ def match_data_results(request, season_id, series_id, team_1_id, team_2_id, matc
 #        match = Match.objects.get(match_id)
 
     return render(request, 'stats/match_data_results.html', context)
+
+def match_complete(request):
+    test_object = TestObject.objects.create()
+    test_object.shortCode = request.POST['shortCode']
+    test_object.winningTeam = request.POST['winningTeam']
+    test_object.losingTeam = request.POST['losingTeam']
+    test_object.gameId = request.POST['gameId']
+    test_object.save()
 
 def login(request):
     username = request.POST['username']

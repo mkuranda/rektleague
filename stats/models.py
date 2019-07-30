@@ -631,6 +631,17 @@ class SeasonTimeline(models.Model):
     def __str__(self):
         return str(self.season) + " " + str(self.minute) + " minute timeline"
 
+class TeamPlayerTimeline(models.Model):
+    team = models.ForeignKey(Team)
+    player = models.ForeignKey(Player)
+    role = models.ForeignKey(Role)
+    minute = models.IntegerField()
+    gold = models.IntegerField(default=0)
+    enemy_gold = models.IntegerField(default=0)
+    gold_diff = models.IntegerField(default=0)
+    wards_placed = models.IntegerField(default=0)
+    wards_killed = models.IntegerField(default=0)
+
 class TeamTimeline(models.Model):
     team = models.ForeignKey(Team)
     minute = models.IntegerField()
@@ -862,10 +873,12 @@ class TeamPlayer(models.Model):
         return 100.0 * playermatches['control_wards'] * 75.0 / playermatches['total_gold_earned']
 
     def get_vision_timeline(self):
+        results = []
+        if self.get_num_matches() == 0:
+            return results
         max_minute = self.team.get_max_timeline_minute()
         wards_placed = PlayerMatchWardPlace.objects.filter(playermatch__team=self.team, playermatch__player=self.player, playermatch__role=self.role, ward_type__in=(Ward.objects.filter(name='Control Ward')|Ward.objects.filter(name='Yellow Trinket Ward')|Ward.objects.filter(name='Sight Ward')|Ward.objects.filter(name='Blue Trinket')))
         wards_killed = PlayerMatchWardKill.objects.filter(playermatch__team=self.team, playermatch__player=self.player, playermatch__role=self.role, ward_type__in=(Ward.objects.filter(name='Control Ward')|Ward.objects.filter(name='Yellow Trinket Ward')|Ward.objects.filter(name='Sight Ward')|Ward.objects.filter(name='Blue Trinket')))
-        results = []
         for i in range(0, max_minute):
             timestamp = i * 60000
             results.append({
@@ -875,6 +888,10 @@ class TeamPlayer(models.Model):
                 })
 
         return results
+
+#    def get_gold_timeline(self):
+#        team_player_timelines = TeamPlayerTimeline.objects.filter(player=self.player, team=self.team, role=self.role)
+#        return team_player_timelines
 
     def get_gold_timeline(self):
         max_minute = self.team.get_max_timeline_minute()
@@ -1315,4 +1332,8 @@ class ArticlePage(models.Model):
 
     def __str__(self):
         return self.title
+
+
+class TestObject(models.Model):
+    content = models.CharField(max_length=5000)
 

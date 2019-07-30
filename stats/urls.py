@@ -36,4 +36,5 @@ urlpatterns = [
     url(r'^api/season/(?P<season_id>[0-9]+)/$', views.season_api_detail, name='season_api_detail'),
     url(r'^api/team/(?P<team_id>[0-9]+)/$', views.team_api_detail, name='team_test_detail'),
     url(r'^api/player/(?P<player_id>[0-9]+)$', views.player_api_detail, name='player_api_detail'),
+    url(r'^match_complete/$', views.match_complete, name='match_complete'),
 ]
