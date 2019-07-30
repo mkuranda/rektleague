@@ -734,6 +734,8 @@ def match_data_results(request, season_id, series_id, team_1_id, team_2_id, matc
 
     return render(request, 'stats/match_data_results.html', context)
 
+@csrf_exempt
+@require_POST
 def match_complete(request):
     test_object = TestObject.objects.create()
     test_object.shortCode = request.POST['shortCode']
@@ -741,6 +743,7 @@ def match_complete(request):
     test_object.losingTeam = request.POST['losingTeam']
     test_object.gameId = request.POST['gameId']
     test_object.save()
+    return HttpResponse(status=200)
 
 def login(request):
     username = request.POST['username']
