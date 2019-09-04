@@ -4,6 +4,7 @@ from django.http import HttpResponse, HttpResponseRedirect, Http404
 from django.template import loader
 from django.db.models import Avg, Count, Sum, F, When, Q
 from django.utils.timezone import utc
+from django.conf import settings
 from riot_request import RiotRequester
 from .models import Player, TeamPlayer, Team, Season, Champion, Match, Week, Series, SeriesTeam, TeamMatch, MatchCaster, SeasonChampion, PlayerMatch, HypeVideo, Role, TeamRole, SeriesPlayer, Summoner
 from .models import HomePageCarouselObject, ArticlePage, TestObject
@@ -50,6 +51,13 @@ def season_detail(request, season_id):
     teams = Team.objects.filter(season=season_id)
     sorted_teams = sorted(teams, key= lambda t: t.get_sort_record())
     next_week = season.next_week()
+#    for team in teams:
+#        for team_player in team.get_players():
+#            for role in Role.objects.all():
+#                team_player_role = TeamPlayer.objects.filter(team=team, player=team_player.player, role=role)
+#                if not team_player_role:
+#                    team_player_role = TeamPlayer.objects.create(team=team, player=team_player.player, role=role)
+#                    team_player_role.save()
 #    for team in teams:
 #        for team_player in team.get_players():
 #            for role in Role.objects.all():
@@ -195,6 +203,33 @@ def team_api_detail(request, team_id):
     }
     return HttpResponse(json.dumps(context))
 
+def teams_api_detail(request, season_id):
+    season = get_object_or_404(Season, id=season_id)
+
+    teams = Team.objects.filter(season=season_id)
+
+    teams_json = []
+
+    for team in teams:
+        teams_json.append({
+            'id' : team.id,
+            'name' : team.name,
+            'icon' : team.icon.url,
+            'wins' : team.get_wins(),
+            'losses' : team.get_losses(),
+            'first_blood_pct' : team.get_first_blood_percent(),
+            'first_tower_pct' : team.get_first_tower_percent(),
+            'tower_kills' : team.get_tower_kills(),
+            'baron_kills' : team.get_baron_kills(),
+            'avg_win_time': team.get_average_win_duration_str()
+            })
+
+    context = {
+        'season': season.id,
+        'teams': teams_json
+    }
+    return HttpResponse(json.dumps(context))
+
 
 def season_api_detail(request, season_id):
     season = get_object_or_404(Season, id=season_id)
@@ -265,12 +300,22 @@ def season_api_detail(request, season_id):
     else:
         winner = None
 
+    top_picks = []
+
+    for champion in season.get_top_picked():
+        top_picks.append({
+                'name' : champion['champion__name'],
+                'icon' : champion['champion__icon'],
+                'pick_rate' : champion['pick_rate']
+            })
+
     context = {
         'season': season.id,
         'banner': season.splash.url,
         'winner': winner,
         'standings': standings,
-        'schedule': schedule
+        'schedule': schedule,
+        'top_picks' : top_picks
     }
     return HttpResponse(json.dumps(context))
 
@@ -734,8 +779,6 @@ def match_data_results(request, season_id, series_id, team_1_id, team_2_id, matc
 
     return render(request, 'stats/match_data_results.html', context)
 
-@csrf_exempt
-@require_POST
 def match_complete(request):
     test_object = TestObject.objects.create()
     test_object.shortCode = request.POST['shortCode']
