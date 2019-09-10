@@ -100,7 +100,7 @@ def get_item(riot_id):
     return item
 
 def get_champions():
-    url = 'http://ddragon.leagueoflegends.com/cdn/9.2.1/data/en_US/champion.json'
+    url = 'http://ddragon.leagueoflegends.com/cdn/9.17.1/data/en_US/champion.json'
     r = requests.get(url).json()
     for champion_name in r['data']:
         champion_data = r['data'][champion_name]
@@ -113,7 +113,7 @@ def get_champions():
             champion = Champion.objects.create(id=key, name=name, title=title)
         champion.name = name
         champion.title = title
-	result = requests.get("http://ddragon.leagueoflegends.com/cdn/9.2.1/img/champion/" + champion_data["image"]["full"], stream=True)
+	result = requests.get("http://ddragon.leagueoflegends.com/cdn/9.17.1/img/champion/" + champion_data["image"]["full"], stream=True)
         with open("media/stats/champion/icon/" + champion_data["image"]["full"], 'wb') as f:
             result.raw.decode_content = True
             shutil.copyfileobj(result.raw, f)
@@ -135,7 +135,7 @@ def get_champion(riot_id):
     except Champion.DoesNotExist:
         champion_exists = False
 
-    url = 'http://ddragon.leagueoflegends.com/cdn/9.2.1/data/en_US/champion.json'
+    url = 'http://ddragon.leagueoflegends.com/cdn/9.17.1/data/en_US/champion.json'
     r = requests.get(url).json()
     if champion_exists == False or champion.name == "" or champion.title == "" or champion.icon == "":
         for champion_name in r['data']:
@@ -150,7 +150,7 @@ def get_champion(riot_id):
                     champion = Champion.objects.create(id=key, name=name, title=title)
                 champion.name = name
                 champion.title = title
-                result = requests.get("http://ddragon.leagueoflegends.com/cdn/9.2.1/img/champion/" + champion_data["image"]["full"], stream=True)
+                result = requests.get("http://ddragon.leagueoflegends.com/cdn/9.17.1/img/champion/" + champion_data["image"]["full"], stream=True)
                 with open("media/stats/champion/icon/" + champion_data["image"]["full"], 'wb') as f:
                     result.raw.decode_content = True
                     shutil.copyfileobj(result.raw, f)
@@ -302,8 +302,8 @@ def update_playermatchkills():
         for playermatchkill in playermatchkills:
             if playermatchkill.position_x == 0:
                 count += 1
-        if count > 0:
-            a = 5/0
+#        if count > 0:
+#            a = 5/0
 #    for match in matches:
 #
 #            PlayerMatchTimeline.objects.filter(playermatch__match=match).delete()
@@ -362,20 +362,20 @@ def update_team_player_timelines(team_id, player_id, role_id):
     team_player.killParticipation = team_player.generate_kill_participation()
     team_player.teamDamagePercent = team_player.generate_percent_team_damage()
     team_player.save()
-    vision_timelines = team_player.generate_vision_timeline()
-    gold_timelines = team_player.generate_gold_timeline()
-    for vision_timeline, gold_timeline in zip(vision_timelines, gold_timelines):
-        timeline = TeamPlayerTimeline.objects.filter(team=team_player.team, player=team_player.player, role=team_player.role, minute=gold_timeline['minute'])
-        if timeline:
-            timeline = timeline[0]
-        else:
-            timeline = TeamPlayerTimeline.objects.create(team=team_player.team, player=team_player.player, role=team_player.role, minute=gold_timeline['minute'])
-        timeline.gold = gold_timeline['avgGold']
-        timeline.enemy_gold = gold_timeline['avgOppGold']
-        timeline.gold_diff = gold_timeline['goldDiff']
-        timeline.wards_placed = vision_timeline['wards_placed']
-        timeline.wards_killed = vision_timeline['wards_killed']
-        timeline.save()
+#    vision_timelines = team_player.generate_vision_timeline()
+#    gold_timelines = team_player.generate_gold_timeline()
+#    for vision_timeline, gold_timeline in zip(vision_timelines, gold_timelines):
+#        timeline = TeamPlayerTimeline.objects.filter(team=team_player.team, player=team_player.player, role=team_player.role, minute=gold_timeline['minute'])
+#        if timeline:
+#            timeline = timeline[0]
+#        else:
+#            timeline = TeamPlayerTimeline.objects.create(team=team_player.team, player=team_player.player, role=team_player.role, minute=gold_timeline['minute'])
+#        timeline.gold = gold_timeline['avgGold']
+#        timeline.enemy_gold = gold_timeline['avgOppGold']
+#        timeline.gold_diff = gold_timeline['goldDiff']
+#        timeline.wards_placed = vision_timeline['wards_placed']
+#        timeline.wards_killed = vision_timeline['wards_killed']
+#        timeline.save()
 
 def get_match(match_id):
     try:
@@ -515,8 +515,24 @@ def get_match(match_id):
         player_match.physical_damage_taken = participant_stats['physicalDamageTaken']
         player_match.save()
 
+
     match.duration = match_data['gameDuration']
     match.save()
     get_match_timeline(match_id)
+
+    update_team_timelines(team_1.id)
+    update_team_timelines(team_2.id)
+
+    update_season_timelines(team_1.season.id)
+
+    players_1 = TeamPlayer.objects.filter(team=team_1)
+    for player in players_1:
+        update_team_player_timelines(player.team.id, player.player.id, player.role.id)
+   
+    players_2 = TeamPlayer.objects.filter(team=team_2)
+    for player in players_2:
+        update_team_player_timelines(player.team.id, player.player.id, player.role.id)
+
+    update_playermatchkills()
     return match
 

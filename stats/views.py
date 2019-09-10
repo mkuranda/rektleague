@@ -452,6 +452,8 @@ def team_player_detail(request, season_id, team_id, player_id):
     timelines = team_player_role.get_gold_timeline()
     enemy_timelines = team_player_role.get_enemy_timelines()
     max_duration = team.get_max_timeline_minute()
+    #for player in team_players:
+    #    update_team_player_timelines(player.team.id, player.player.id, player.role.id)
     context = {
         'season': season,
         'team': team,
