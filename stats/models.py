@@ -322,10 +322,10 @@ class Series(models.Model):
         return SeriesCastPlayer.objects.filter(series=self, team=self.get_team_2)
 
     def get_team_1_players(self):
-        return SeriesPlayer.objects.filter(series=self, team=self.get_team_1)
+        return SeriesPlayer.objects.filter(series=self, team=self.get_team_1())
 
     def get_team_2_players(self):
-        return SeriesPlayer.objects.filter(series=self, team=self.get_team_2)
+        return SeriesPlayer.objects.filter(series=self, team=self.get_team_2())
 
     def get_team_1_wins(self):
 	return TeamMatch.objects.filter(team=self.get_team_1(), win=True, match__series=self).count()
@@ -334,12 +334,12 @@ class Series(models.Model):
 	return TeamMatch.objects.filter(team=self.get_team_2(), win=True, match__series=self).count()
 
     def get_team_1_roster_submitted(self):
-        if self.get_team_1_players().count() < 5:
+        if not self.get_team_1_players() or self.get_team_1_players().count() < 5:
             return False
         return True
 
     def get_team_2_roster_submitted(self):
-        if self.get_team_2_players().count() < 5:
+        if not self.get_team_2_players() or self.get_team_2_players().count() < 5:
             return False
         return True
 

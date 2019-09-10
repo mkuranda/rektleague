@@ -11,6 +11,8 @@ from .models import HomePageCarouselObject, ArticlePage, TestObject
 from .forms import TournamentCodeForm, InitializeMatchForm, CreateRosterForm
 from get_riot_object import ObjectNotFound, get_item, get_champions, get_champion, get_match, get_all_items, get_match_timeline, update_playermatchkills, update_team_timelines, update_season_timelines, update_team_player_timelines
 from datetime import datetime
+from django.views.decorators.csrf import csrf_exempt
+from django.views.decorators.http import require_POST
 import random
 import json
 
@@ -612,6 +614,8 @@ def series_detail(request, season_id, series_id):
     team1 = seriesteams[0]
     team2 = seriesteams[1]
 
+    user = request.user._wrapped if hasattr(request.user,'_wrapped') else request.user
+
     context = {
         'season': season,
         'series': series,
@@ -619,7 +623,8 @@ def series_detail(request, season_id, series_id):
         'num_match_links': num_match_links,
         'team1': team1,
         'team2': team2,
-        'now': datetime.utcnow().replace(tzinfo=utc)
+        'now': datetime.utcnow().replace(tzinfo=utc),
+        'user': user
     }
     return render(request, 'stats/series.html', context)
 

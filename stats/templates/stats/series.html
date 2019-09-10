@@ -440,7 +440,7 @@ function ReplaceMatchContent(id, content) {
 		  '</td>' +
 		 '</tr>' +
 		{% endif %}
-		{% if request.user == series.get_team_1.user %}
+		{% ifequal request.user.id series.get_team_1.user.id %}
 		{% if season.id > 2 and not series.get_team_1_roster_submitted and not series.past_deadline %}
 		'<table class="centercontent" width="70%">' +
 		'<tr>' +
@@ -502,8 +502,8 @@ function ReplaceMatchContent(id, content) {
 		 '</tr>' +
 		'</table>' +
 		{% endif %}
-		{% endif %}
-		{% if request.user == series.get_team_2.user %}
+		{% endifequal %}
+		{% ifequal request.user.id series.get_team_2.user.id %}
 		{% if season.id > 2 and not series.get_team_2_roster_submitted and not series.past_deadline %}
 		'<table class="centercontent" width="70%">' +
 		'<tr>' +
@@ -567,7 +567,7 @@ function ReplaceMatchContent(id, content) {
 		'</table>' +
 
 		{% endif %}
-		{% endif %}
+		{% endifequal %}
 		'</table>' +
 		        "");
 	contentMap.set("Load Match",
