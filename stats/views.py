@@ -1,4 +1,4 @@
-from django.shortcuts import get_object_or_404, render
+from django.shortcuts import get_object_or_404, render, redirect
 from django.contrib.auth import authenticate, login
 from django.http import HttpResponse, HttpResponseRedirect, Http404
 from django.template import loader
@@ -421,6 +421,13 @@ def player_detail(request, player_id):
         'team_players': team_players
     }
     return render(request, 'stats/player.html', context)
+
+def team_recache(request, season_id, team_id):
+    team = get_object_or_404(Team, id=team_id, season=season_id)
+    team_players = TeamPlayer.objects.filter(team=team_id)
+    for team_player in team_players:
+        update_team_player_timelines(team_player.team.id, team_player.player.id, team_player.role.id)
+    return redirect('/stats/season/' + season_id + '/team/' + team_id + '/')
 
 def team_detail(request, season_id, team_id):
     team = get_object_or_404(Team, id=team_id, season=season_id)
