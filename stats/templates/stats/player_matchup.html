@@ -285,7 +285,7 @@ chart.render();
 					{% for champion in blue_player.get_played_champion_list %}
 					{% if forloop.counter < 4 %}
 					<td style="font-size: 18px;">
-						{{ champion.wins }}-{{ champion.losses }}
+						{{ champion.wins | floatformat:"0" }}-{{ champion.losses | floatformat:"0" }}
 					</td>
 					{% endif %}
 					{% endfor %}
@@ -311,7 +311,7 @@ chart.render();
 					{% for champion in red_player.get_played_champion_list %}
 					{% if forloop.counter < 4 %}
 					<td style="font-size: 18px;">
-						{{ champion.wins }}-{{ champion.losses }}
+						{{ champion.wins | floatformat:"0" }}-{{ champion.losses | floatformat:"0" }}
 					</td>
 					{% endif %}
 					{% endfor %}

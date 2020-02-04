@@ -441,10 +441,10 @@ class Team(models.Model):
         return time.strftime('%M:%S', time.gmtime(TeamMatch.objects.filter(team=self).aggregate(Avg('match__duration'))['match__duration__avg']))
 
     def get_average_win_duration(self):
-        return TeamMatch.objects.filter(team=self, win=True).aggregate(Avg('match__duration'))['match__duration__avg']
+        return TeamMatch.objects.filter(team=self, win=True, match__duration__gte=5).aggregate(Avg('match__duration'))['match__duration__avg']
 
     def get_average_win_duration_str(self):
-        return time.strftime('%M:%S', time.gmtime(TeamMatch.objects.filter(team=self, win=True).aggregate(Avg('match__duration'))['match__duration__avg']))
+        return time.strftime('%M:%S', time.gmtime(TeamMatch.objects.filter(team=self, win=True, match__duration__gte=5).aggregate(Avg('match__duration'))['match__duration__avg']))
 
     def get_kill_timelines(self):
         return TeamTimeline.objects.filter(team=self)

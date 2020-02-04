@@ -59,7 +59,7 @@ class TeamMatchBanInline(admin.TabularInline):
 
 class TeamMatchInline(admin.TabularInline):
     model = TeamMatch
-    extra = 0
+    extra = 2
 
 class PlayerMatchInline(admin.TabularInline):
     model = PlayerMatch
@@ -78,11 +78,11 @@ class MatchInline(admin.StackedInline):
 
 class SeriesTeamInline(admin.TabularInline):
     model = SeriesTeam
-    extra = 0
+    extra = 2
 
 class SeriesPlayerInline(admin.TabularInline):
     model = SeriesPlayer
-    extra = 0
+    extra = 6
 
 class SeriesAdmin(admin.ModelAdmin):
     inlines = [MatchInline, SeriesTeamInline, SeriesPlayerInline]

@@ -100,7 +100,7 @@ def get_item(riot_id):
     return item
 
 def get_champions():
-    url = 'http://ddragon.leagueoflegends.com/cdn/9.17.1/data/en_US/champion.json'
+    url = 'http://ddragon.leagueoflegends.com/cdn/9.22.1/data/en_US/champion.json'
     r = requests.get(url).json()
     for champion_name in r['data']:
         champion_data = r['data'][champion_name]
@@ -113,7 +113,7 @@ def get_champions():
             champion = Champion.objects.create(id=key, name=name, title=title)
         champion.name = name
         champion.title = title
-	result = requests.get("http://ddragon.leagueoflegends.com/cdn/9.17.1/img/champion/" + champion_data["image"]["full"], stream=True)
+	result = requests.get("http://ddragon.leagueoflegends.com/cdn/9.22.1/img/champion/" + champion_data["image"]["full"], stream=True)
         with open("media/stats/champion/icon/" + champion_data["image"]["full"], 'wb') as f:
             result.raw.decode_content = True
             shutil.copyfileobj(result.raw, f)
@@ -135,7 +135,7 @@ def get_champion(riot_id):
     except Champion.DoesNotExist:
         champion_exists = False
 
-    url = 'http://ddragon.leagueoflegends.com/cdn/9.17.1/data/en_US/champion.json'
+    url = 'http://ddragon.leagueoflegends.com/cdn/9.22.1/data/en_US/champion.json'
     r = requests.get(url).json()
     if champion_exists == False or champion.name == "" or champion.title == "" or champion.icon == "":
         for champion_name in r['data']:
@@ -150,7 +150,7 @@ def get_champion(riot_id):
                     champion = Champion.objects.create(id=key, name=name, title=title)
                 champion.name = name
                 champion.title = title
-                result = requests.get("http://ddragon.leagueoflegends.com/cdn/9.17.1/img/champion/" + champion_data["image"]["full"], stream=True)
+                result = requests.get("http://ddragon.leagueoflegends.com/cdn/9.22.1/img/champion/" + champion_data["image"]["full"], stream=True)
                 with open("media/stats/champion/icon/" + champion_data["image"]["full"], 'wb') as f:
                     result.raw.decode_content = True
                     shutil.copyfileobj(result.raw, f)
@@ -405,6 +405,7 @@ def get_match(match_id):
     except Series.DoesNotExist:
 	raise ObjectNotFound("Series")
 
+    series.youtube_link = " "
     requester = RiotRequester('/lol/match/v4/matches/')
     try:
         match_data = requester.request(str(match.riot_id))
