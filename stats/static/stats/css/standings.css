@@ -1,0 +1,399 @@
+
+    /* STANDINGS */ 
+
+    h1, h2{
+        color:white;
+        text-align: center;
+        font-size: 95px;
+        font-weight: 800;
+    }
+
+    .rekt-red{
+      color: #bf1e2d;
+  }
+
+    /* div > span{
+      position: absolute;
+      float: right;
+      color: white;
+      font-size: 80px;
+      margin: 33px 0px 0px -158px;
+      filter: drop-shadow(9px 4px 6px black);
+      font-weight: 800;
+    }
+
+    div > img {
+      float: left;
+      width: 100%;
+    }
+
+    section > div {
+      width: 50%;
+      margin: auto;
+    } */
+
+    h1, h2{
+      color:white;
+      text-align: center;
+      font-size: 95px;
+      font-weight: 800;
+  }
+
+  .subhead{
+    font-size: 40px;
+    margin: -45px 0 38px 0;
+}
+  
+
+  .rekt-red{
+      color: #bf1e2d;
+  }
+
+  section {
+      width: 60%;
+      margin-left:auto;
+      margin-right: auto;
+    }
+
+    .collapsible {
+      background-color: black;
+      color: black;
+      cursor: pointer;
+      width: 100%;
+      border: none;
+      outline: none;
+      font-size: 33px;
+      text-align: left;
+      font-weight: 800;
+    }
+/* ONE DAY GO AND USE THIS TO SET BACKGROUND IMAGES */
+    /* #test{
+      background: url("../images/Standings/air-blank.png") no-repeat top left;
+    } */
+
+    button > img{
+      width: 100%;
+      opacity: .6;
+    }
+
+    .standing {
+      font-size: 154px;
+      font-weight: 800;
+      margin: 33px 0px 0px -57%;
+      position: absolute;
+      z-index: 1;
+      color: #bf1e2d;
+      filter: drop-shadow(2px 4px 2px black);
+  }
+  
+  .team {
+    font-size: 56px;
+    font-weight: 800;
+    margin: 126px 0px 0px -37%;
+    position: absolute;
+    z-index: 1;
+    color: white;
+    filter: drop-shadow(2px 4px 2px black);
+}
+
+
+
+  section a{
+      text-decoration: none;
+      color: black;
+  }
+
+  section a:hover{
+      text-decoration: none;
+      color: black;
+  }
+  
+    
+    /* .active, .collapsible:hover {
+      background-color: rgba(176,46,52,1);
+      color: white;
+      
+
+    }
+     */
+    .collapsible:after {
+      content: '\002B';
+      color: #ffffff;
+      float: right;
+      position: absolute;
+      z-index: 1;
+      margin: 77px 0px 0 -6%;
+      font-size: 88px;
+      filter: drop-shadow(2px 4px 2px black);
+  }
+  
+  
+      
+    }
+
+    .collapsible:hover:after {
+      color: white;
+      
+    }
+    
+    .active:after {
+      content: "\2212";
+    }
+    
+    .content {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.2s ease-out;
+      background-color: #f1f1f1;
+      width: 98.5%;
+      margin-left: 7px;
+    }
+
+    .content > p{
+      font-size: 37px;
+      font-weight: 800;
+      text-align: center;
+    }
+
+    
+
+    .result{
+        font-size: 38px;
+        font-weight: 800;
+        padding-left: 10px;
+    }
+
+    .team-button{
+      background: #bf1e2d;
+      color: white;
+      padding: 10px 20px;
+      width: 50%;
+      text-align: center;
+      margin: 10px 0px 10px 0;
+      font-size: 37px;
+      font-weight: 800;
+      text-decoration: none;
+      border-radius: 10px;
+    }
+    
+    .button-move{
+          font-size: 37px;
+    padding-left: 17px;
+    font-weight: 400;
+    padding: 10px 0;
+    }
+
+
+    @media all and (max-width : 1560px) {
+      .standing{
+      font-size: 125px;
+      margin: 48px 0px 0px -57%;
+      }
+
+      .team {
+        font-size: 50px;
+        margin: 118px 0px 0px -40%;
+    }
+
+  }
+
+  @media all and (max-width : 1330px) {
+    .standing {
+      font-size: 100px;
+      margin: 48px 0px 0px -57%;
+  }
+
+  .team {
+    font-size: 40px;
+    margin: 103px 0px 0px -40%;
+}
+
+    .collapsible:after {
+      margin: 55px 0px 0 -6%;
+
+}
+}
+    
+
+    @media all and (max-width : 1180px) {
+      .collapsible:after {
+          padding: 23px 32px 0 0;
+        }
+      section{
+          width: 80%;
+      }
+
+      .standing {
+        font-size: 118px;
+        margin: 51px 0px 0px -73%;}
+
+        .team {
+          font-size: 45px;
+          margin: 121px 0px 0px -49%;
+      }
+  }
+
+  @media all and (max-width : 1050px) {
+    .standing {
+      font-size: 108px;
+      margin: 51px 0px 0px -73%;
+  }
+
+  .team {
+    font-size: 38px;
+    margin: 121px 0px 0px -49%;
+}
+
+  .collapsible:after {
+  margin: 40px 0px 0 -7%;
+}
+}
+
+@media all and (max-width : 950px) {
+  .standing {
+    font-size: 93px;
+    margin: 51px 0px 0px -73%;
+}
+
+.team {
+  font-size: 30px;
+  margin: 109px 0px 0px -51%;
+}
+
+.collapsible:after {
+  margin: 30px 0px 0 -9%;
+}
+}
+
+@media all and (max-width : 850px) {
+  .standing {
+    font-size: 82px;
+    margin: 51px 0px 0px -73%;
+}
+
+.team {
+  font-size: 33px;
+  margin: 100px 0px 0px -51%;
+}
+
+.collapsible:after {
+  margin: 17px 0px 0 -9%;
+}
+}
+
+    @media all and (max-width : 768px) {
+      .collapsible:after {
+        padding: 10px 25px 0 0;
+    }
+
+    .standing {
+      font-size: 82px;
+      margin: 26px 0px 0px -73%;
+  }
+
+  .team {
+    font-size: 27px;
+    margin: 79px 0px 0px -49%;
+}
+    }
+
+  
+
+    @media all and (max-width : 700px) {
+      
+
+    .collapsible:after {
+      padding: 13px 25px 0 0;
+    }
+
+    .team {
+      font-size: 30px;
+      margin: 91px 0px 0px -67%;
+  }
+
+  .standing {
+    font-size: 82px;
+    margin: 41px 0px 0px -94%;
+}
+
+
+
+    section{
+        width:100%;
+    }
+
+    .content > p {
+      font-size: 21px;
+    }
+
+    .result {
+      font-size: 21px;
+      padding-left: 4px;
+    }
+
+    .team-button{
+    font-size: 25px;
+    }
+
+    
+  h1, h2{
+    font-size: 74px;
+  }
+  }
+
+  @media all and (max-width : 570px) {
+    .collapsible:after {
+    margin: 12px 0px 0 -11%;
+}
+
+.team {
+  font-size: 24px;
+  margin: 77px 0px 0px -62%;
+}
+
+.standing {
+  font-size: 75px;
+  margin: 29px 0px 0px -94%;
+}
+
+
+
+  }
+
+  @media all and (max-width : 414px) {
+    .collapsible:after {
+      margin: 12px 0px 0 -11%;
+      font-size: 43px;
+    }
+      .team {
+        font-size: 19px;
+        margin: 42px 0px 0px -56%;
+    }
+    .standing {
+      font-size: 65px;
+      margin: 9px 0px 0px -94%;
+  }
+  }
+  @media all and (max-width : 375px) {
+    .collapsible:after {
+      margin: 12px 0px 0 -11%;
+      font-size: 43px;
+    }
+      .team {
+        font-size: 19px;
+        margin: 42px 0px 0px -56%;
+    }
+
+    .standing {
+      font-size: 65px;
+      margin: 9px 0px 0px -94%;
+  }
+
+
+
+  }
+
+
+
+
+   

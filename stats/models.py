@@ -407,6 +407,15 @@ class Player(models.Model):
     matches = models.ManyToManyField(Match, through='PlayerMatch')
     photo = models.ImageField(upload_to='stats/player_photos', blank=True, null=True)
 
+    def team_players(self):
+        return TeamPlayer.objects.filter(player=self)
+
+    def teams(self):
+        return Team.objects.filter(pk__in=self.team_players())
+
+    def seasons(self):
+        return Season.objects.filter(pk__in=self.teams())
+
     def __str__(self):
         return self.name
 
@@ -419,14 +428,27 @@ class Summoner(models.Model):
     def __str__(self):
         return self.name + " (" + unicode(self.player) + ")"
 
+class TeamMedia(models.Model):
+    name = models.CharField(max_length=40)
+    icon = models.ImageField(upload_to='stats')
+    splash = models.ImageField(upload_to='stats/team_splashes', default='')
+    banner = models.ImageField(upload_to='stats/team_banners')
+    left_splash = models.ImageField(upload_to='stats/team_splashes')
+    right_splash = models.ImageField(upload_to='stats/team_splashes')
+
+    def __str__(self):
+        return self.name
+
 class Team(models.Model):
     name = models.CharField(max_length=40)
     user = models.ForeignKey(User, default=0)
     players = models.ManyToManyField(Player, through='TeamPlayer')
     matches = models.ManyToManyField(Match, through='TeamMatch')
     season = models.ForeignKey(Season)
+    media = models.ForeignKey(TeamMedia)
     icon = models.ImageField(upload_to='stats')
     splash = models.ImageField(upload_to='stats/team_splashes', default='')
+    banner = models.ImageField(upload_to='stats/team_banners', blank=True, null=True)
     left_splash = models.ImageField(upload_to='stats/team_splashes', blank=True, null=True)
     right_splash = models.ImageField(upload_to='stats/team_splashes', blank=True, null=True)
     season_win = models.BooleanField(default=False)

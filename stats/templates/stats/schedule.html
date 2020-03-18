@@ -1,0 +1,60 @@
+{% extends "stats/base.html" %}
+{% load staticfiles %}
+
+{% block title %} Rekt League | Season {{ season.id }} Schedule {% endblock %}
+
+{% block head %}
+<link rel="stylesheet" href="{% static 'stats/css/schedule.css' %}">
+{% endblock %}
+
+{% block content %}
+<h1>SEASON <span class="rekt-red">{{ season.id }}</span></h1>
+            <h2 class="subhead">SCHEDULE</h2>
+	    {% for week in season.get_weeks_desc %}
+	    {% if forloop.counter <= season.next_week.number and week.regular %}
+           <section>
+		   <button class="collapsible" id="week1"><span class="week">WEEK {{ week.number }}</span><span class="date">{% if week.date %}{{ week.date|date:"n/j" }}{% endif %}</span></button>
+            <div class="content">
+	{% for series in week.series_set.all %}
+	<p><a href="#"><span class="rekt-red">({{ series.get_series_team_1.get_record_before }})</span> {{ series.get_team_1.name }} <span class="rekt-red vs">VS.</span> {{ series.get_team_2.name }} <span class="rekt-red">({{ series.get_series_team_2.get_record_before }})</span><span class="rekt-red time">{{ series.date|date:"g:i a" }}</span></a><a href="#" class="matchupButton">VIEW MATCH UP</a></p>
+	{% endfor %}
+            </div>
+          </section>
+	  {% endif %}
+	  {% endfor %}
+         
+          <h2>PLAY<span class="rekt-red">OFFS</span></h2>
+	    {% for week in season.get_weeks_desc %}
+	    {% if forloop.counter <= season.next_week.number and not week.regular %}
+           <section>
+		   <button class="collapsible" id="week1"><span class="week">{{ week.title }}</span><span class="date">{% if week.date %}{{ week.date|date:"n/j" }}{% endif %}</span></button>
+            <div class="content">
+	{% for series in week.series_set.all %}
+	<p><a href="#"><span class="rekt-red">({{ series.get_series_team_1.get_record_before }})</span> {{ series.get_team_1.name }} <span class="rekt-red vs">VS.</span> {{ series.get_team_2.name }} <span class="rekt-red">({{ series.get_series_team_2.get_record_before }})</span><span class="rekt-red time">{{ series.date|date:"g:i a" }}</span></a><a href="#" class="matchupButton">VIEW MATCH UP</a></p>
+	{% endfor %}
+            </div>
+          </section>
+	  {% endif %}
+	  {% endfor %}
+
+          <script>
+            var coll = document.getElementsByClassName("collapsible");
+            var i;
+  
+            for (i = 0; i < coll.length; i++) {
+              coll[i].addEventListener("click", function() {
+                this.classList.toggle("active");
+                var content = this.nextElementSibling;
+                if (content.style.maxHeight){
+                  content.style.maxHeight = null;
+                } else {
+                  content.style.maxHeight = content.scrollHeight + "px";
+                } 
+              });
+           }
+            </script>
+
+
+           
+            </body>
+{% endblock %}

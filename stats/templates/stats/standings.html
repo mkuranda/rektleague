@@ -1,0 +1,32 @@
+{% extends "stats/base.html" %}
+{% load staticfiles %}
+
+{% block title %} Rekt League | Season {{ season.id }} Standings {% endblock %}
+
+{% block head %}
+<link rel="stylesheet" href="{% static 'stats/css/standings.css' %}">
+{% endblock %}
+
+{% block content %}
+            <h1>SEASON <span class="rekt-red">{{ season.id }}</span></h1>
+            <h2 class="subhead">STANDINGS</h2>
+            <!--FIRST PLACE-->
+	    {% for team in sorted_teams %}
+            <section>
+		    <button class="collapsible"><img src="{{ team.media.banner.url }}" alt="air drake"><span class="standing">{{ forloop.counter }}</span><span class="team">{{ team.name }}</span></button>
+              <div class="content">
+		      <p>WINS: <span class="rekt-red result">{{ team.get_regular_wins }}</span></p>
+		      <p>LOSSES: <span class="rekt-red result"><span class="rekt-red result">{{ team.get_regular_losses }}</span></p>
+		      <p>FIRST BLOOD %: <span class="rekt-red result">{{ team.get_first_blood_percent|floatformat:"1" }}%</span></p>
+		      <p>FIRST TOWER %: <span class="rekt-red result">{{ team.get_first_tower_percent|floatformat:"1" }}%</span></p>
+		      <p>TOWER KILLS: <span class="rekt-red result">{{ team.get_tower_kills.tower_kills__sum }}</span></p>
+		      <p>BARON KILLS: <span class="rekt-red result">{{ team.get_baron_kills.baron_kills__sum }}</span></p>
+		      <p>AVERAGE WIN TIME: <span class="rekt-red result">{{ team.get_average_win_duration_str }}</span></p>
+		      <p class="button-move"><a href="/season/{{ season.id }}/team/{{ team.id }}/" class="team-button">SEE MORE DETAILS</a></p>
+                
+              </div>
+            </section>
+	    {% endfor %}
+	<script type="text/javascript" src="{% static 'stats/js/standings.js' %}"></script>
+            </body>
+{% endblock %}

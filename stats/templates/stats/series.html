@@ -1,713 +1,226 @@
 {% extends "stats/base.html" %}
+{% load staticfiles %}
 
 {% block title %}Rekt League | {{ series }}{% endblock %}
 
-{% block content %}
-<script type="text/javascript"><!--
-function ReplaceMatchContent(id, content) {
-	var container = document.getElementById(id);
-	var contentMap = new Map();
-	{% for match in matches %}
-	contentMap.set("{{ match.game_num }}",
-                '<table width="100%">' +
-		 '<tr class="centercontent">' +
-		{% if match.playermatch_set.all %}
-		  {% for teammatch in match.teammatch_set.all %}
-		  '<td width="50%">' +
-		   '<table class="centercontent" width="100%">' +
-		    '<tr>' +
-		     {% if forloop.counter == 1 %}
-		{% if teammatch.win %}
-		'<th class="centertableheader" style="border-bottom: 1px solid #4a56b2"><a class="centertableheader" style="margin-bottom: 20px; padding-right: 20px; padding-left: 20px; padding-bottom: 5px; border-bottom: 1px solid #6d6d6d;" href="/stats/season/{{ season.id }}/team/{{ teammatch.team.id }}/">{{ teammatch.team.name }}</a></th>' +
-		{% else %}
-		'<th class="centertableheader" style="border-bottom: 1px solid #4a56b2"><a class="centertableheader" href="/stats/season/{{ season.id }}/team/{{ teammatch.team.id }}/">{{ teammatch.team.name }}</a></th>' +
-		{% endif %}
-		     {% else %}
-		{% if teammatch.win %}
-		'<th class="centertableheader" style="border-bottom: 1px solid #b24a58"><a class="centertableheader" style="margin-bottom: 20px; padding-right: 20px; padding-left: 20px; padding-bottom: 5px; border-bottom: 1px solid #6d6d6d;" href="/stats/season/{{ season.id }}/team/{{ teammatch.team.id }}/">{{ teammatch.team.name }}</a></th>' +
-		{% else %}
-		'<th class="centertableheader" style="border-bottom: 1px solid #b24a58"><a class="centertableheader" href="/stats/season/{{ season.id }}/team/{{ teammatch.team.id }}/">{{ teammatch.team.name }}</a></th>' +
-		{% endif %}
-
-		     {% endif %}
-		    '</tr>' +
-		    '<tr>' +
-		     {% if forloop.counter == 1 %}
-		     '<td style="border-bottom: 1px solid #4a56b2">' +
-		     {% else %}
-		     '<td style="border-bottom: 1px solid #b24a58">' +
-		     {% endif %}
-		      '<table class="centercontent" width="100%">' +
-		     {% if forloop.counter == 1 %}
-		       '<tr class="alternating-back"></tr>' +
-		        '<th>' +
-		        '</th>' +
-		        '<th>' +
-		         '<img src="/static/stats/scoreboardicon_champion.png" title="Champion" height="25px" width="25px">' +
-		        '</th>' +
-		        '<th>' +
-		        '</th>' +
-		        '<th>' +
-		         '<img src="/static/stats/scoreboardicon_score.png" title="Score" height="25px" width="25px">' +
-		        '</th>' +
-		        '<th>' +
-		         '<img src="/static/stats/scoreboardicon_minion.png" title="Minions Killed" height="25px" width="25px">' +
-		        '</th>' +
-		        '<th>' +
-		         '<img src="/static/stats/scoreboardicon_gold.png" title="Total Gold" height="25px" width="25px">' +
-		        '</th>' +
-		       '</tr>' +
-		     {% else %}
-	               '<tr class="alternating-back"></tr>' +
-		        '<th>' +
-		        '</th>' +
-		        '<th>' +
-		         '<img src="/static/stats/scoreboardicon_gold.png" title="Total Gold" height="25px" width="25px">' +
-		        '</th>' +
-		        '<th>' +
-		         '<img src="/static/stats/scoreboardicon_minion.png" title="Minions Killed" height="25px" width="25px">' +
-		        '</th>' +
-		        '<th>' +
-		         '<img src="/static/stats/scoreboardicon_score.png" title="Score" height="25px" width="25px">' +
-		        '</th>' +
-		        '<th>' +
-		        '</th>' +
-		        '<th>' +
-		         '<img src="/static/stats/scoreboardicon_champion.png" title="Champion" height="25px" width="25px">' +
-		        '</th>' +
-		        '<th>' +
-		        '</th>' +
-		       '</tr>' +
-
-		     {% endif %}
-		       '<tr class="alternating-back"></tr>' +
-		    {% for playermatch in teammatch.get_player_matches %}
-		       '<tr class="alternating-back">' +
-		      {% if forloop.parentloop.counter == 1 %}
-		        '<td width="10%"></td>' +
-		        '<td><img src="{{ playermatch.champion.icon.url }}" height="50" width="50" title="{{ playermatch.champion.name }}"></td>' +
-		        '<td>{{ playermatch.player.name }}</td>' +
-		        '<td>{{ playermatch.kills }}/{{ playermatch.deaths }}/{{ playermatch.assists }}</td>' +
-		        '<td>{{ playermatch.get_cs }}</td>' +
-		        '<td>{{ playermatch.gold_earned }}</td>' +
-		        '<td width="10%"></td>' +
-		      {% else %}
-		        '<td width="10%"></td>' +
-		        '<td>{{ playermatch.gold_earned }}</td>' +
-		        '<td>{{ playermatch.get_cs }}</td>' +
-		        '<td>{{ playermatch.kills }}/{{ playermatch.deaths }}/{{ playermatch.assists }}</td>' +
-		        '<td>{{ playermatch.player.name }}</td>' +
-		        '<td><img src="{{ playermatch.champion.icon.url }}" height="50" width="50" title="{{ playermatch.champion.name }}"></td>' +
-		        '<td width="10%"></td>' +
-		      {% endif %}
-		       '</tr>' +
-		    {% endfor %}
-		      '</table>' +
-		     '</td>' +
-		    '</tr>' +
-		    '<tr>' +
-		     '<td>' +
-		      '<table class="centercontent" width="40%">' +
-		       '<tr>' +
-		        '<th class="centertableheader">Bans</th>' +
-		     {% for ban in teammatch.get_team_bans %}
-		        '<td>' +
-		         '<img src="{{ ban.champion.icon.url }}" height="40" width="40" style="padding:5px" title="{{ ban.champion.name }}">' +
-		        '</td>' +
-		     {% endfor %}
-		       '</tr>' +
-		      '</table>' +
-		     '</td>' +
-		    '</tr>' +
-		   '</table>' +
-		  '</td>' +
-		 {% endfor %}
-		 '</tr>' +
-		 '<tr>' +
-		  '<th colspan=2 class="centertableheader">' +
-		   'Duration' +
-		  '</th>' +
-		 '</tr>' +
-		 '<tr class="centercontent">' +
-		  '<td colspan=2 style="font-size: 20; font-weight: 600; padding-bottom: 20px;">' +
-        	   '{{ match.duration_str }}' +
-		  '</td>' +
-		 '</tr>' +
-		'</table>' +
-		'<table class="centercontent" width="100%">' +
-		'<tr>' +
-		  '<th class="centertableheader">' +
-		   'Total Team Gold' +
-		  '</th>' +
-		 '</tr>' +
-		 '<tr class="centercontent">' +
-		  '<td>' +
-		   '<div id="goldGraph{{ match.game_num }}" style="height: 370px; width: 100%; margin: auto; margin-bottom:80px;"></div>' +
-		  '</td>' +
-		 '</tr>' +
-		 '<tr>' +
-		  '<th class="centertableheader">Full Statistics</th>' +
-		 '</tr>' +
-		'</table>' +
-		// Full stats table
-		'<table class="centercontent" width="90%">' +
-		'<tr class="alternating-back">' +
-		'<tr class="alternating-back"><td width="30%"> </td>' +
-		{% for playermatch in match.playermatch_set.all %}
-		'<td width="7%"><img src="{{ playermatch.champion.icon.url }}" height="30" width="30" title="{{ playermatch.champion.name }}"></td>' +
-		{% endfor %}
-		'</tr><tr class="alternating-back"><th><i>Combat</i></th>' +
-		'</tr><tr class="alternating-back"><td style="text-align: left;">KDA</td>' +
-		{% for playermatch in match.playermatch_set.all %}
-		'<td>{{ playermatch.kills }}/{{ playermatch.deaths }}/{{ playermatch.assists }}</td>' +
-		{% endfor %}
-		'</tr><tr class="alternating-back"><td style="text-align: left;">Largest Killing Spree</td>' +
-		{% for playermatch in match.playermatch_set.all %}
-		'<td>{{ playermatch.largest_killing_spree }}</td>' +
-		{% endfor %}
-		'</tr><tr class="alternating-back"><td style="text-align: left;">First Blood</td>' +
-		{% for playermatch in match.playermatch_set.all %}
-		{% if playermatch.first_blood_kill %}
-		'<td>Yes</td>' +
-		{% else %}
-		'<td>No</td>' +
-		{% endif %}
-		{% endfor %}
-		'</tr><tr class="alternating-back"><th><i>Damage Dealt</i></th>' +
-		'</tr><tr class="alternating-back"><td style="text-align: left;">Total Damage Dealt to Champions</td>' +
-		{% for playermatch in match.playermatch_set.all %}
-		'<td>{{ playermatch.total_damage_dealt_to_champions }}</td>' +
-		{% endfor %}
-		'</tr><tr class="alternating-back"><td style="text-align: left;">Physical Damage Dealt to Champions</td>' +
-		{% for playermatch in match.playermatch_set.all %}
-		'<td>{{ playermatch.physical_damage_dealt_to_champions }}</td>' +
-		{% endfor %}
-		'</tr><tr class="alternating-back"><td style="text-align: left;">Magic Damage Dealt to Champions</td>' +
-		{% for playermatch in match.playermatch_set.all %}
-		'<td>{{ playermatch.magic_damage_dealt_to_champions }}</td>' +
-		{% endfor %}
-		'</tr><tr class="alternating-back"><td style="text-align: left;">True Damage Dealt to Champions</td>' +
-		{% for playermatch in match.playermatch_set.all %}
-		'<td>{{ playermatch.true_damage_dealt_to_champions }}</td>' +
-		{% endfor %}
-		'</tr><tr class="alternating-back"><td style="text-align: left;">Total Damage Dealt</td>' +
-		{% for playermatch in match.playermatch_set.all %}
-		'<td>{{ playermatch.total_damage_dealt }}</td>' +
-		{% endfor %}
-		'</tr><tr class="alternating-back"><td style="text-align: left;">Physical Damage Dealt</td>' +
-		{% for playermatch in match.playermatch_set.all %}
-		'<td>{{ playermatch.physical_damage_dealt }}</td>' +
-		{% endfor %}
-		'</tr><tr class="alternating-back"><td style="text-align: left;">Magic Damage Dealt</td>' +
-		{% for playermatch in match.playermatch_set.all %}
-		'<td>{{ playermatch.magic_damage_dealt }}</td>' +
-		{% endfor %}
-		'</tr><tr><td style="text-align: left;">True Damage Dealt</td>' +
-		{% for playermatch in match.playermatch_set.all %}
-		'<td>{{ playermatch.true_damage_dealt }}</td>' +
-		{% endfor %}
-		'</tr><tr class="alternating-back"><td style="text-align: left;">Largest Critical Strike</td>' +
-		{% for playermatch in match.playermatch_set.all %}
-		'<td>{{ playermatch.largest_critical_strike }}</td>' +
-		{% endfor %}
-		'</tr><tr class="alternating-back"><td style="text-align: left;">Total Damage to Objectives</td>' +
-		{% for playermatch in match.playermatch_set.all %}
-		'<td>{{ playermatch.damage_dealt_to_objectives }}</td>' +
-		{% endfor %}
-		'</tr><tr class="alternating-back"><td style="text-align: left;">Total Damage to Turrets</td>' +
-		{% for playermatch in match.playermatch_set.all %}
-		'<td>{{ playermatch.damage_dealt_to_turrets }}</td>' +
-		{% endfor %}
-		'</tr><tr class="alternating-back"><th><i>Damage Taken & Healed</i></th>' +
-		'</tr><tr class="alternating-back"><td style="text-align: left;">Damage Healed</td>' +
-		{% for playermatch in match.playermatch_set.all %}
-		'<td>{{ playermatch.total_heal }}</td>' +
-		{% endfor %}
-		'</tr><tr class="alternating-back"><td style="text-align: left;">Damage Taken</td>' +
-		{% for playermatch in match.playermatch_set.all %}
-		'<td>{{ playermatch.total_damage_taken }}</td>' +
-		{% endfor %}
-		'</tr><tr class="alternating-back"><td style="text-align: left;">Physical Damage Taken</td>' +
-		{% for playermatch in match.playermatch_set.all %}
-		'<td>{{ playermatch.physical_damage_taken }}</td>' +
-		{% endfor %}
-		'</tr><tr class="alternating-back"><td style="text-align: left;">Magic Damage Taken</td>' +
-		{% for playermatch in match.playermatch_set.all %}
-		'<td>{{ playermatch.magical_damage_taken }}</td>' +
-		{% endfor %}
-		'</tr><tr class="alternating-back"><td style="text-align: left;">True Damage Taken</td>' +
-		{% for playermatch in match.playermatch_set.all %}
-		'<td>{{ playermatch.true_damage_taken }}</td>' +
-		{% endfor %}
-		'</tr><tr class="alternating-back"><th><i>Vision</i></th>' +
-		'</tr><tr class="alternating-back"><td style="text-align: left;">Wards Placed</td>' +
-		{% for playermatch in match.playermatch_set.all %}
-		'<td>{{ playermatch.wards_placed }}</td>' +
-		{% endfor %}
-		'</tr><tr class="alternating-back"><td style="text-align: left;">Wards Destroyed</td>' +
-		{% for playermatch in match.playermatch_set.all %}
-		'<td>{{ playermatch.wards_killed }}</td>' +
-		{% endfor %}
-		'</tr><tr class="alternating-back"><td style="text-align: left;">Control Wards Purchased</td>' +
-		{% for playermatch in match.playermatch_set.all %}
-		'<td>{{ playermatch.vision_wards_bought_in_game }}</td>' +
-		{% endfor %}
-		'</tr><tr class="alternating-back"><th><i>Income</i></th>' +
-		'</tr><tr class="alternating-back"><td style="text-align: left;">Gold Earned</td>' +
-		{% for playermatch in match.playermatch_set.all %}
-		'<td>{{ playermatch.gold_earned }}</td>' +
-		{% endfor %}
-		'</tr><tr class="alternating-back"><td style="text-align: left;">Gold Spent</td>' +
-		{% for playermatch in match.playermatch_set.all %}
-		'<td>{{ playermatch.gold_spent }}</td>' +
-		{% endfor %}
-		'</tr><tr class="alternating-back"><td style="text-align: left;">Minions Killed</td>' +
-		{% for playermatch in match.playermatch_set.all %}
-		'<td>{{ playermatch.total_minions_killed }}</td>' +
-		{% endfor %}
-		'</tr><tr class="alternating-back"><td style="text-align: left;">Neutral Minions Killed</td>' +
-		{% for playermatch in match.playermatch_set.all %}
-		'<td>{{ playermatch.neutral_minions_killed }}</td>' +
-		{% endfor %}
-		'</tr><tr class="alternating-back"><td style="text-align: left;">Neutral Minions Killed in Team\'s Jungle</td>' +
-		{% for playermatch in match.playermatch_set.all %}
-		'<td>{{ playermatch.neutral_minions_killed_team_jungle }}</td>' +
-		{% endfor %}
-		'</tr><tr class="alternating-back"><td style="text-align: left;">Neutral Minions Killed in Enemy Jungle</td>' +
-		{% for playermatch in match.playermatch_set.all %}
-		'<td>{{ playermatch.neutral_minions_killed_enemy_jungle }}</td>' +
-		{% endfor %}
-		{% else %}
-		 {% if match.tournament_code or match.riot_id %}
-		'<table class="centercontent" width="80%">' +
-		 '<tr>' +
-		  '<td>' +
-		   '<table class="centercontent" width="100%">' +
-		    '<tr>' +
-		{% for teammatch in match.teammatch_set.all %}
-		     '<td width="50%">' +
-		      '<table class="centercontent" width="100%">' +
-		       '<tr>' +
-		     {% if forloop.counter == 1 %}
-		        '<th class="centertableheader" style="border-bottom: 1px solid #4a56b2">{{ teammatch.team.name }}</th>' +
-		     {% else %}
-		        '<th class="centertableheader" style="border-bottom: 1px solid #b24a58">{{ teammatch.team.name }}</th>' +
-		     {% endif %}
-		       '</tr>' +
-		       '<tr>' +
-		     {% if forloop.counter == 1 %}
-		        '<td style="border-bottom: 1px solid #4a56b2">' +
-		     {% else %}
-		        '<td style="border-bottom: 1px solid #b24a58">' +
-		     {% endif %}
-		        '</td>' +
-		       '</tr>' +	
-		      '</table>' +
-		     '</td>' +
-		 {% endfor %}
-		    '</tr>' +
-		   '</table>' +
-		  '</td>' +
-		 '</tr>' +
-		 '<tr class="centercontent">' +
-		  '<td>' +
-		  '</td>' +
-		 '</tr>' +
-                   {% if match.tournament_code != 'none' %}
-		 '<tr class="centercontent">' +
-		  '<td>' +
-		   '<table class="centercontent">' +
-		    '<tr>' +
-		     '<th class="centertableheader">Tournament Code</th>' +
-		    '</tr>' +
-		    '<tr>' +
-		     '<td>' +
-		      '{{ match.tournament_code }}' +
-		     '</td>' +
-		    '</tr>' +
-		    '<tr>' +
-		     '<td>' +
-        		'<a href="/stats/season/{{ season.id }}/match/{{ match.id }}/load_match/">Match Complete</a>' +
-		     '</td>' +
-		    '</tr>' +
-		   '</table>' +
-		  '</td>' +
-		 '</tr>' +
-                   {% endif %}
-		'</table>' +
-		 {% else %}
-		 {% endif %}
-		{% endif %}
-		'</tr></table>' +
-			"");
-	{% endfor %}
-	contentMap.set("Overview",
-		'<table class="centercontent" width="50%">' +
-		{% if series.rosters_submitted and series.past_deadline and season.id > 2 %}
-		'<table class="centercontent" width="80%">' +
-		 '<tr>' +
-		  '<td>' +
-		   '<table class="centercontent" width="100%">' +
-		    '<tr>' +
-		     '<td width="50%">' +
-		      '<table class="centercontent" width="100%">' +
-		       '<tr>' +
-		        '<th class="centertableheader" style="border-bottom: 1px solid #4a56b2">{{ series.get_team_1.name }}</th>' +
-		       '</tr>' +
-		       '<tr>' +
-		        '<td style="border-bottom: 1px solid #4a56b2">' +
-		         '<table class="centercontent" width="100%">' +
-		          '<tr class="alternating-back"></tr>' +
-		    {% for seriesplayer in series.get_team_1_players %}
-		     {% if seriesplayer.role.name == "Substitute" %}
-	        	  '<tr class="alternating-back">' +
-		           '<td width="50%" height="30px"></td>' +
-		           '<td width="50%" height="30px"></td>' +
-		          '</tr>' +
-		     {% endif %}
-
-		          '<tr class="alternating-back">' +
-		           '<td width="40%"><img src="{{ seriesplayer.role.icon.url }}" height="30" width="30" title="{{ seriesplayer.role.name }}"></td>' +
-		           '<td style="font-size:20; text-align:left"><a href="/season/{{ season.id }}/team/{{ series.get_team_1.id }}/player/{{ seriesplayer.player.id }}/">{{ seriesplayer.player.name }}</a></td>' +
-		          '</tr>' +
-		    {% endfor %}
-		         '</table>' +
-		        '</td>' +
-		       '</tr>' +	
-		      '</table>' +
-		     '</td>' +
-		     '<td width="50%">' +
-		      '<table class="centercontent" width="100%">' +
-		       '<tr>' +
-		        '<th class="centertableheader" style="border-bottom: 1px solid #b24a58">{{ series.get_team_2.name }}</th>' +
-		       '</tr>' +
-		       '<tr>' +
-		        '<td style="border-bottom: 1px solid #b24a58">' +
-		         '<table class="centercontent" width="100%">' +
-		          '<tr class="alternating-back"></tr>' +
-		    {% for seriesplayer in series.get_team_2_players %}
-		     {% if seriesplayer.role.name == "Substitute" %}
-	        	  '<tr class="alternating-back">' +
-		           '<td width="50%" height="30px"></td>' +
-		           '<td width="50%" height="30px"></td>' +
-		          '</tr>' +
-		     {% endif %}
-
-		          '<tr class="alternating-back">' +
-		           '<td style="font-size:20; text-align:right"><a href="/season/{{ season.id }}/team/{{ series.get_team_2.id }}/player/{{ seriesplayer.player.id }}/">{{ seriesplayer.player.name }}</a></td>' +
-		           '<td width="40%"><img src="{{ seriesplayer.role.icon.url }}" height="30" width="30" title="{{ seriesplayer.role.name }}"></td>' +
-		          '</tr>' +
-		    {% endfor %}
-		         '</table>' +
-		        '</td>' +
-		       '</tr>' +	
-		      '</table>' +
-		     '</td>' +
-		    '</tr>' +
-		   '</table>' +
-		  '</td>' +
-		 '</tr>' +
-		 '<tr class="centercontent">' +
-		  '<td>' +
-		  '</td>' +
-		 '</tr>' +
-		'<tr class="centercontent">' +
-		  '<th class="pagebutton" style="font-size:20; padding:20px;">' +
-		   '<a href="caster_tools">Caster Tools</a>' +
-		  '</th>' +
-		 '</tr>' +
-		'</table>' +
-		{% elif season.id > 2 %}
-		'<tr>' +
-		  '<th class="centertableheader" style="padding-bottom:15px" width="100%">' +
-		   'Rosters Pending' +
-		  '</th>' +
-		 '</tr>' +
-		 '<tr class="centercontent">' +
-		  '<td style="padding-bottom:20px;">' +
-		   '<p>Not all rosters have been submitted yet for this series!</p> <p>Check back later.</p>' +
-		  '</td>' +
-		 '</tr>' +
-		 '<tr>' +
-		'<th class="centertableheader" style="padding-bottom:15px" width="100%">' +
-		   'Submission Deadline' +
-		  '</th>' +
-		 '</tr>' +
-		 '<tr class="centercontent">' +
-		  '<td style="padding:20px;">' +
-	           '<div style="font-size: 24;">{{ series.deadline|date:"g:i a"}}</div>' +
-	           '<div style="font-size: 24;">{{ series.deadline|date:"F j, Y"}}</div>' +
-		  '</td>' +
-		 '</tr>' +
-		{% endif %}
-		{% ifequal request.user.id series.get_team_1.user.id %}
-		{% if season.id > 2 and not series.get_team_1_roster_submitted and not series.past_deadline %}
-		'<table class="centercontent" width="70%">' +
-		'<tr>' +
-		  '<td class="centercontent" style="padding: 20px; margin-bottom: 20px; font-size: 24;" width="100%">' +
-		'<a href="create_roster/{{ series.get_team_1.id }}/"><b>Create Roster for {{ series.get_team_1.name }}</b></a>' +
-		  '</td>' +
-		 '</tr>' +
-		'</table>' +
-		{% elif series.get_team_1_roster_submitted and season.id > 2 and not series.past_deadline %}
-		'<table class="centercontent" width="50%">' +
-		 '<tr class="centercontent">' +
-		  '<td style="padding-bottom: 40px">' +
-		   '<table class="centercontent" width="100%">' +
-		    '<tr>' +
-		     '<td width="100%">' +
-		      '<table class="centercontent" width="100%">' +
-		       '<tr>' +
-		        '<th class="centertableheader" style="border-bottom: 1px solid #4a56b2">{{ series.get_team_1.name }} - Current Roster</th>' +
-		       '</tr>' +
-		       '<tr>' +
-		        '<td style="border-bottom: 1px solid #4a56b2">' +
-		         '<table class="centercontent" width="100%">' +
-		          '<tr class="alternating-back"></tr>' +
-		    {% for seriesplayer in series.get_team_1_players %}
-		    {% if seriesplayer.role.name == "Substitute" %}
-	        	  '<tr class="alternating-back">' +
-		           '<td width="50%" height="30px"></td>' +
-		           '<td width="50%" height="30px"></td>' +
-		          '</tr>' +
-		    {% endif %}
-		          '<tr class="alternating-back">' +
-		           '<td width="50%"><img src="{{ seriesplayer.role.icon.url }}" height="30" width="30" title="{{ seriesplayer.role.name }}"></td>' +
-		           '<td style="font-size:20; text-align:left">{{ seriesplayer.player.name }}</td>' +
-		          '</tr>' +
-		    {% endfor %}
-		         '</table>' +
-		        '</td>' +
-		       '</tr>' +	
-		      '</table>' +
-		     '</td>' +
-		    '</tr>' +
-		   '</table>' +
-		  '</td>' +
-		 '</tr>' +
-		'<table>' +
-		'<table class="centercontent" width="70%">' +
-		'<tr>' +
-		  '<td class="centercontent" style="padding: 20px; margin-bottom: 20px; font-size: 24;" width="100%">' +
-		'<a href="create_roster/{{ series.get_team_1.id }}/"><b>Create Roster for {{ series.get_team_1.name }}</b></a>' +
-		  '</td>' +
-		 '</tr>' +
-		'</table>' +
-		{% elif series.past_deadline and season.id > 2 and not series.get_team_1_roster_submitted %}
-		'<table class="centercontent" width="70%">' +
-		'<tr>' +
-		  '<td class="centercontent" style="padding: 40px; margin-bottom: 20px; font-size: 24;" width="100%">' +
-		  'You missed the deadline, contact one of the Founding Fathers to submit' +
-		  '</td>' +
-		 '</tr>' +
-		'</table>' +
-		{% endif %}
-		{% endifequal %}
-		{% ifequal request.user.id series.get_team_2.user.id %}
-		{% if season.id > 2 and not series.get_team_2_roster_submitted and not series.past_deadline %}
-		'<table class="centercontent" width="70%">' +
-		'<tr>' +
-		  '<td class="centercontent" style="padding: 20px; margin-bottom: 20px; font-size: 24;" width="100%">' +
-		'<a href="create_roster/{{ series.get_team_2.id }}/"><b>Create Roster for {{ series.get_team_2.name }}</b></a>' +
-		  '</td>' +
-		 '</tr>' +
-		'</table>' +
-		{% elif series.get_team_2_roster_submitted and season.id > 2 and not series.past_deadline %}
-		'<table class="centercontent" width="50%">' +
-		 '<tr class="centercontent">' +
-		  '<td style="padding-bottom: 40px">' +
-		   '<table class="centercontent" width="100%">' +
-		    '<tr>' +
-		     '<td width="100%">' +
-		      '<table class="centercontent" width="100%">' +
-		       '<tr>' +
-		        '<th class="centertableheader" style="border-bottom: 1px solid #b24a58">{{ series.get_team_2.name }} - Current Roster</th>' +
-		       '</tr>' +
-		       '<tr>' +
-		        '<td style="border-bottom: 1px solid #b24a58">' +
-		         '<table class="centercontent" width="100%">' +
-		          '<tr class="alternating-back"></tr>' +
-		    {% for seriesplayer in series.get_team_2_players %}
-		    {% if seriesplayer.role.name == "Substitute" %}
-	        	  '<tr class="alternating-back">' +
-		           '<td width="50%" height="30px"></td>' +
-		           '<td width="50%" height="30px"></td>' +
-		          '</tr>' +
-		    {% endif %}
-		          '<tr class="alternating-back">' +
-		           '<td width="50%"><img src="{{ seriesplayer.role.icon.url }}" height="30" width="30" title="{{ seriesplayer.role.name }}"></td>' +
-		           '<td style="font-size:20; text-align:left">{{ seriesplayer.player.name }}</td>' +
-		          '</tr>' +
-		    {% endfor %}
-		         '</table>' +
-		        '</td>' +
-		       '</tr>' +	
-		      '</table>' +
-		     '</td>' +
-		    '</tr>' +
-		   '</table>' +
-		  '</td>' +
-		 '</tr>' +
-		'<table>' +
-
-		'<table class="centercontent" width="70%">' +
-		'<tr>' +
-		  '<td class="centercontent" style="padding: 20px; margin-bottom: 20px; font-size: 24;" width="100%">' +
-		'<a href="create_roster/{{ series.get_team_2.id }}/"><b>Create Roster for {{ series.get_team_2.name }}</b></a>' +
-		  '</td>' +
-		 '</tr>' +
-		'</table>' +
-		{% elif series.past_deadline and not series.get_team_2_roster_submitted and season.id > 2 %}
-		'<table class="centercontent" width="70%">' +
-		'<tr>' +
-		  '<td class="centercontent" style="padding: 40px; margin-bottom: 20px; font-size: 24;" width="100%">' +
-		  'You missed the deadline, contact one of the Founding Fathers to submit' +
-		  '</td>' +
-		 '</tr>' +
-		'</table>' +
-
-		{% endif %}
-		{% endifequal %}
-		'</table>' +
-		        "");
-	contentMap.set("Load Match",
-                "<a href=\"/stats/season/{{ season.id }}/series/{{ series.id }}/load_match/\">Load Match</a>");
-
-	container.innerHTML = contentMap.get(content);
-       {% for match in matches %}
-	if (content == "{{ match.game_num }}") {
-       var chart{{ match.game_num }} = new CanvasJS.Chart("goldGraph{{ match.game_num }}", {
-	animationEnabled: true,
-	backgroundColor: "#212121",
-	title: {
-		fontColor: "#727272",
-		fontFamily: 'Noto Sans',
-		fontSize: 24,
-	},
-	axisX: {
-		minimum: 0,
-		maximum: {{ match.get_max_timeline_minute }},
-		labelFontColor: "#727272",
-	},
-	axisY: {
-		labelFontColor: "#727272",
-	},
-	data: [{
-		labelFontColor: "#727272",
-		fillOpacity: "0.3",
-		name: "views",
-		type: "area",
-		dataPoints: [
-			{% for timeline in match.get_blue_team.get_timelines %}
-			{ x: {{ timeline.minute }}, y: {{ timeline.sumGold }}, label: "{{ timeline.minute }}:00" },
-                        {% endfor %}
-		]
-	},{
-		labelFontColor: "#727272",
-		fillOpacity: "0.3",
-		name: "views",
-		type: "area",
-		dataPoints: [
-			{% for timeline in match.get_red_team.get_timelines %}
-			{ x: {{ timeline.minute }}, y: {{ timeline.sumGold }}, label: "{{ timeline.minute }}:00" },
-                        {% endfor %}
-		]
-	}
-	]
-        });
-
-        chart{{ match.game_num }}.render();
-											  
-	var diffChart{{ match.game_num }} = new CanvasJS.Chart("diffGoldGraph{{ match.game_num }}", {
-	animationEnabled: true,
-	backgroundColor: "#212121",
-	title: {
-		fontColor: "#727272",
-		fontFamily: 'Noto Sans',
-		fontSize: 24,
-	},
-	axisX: {
-		minimum: 0,
-		maximum: {{ match.get_max_timeline_minute }},
-		labelFontColor: "#727272",
-	},
-	axisY: {
-		labelFontColor: "#727272",
-	},
-	data: [{
-		labelFontColor: "#727272",
-		fillOpacity: "0.3",
-		name: "views",
-		type: "area",
-		dataPoints: [
-			{% for timeline in match.get_timeline_diffs %}
-			{ x: {{ timeline.minute }}, y: {{ timeline.sumGold }}, label: "{{ timeline.minute }}:00" },
-                        {% endfor %}
-		]
-	}
-	]
-        });
-
-        diffChart{{ match.game_num }}.render();
-
-	}
+{% block head %}
+<script type="text/javascript">
+{% for match in matches %}
+function ReplaceGame{{ match.game_num }}() {
+        {% for teammatch in match.teammatch_set.all %}
+        {% for playermatch in teammatch.get_player_matches %}
+        document.getElementById("{{ teammatch.side }}TeamPlayer{{ forloop.counter }}_name").innerHTML = "{{ playermatch.player.name }}";
+        document.getElementById("{{ teammatch.side }}TeamPlayer{{ forloop.counter }}_kda").innerHTML = "{{ playermatch.kills }}/{{ playermatch.deaths }}/{{ playermatch.assists }}";
+        document.getElementById("{{ teammatch.side }}TeamPlayer{{ forloop.counter }}_cs").innerHTML = "{{ playermatch.get_cs }}";
+        document.getElementById("{{ teammatch.side }}TeamPlayer{{ forloop.counter }}_gold").innerHTML = "{{ playermatch.gold_earned }}";
+        document.getElementById("{{ teammatch.side }}TeamPlayer{{ forloop.counter }}_champ").src = "{{ playermatch.champion.icon.url }}";
+        {% endfor %}
         {% endfor %}
 }
-window.onload = function() {
-	ReplaceMatchContent('pagecontent','Overview');
-											  
+{% endfor %}
+</script>
 
-}
-//--></script>
+<link rel="stylesheet" href="{% static 'stats/css/series.css' %}">
+{% endblock %}
 
-<div width="60%" style="text-align: center"><a class="imglink" href="/stats/season/{{ season.id }}/"><img style="width: 55%; margin-left: auto; margin-right: auto; margin-top:220px; margin-bottom: 100px;" src="{{ season.splash.url }}"></a></div>
+{% block content %}
 
-<div style="width: 75%; text-align: center; background-color: #303030; padding: 20px; margin: 0 auto; height: 1050px;">
-	<h1 style="font-size: 48">Week {{ series.week.number }}</h1>
-	<h1 style="font-size: 48">{% for seriesteam in series.seriesteam_set.all %}<a href="/stats/season/{{ season.id }}/team/{{ seriesteam.team.id }}/">{{ seriesteam.team.name }} ({{ seriesteam.get_record_before }})</a>{% if forloop.counter == 1 %} vs {% endif %}{% endfor %}</h1>
-	{% if series.date %}
-	<div style="font-size: 36; padding-top: 36px;">{{ series.date|date:"g:i a"}}</div>
-	<div style="font-size: 36; padding-bottom: 36px;">{{ series.date|date:"F j, Y"}}</div>
-	{% endif %}
+    <section>
+	    <h2>WEEK {{ series.week.number }}</h2>
+	    <h1>{{ series.get_team_1.name }}<span class="recordSmall">({{ series.get_series_team_1.get_record_before }})</span> <span class="rekt-red">vs</span> {{ series.get_team_2.name }}<span class="recordSmall">({{ series.get_series_team_2.get_record_before }})</span></h1>
+      <div class="matchDate">
+	      <p>{{ series.date|date:"g:i a" }} EST</p>
+	      <p>{{ series.date|date:"F j, Y" }}</p>
+      </div>
+    </section>
+    <section>
+      <img class="imageLeft" src="{{ series.get_team_1.media.banner.url }}">
+      <span class="teamNameLeft">{{ series.get_team_1.name }}</span>
+      <img class="imageRight" src="{{ series.get_team_2.media.banner.url }}">
+      <span class="teamNameRight">{{ series.get_team_2.name }}</span>
+    </section>
+    
+    {% if series.rosters_submitted and series.past_deadline and season.id > 2 %}
+    <div class="teamsContainer">
+      <div class="teams">
+        {% for seriesplayer in series.get_team_1_players %}
+        <div class="playerSection">
+	  {% if seriesplayer.player.photo %}
+          <img class="playerPhotoLeft" src="{{ seriesplayer.player.photo.url }}">
+	  {% else %}
+	  <img class="playerPhotoRight" src="/static/stats/player-photos/missing.png">
+	  {% endif %}
+	  <p>{{ seriesplayer.player.name }}</p>
+	  <img class="laneLeft" src="{{ seriesplayer.role.icon.url }}">
+        </div>
+	{% endfor %}
+      </div>
 
-	<div style="padding: 20px; padding-left: 150px; margin-left: 60px;">
-		{% if series.youtube_link != '' and series.youtube_link != ' ' %}
-        	<iframe class="videoplayer" src="{{ series.youtube_link }}" frameborder="0" allowfullscreen="true" scrolling="no" height="441" width="784"></iframe>
-		{% else %}
-		<img style="z-index: 0; position: absolute; display: block; margin-left: 0; float: left; width: 50%; " src="{{ series.seriesteam_set.all.0.team.left_splash.url }}">
-		<img style="z-index: 2; position: absolute; display: block; margin-left: 0; float: left; width: 50%; " src="/static/stats/vs_frame.png">
-		<img style="z-index: 1; position: absolute; display: block; margin-left: 0; float: left; width: 50%; " src="{{ series.seriesteam_set.all.1.team.right_splash.url }}">
-		{% endif %}
-	</div>
-</div>
-<p></p>
+      <div class="teams">
+        {% for seriesplayer in series.get_team_2_players %}
+        <div class="playerSection">
+          <img class="laneRight" src="{{ seriesplayer.role.icon.url }}">
+	  <p>{{ seriesplayer.player.name }}</p>
+	  {% if seriesplayer.player.photo %}
+	  <img class="playerPhotoRight" src="{{ seriesplayer.player.photo.url }}">
+	  {% else %}
+	  <img class="playerPhotoRight" src="/static/stats/player-photos/missing.png">
+	  {% endif %}
+        </div>
+	{% endfor %}
+      </div>
+    </div>
+    {% endif %}
 
-<div id="defaultCountdown"></div>
+    <!-- FILTERS -->
+    <section>
+    <h2 class="postGameHead">POST GAME</h2>
+                  <!-- MATCH FILTER -->
+                  <div id="filter">    
+                    <div class="grey-search-button-container">
+  
+                      <div class="drop-item drop-list">
+                
+                        <ul id="rome-menu">
+                             <li class="tophelp"><a class="menu-trigger" href="#">MATCH</a>
+                              <ul id="subrome">
+			      {% for match in matches %}
+			      <li><a href="javascript:ReplaceGame{{ match.game_num }}();">MATCH {{ match.game_num }}</a></li>
+			      {% endfor %}
+                          </ul> 
+                        </li>              
+                        </ul>
+                       </div>
+                     </div>
+                    </div>
+                  </section>
+                  <!-- TEAM FILTER -->
 
-<table class="centercontent" width="70%">
-	<tr class="centercontent">
-		<td>
-		<table class="centercontent" width="100%">
-			<tr>
-			{% for match in matches %}
-				<td class="pagebutton" width= "{% widthratio 1 num_match_links 100 %}%">
-					<div style="font-size:20;">
-						<a style="font-size: 28" href="javascript:ReplaceMatchContent('pagecontent','{{ match.game_num }}')"><b>Game {{ match.game_num }}</b></a>
-					</div>
-				</td>
-			{% endfor %}
-			</tr>
-		</table>
-		</td>
-	</tr>
-	<tr>
-		<td>
-			<div id="pagecontent" onload="ReplaceMatchContent('pagecontent'),'Overview')">
-			</div>
-		</td>
-	</tr>
+                  <!-- <div id="filter">    
+                    <div class="grey-search-button-container">
+  
+                      <div class="drop-item drop-list">
+                
+                        <ul id="rome-menu">
+                             <li class="tophelp"><a class="menu-trigger" href="#">TEAM</a>
+                              <ul id="subrome">
+                                  <li><a href="#">AIR</a></li>
+                                  <li><a href="#">BRAMBLEBACK</a></li>
+                          </ul> 
+                        </li>              
+                        </ul>
+                       </div>
+                    
+                     </div> -->
 
-</table>
-                       <script type="text/javascript" src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>
+                     <!--POST GAME STATS-->
+                    
+                     <!-- TEAM 1 -->
+                     <div class="tableContainer">
+                       <table>
+                         <thead>
+                           <th>
+                             <img src="/static/stats/scoreboardicon_champion.png" alt="champion">
+                           </th>
+                           <th></th>
+                           <th><img src="/static/stats/scoreboardicon_score.png"></th>
+                           <th><img src="/static/stats/scoreboardicon_minion.png"></th>
+                           <th><img src="/static/stats/scoreboardicon_gold.png"></th>
+                         </thead>
+                         <tbody>
+                          <tr class="whiteRow">
+                              <td><img id="BlueTeamPlayer1_champ"></td>
+                              <td id="BlueTeamPlayer1_name"></td>
+                              <td id="BlueTeamPlayer1_kda"></td>
+                              <td id="BlueTeamPlayer1_cs"></td>
+                              <td id="BlueTeamPlayer1_gold"></td>
+                           </tr>
+                           <tr>
+                              <td><img id="BlueTeamPlayer2_champ"></td>
+                              <td id="BlueTeamPlayer2_name"></td>
+                              <td id="BlueTeamPlayer2_kda"></td>
+                              <td id="BlueTeamPlayer2_cs"></td>
+                              <td id="BlueTeamPlayer2_gold"></td>
+                           </tr>
+                           <tr class="whiteRow">
+                              <td><img id="BlueTeamPlayer3_champ"></td>
+                              <td id="BlueTeamPlayer3_name"></td>
+                              <td id="BlueTeamPlayer3_kda"></td>
+                              <td id="BlueTeamPlayer3_cs"></td>
+                              <td id="BlueTeamPlayer3_gold"></td>
+                           </tr>
+                           <tr>
+                              <td><img id="BlueTeamPlayer4_champ"></td>
+                              <td id="BlueTeamPlayer4_name"></td>
+                              <td id="BlueTeamPlayer4_kda"></td>
+                              <td id="BlueTeamPlayer4_cs"></td>
+                              <td id="BlueTeamPlayer4_gold"></td>
+                           </tr>
+                           <tr class="whiteRow">
+                              <td><img id="BlueTeamPlayer5_champ"></td>
+                              <td id="BlueTeamPlayer5_name"></td>
+                              <td id="BlueTeamPlayer5_kda"></td>
+                              <td id="BlueTeamPlayer5_cs"></td>
+                              <td id="BlueTeamPlayer5_gold"></td>
+                           </tr>
+                         </tbody>
+                       </table>
+                     <!-- TEAM 2 -->
+                      <table class="second">
+                        <thead>
+                          <th>
+                            <img src="/static/stats/scoreboardicon_champion.png" alt="champion">
+                          </th>
+                          <th></th>
+                          <th><img src="/static/stats/scoreboardicon_score.png"></th>
+                          <th><img src="/static/stats/scoreboardicon_minion.png"></th>
+                          <th><img src="/static/stats/scoreboardicon_gold.png"></th>
+                        </thead>
+                        <tbody>
+                           <tr class="whiteRow">
+                              <td><img id="RedTeamPlayer1_champ"></td>
+                              <td id="RedTeamPlayer1_name"></td>
+                              <td id="RedTeamPlayer1_kda"></td>
+                              <td id="RedTeamPlayer1_cs"></td>
+                              <td id="RedTeamPlayer1_gold"></td>
+                           </tr>
+                           <tr>
+                              <td><img id="RedTeamPlayer2_champ"></td>
+                              <td id="RedTeamPlayer2_name"></td>
+                              <td id="RedTeamPlayer2_kda"></td>
+                              <td id="RedTeamPlayer2_cs"></td>
+                              <td id="RedTeamPlayer2_gold"></td>
+                           </tr>
+                           <tr class="whiteRow">
+                              <td><img id="RedTeamPlayer3_champ"></td>
+                              <td id="RedTeamPlayer3_name"></td>
+                              <td id="RedTeamPlayer3_kda"></td>
+                              <td id="RedTeamPlayer3_cs"></td>
+                              <td id="RedTeamPlayer3_gold"></td>
+                           </tr>
+                           <tr>
+                              <td><img id="RedTeamPlayer4_champ"></td>
+                              <td id="RedTeamPlayer4_name"></td>
+                              <td id="RedTeamPlayer4_kda"></td>
+                              <td id="RedTeamPlayer4_cs"></td>
+                              <td id="RedTeamPlayer4_gold"></td>
+                           </tr>
+                           <tr class="whiteRow">
+                              <td><img id="RedTeamPlayer5_champ"></td>
+                              <td id="RedTeamPlayer5_name"></td>
+                              <td id="RedTeamPlayer5_kda"></td>
+                              <td id="RedTeamPlayer5_cs"></td>
+                              <td id="RedTeamPlayer5_gold"></td>
+                           </tr>
+                        </tbody>
+                      </table>
+                    </div>
+                    <div class="clearfix"></div>
+                    <!-- Lock In -->
+                    <div class="button">
+                    <span><a href="#">LOCK IN</a></span>
+                    </div>
+                  
+            </body>
 {% endblock %}
 

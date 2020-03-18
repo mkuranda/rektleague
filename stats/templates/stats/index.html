@@ -1,7 +1,32 @@
 {% extends "stats/base.html" %}
+{% load staticfiles %}
 
 {% block title %}Rekt League | Home{% endblock %}
 
+{% block head %}{% endblock %}
+
 {% block content %}
-Home page!
+            <!--START OF BODY CONTENT-->
+            <div class="main-body">
+                    <a class="splash-button" href="#">EXPLORE SEASON 5</a>
+                <img class="homepage-splash" src="/media/stats/homepageSplash/homepage.png">
+                <a class="splash-button" href="standings.html">EXPLORE SEASON 5</a>
+            </div>  
+            </body>
+			<footer>
+                    <div class="contact-us">
+                    <p>CONTACT US</p>
+                    <a class="contact" href="mailto:therektleague@gmail.com">therektleague@gmail.com</a>
+                    </div>
+                    
+                    <div class="social-media">
+                        <p>FOLLOW THE LEAGUE</p>
+                            <a class="mediaicon" href="https://twitter.com/therektleague"><img style="padding:5px;" src="/media/stats/media_icons/twitter.png"></a>
+		                    <a class="mediaicon" href="https://twitch.tv/therektleague"><img style="padding:5px;" src="/media/stats/media_icons/twitch.png"></a>
+		                    <a class="mediaicon" href="https://www.youtube.com/channel/UC79qzlDqxImPG49FKiChe0Q"><img style="padding:5px;" src="/media/stats/media_icons/youtube.png"></a>
+		                    <a class="mediaicon" href="https://instagram.com/therektleague"><img style="padding:5px;" src="/media/stats/media_icons/instagram.png"></a>
+                    </div>
+			</footer>
+    </body>
+    <div class="clearfix"></div>
 {% endblock %}

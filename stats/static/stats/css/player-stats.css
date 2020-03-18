@@ -1,0 +1,146 @@
+    /* PLAYYER STATS */
+
+    h1, h2{
+      color:white;
+      text-align: center;
+      font-size: 95px;
+      font-weight: 800;
+  }
+
+table {
+  color: white;
+  margin: auto; 
+  border-collapse: collapse;
+  position: relative;
+}
+
+
+th {
+  font-size: 1.5em;
+  font-weight: 800;
+  text-align: center;
+  background: #bf1f2f;
+  padding: .5% .5%;
+  border: 8px solid black;
+  position: sticky;
+  top: 0;
+}
+
+.filterCheat{
+  display: none;
+}
+
+td > img{
+  width: 42%;
+}
+
+td {
+  text-align: center;
+  font-size: 1.9em;
+  font-weight: 600;
+  padding: .5% .8%;
+}
+
+
+.whiteRow {
+  background: white;
+  color: black;
+}
+
+.blankCell{
+  background: none;
+}
+
+tr a{
+  text-decoration: none;
+  color: white;
+}
+
+.whiteRow a{
+  color: black;
+}
+
+td > a:hover{
+  color: #bf1f2f;
+  text-decoration: none;
+}
+
+img + span{
+  display: none;
+}
+
+input{
+  font-size: 1.7em;
+  line-height: 1.15;
+  margin: 0% 0% 2% 33%;
+  width: 36%;
+  height: 49px;
+  border: 3px solid #bf1f2f;
+}
+
+.container {
+    height: 950px;
+    overflow: auto;
+    animation: ease;
+    width: 80%;
+}
+
+tr:hover{
+  background: rgba(184, 184, 184, 0.54);
+  color: white;
+}
+@media (max-width:1160px){
+  .container {
+    width: 92%;
+  }
+}
+
+@media (min-width: 415px) and (max-width:768px){
+  td > img {
+    width: 36px;
+}
+}
+@media (min-width:375px) and (max-width:414px){
+  input{
+    width: 78%;
+    margin-bottom: 4%;
+  }
+  td {
+    text-align: center;
+    font-size: 1em;
+    font-weight: 400;
+    padding: 0% 0%;
+}
+.container{
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  height: auto;
+}
+th {
+  font-size: 1em;
+  font-weight: 800;
+  text-align: center;
+  background: #bf1f2f;
+  padding: 0 .1%;
+  border: 5px solid black;
+}
+
+h1,h2{
+  font-size: 5em;
+}
+
+td > img {
+  width: 30px;
+}
+
+input{
+  margin: 0% 0% 2% 9%;
+}
+
+
+}
+
+
+    
+

@@ -1,7 +1,7 @@
 from django.contrib import admin
 
 from .models import Season, Summoner
-from .models import Team, Match, TeamMatch, PlayerMatch, Week, Series, SeriesTeam, TeamMatchBan, MatchCaster, HypeVideo, TeamRole, SeriesPlayer
+from .models import Team, Match, TeamMatch, PlayerMatch, Week, Series, SeriesTeam, TeamMatchBan, MatchCaster, HypeVideo, TeamRole, SeriesPlayer, TeamMedia
 from .models import PlayerMatchTimeline, PlayerMatchKill, PlayerMatchAssist, PlayerMatchWardPlace, PlayerMatchWardKill, PlayerMatchBuildingKill, PlayerMatchBuildingAssist, PlayerMatchEliteMonsterKill
 from .models import Lane, Ward, Building, EliteMonster
 from .models import Player
@@ -128,3 +128,4 @@ admin.site.register(TeamTimeline)
 admin.site.register(SeasonTimeline)
 admin.site.register(TeamPlayerTimeline)
 admin.site.register(TestObject)
+admin.site.register(TeamMedia)

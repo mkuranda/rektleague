@@ -1,0 +1,414 @@
+/*
+Project Name: The Rekt League
+Author: Brian McQueen & Matt Kuranda
+*/
+
+/******************************************
+/* SETUP
+/*******************************************/
+
+/* Box Model Hack */
+* {
+    -moz-box-sizing: border-box; /* Firexfox */
+    -webkit-box-sizing: border-box; /* Safari/Chrome/iOS/Android */
+    box-sizing: border-box; /* IE */
+}
+
+/* Clear fix hack */
+.clearfix:after {
+    content: ".";
+    display: block;
+    clear: both;
+    visibility: hidden;
+    line-height: 0;
+    height: 0;
+}
+
+.clear {
+   clear: both;
+}
+
+.alignright {
+   float: right;
+   padding: 0 0 10px 10px; /* note the padding around a right floated image */
+}
+
+.alignleft {
+   float: left;
+   padding: 0 10px 10px 0; /* note the padding around a left floated image */
+}
+
+/******************************************
+/* BASE STYLES
+/*******************************************/
+
+body {
+    color: #000;
+    font-size: 12px;
+    line-height: 1.4;
+    font-family: Helvetica, Arial, sans-serif;
+}
+
+.rekt-red{
+    color: #bf1f2f;
+}
+
+/******************************************
+/* LAYOUT
+/*******************************************/
+
+/* Center the container */
+#container {
+   width: 960px;
+   margin: auto;
+}
+
+header {
+
+}
+
+footer {
+
+}
+
+/******************************************
+/* ADDITIONAL STYLES
+/*******************************************/
+
+body {
+    font-family: 'Lato', Arial, Helvetica, sans-serif;
+    background: black;
+    
+}
+
+/* TOP NAV */
+
+nav {
+    margin: 0;
+    padding: 0;
+    background-color: black;
+  }
+  
+  #logo {
+    display: block;
+    float: left;
+    line-height: 60px;
+    width: 136px;
+    margin-right: 25px;
+  }
+
+  .rektlogo {
+      width:127px;
+  }
+
+  .signinFloat {
+      float: right;
+  }
+  
+  nav:after {
+    content: "";
+    display: table;
+    clear: both;
+  }
+  
+  nav ul {
+    padding: 0;
+    margin: 0;
+    list-style: none;
+    position: relative;
+    z-index: 4;
+  }
+  
+  nav ul li {
+    margin: 0px;
+    display: inline-block;
+    float: left;
+    background-color: black;
+  }
+
+  a {
+      text-decoration: none;
+      color: white;
+  }
+
+  a.underlined{
+      text-decoration: none;
+      color: white;
+  }
+  
+  nav a {
+    display: block;
+    padding: 0 35px;
+    color: #FFF;
+    font-size: 20px;
+    line-height: 60px;
+    text-decoration: none;
+  }
+  
+  nav ul li ul li:hover { 
+      background: #bf1f2f;
+      text-decoration: none;
+      color: white;
+ }
+  
+  nav a:hover { 
+      background-color: #bf1f2f;
+      text-decoration: none;
+      color: white;
+ }
+  
+  nav ul ul {
+    display: none;
+    position: absolute;
+    top: 60px;
+  }
+  
+  nav ul li:hover > ul { display: inherit; }
+  
+  nav ul ul li {
+    width: 170px;
+    float: none;
+    display: list-item;
+    position: relative;
+  }
+  
+  nav ul ul ul li {
+    position: relative;
+    top: -60px;
+    left: 170px;
+  }
+  
+  li > a:after { content: ""; }
+
+  .toggle, [id^=drop] {
+     display: none;
+    }
+
+li > a:only-child:after { content: ''; }
+
+a:visited{
+    text-decoration: 
+    color: white;
+}
+
+#logo a{
+    padding:0;
+}
+
+#logo a:hover{
+    color:none;
+    background: none;
+}
+
+
+/* BUTTONS */
+
+.button{
+    overflow: hidden; 
+    text-align: center;
+  }
+  
+  .button a {
+    background: #bf1f2f;
+    color: white;
+    display: inline-block;
+    padding: 2% 5%;
+    border-radius: 57px;
+    font-size: 3em;
+    font-weight: 800;
+    margin: 4% 0;
+    text-decoration: none;
+  }
+
+  .button a:hover{
+    text-decoration: none;
+    background-color: #800c17;
+  }
+
+/* MEDIA QUERIES FOR RESPONSIVE NAV */
+
+@media all and (max-width : 1100px) {
+
+    #logo {
+      display: block;
+      padding: 0;
+      width: 100%;
+      text-align: center;
+      float: none;
+    }
+    
+    nav { margin: 0; }
+    
+    .toggle + a,
+     .menu { display: none; }
+    
+    .toggle {
+      display: block;
+      background-color: black;
+      padding: 0 20px;
+      color: #FFF;
+      font-size: 20px;
+      line-height: 60px;
+      text-decoration: none;
+      border: none;
+    }
+    
+    .toggle:hover { background-color: #bf1f2f; }
+    
+    [id^=drop]:checked + ul { display: block; }
+    
+    nav ul li {
+      display: block;
+      width: 100%;
+    }
+    
+    nav ul ul .toggle,
+     nav ul ul a { padding: 0 60px; }
+    
+    nav ul ul ul a { padding: 0 80px; }
+    
+    nav a:hover,
+     nav ul ul ul a { background-color: #bf1f2f; }
+    
+    nav ul li ul li .toggle,
+     nav ul ul a { background-color: black; }
+    
+    nav ul ul {
+      float: none;
+      position: static;
+      color: #ffffff;
+    }
+    
+    nav ul ul li:hover > ul,
+    nav ul li:hover > ul { display: none; }
+    
+    nav ul ul li {
+      display: block;
+      width: 100%;
+    }
+    
+    nav ul ul ul li { position: static;
+    
+    }
+    }
+    
+    @media all and (max-width : 330px) {
+    
+    nav ul li {
+      display: block;
+      width: 94%;
+    }
+    
+    }
+
+    /* BODY CONTENT */
+
+    .homepage-splash{
+        width: 100%;
+        opacity: .7;
+    }
+
+    .main-body {
+        background: black;
+        position: relative;
+        text-align: center;
+        z-index: -1;
+    }
+
+    .splash-button {
+        padding: 22px 42px;
+        border: 3px solid white;
+        font-size: 35px;
+        text-align: center;
+        position: absolute;   
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        text-decoration: none;
+    }
+
+    @media (max-width: 768px){
+
+        .splash-button{
+            padding: 9px 31px;
+            font-size: 19px;
+        }
+    
+        }
+
+    .splash-button:hover{
+        text-decoration: none;
+        color: white;
+        
+    }
+
+    footer {
+        background: black;
+        width:100%;
+        
+
+    }
+
+    .contact-us{
+        text-align: center;
+        width: 50%;
+        float: left;
+        padding: 20px 0px;
+        color: white;
+        background: black;
+        order: 1;
+
+    }
+
+    .social-media{
+        text-align: center;
+        width: 50%;
+        float: left;
+        padding: 20px 0px;
+        color: white;
+        background: black;
+        order: 2;
+
+    }
+
+    @media (max-width: 768px){
+
+    .social-media{
+        width:100%;
+
+    }
+
+    .contact-us{
+        width:100%;
+    }
+    }
+
+    div > p{
+        font-size:18px;
+        font-weight: 600;
+
+    }
+
+    @media (min-width: 768px){
+
+        .social-media{
+            width:50%;
+    
+        }
+    
+        .contact-us{
+            width:50%;
+        }
+    }
+    
+        div > p{
+            font-size:18px;
+            font-weight: 600;
+    
+        }
+
+    .contact:hover{
+        color: #bf1f2f;
+        text-decoration: none;
+
+    }

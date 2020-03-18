@@ -1,533 +1,143 @@
 {% extends "stats/base.html" %}
+{% load staticfiles %}
 
-{% block title %}Rekt League | Team {{ team.name }}{% endblock %}
+{% block title %} Rekt League | Season {{ season.id }} | {{ team.name }} {% endblock %}
+
+{% block head %}
+<link rel="stylesheet" href="{% static 'stats/css/team.css' %}">
+<script type="text/javascript"><!--
+	window.onload = function() {
+		var section = document.getElementById("banner");
+		section.style.background = "url('{{ team.media.banner.url }}') no-repeat top left";
+	}
+</script>
+{% endblock %}
 
 {% block content %}
+            <!-- HERO IMAGE -->
+          
+            <section id="banner">
+		    <h1><span class="rekt-red">TEAM</span> {{ team.name }}</h1>
+            </section>
 
-<script>
-window.onload = function () {
+            <!-- FILTERS -->
+                  <!-- SEASONS FILTER -->
+                  <div id="filter">    
+                  <div class="grey-search-button-container">
 
-var chart = new CanvasJS.Chart("killsByTime", {
-	animationEnabled: true,
-	backgroundColor: "#212121",
-	title: {
-		fontColor: "#727272",
-		fontFamily: 'Noto Sans',
-		fontSize: 24,
-	},
-	axisX: {
-		minimum: 0,
-		maximum: {{ team.get_max_timeline_minute }},
-		labelFontColor: "#727272",
-	},
-	axisY: {
-		labelFontColor: "#727272",
-	},
-	data: [{
-		labelFontColor: "#727272",
-		fillOpacity: "0.3",
-		name: "views",
-		type: "area",
-		dataPoints: [
-			{% for timeline in kill_timelines %}
-			{ x: {{ timeline.minute }}, y: {{ timeline.kills }}, label: "{{ timeline.minute }}:00" },
-                        {% endfor %}
-		]
-	},{
-		labelFontColor: "#727272",
-		fillOpacity: "0.3",
-		name: "views",
-		type: "area",
-		dataPoints: [
-			{% for timeline in kill_timelines %}
-			{ x: {{ timeline.minute }}, y: {{ timeline.enemy_kills }}, label: "{{ timeline.minute }}:00" },
-                        {% endfor %}
-		]
-	},{
-		labelFontColor: "#727272",
-		fillOpacity: "0",
-		name: "views",
-		type: "area",
-		dataPoints: [
-			{% for timeline in overall_timelines %}
-			{ x: {{ timeline.minute }}, y: {{ timeline.kills }}, label: "{{ timeline.minute }}:00" },
-                        {% endfor %}
-		]
-	}
+                    <div class="drop-item drop-list">
+              
+                      <ul id="rome-menu">
+                           <li class="tophelp"><a class="menu-trigger" href="#">SEASONS</a>
+                            <ul id="subrome">
+				    {% for all_season_team in all_season_teams %}
+				    <li><a href="/season/{{ all_season_team.season.id }}/team/{{ all_season_team.id }}/">{{ all_season_team.season }}</a></li>
+				    {% endfor %}
+                        </ul> 
+                      </li>              
+                      </ul>
+                     </div>
+                  
+                   </div>
+                  <!-- TEAMMATES FILTER -->
+                  
+                  <div class="grey-search-button-container">
 
+                    <div class="drop-item drop-list">
+              
+                      <ul id="rome-menu">
+                           <li class="tophelp"><a class="menu-trigger" id="team" href="#">PLAYERS</a>
+                            <ul id="subrome">
+				    {% for player in players %}
+				    <li><a href="/season/{{ team.season.id }}/team/{{ team.id }}/player/{{ player.id }}/">{{ player.name }}</a></li>
+				    {% endfor %}
+                        </ul> 
+                      </li>              
+                      </ul>
+                     </div>
+                  
+                   </div>
+                 
+                 </div>
+            <!-- SLIDER -->
+              <!--<div class="slider">
+                <div><iframe src="https://player.twitch.tv/?autoplay=false&video=v314288172" frameborder="0" allowfullscreen="true" scrolling="no"></iframe></div>
 
-	]
-});
-chart.render();
+                <div><iframe src="https://player.twitch.tv/?autoplay=false&video=v314288169" frameborder="0" allowfullscreen="true" scrolling="no"></iframe></div>
 
-var chart2 = new CanvasJS.Chart("buildingKillsByTime", {
-	animationEnabled: true,
-	backgroundColor: "#212121",
-	title: {
-		fontColor: "#727272",
-		fontFamily: 'Noto Sans',
-		fontSize: 24,
-	},
-	axisX: {
-		minimum: 0,
-		maximum: {{ team.get_max_timeline_minute }},
-		labelFontColor: "#727272",
-	},
-	axisY: {
-		labelFontColor: "#727272",
-	},
-	data: [{
-		labelFontColor: "#727272",
-		fillOpacity: "0.3",
-		name: "views",
-		type: "area",
-		dataPoints: [
-			{% for timeline in kill_timelines %}
-			{ x: {{ timeline.minute }}, y: {{ timeline.building_kills }}, label: "{{ timeline.minute }}:00" },
-                        {% endfor %}
-		]
-	},{
-		labelFontColor: "#727272",
-		fillOpacity: "0.3",
-		name: "views",
-		type: "area",
-		dataPoints: [
-			{% for timeline in kill_timelines %}
-			{ x: {{ timeline.minute }}, y: {{ timeline.enemy_building_kills }}, label: "{{ timeline.minute }}:00" },
-                        {% endfor %}
-		]
-	},{
-		labelFontColor: "#727272",
-		fillOpacity: "0",
-		name: "views",
-		type: "area",
-		dataPoints: [
-			{% for timeline in overall_timelines %}
-			{ x: {{ timeline.minute }}, y: {{ timeline.building_kills }}, label: "{{ timeline.minute }}:00" },
-                        {% endfor %}
-		]
-	}
+                <div><iframe src="https://player.twitch.tv/?autoplay=false&video=v314288172" frameborder="0" allowfullscreen="true" scrolling="no"></iframe></div>
+	      </div>-->
+              
+              <!--STATS-->
 
+              <div class="stats">
+                <div class="statSection">
+                <div class="statTitle">RECORD</div>
+		<p>{{ team.get_record }}</p>
+                
+                </div>
 
-	]
-});
-chart2.render();
+                <div class="statSection">
+                  <div class="statTitle">POPULAR BANS</div>
+                  <div class="popBansSection">
+			  {% for champion in team.get_top_banned %}
+                    <div>
+			    <img class="popBans" src="{{ MEDIA_URL }}{{ champion.champion__icon }}">
+			    <span class="percentBan">{{ champion.ban_rate }}%</span>
+                    </div>
+		          {% endfor %}
+                  </div>
+                  </div>
 
-var chart3 = new CanvasJS.Chart("wardsPlacedByTime", {
-	animationEnabled: true,
-	backgroundColor: "#212121",
-	title: {
-		fontColor: "#727272",
-		fontFamily: 'Noto Sans',
-		fontSize: 24,
-	},
-	axisX: {
-		minimum: 0,
-		maximum: {{ team.get_max_timeline_minute }},
-		labelFontColor: "#727272",
-	},
-	axisY: {
-		labelFontColor: "#727272",
-	},
-	data: [{
-		labelFontColor: "#727272",
-		fillOpacity: "0.3",
-		name: "views",
-		type: "area",
-		dataPoints: [
-			{% for timeline in kill_timelines %}
-			{ x: {{ timeline.minute }}, y: {{ timeline.wards_placed }}, label: "{{ timeline.minute }}:00" },
-                        {% endfor %}
-		]
-	},{
-		labelFontColor: "#727272",
-		fillOpacity: "0.3",
-		name: "views",
-		type: "area",
-		dataPoints: [
-			{% for timeline in kill_timelines %}
-			{ x: {{ timeline.minute }}, y: {{ timeline.enemy_wards_placed }}, label: "{{ timeline.minute }}:00" },
-                        {% endfor %}
-		]
-	},{
-		labelFontColor: "#727272",
-		fillOpacity: "0",
-		name: "views",
-		type: "area",
-		dataPoints: [
-			{% for timeline in overall_timelines %}
-			{ x: {{ timeline.minute }}, y: {{ timeline.wards_placed }}, label: "{{ timeline.minute }}:00" },
-                        {% endfor %}
-		]
-	}
+                <div class="statSection">
+                    <div class="statTitle">FIRST BLOOD %</div>
+		    <p>{{ team.get_first_blood_percent|floatformat:"1" }}%</p>
+                </div>
+
+                <div class="statSection">
+                    <div class="statTitle">FIRST TOWER %</div>
+		    <p>{{ team.get_first_tower_percent|floatformat:"1"}}%</p>
+                </div>
+
+              </div>
+
+              <!-- SCHEDULE TABLE -->
+
+              <table>
+                <h2>SCHEDULE</h2>
+                  <tr>
+                    <th class="blankCell"></th>
+                    <th>WEEK</th>
+                    <th>RECORD</th> 
+                    <th class="blankCell"></th>
+                  </tr>
+		  {% for series in series_list %}
+		  {% if forloop.counter|divisibleby:2 %}
+                  <tr class="whiteRow">
+		  {% else %}
+		  <tr>
+	          {% endif %}
+		  {% if series.get_team_1 == team %}
+		  <td><a href=""><img src="{{ series.get_team_2.icon.url }}" /></a></td>
+		    <td>{{ series.week }}</td>
+		    <td>{{ series.get_team_1_wins }}-{{ series.get_team_2_wins }}</td>
+                    <td><a href="#" class="matchupButton">VIEW MATCH UP</a></td>
+                  </tr>
+		  {% endif %}
+		  {% if series.get_team_2 == team %}
+		  <td><a href=""><img src="{{ series.get_team_1.icon.url }}" /></a></td>
+		    <td>{{ series.week }}</td>
+		    <td>{{ series.get_team_2_wins }}-{{ series.get_team_1_wins }}</td>
+                    <td><a href="#" class="matchupButton">VIEW MATCH UP</a></td>
+                  </tr>
+		  {% endif %}
+		  {% endfor %}
+                 
+                </table>
+                
+              <!-- GOLD TABLE -->
+              
 
 
-	]
-});
-chart3.render();
-
-var chart4 = new CanvasJS.Chart("wardsKilledByTime", {
-	animationEnabled: true,
-	backgroundColor: "#212121",
-	title: {
-		fontColor: "#727272",
-		fontFamily: 'Noto Sans',
-		fontSize: 24,
-	},
-	axisX: {
-		minimum: 0,
-		maximum: {{ team.get_max_timeline_minute }},
-		labelFontColor: "#727272",
-	},
-	axisY: {
-		labelFontColor: "#727272",
-	},
-	data: [{
-		labelFontColor: "#727272",
-		fillOpacity: "0.3",
-		name: "views",
-		type: "area",
-		dataPoints: [
-			{% for timeline in kill_timelines %}
-			{ x: {{ timeline.minute }}, y: {{ timeline.wards_killed }}, label: "{{ timeline.minute }}:00" },
-                        {% endfor %}
-		]
-	},{
-		labelFontColor: "#727272",
-		fillOpacity: "0.3",
-		name: "views",
-		type: "area",
-		dataPoints: [
-			{% for timeline in kill_timelines %}
-			{ x: {{ timeline.minute }}, y: {{ timeline.enemy_wards_killed }}, label: "{{ timeline.minute }}:00" },
-                        {% endfor %}
-		]
-	},{
-		labelFontColor: "#727272",
-		fillOpacity: "0",
-		name: "views",
-		type: "area",
-		dataPoints: [
-			{% for timeline in overall_timelines %}
-			{ x: {{ timeline.minute }}, y: {{ timeline.wards_killed }}, label: "{{ timeline.minute }}:00" },
-                        {% endfor %}
-		]
-	}
-
-
-	]
-});
-chart4.render();
-}
-</script>
-
-
-<a href="/season/{{ team.season.id }}/team/{{ team.id }}/">
-	<img style="width: 100%;" src="{{ team.splash.url }}">
-</a>
-<p> </p>
-
-<table class="centercontent" width="70%">
-	<tr class="centercontent">
-		<td>
-		</td>
-	</tr>
-	<tr class="centercontent">
-		<td>
-		<table class="centercontent" width="100%">
-			<tr>
-			{% for player in players %}
-			<td class="pagebutton" width="{% widthratio 1 players.count 100 %}%">
-					<div style="font-size:20">
-						<a href="player/{{ player.id }}/"><b>{{ player.name }}</b></a>
-					</div>
-				</th>
-			{% endfor %}
-
-			</tr>
-		</table>
-		</td>
-	</tr>
-	<tr>
-		<td>
-			<table width="100%">
-				<tr>
-					<td width="50%" height="100%" style="vertical-align:top">
-						<table width="100%">
-							<tr>
-								<th class="centertableheader">
-									Record
-								</th>
-							</tr>
-							<tr class="centercontent">
-								<th style="padding-bottom:20px; font-size:24;">
-									{{ team.get_record }}
-								</th>
-							</tr>
-							<tr class="centercontent">
-								<td class="centercontent">
-									<table width="100%">
-										<tr>
-											<td>
-												<table width="100%">
-													<tr>
-														<th class="centertableheader">
-															Popular Bans
-														</th>
-													<tr>
-														<table width="100%">
-															<tr>
-									{% for champion in team.get_top_banned %}
-											<td width="60"><img src="{{ MEDIA_URL }}{{ champion.champion__icon }}" height="50" width="50" title="{{ champion.champion__name }}"></td>
-									{% endfor %}
-															</tr><tr>
-									{% for champion in team.get_top_banned %}
-													<td width="60"><b>{{ champion.ban_rate }}%</b></td>
-									{% endfor %}
-															</tr>
-														</table>
-													</td>
-												</tr>
-											</table>
-								</td>
-							</tr>
-							<tr>
-								<td>
-									<table width="100%">
-										<tr>
-												<th class="centertableheader">
-													First Blood %
-												</th>
-										</tr>
-										<tr>
-											<th style="padding-bottom:20px; font-size:25;">
-												{{ team.get_first_blood_percent|floatformat:"1" }}%
-											</th>
-										</tr>
-									</table>
-								</td>
-							</tr>
-			                                <tr class="centercontent"><td width="100%"></td></tr><tr>
-								<td>
-									<table width="100%">
-										<tr>
-												<th class="centertableheader">
-													First Tower %
-												</th>
-										</tr>
-										<tr>
-											<th style="padding-bottom:20px; font-size:25;">
-												{{ team.get_first_tower_percent|floatformat:"1" }}%
-											</th>
-										</tr>
-									</table>
-								</td>
-							</tr>
-						</table>
-					</td>
-					<td width="50%" height="100%" style="vertical-align:top">
-						<table width="100%" class="centercontent">
-							<tr>
-								<th class="centertableheader">
-									<p><b>Schedule</b></p>
-								</th>
-							{% for series in series_list %}
-							<tr class="alternating-back">
-								<td>
-									<div class="linktable">
-										<a style="display: table-row;" href="/stats/season/{{ series.week.season.id }}/series/{{ series.id }}/">
-											<div class="linktablecell" style="width: 10%"></div>
-											<div class="linktablecell" style="width: 10%">
-												<i>Week {{ series.week.number }}</i>
-											</div>
-											{% if series.get_team_1 == team %}
-											<div class="linktablecell" style="width: 10%">
-												{{ series.get_team_1_wins }}-{{ series.get_team_2_wins }}
-											</div>
-											<div class="linktablecell" style="width: 20%">
-												vs <b>{{ series.get_team_2.name }}</b>
-											</div>
-											<div class="linktablecell" style="width: 10%">
-												<img src="{{ series.get_team_2.icon.url }}" height="40px" width="40px">
-											</div>
-											{% elif series.get_team_2 == team %}
-											<div class="linktablecell" style="width: 10%">
-												{{ series.get_team_2_wins }}-{{ series.get_team_1_wins }}
-											</div>
-											<div class="linktablecell" style="width: 20%">
-												vs <b>{{ series.get_team_1.name }}</b>
-											</div>
-											<div class="linktablecell" style="width: 10%">
-												<img src="{{ series.get_team_1.icon.url }}" height="40px" width="40px">
-											</div>
-											{% endif %}
-											<div class="linktablecell" style="width: 10%"></div>
-											</div>
-										</a>
-										{% endfor %}
-									</table>
-								</td>
-							</tr>
-						</table>
-					</td>
-				</tr>
-				<tr class="centercontent">
-					<td></td>
-				</tr>
-				<tr>
-					<th class="centertableheader">
-						Kills
-					</th>
-				</tr>
-				<tr class="centercontent">
-					<td>
-						<table class="centercontent" width="100%">
-							<tr>
-								<td>
-									<table width="10%" class="centercontent" style="margin-bottom:20px;">
-										<tr>
-											<td style="font-size: 14; color: #4f81bc; width: 20%;">
-												<b>Team {{ team.name }}</b>
-											</td>
-										</tr>
-										<tr>
-											<td style="font-size: 14; color: #c0504e; width: 10%">
-												<b>Opposing Team</b>
-											</td>
-										</tr>
-										<tr>
-											<td style="font-size: 14; color: #9bbb58; width: 20%">
-												<b>Season Average</b>
-											</td>
-										</tr>
-									</table>
-								</td>
-								<td width="90%">
-						<div id="killsByTime" style="height: 370px; width: 100%; margin: auto; margin-bottom:80px;"></div>
-					</td>
-
-							</tr>
-						</table>
-					</td>
-
-				</tr>
-
-				<tr>
-					<th class="centertableheader">
-						Building Kills
-					</th>
-				</tr>
-				<tr class="centercontent">
-					<td>
-						<table class="centercontent" width="100%">
-							<tr>
-								<td>
-									<table width="10%" class="centercontent" style="margin-bottom:20px;">
-										<tr>
-											<td style="font-size: 14; color: #4f81bc; width: 20%;">
-												<b>Team {{ team.name }}</b>
-											</td>
-										</tr>
-										<tr>
-											<td style="font-size: 14; color: #c0504e; width: 10%">
-												<b>Opposing Team</b>
-											</td>
-										</tr>
-										<tr>
-											<td style="font-size: 14; color: #9bbb58; width: 20%">
-												<b>Season Average</b>
-											</td>
-										</tr>
-									</table>
-								</td>
-								<td width="90%">
-						<div id="buildingKillsByTime" style="height: 370px; width: 100%; margin: auto; margin-bottom:80px;"></div>
-					</td>
-
-							</tr>
-						</table>
-					</td>
-
-				</tr>
-				<tr>
-					<th class="centertableheader">
-						Wards Placed
-					</th>
-				</tr>
-				<tr class="centercontent">
-					<td>
-						<table class="centercontent" width="100%">
-							<tr>
-								<td>
-									<table width="10%" class="centercontent" style="margin-bottom:20px;">
-										<tr>
-											<td style="font-size: 14; color: #4f81bc; width: 20%;">
-												<b>Team {{ team.name }}</b>
-											</td>
-										</tr>
-										<tr>
-											<td style="font-size: 14; color: #c0504e; width: 10%">
-												<b>Opposing Team</b>
-											</td>
-										</tr>
-										<tr>
-											<td style="font-size: 14; color: #9bbb58; width: 20%">
-												<b>Season Average</b>
-											</td>
-										</tr>
-									</table>
-								</td>
-								<td width="90%">
-						<div id="wardsPlacedByTime" style="height: 370px; width: 100%; margin: auto; margin-bottom:80px;"></div>
-					</td>
-							</tr>
-						</table>
-					</td>
-
-				</tr>
-
-				<tr>
-					<th class="centertableheader">
-						Wards Killed
-					</th>
-				</tr>
-				<tr class="centercontent">
-					<td>
-						<table class="centercontent" width="100%">
-							<tr>
-								<td>
-									<table width="10%" class="centercontent" style="margin-bottom:20px;">
-										<tr>
-											<td style="font-size: 14; color: #4f81bc; width: 20%;">
-												<b>Team {{ team.name }}</b>
-											</td>
-										</tr>
-										<tr>
-											<td style="font-size: 14; color: #c0504e; width: 10%">
-												<b>Opposing Team</b>
-											</td>
-										</tr>
-										<tr>
-											<td style="font-size: 14; color: #9bbb58; width: 20%">
-												<b>Season Average</b>
-											</td>
-										</tr>
-									</table>
-								</td>
-								<td width="90%">
-									<div id="wardsKilledByTime" style="height: 370px; width: 100%; margin: auto; margin-bottom:80px;"></div>
-								</td>
-							</tr>
-						</table>
-					</td>
-
-				</tr>
-			</table>
-
-		</td>
-	</tr>
-
-</table>
-
-<script type="text/javascript" src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>
+            </body>
 {% endblock %}

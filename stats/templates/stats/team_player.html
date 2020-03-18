@@ -1,330 +1,171 @@
 {% extends "stats/base.html" %}
+{% load staticfiles %}
 
 {% block title %}Rekt League | Team {{ team.name }} | {{ team_player_role.player.name }}{% endblock %}
 
+{% block head %}
+<link rel="stylesheet" href="{% static 'stats/css/player.css' %}">
+<script type="text/javascript"><!--
+	window.onload = function() {
+		var section = document.getElementById("banner");
+		section.style.background = "url('{{ team.media.banner.url }}') no-repeat top left";
+	}
+</script>
+{% endblock %}
+
 {% block content %}
 
-<script>
-window.onload = function () {
+            <!-- HERO IMAGE -->
+          
+            <section id="banner">
+		    {% if player.photo %}
+		    <img class="playerPhoto" src="{{ player.photo.url }}">
+		    {% else %}
+		    <img class="playerPhoto" src="/static/stats/player-photos/missing.png">
+		    {% endif %}
+		    <h1>{{ player.name }}</h1>
+              <div class="laneIcons">
+	      {% if team_player_role.role.isFill %}
+	      {% for team_player in team_players %}
+	      {% if team_player.get_num_matches > 0 and not team_player.role.isFill %}
+	      <img src="{{ team_player.role.icon.url }}">
+	      {% endif%}
+	      {% endfor %}
+	      {% else %}
+	      <img src="{{ team_player_role.role.icon.url }}">
+	      {% endif %}
+              </div>
+            </section>
 
-var chart = new CanvasJS.Chart("averageGold", {
-	animationEnabled: true,
-	backgroundColor: "#212121",
-	title: {
-		fontColor: "#727272",
-		fontFamily: 'Noto Sans',
-		fontSize: 24,
-	},
-	axisX: {
-		minimum: 0,
-		maximum: {{ max_duration }},
-		labelFontColor: "#727272",
-	},
-	axisY: {
-		labelFontColor: "#727272",
-	},
-	data: [{
-		labelFontColor: "#727272",
-		fillOpacity: "0.3",
-		name: "views",
-		type: "area",
-		dataPoints: [
-			{% for timeline in timelines %}
-			{ x: {{ timeline.minute }}, y: {{ timeline.avgGold|floatformat:"0" }}, label: "{{ timeline.minute }}:00" },
-                        {% endfor %}
-		]
-	},{
-		labelFontColor: "#727272",
-		fillOpacity: "0.3",
-		name: "views",
-		type: "area",
-		dataPoints: [
-			{% for timeline in timelines %}
-			{ x: {{ timeline.minute }}, y: {{ timeline.avgOppGold|floatformat:"0" }}, label: "{{ timeline.minute }}:00" },
-                        {% endfor %}
-		]
-	}
-	
-	]
-});
-chart.render();
+            <!-- FILTERS -->
+                  <!-- SEASONS FILTER -->
+                  <div id="filter">    
+                  <div class="grey-search-button-container">
 
-var chart2 = new CanvasJS.Chart("goldDiffVsLaneOpponent", {
-	animationEnabled: true,
-	backgroundColor: "#212121",
-	title: {
-		fontColor: "#727272",
-		fontFamily: 'Noto Sans',
-		fontSize: 24,
-	},
-	axisX: {
-		minimum: 0,
-		maximum: {{ max_duration }},
-		labelFontColor: "#727272",
-	},
-	axisY: {
-		labelFontColor: "#727272",
-	},
-	data: [{
-		labelFontColor: "#727272",
-		fillOpacity: "0.3",
-		name: "views",
-		type: "area",
-		dataPoints: [
-			{% for timeline in timelines %}
-			{ x: {{ timeline.minute }}, y: {{ timeline.goldDiff|floatformat:"0" }}, label: "{{ timeline.minute }}:00" },
-                        {% endfor %}
-		]
-	}
-	]
-});
-chart2.render();
+                    <div class="drop-item drop-list">
+              
+                      <ul id="rome-menu">
+                           <li class="tophelp"><a class="menu-trigger" href="#">SEASONS</a>
+                            <ul id="subrome">
+				    {% for team_player in team_set %}
+				    <li><a href="/season/{{ team_player.team.season.id }}/team/{{ team_player.team.id }}/player/{{ player.id }}/">{{ team_player.team }}</a></li>
+				    {% endfor %}
+                        </ul> 
+                      </li>              
+                      </ul>
+                     </div>
+                  
+                   </div>
+                  <!-- TEAMMATES FILTER -->
+                  
+                  <div class="grey-search-button-container">
 
-}
-</script>
-<a href="/season/{{ team.season.id }}/team/{{ team.id }}/">
-	<img style="width: 100%;" src="{{ team.splash.url }}">
-</a>
-<p> </p>
+                    <div class="drop-item drop-list">
+              
+                      <ul id="rome-menu">
+                           <li class="tophelp"><a class="menu-trigger" id="team" href="#">TEAMMATES</a>
+                            <ul id="subrome">
+				    {% for teammate in teammates %}
+				    <li><a href="/season/{{ season.id }}/team/{{ teammate.team.id }}/player/{{ teammate.player.id }}/">{{ teammate.player.name }}</a></li>
+				    {% endfor %}
+                        </ul> 
+                      </li>              
+                      </ul>
+                     </div>
+                  
+                   </div>
+                  <!-- ROLES FILTER -->
+                <div class="grey-search-button-container">
 
-<table class="centercontent" width="70%">
-	<tr class="centercontent">
-		<td>
-		</td>
-	</tr>
-	<tr class="centercontent">
-		<td>
-		<table class="centercontent" width="100%">
-			<tr>
-			{% for player in players %}
-			<td class="pagebutton" width="{% widthratio 1 players.count 100 %}%">
-					<div style="font-size:20">
-						<a href="/season/{{ season.id }}/team/{{ team.id }}/player/{{ player.id }}/"><b>{{ player.name }}</b></a>
-					</div>
-				</th>
-			{% endfor %}
+                  <div class="drop-item drop-list">
+            
+                    <ul id="rome-menu">
+                         <li class="tophelp"><a class="menu-trigger" href="#">ROLES</a>
+                          <ul id="subrome">
+				{% for team_player in team_players %}
+				{% if team_player.get_num_matches > 0 %}
+				<li><a href="/season/{{ season.id }}/team/{{ team_player.team.id }}/player/{{ team_player.player.id }}/role/{{ team_player.role.id }}/">{{ team_player.role }}</a></li>
+				{% endif %}
+				{% endfor %}
+                      </ul> 
+                    </li>              
+                    </ul>
+                   </div>
+                
+                 </div>
+                 </div>
+            <!-- SLIDER -->
+              <!--<div class="slider">
+                <div><iframe src="https://player.twitch.tv/?autoplay=false&video=v314288172" frameborder="0" allowfullscreen="true" scrolling="no"></iframe></div>
 
-			</tr>
-		</table>
-		</td>
-	</tr>
-	<tr>
-		<td>
-			<table width="100%">
-				<tr>
-					<td width="50%" style="vertical-align:top;">
-						<table width="100%">
-							<tr class="centercontent">
-								<td>
-									<table width="100%">
-										<tr>
-											<th style="padding-bottom:30px; font-size:48; text-align: center;">
-												{{ team_player_role.player.name }}
-											</th>
-										</tr>
-										<tr>
-											<td>
-											<table class="centercontent">
-												<tr>
-													{% for team_player in team_players %}
-													{% if team_player.get_player_matches|length > 0 or team_player.role.isFill %}
-													<td>
-														<a href="/season/{{ season.id }}/team/{{ team.id }}/player/{{ team_player_role.player.id }}/role/{{ team_player.role.id }}/">
-															{% if team_player.role == team_player_role.role %}
-															<img src="{{ team_player.role.icon.url }}" title="All" height="70px" width="70px" style="padding:5px; border: 1px solid #6d6d6d;">
-															{% else %}
-															<img src="{{ team_player.role.icon.url }}" title="{{ team_player.role.name }}" height="70px" width="70px" style="padding:5px;">
-															{% endif %}
-														</a>
-													</td>
-													{% endif %}
-													{% endfor %}
-												</tr>
-											</table>
-											</td>
-										</tr>
-									</table>
-								</td>
-							</tr>
-							<tr>
-								<th class="centertableheader">
-									<p><b>Accounts</b></p>
-								</th>
-							</tr>
-									{% for summoner in team_player_role.player.summoner_set.all %}
-							<tr>
-								<th style="font-size:20;">
-									<a href="https://na.op.gg/summoner/userName={{ summoner.link }}">{{ summoner.name }}</a>
-								</th>
-							</tr>
-									{% endfor %}
-							<tr class="centercontent">
-								<td style="padding-bottom:30px;"></td>
-							</tr>
-							<tr>
-								<th class="centertableheader">
-									<p><b>Total KDA</b></p>
-								</th>
-							</tr>
-							<tr class="centercontent">
-								<th style="padding-bottom:20px; font-size:25;">
-									{% if team_player_role.get_kda == 1000000 %}
-										Perfect
-									{% else %}
-										{{ team_player_role.get_kda|floatformat:"1" }}
-									{% endif %}
-								</th>
-							</tr>
-							<tr>
-								<th class="centertableheader">
-									Average Score
-								</th>
-							</tr>
-							<tr class="centercontent">
-								<th style="padding-bottom:20px; font-size:25;">
-									{{ team_player_role.get_avg_kills|floatformat:"1" }}/{{ team_player_role.get_avg_deaths|floatformat:"1" }}/{{ team_player_role.get_avg_assists|floatformat:"1" }}
-								</th>
-							</tr>
-							<tr>
-								<th class="centertableheader">
-									Kill Participation
-								</th>
-							</tr>
-							<tr class="centercontent">
-								<th style="padding-bottom:20px; font-size:25;">
-									{{ team_player_role.get_kill_participation|floatformat:"1" }}%
-								</th>
-							</tr>
-							<tr>
-								<th class="centertableheader">
-									Percent of Team Damage
-								</th>
-							</tr>
-							<tr class="centercontent">
-								<th style="padding-bottom:20px; font-size:25;">
-									{{ team_player_role.get_percent_team_damage|floatformat:"1" }}%
-								</th>
-							</tr>
-						</table>
-					</td>
-					<td width="50%" style="vertical-align:top;">
-						<table class="centercontent">
-							<tr class="alternating-back">
-								<th class="centertableheader">
-									<p><b>Most Played Champions</b></p>
-								</th>
-							</tr>
-							<tr class="centercontent">
-								<table class="centercontent">
-									<tr>
-										<th width="16%"> </th>
-										<th width="16%">Games Played</th>
-										<th width="16%">KDA</th>
-										<th width="16%">Winrate</th>
-										{% if season.id > 2 %}
-										<th width="16%">CS/Min</th>
-										{% else %}
-										<th width="16%">CS/Game</th>
-										{% endif %}
-									</tr>
-									{% for champion in team_player_role.get_played_champion_list %}
-									<tr class="alternating-back">
-										<td><img src="{{ MEDIA_URL }}{{ champion.playermatch__champion__icon }}" height="50" width="50" title="{{ champion.playermatch__champion__name }}"></td>
-										<td>{{ champion.champion_count }}</td>
-										<td>{{ champion.avg_kills|floatformat:"1" }}/{{ champion.avg_deaths|floatformat:"1" }}/{{ champion.avg_assists|floatformat:"1" }}</td>
-										<td>{{ champion.winrate|floatformat:"1" }}%</td>
-										{% if season.id > 2 %}
-										<td>{{ champion.cs_per_min|floatformat:"2" }}</td>
-										{% else %}
-										<td>{{ champion.average_cs|floatformat:"2" }}</td>
-										{% endif %}
-							
-									</tr>
-									{% endfor %}
-								</table>
-							</tr>
-						</table>
-					</td>
-				</tr>
-			</table>
-		</td>
-        </tr>
-	<tr>		
-		<table class="centercontent" width="70%" style="margin-top: 80px;">
-			<tr class="centercontent">
-				<td></td>
-			</tr>
-			<tr>
-				<th class="centertableheader">
-					<p><b>Gold</b></p>
-				</th>
-			</tr>
+                <div><iframe src="https://player.twitch.tv/?autoplay=false&video=v314288169" frameborder="0" allowfullscreen="true" scrolling="no"></iframe></div>
 
-			<tr class="centercontent">
-					<td>
-						<table class="centercontent" width="100%">
-							<tr>
-								<td>
-									<table width="10%" class="centercontent" style="margin-bottom:20px;">
-										<tr>
-											<td style="font-size: 14; color: #4f81bc; width: 20%;">
-												<b>{{ team_player_role.player.name }}</b>
-											</td>
-										</tr>
-										<tr>
-											<td style="font-size: 14; color: #c0504e; width: 10%">
-												<b>Lane Opponent</b>
-											</td>
-										</tr>
-									</table>
-								</td>
-								<td width="90%">
-									<div id="averageGold" style="height: 370px; width: 100%; margin: auto; margin-bottom:80px;"></div>
-								</td>
-							</tr>
-						</table>
-					</td>
+                <div><iframe src="https://player.twitch.tv/?autoplay=false&video=v314288172" frameborder="0" allowfullscreen="true" scrolling="no"></iframe></div>
+	      </div>-->
+              
+              <!--STATS-->
 
-				</tr>
+              <div class="stats">
+                <div class="statSection">
+                <div class="statTitle">ACCOUNTS</div>
+		{% for summoner in player.summoner_set.all %}
+                <p><a href="https://na.op.gg/summoner/userName={{ summoner.link }}">{{ summoner.name }}</a></p>
+		{% endfor %}
+                </div>
 
-		</table>
+                <div class="statSection">
+                    <div class="statTitle">TOTAL KDA</div>
+		    <p>{{ team_player_role.get_kda|floatformat:"1" }}</p>
+                </div>
 
-		<table class="centercontent" width="70%">
-			<tr>
-				<th class="centertableheader">
-					<p><b>Gold Difference</b></p>
-				</th>
-			</tr>
-			<tr class="centercontent">
-				<td>
-					<table class="centercontent" width="100%">
-						<tr>
-							<td>
-								<table width="10%" class="centercontent" style="margin-bottom:20px;">
-									<tr>
-										<td style="font-size: 14; color: #4f81bc; width: 20%;">
-											<b>{{ team_player_role.player.name }}</b>
-										</td>
-									</tr>
-								</table>
-							</td>
-							<td width="90%">
-								<div id="goldDiffVsLaneOpponent" style="height: 370px; width: 100%; margin: auto; margin-bottom:80px;"></div>
-							</td>
-						</tr>
-					</table>
-				</td>
+                <div class="statSection">
+                    <div class="statTitle">AVG. SCORE</div>
+		    <p>{{ team_player_role.get_avg_kills|floatformat:"1" }}/{{ team_player_role.get_avg_deaths|floatformat:"1" }}/{{ team_player_role.get_avg_assists|floatformat:"1" }}</p>
+                </div>
 
-			</tr>
+                <div class="statSection">
+                    <div class="statTitle">KILL PARTICIPATION</div>
+		    <p>{{ team_player_role.get_kill_participation|floatformat:"1" }}%</p>
+                </div>
 
-			<tr>
-			</tr>
-		</table>
-	</tr>
+                <div class="statSection">
+                    <div class="statTitle">% OF TEAM DAMAGE</div>
+		    <p>{{ team_player_role.get_percent_team_damage|floatformat:"1" }}%</p>
+                </div>
+              </div>
 
-</table>
+              <!-- CHAMPS PLAYED TABLE -->
 
-
-<script type="text/javascript" src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>
-	
+              <table>
+                  <tr>
+                    <th class="blankCell"></th>
+                    <th>GAMES PLAYED</th>
+                    <th>KDA</th> 
+                    <th>WINRATE</th>
+		    {% if season.id > 2 %}
+                    <th>CS/MIN</th>
+		    {% else %}
+                    <th>CS/GAME</th>
+		    {% endif %}
+                  </tr>
+		  {% for champion in team_player_role.get_played_champion_list %}
+		  {% if forloop.counter|divisibleby:2 %}
+                  <tr class="whiteRow">
+		  {% else %}
+		  <tr>
+		  {% endif %}
+			  <td><img src="{{ MEDIA_URL }}{{ champion.playermatch__champion__icon }}"/></td>
+			  <td>{{ champion.champion_count }}</td>
+			  <td>{{ champion.avg_kills|floatformat:"1" }}/{{ champion.avg_deaths|floatformat:"1" }}/{{ champion.avg_assists|floatformat:"1" }}</td>
+			  <td>{{ champion.winrate|floatformat:"1" }}%</td>
+			  {% if season.id > 2 %}
+			  <td>{{ champion.cs_per_min|floatformat:"2" }}</td>
+			  {% else %}
+			  <td>{{ champion.average_cs|floatformat:"2" }}</td>
+			  {% endif %}
+                    <td></td>
+                  </tr>
+		  {% endfor %}
+                </table>
+            </body>
 {% endblock %}

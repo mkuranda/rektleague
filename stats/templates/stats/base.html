@@ -1,590 +1,108 @@
 {% load static %}
 
 
+{% block title %}{% endblock %}
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+    	<meta charset="utf-8">
+    	<meta name="description" content="Welcome to The Rekt League">
+    	<meta name="keywords" content="league of legends, community, tournament">
 
-<head>
-<!-- Global site tag (gtag.js) - Google Analytics -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=UA-126188250-1"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
+		<title>The Rekt League</title>
+         <!-- Global site tag (gtag.js) - Google Analytics -->
+        <script async src="https://www.googletagmanager.com/gtag/js?id=UA-126188250-1"></script>
+        <script>
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
 
-  gtag('config', 'UA-126188250-1');
-</script>
+            gtag('config', 'UA-126188250-1');
+        </script>
 <!--end analytics-->
-<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
-<link href="https://fonts.googleapis.com/css?family=Bowlby+One|Open+Sans" rel="stylesheet">
-  <link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.css"/>
-  <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.9.0/slick-theme.css"/>
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
-  <script type="text/javascript" src="https://bowercdn.net/c/jquery.tablesorter-2.1.4/js/jquery.tablesorter.js"></script>
-<meta name="viewport" content="width=device-width, initial-scale=1">
+        <!-- external CSS link -->      
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+        <link href="https://fonts.googleapis.com/css?family=Bowlby+One|Open+Sans" rel="stylesheet">
+        <link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.css"/>
+        <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.9.0/slick-theme.css"/>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+        <script type="text/javascript" src="https://bowercdn.net/c/jquery.tablesorter-2.1.4/js/jquery.tablesorter.js"></script>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" href="{% static 'stats/css/normalize.css' %}">
+	<link rel="stylesheet" href="{% static 'stats/css/global.css' %}">
+	<link rel="icon" href="/media/stats/favicon.png">
+        <link href="https://fonts.googleapis.com/css?family=Lato:400,700,900&display=swap" rel="stylesheet">
+
+{% block head %}{% endblock %}
+	</head>
+	<body>
+			<header>
+                    <nav>
+                            <div id="logo"><img class="rektlogo" src="/media/stats/medium.png"></div>
+                            <label for="drop" class="toggle">Menu</label>
+                            <input type="checkbox" id="drop" />
+                            <ul class="menu">
+                              <li> 
+                                <!-- First Tier Drop Down -->
+                                <label for="drop-1" class="toggle">SEASONS</label>
+                                <a href="#">SEASONS</span></a>
+                                <input type="checkbox" id="drop-1"/>
+                                <ul>
+				{% for season in seasons %}
+				<li><a href="standings.html">SEASON {{ season.id }}</a></li>
+				{% endfor %}
+                                </ul>
+                              </li>
+                              <!-- How to do a 2 tier drop down
+                                <li> 
+                                
+                                 First Tier Drop Down 
+                                <label for="drop-2" class="toggle">Portfolio +</label>
+                                <a href="#">Portfolio</a>
+                                <input type="checkbox" id="drop-2"/>
+                                <ul>
+                                  <li><a href="#">Portfolio 1</a></li>
+                                  <li><a href="#">Portfolio 2</a></li>
+                                  <li> 
+                                    
+                                     Second Tier Drop Down 
+                                    <label for="drop-3" class="toggle">Works +</label>
+                                    <a href="#">Works</a>
+                                    <input type="checkbox" id="drop-3"/>
+                                    <ul>
+                                      <li><a href="#">HTML/CSS</a></li>
+                                      <li><a href="#">jQuery</a></li>
+                                      <li><a href="#">Python</a></li>
+                                    </ul>
+                                  </li>
+                                </ul>
+                              </li> -->
+                              <li><a href="/schedule/">SCHEDULE</a></li>
+                              <li><a href="#">ABOUT</a></li>
+                              <li><a href="#">RULES</a></li>
+                              <li><a href="#">SIGN UP</a></li>
+                              <li class="signinFloat"><a href="#">SIGN IN</a></li>
+                            </ul>
+                          </nav>
+            </header>
 
-    <style>
-#defaultCountdown { width: 240px; height: 45px; }
 
-input {
-	color: black;
-}
-
-.bar-below
-{
-	border-bottom: 1px solid #6d6d6d;
-	margin: auto;
-	width: 100%;
-}
-
-.navbar1 {
-    
-    background-color: #000;
-    position: fixed;
-    top: 0;
-    width: 100%;
-    height: 55px;
-    z-index: 3;
-}
-
-.overlay {
-    height: 0%;
-    width: 100%;
-    position: fixed;
-    z-index: 5;
-    top: 0;
-    left: 0;
-    background-color: rgba(121, 121, 121, 0.94);
-    overflow-y: hidden;
-    transition: 0.8s;
-}
-
-
-
-.overlay-content {
-    position: relative;
-    top: 25%;
-    width: 100%;
-    max-width: 995px;
-    text-align: center;
-    margin-top: 30px;
-    font-family: verdana;
-}
-
-.overlay a {
-    padding: 8px;
-    text-decoration: none;
-    font-size: 36px;
-    color: #818181;
-    display: block;
-    transition: 0.3s;
-}
-
-.overlay a:hover, .overlay a:focus {
-    color: #f1f1f1;
-}
-
-.overlay .closebtn {
-    position: absolute;
-    top: 20px;
-    right: 45px;
-    font-size: 60px;
-}
-
-@media screen and (max-height: 450px) {
-  .overlay {overflow-y: auto;}
-  .overlay a {font-size: 20px}
-  .overlay .closebtn {
-    font-size: 40px;
-    top: 15px;
-    right: 35px;
-
-  }
-
-
-  /* Start of my own stuff */
-
-
-.logo
-
-{
-width: 288px;
-position: fixed;
-overflow: hidden;
-
-}
-
-
-       
-    }
-        .pagebar
-        {
-
-            width:100%;
-            background-color: black;
-            overflow: hidden;
-        }
-        .pagebuttonstyle
-
-        {
-    font-family: verdana;
-    font-weight: 600;
-    text-align: center;
-    color: white;
-
-
-        } 
-
-	.linktable {
-		display: table;
-		width: 100%;
-	}
-	
-	.linktablecell {
-		display: table-cell;
-		text-align: center;
-		vertical-align: middle;
-	}
-	.linktablecell-alternating {
-		display: table-cell;
-		text-align: center;
-		vertical-align: middle;
-	}
-
-
-
-    h1
-
-    {
-font-family: verdana;
-
-
-    }
-
-    table
-    {
-	border-collapse: collapse;
-	padding: 10px;
-    }
-    	table.navbar
-        {
-		margin:0px;
-		padding-bottom:0px;
-	        width:100%;
-	        background-color: black;
-	}
-
-    table.centercontent
-    {
-	margin-left: auto;
-	margin-right: auto;
-	padding-left: 0px;
-	padding-right: 0px;
-	border-left: 0px;
-	border-right: 0px;
-    }
-    td.centercontent
-    {
-	border-bottom: 1px solid #6d6d6d; 
-	font-family: 'Open Sans', sans-serif;
-    }
-    tr.centercontent
-    {
-	padding: 0px;
-	text-align: center;
-	border-bottom: 1px solid #6d6d6d; 
-    }
-    td.navlink
-    {
-	font-color: white;
-	padding: 12px;
-	
-    }
-
-    td.pagebutton
-    {
-	font-color: white;
-	font-size: 20;
-	padding-top: 5px;
-	padding-bottom: 5px;
-	font-family: 'Noto Sans', sans-serif;
-	
-    }
-    th
-    {
-        text-align: center;
-        padding: 8px;
-	font-family: 'Noto Sans', sans-serif;
-    }
-    td
-    {
-        text-align: center;
-        padding: 8px;
-	font-family: 'Open Sans', sans-serif;
-    }
-    th.centertableheader
-    {
-	padding-bottom:20px;
-	padding-top:15px;
-	font-size:24;
-        color:#727272;
-	font-family: 'Noto Sans', sans-serif;
-    }
-    th.sortableheader
-    {
-	border:1px solid #727272;
-	font-family: 'Noto Sans', sans-serif;
-    }
-    th.sortableheader:hover
-    {
-	border:1px solid #727272;
-	font-family: 'Noto Sans', sans-serif;
-	color:red;
-    }
-
-    th.headerSortDown
-    {
-	border:1px solid #727272;
-	background-color: #303030;
-	font-family: 'Noto Sans', sans-serif;
-    }
-    th.headerSortUp
-    {
-	border:1px solid #727272;
-	background-color: #303030;
-	font-family: 'Noto Sans', sans-serif;
-    }
-
-    .centertableheader a:link
-    {
-	    color: #727272;
-    }
-    .centertableheader a:visited
-    {
-	    color: #727272;
-    }
-    .centertableheader a:hover
-    {
-	color: red;
-	opacity: .67;
-    }
-
-
-    tr.alternating-back:nth-child(even) {
-	background-color: #303030;
-    }
-
-  .content
-  {
-	margin:0px 0px 0px 0px;
-	padding:0px 0px 0px 0px;
-    background-color: #212121;
-    position: center;
-	 font-family: 'Noto Sans', sans-serif;
-
-
-  }
-
-  body
-  {
-	margin:0px;
-	color: white;
-    	background-color: #212121;
-	
-  }
-
-a:link {
-    text-decoration: none;
-	    color: white;
-}
-
-a:visited {
-    text-decoration: none;
-	    color: white;
-}
-
-a:hover {
-    text-decoration: none;
-    color: red;
-    opacity: .67;
-}
-
-a:active {
-    text-decoration: none;
-}
-
-.space 
-
-{
-
-    margin-bottom: 50px;
-}
-.push
-{
-	height: 133px;
-}
-.bottombar
-{
-	background-color: black;
-	bottom: 0;
-	width: 100%;
-	height: 133px;
-	margin-top:60px;
-}
-.col-centered {
-    float: none;
-    margin: 0 auto;
-}
-
-.carousel-control { 
-    width: 8%;
-    width: 0px;
-}
-.carousel-control.left,
-.carousel-control.right { 
-    margin-right: 10px;
-    margin-left: 2px; 
-    background-image: none;
-    opacity: 1;
-}
-.carousel-control > a > span {
-    color: white;
-	  font-size: 29px !important;
-}
-
-.carousel-col { 
-    position: relative; 
-    min-height: 1px; 
-    padding: 5px; 
-    float: left;
- }
-
- .active > div { display:none; }
- .active > div:first-child { display:block; }
-
-/*xs*/
-@media (max-width: 767px) {
-  .carousel-inner .active.left { left: -50%; }
-  .carousel-inner .active.right { left: 50%; }
-	.carousel-inner .next        { left:  50%; }
-	.carousel-inner .prev		     { left: -50%; }
-  .carousel-col                { width: 50%; }
-	.active > div:first-child + div { display:block; }
-}
-
-/*sm*/
-@media (min-width: 768px) and (max-width: 991px) {
-  .carousel-inner .active.left { left: -50%; }
-  .carousel-inner .active.right { left: 50%; }
-	.carousel-inner .next        { left:  50%; }
-	.carousel-inner .prev		     { left: -50%; }
-  .carousel-col                { width: 50%; }
-	.active > div:first-child + div { display:block; }
-}
-
-/*md*/
-@media (min-width: 992px) and (max-width: 1199px) {
-  .carousel-inner .active.left { left: -33%; }
-  .carousel-inner .active.right { left: 33%; }
-	.carousel-inner .next        { left:  33%; }
-	.carousel-inner .prev		     { left: -33%; }
-  .carousel-col                { width: 33%; }
-	.active > div:first-child + div { display:block; }
-  .active > div:first-child + div + div { display:block; }
-}
-
-/*lg*/
-@media (min-width: 1200px) {
-  .carousel-inner .active.left { left: -25%; }
-  .carousel-inner .active.right{ left:  25%; }
-	.carousel-inner .next        { left:  25%; }
-	.carousel-inner .prev		     { left: -25%; }
-  .carousel-col                { width: 25%; }
-	.active > div:first-child + div { display:block; }
-  .active > div:first-child + div + div { display:block; }
-	.active > div:first-child + div + div + div { display:block; }
-}
-
-.block {
-	width: 50px;
-	height: 50px;
-}
-
-.red {background: red;}
-
-.blue {background: blue;}
-
-.green {background: green;}
-
-.yellow {background: yellow;}
-
-
-
-.dropbtn {
-    background-color: black;
-    color: white;
-    padding: 16px;
-    font-size: 16px;
-    border: none;
-    width:210px;
-    font-weight: 800;
-}
-
-.dropdown {
-    position: relative;
-    display: inline-block;
-    float:right;
-}
-
-.dropdown-content {
-    display: none;
-    position: absolute;
-    background-color: #f1f1f1;
-    min-width: 100%;
-    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
-    z-index: 1;
-}
-
-.dropdown-content a {
-    color: black;
-    padding: 12px 16px;
-    text-decoration: none;
-    display: block;
-}
-
-.dropdown-content a:hover {background-color: #bf1f2f;}
-
-.dropdown:hover .dropdown-content {display: block;}
-
-.dropdown:hover .dropbtn {background-color: #bf1f2f;}
-
-.topbar-content{
-    position: relative;
-    display: inline-block;
-    float:right;
-    margin:15px;
-}
-
-.slick-slide:focus {
-	outline: none;
-}
-
-.thin-line {
-	width: 100%;
-	border-bottom: 1px solid #6d6d6d; 
-}
-
-
-    </style>
-
-    <title>{% block title %}Rekt League{% endblock %}</title>
-
-
-
-</head>
-
-
-
-
-
-
-
-
-
-
-
-
-</div>
-
-<body>
-
-
-<div class="navbar1">
-
-
-<div class="dropdown">
-
-  <button class="dropbtn"><span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span> MENU</button>
-  <div class="dropdown-content">
-    <p><a href="/stats/season/5">Season 5</a></p>
-    <p><a href="/stats/season/4">Season 4</a></p>
-    <p><a href="/stats/season/3">Season 3</a></p>
-    <p><a href="/stats/season/2">Season 2</a></p>
-    <p><a href="/stats/season/1">Season 1</a></p>
-    <p><a href="/stats/about">About</a></p>
-    <p><a href="https://docs.google.com/document/d/1CXoNUVz3K5vAqq_qPV36BGLRZEKzaxmvD79JkOJtq3g/edit?usp=sharing">Rules</a></p>
-    {% if request.user.username %}
-    <p><a href="/logout">Logout</a></p>
-    {% else %}
-    <p><a href="/login">Login</a></p>
-    {% endif %}
-
-  </div>
-</div>
-{% if request.user.username %}
-<div class="topbar-content">
-	<b>Logged in as {{ request.user.username }}</b>
-</div>
-{% endif %}
-
-
-
-</div>
-<a href="/stats/"><img src="/static/stats/logoogsize.png" style="width:300px;position: fixed; z-index:4;" id='Logo'></a>
-
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous">
-	$('.carousel[data-type="multi"] .item').each(function() {
-	var next = $(this).next();
-	if (!next.length) {
-		next = $(this).siblings(':first');
-	}
-	next.children(':first-child').clone().appendTo($(this));
-
-	for (var i = 0; i < 2; i++) {
-		next = next.next();
-		if (!next.length) {
-			next = $(this).siblings(':first');
-		}
-
-		next.children(':first-child').clone().appendTo($(this));
-	}
-});
-</script>
-<script type="text/javascript" src="//cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.min.js"></script>
-
-
-    <div id="content">
         {% block content %}{% endblock %}
-    </div>
+			<footer>
+                    <div class="contact-us">
+                    <p>CONTACT US</p>
+                    <a class="contact" href="mailto:therektleague@gmail.com">therektleague@gmail.com</a>
+                    </div>
+                    
+                    <div class="social-media">
+                        <p>FOLLOW THE LEAGUE</p>
+                            <a class="mediaicon" href="https://twitter.com/therektleague"><img style="padding:5px;" src="/media/stats/media_icons/twitter.png"></a>
+		                    <a class="mediaicon" href="https://twitch.tv/therektleague"><img style="padding:5px;" src="/media/stats/media_icons/twitch.png"></a>
+		                    <a class="mediaicon" href="https://www.youtube.com/channel/UC79qzlDqxImPG49FKiChe0Q"><img style="padding:5px;" src="/media/stats/media_icons/youtube.png"></a>
+		                    <a class="mediaicon" href="https://instagram.com/therektleague"><img style="padding:5px;" src="/media/stats/media_icons/instagram.png"></a>
+                    </div>
+      </footer>
+    </body>
+    <div class="clearfix"></div>
 
-    <div class="bottombar">
-
-	<div style="text-align:center; float: right; padding-top:38px;width:25%;">
-		<p><b>Follow The Rekt League</b></p>
-		<a class="mediaicon" href="https://twitter.com/therektleague"><img style="padding:5px;" src="/media/stats/media_icons/twitter.png"></a>
-		<a class="mediaicon" href="https://twitch.tv/therektleague"><img style="padding:5px;" src="/media/stats/media_icons/twitch.png"></a>
-		<a class="mediaicon" href="https://www.youtube.com/channel/UC79qzlDqxImPG49FKiChe0Q"><img style="padding:5px;" src="/media/stats/media_icons/youtube.png"></a>
-		<a class="mediaicon" href="https://instagram.com/therektleague"><img style="padding:5px;" src="/media/stats/media_icons/instagram.png"></a>
-	</div>
-	<div style="text-align: center; float: right; padding-top:38px;width:42%;">
-		<p><b>Contact Us</b></p>
-		<p><a style="color:#bf1f2f;" href="mailto:therektleague@gmail.com">therektleague@gmail.com</a></p>
-    
-	</div>
-
-    <div style="text-align: center; padding-top:9px;width:25%;">
-    	<p style="margin-bottom: -15px; width:129%;"><b>Explore</b></p>
-    	<hr style="width: 59%;margin-bottom: 2px; margin-left: 37%;">
-     	<div style="text-align: center; float: right; padding-top:7px;width:42%;">
-		<a style="color:#ffffff;font-size:14px;" href="/stats/season/4">Season 4</a><br>
-		<a style="color:#ffffff;font-size:14px;" href="/stats/season/3">Season 3</a><br>
-    		<a style="color:#ffffff;font-size:14px;" href="/stats/season/2">Season 2</a><br>
-    		<a style="color:#ffffff;font-size:14px;" href="/stats/season/1">Season 1</a><br>
-    	</div>
-
-     	<div style="text-align: center; float: right; padding-top:18px;width:15%;">
-    		<a style="color:#ffffff;font-size:14px;" href="/stats/about">About</a>
-     	</div>
-    </div>
-
-</body>
-
-
+</html>

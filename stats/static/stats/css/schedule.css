@@ -1,0 +1,220 @@
+
+    /* SCHEDULE */
+
+    h1, h2{
+        color:white;
+        text-align: center;
+        font-size: 95px;
+        font-weight: 800;
+    }
+
+    .subhead{
+        font-size: 40px;
+        margin: -45px 0 38px 0;
+    }
+
+    .rekt-red{
+        color: #bf1e2d;
+    }
+
+      section {
+          width: 60%;
+          margin-left:auto;
+          margin-right: auto;
+      }
+
+      .collapsible {
+        background-color: white;
+        color: black;
+        cursor: pointer;
+        padding: 18px 0 18px 33px;
+        width: 100%;
+        border: none;
+        outline: none;
+        font-size: 33px;
+        text-align: left;
+        font-weight: 800;
+      }
+
+      .week{
+        font-size: 66px;
+        font-weight: 800;
+        margin: 0px 172px 0 0;
+    }
+
+    section a{
+        text-decoration: none;
+        color: black;
+    }
+
+    section a:hover{
+        text-decoration: none;
+        color: black;
+    }
+    
+    .quarters{
+        margin: 0px 75px 0 0;
+    }
+
+    .semis{
+        margin: 0px 229px 0 0;
+    }
+
+    .finals{
+        margin: 0px 194px 0 0;
+    }
+
+        .date{
+        font-size: 35px;
+        font-weight: 400;
+    }
+      
+      .active, .collapsible:hover {
+        background-color: rgba(176,46,52,1);
+        color: white;
+
+      }
+      
+      .collapsible:after {
+        content: '\002B';
+        color: #bf1e2d;
+        float: right;
+        padding: 20px 25px 0 0;
+      }
+
+      .collapsible:hover:after {
+        color: white;
+        
+      }
+      
+      .active:after {
+        content: "\2212";
+        color: white;
+      }
+      
+      .content {
+        max-height: 0;
+        overflow: hidden;
+        transition: max-height 0.2s ease-out;
+        background-color: #f1f1f1;
+      }
+
+      .content > p{
+        font-size: 20px;
+        padding: 17px 20px 17px 20px;
+      }
+
+      .content > p:hover{
+        background-color:rgba(1,1,1,.2)
+      }
+
+      .vs{
+          font-size: 15px;
+      }
+
+      .time{
+        padding-left: 31px;
+      }
+
+      .matchupButton{
+        background: #bf1e2d;
+        color: white;
+        padding: 5px 10px;
+        font-size: 14px;
+        font-weight: 800;
+        text-decoration: none;
+        border-radius: 10px;
+        float: right;
+      }
+
+      .matchupButton:hover{
+        background: #7d0c18;
+        text-decoration: none;
+        color: white;
+      }
+
+      @media all and (max-width : 1180px) {
+        .collapsible:after {
+            padding: 23px 32px 0 0;
+          }
+        section{
+            width: 80%;
+        }
+    }
+
+      @media all and (max-width : 768px) {
+        .collapsible:after {
+            padding: 25px 25px 0 0;
+          }
+          .week {
+            font-size: 57px;
+          }
+          .date{
+            font-size: 28px;
+          }
+          
+
+          .quarters{
+            margin: 0px 75px 0 0;
+        }
+    
+        .semis{
+            margin: 0px 208px 0 0;
+        }
+    
+        .finals{
+            margin: 0px 178px 0 0;
+        }
+
+        .matchupButton {
+            background: #bf1e2d;
+            color: white;
+            padding: 5px 10px;
+            font-size: 9px;
+            font-weight: 800;
+            text-decoration: none;
+            border-radius: 10px;
+            float: right;
+        }
+      }
+
+      @media all and (max-width : 700px) {
+        .week {
+            font-size: 51px;
+            font-weight: 800;
+            margin: 0px 93px 0 0;
+      }
+
+      .collapsible:after {
+        padding: 13px 25px 0 0;
+      }
+
+      section{
+          width:100%;
+      }
+
+      .content > p {
+        font-size: 15px;
+      }
+
+      .date{
+        font-size: 28px;
+      }
+
+      .quarters{
+        margin: 0px 13px 0 0;
+    }
+
+    .semis{
+        margin: 0px 135px 0 0;
+    }
+
+    .finals{
+        margin: 0px 107px 0 0;
+    }
+    h1, h2{
+        font-size: 74px;
+    }
+    }
+
+     

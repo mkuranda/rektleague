@@ -1,0 +1,124 @@
+    h1, h2{
+        text-align: center;
+        color: white;
+    }
+    h1{
+        font-size: 3em;
+        font-weight: 800;
+        padding: 4% 0 0 0;
+    }
+    h2{
+        font-size: 2em;
+        padding: 1% 7%;
+
+    }
+    
+    h1 + p{
+      margin: auto;
+      width: 70%;
+      text-align: center;
+    }
+
+    section{
+      width: 100%;
+      margin: 1% 0 0 28%;
+  }
+
+    p {
+      font-size: 1em;
+      font-weight: 600;
+      color: white;
+  }
+
+  label{
+    font-size: 2em;
+    font-weight: 600;
+    color: white;
+  }
+
+    form > ul{
+        list-style: none;
+        width: 90%;
+        margin: auto;
+        text-align: center;
+    }
+
+    form li{
+        padding: 2% 0;
+    }
+
+    input{
+        margin: 0 0 0px 3%;
+    }
+
+    input:hover, input:focus {
+        background-color: #eee;
+      }
+
+    #secondaryAccount{
+        width: 400px;
+    }
+
+    [type="email"], [type="text"], [type="password"]{
+      padding: 2px 2px;
+      border: 2px solid #bf1f2f;
+      width: 28%;
+      box-shadow: inset 1px 3px 3px #ccc;
+  }
+
+  
+
+      select {
+        -webkit-appearance: none;
+        appearance: none;
+        display: block;
+        font-family: inherit;
+        font-size: 100%;
+        margin: 2% auto;
+        box-sizing: border-box;
+        width: 40%;
+        height: 30px;
+        box-shadow: inset 1px 1px 3px #ccc;
+        border-radius: 5px;
+        padding: 0 0 0 10px;
+    }
+
+    @media (min-width:415px and max-width:768px){
+      section{
+      width: 100%;
+      margin: 1% 0 0 24%;
+    }
+    }
+    
+    @media (max-width: 414px){
+      h1 + p{
+        margin: auto;
+        width: 70%;
+        text-align: center;
+      }
+  
+      section{
+        width: 86%;
+        padding: 2%;
+        margin: 1% 0 0 10%;
+      }
+  
+      label, p {
+        font-size: 1em;
+        font-weight: 600;
+        color: white;
+    }
+
+    [type="email"], [type="text"], [type="password"]{
+      width:40%;
+    }
+    }
+      
+    
+
+
+
+    
+
+
+
