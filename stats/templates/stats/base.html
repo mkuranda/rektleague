@@ -32,6 +32,7 @@
 	<link rel="stylesheet" href="{% static 'stats/css/global.css' %}">
 	<link rel="icon" href="/media/stats/favicon.png">
         <link href="https://fonts.googleapis.com/css?family=Lato:400,700,900&display=swap" rel="stylesheet">
+	<script src="https://kit.fontawesome.com/6705c26db8.js" crossorigin="anonymous"></script>
 
 {% block head %}{% endblock %}
 	</head>
@@ -42,14 +43,16 @@
                             <label for="drop" class="toggle">Menu</label>
                             <input type="checkbox" id="drop" />
                             <ul class="menu">
-                              <li> 
+                              <li><a href="/schedule/">SCHEDULE</a></li>
+                              <li><a href="/standings/">STANDINGS</a></li>
+		              <li> 
                                 <!-- First Tier Drop Down -->
-                                <label for="drop-1" class="toggle">SEASONS</label>
-                                <a href="#">SEASONS</span></a>
+                                <label for="drop-1" class="toggle">STATS</label>
+				<a href="/players/">STATS</span></a>
                                 <input type="checkbox" id="drop-1"/>
                                 <ul>
 				{% for season in seasons %}
-				<li><a href="standings.html">SEASON {{ season.id }}</a></li>
+				<li><a href="/season/{{ season.id }}/players/">SEASON {{ season.id }}</a></li>
 				{% endfor %}
                                 </ul>
                               </li>
@@ -77,11 +80,9 @@
                                   </li>
                                 </ul>
                               </li> -->
-                              <li><a href="/schedule/">SCHEDULE</a></li>
-                              <li><a href="#">ABOUT</a></li>
-                              <li><a href="#">RULES</a></li>
+                              <li><a href="https://docs.google.com/document/d/1CXoNUVz3K5vAqq_qPV36BGLRZEKzaxmvD79JkOJtq3g/edit#heading=h.mfjb9322hbzf">RULES</a></li>
                               <li><a href="#">SIGN UP</a></li>
-                              <li class="signinFloat"><a href="#">SIGN IN</a></li>
+                              <li class="signinFloat"><a href="/login/">SIGN IN</a></li>
                             </ul>
                           </nav>
             </header>

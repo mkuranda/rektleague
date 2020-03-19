@@ -17,6 +17,11 @@ function ReplaceGame{{ match.game_num }}() {
         {% endfor %}
         {% endfor %}
 }
+{% if matches %}
+window.onload = function() {
+	ReplaceGame1();
+}
+{% endif %}
 {% endfor %}
 </script>
 
@@ -27,7 +32,7 @@ function ReplaceGame{{ match.game_num }}() {
 
     <section>
 	    <h2>WEEK {{ series.week.number }}</h2>
-	    <h1>{{ series.get_team_1.name }}<span class="recordSmall">({{ series.get_series_team_1.get_record_before }})</span> <span class="rekt-red">vs</span> {{ series.get_team_2.name }}<span class="recordSmall">({{ series.get_series_team_2.get_record_before }})</span></h1>
+	    <h1>{{ series.get_team_1.media.name }}<span class="recordSmall">({{ series.get_series_team_1.get_record_before }})</span> <span class="rekt-red">vs</span> {{ series.get_team_2.media.name }}<span class="recordSmall">({{ series.get_series_team_2.get_record_before }})</span></h1>
       <div class="matchDate">
 	      <p>{{ series.date|date:"g:i a" }} EST</p>
 	      <p>{{ series.date|date:"F j, Y" }}</p>
@@ -35,9 +40,9 @@ function ReplaceGame{{ match.game_num }}() {
     </section>
     <section>
       <img class="imageLeft" src="{{ series.get_team_1.media.banner.url }}">
-      <span class="teamNameLeft">{{ series.get_team_1.name }}</span>
+      <span class="teamNameLeft">{{ series.get_team_1.media.name }}</span>
       <img class="imageRight" src="{{ series.get_team_2.media.banner.url }}">
-      <span class="teamNameRight">{{ series.get_team_2.name }}</span>
+      <span class="teamNameRight">{{ series.get_team_2.media.name }}</span>
     </section>
     
     {% if series.rosters_submitted and series.past_deadline and season.id > 2 %}

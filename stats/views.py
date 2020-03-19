@@ -323,6 +323,7 @@ def season_api_detail(request, season_id):
 
 def season_players_detail(request, season_id):
     latest_season = Season.objects.latest('id')
+    seasons = Season.objects.all().order_by('-id')
     context = {
         'latest_season': latest_season
     }
@@ -331,6 +332,7 @@ def season_players_detail(request, season_id):
     context = {
         'latest_season': latest_season,
         'season': season,
+        'seasons': seasons,
         'team_players': team_players
     }
     return render(request, 'stats/season_players.html', context)
@@ -431,6 +433,7 @@ def team_recache(request, season_id, team_id):
 
 def team_detail(request, season_id, team_id):
     team = get_object_or_404(Team, id=team_id, season=season_id)
+    seasons = Season.objects.all().order_by('-id')
     team_players = TeamPlayer.objects.filter(team=team_id).annotate(avg_kills=Avg('player__playermatch__kills'), avg_deaths=Avg('player__playermatch__deaths'), avg_assists=Avg('player__playermatch__assists'), num_champs_played=Count('player__playermatch__champion')).order_by('role')
     players = Player.objects.filter(teamplayer__team=team).values('id', 'name').distinct()
     all_season_teams = Team.objects.filter(media=team.media).order_by('-id')
@@ -439,6 +442,7 @@ def team_detail(request, season_id, team_id):
     kill_timelines = team.get_kill_timelines()
     overall_timelines = team.get_overall_timelines()
     context = {
+        'seasons': seasons,
         'team': team,
         'all_season_teams': all_season_teams,
         'team_players': team_players,
@@ -452,6 +456,7 @@ def team_detail(request, season_id, team_id):
 
 def team_player_role_detail(request, season_id, team_id, player_id, role_id):
     role = get_object_or_404(Role, id=role_id)
+    seasons = Season.objects.all().order_by('-id')
     season = get_object_or_404(Season, id=season_id)
     team = get_object_or_404(Team, id=team_id, season=season_id)
     player = get_object_or_404(Player, id=player_id)
@@ -464,6 +469,7 @@ def team_player_role_detail(request, season_id, team_id, player_id, role_id):
     #enemy_timelines = team_player_role.get_enemy_timelines()
     #max_duration = team.get_max_timeline_minute()
     context = {
+        'seasons': seasons,
         'season': season,
         'team': team,
         'player': player,
@@ -571,6 +577,10 @@ def standings(request, season_id):
     }
     return render(request, 'stats/standings.html', context)
 
+def latest_standings(request):
+    latest_season = Season.objects.latest('id')
+    return standings(request, latest_season.id)
+
 def series_caster_tools(request, season_id, series_id):
     season = get_object_or_404(Season, id=season_id)
     series = get_object_or_404(Series, id=series_id)
@@ -639,6 +649,7 @@ def series_head_to_head_2(request, season_id, series_id):
 
 def series_detail(request, season_id, series_id):
     season = get_object_or_404(Season, id=season_id)
+    seasons = Season.objects.all().order_by('-id')
     series = get_object_or_404(Series, id=series_id)
     matches = Match.objects.prefetch_related('playermatch_set').filter(series=series).order_by('game_num')
     seriesteams = SeriesTeam.objects.prefetch_related('team__teamplayer_set').filter(series=series)
@@ -649,6 +660,7 @@ def series_detail(request, season_id, series_id):
     user = request.user._wrapped if hasattr(request.user,'_wrapped') else request.user
 
     context = {
+        'seasons': seasons,
         'season': season,
         'series': series,
         'matches': matches,
@@ -825,18 +837,20 @@ def match_complete(request):
     test_object.save()
     return HttpResponse(status=200)
 
-def login(request):
-    username = request.POST['username']
-    password = request.POST['password']
-    user = authenticate(username=username, password=password)
-    if user is not None:
-        if user.is_active:
-            login(request, user)
-            return HttpResponseRedirect('stats/')
+def loginpage(request):
+    if request.method == 'POST':
+        username = request.POST['username']
+        password = request.POST['password']
+        user = authenticate(username=username, password=password)
+        if user is not None:
+            if user.is_active:
+                login(request, user)
+                return HttpResponseRedirect('stats/')
+            else:
+                return HttpResponseRedirect('stats/disabled_account')
         else:
-            return HttpResponseRedirect('stats/disabled_account')
-    else:
-        return HttpResponseRedirect('stats/invalid_login')
+            return HttpResponseRedirect('stats/invalid_login')
+    return render(request, 'stats/login.html', {})
 
 def article(request, url_name):
     content = get_object_or_404(ArticlePage, url_name=url_name)

@@ -1,7 +1,7 @@
 {% extends "stats/base.html" %}
 {% load staticfiles %}
 
-{% block title %}Rekt League | Team {{ team.name }} | {{ team_player_role.player.name }}{% endblock %}
+{% block title %}Rekt League | Team {{ team.media.name }} | {{ team_player_role.player.name }}{% endblock %}
 
 {% block head %}
 <link rel="stylesheet" href="{% static 'stats/css/player.css' %}">
@@ -87,6 +87,7 @@
 				<li><a href="/season/{{ season.id }}/team/{{ team_player.team.id }}/player/{{ team_player.player.id }}/role/{{ team_player.role.id }}/">{{ team_player.role }}</a></li>
 				{% endif %}
 				{% endfor %}
+				<li><a href="/season/{{ season.id }}/team/{{ team.id }}/player/{{ player.id }}/">TOTAL</a></li>
                       </ul> 
                     </li>              
                     </ul>

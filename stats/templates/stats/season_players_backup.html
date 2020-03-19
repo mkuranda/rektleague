@@ -1,0 +1,177 @@
+{% extends "stats/base.html" %}
+
+{% block content %}
+
+<div width="60%" style="text-align: center"><a class="imglink" href="/stats/season/{{ season.id }}/"><img style="width: 55%; margin-left: auto; margin-right: auto; margin-top:220px; margin-bottom: 100px;" src="{{ season.splash.url }}"></a></div>
+
+<p> </p>
+
+<table class="centercontent" width="70%">
+	<tr class="centercontent">
+		<td>
+		</td>
+	</tr>
+	<tr class="centercontent">
+		<td>
+		<table class="centercontent" width="100%">
+			<td class="pagebutton" width="25%">
+				<div style="font-size:20;">
+					<a href="/stats/season/{{ season.id }}/players/"><b>Players</b></a>
+				</div>
+			</td>
+			<td class="pagebutton" width="25%">
+				<div style="font-size:20;">
+					<a href="/stats/season/{{ season.id }}/teams/"><b>Teams</b></a>
+				</div>
+			</td>
+			<td class="pagebutton" width="25%">
+				<div style="font-size:20;">
+					<a href="/stats/season/{{ season.id }}/champions/"><b>Champions</b></a>
+				</div>
+			</td>
+			<td class="pagebutton" width="25%">
+				<div style="font-size:20;">
+					<a href="/stats/season/{{ season.id }}/graphs/"><b>Graphs</b></a>
+				</div>
+			</td>
+
+		</table>
+		</td>
+	</tr>
+	<tr>
+		<th style="padding-top: 30px;" class="centertableheader">
+			Player Stats
+		</th>
+	</tr>
+	<tr>
+		<td>
+			<table id="playerTable" style="margin-bottom:20px; margin-top:20px;" class="centercontent tablesorter">
+				<thead>
+				<tr>
+					<th class="sortableheader" width="10%">
+						Player
+					</th>
+					<th class="sortableheader" width="8%">
+						Team
+					</th>
+					<th class="sortableheader" width="8%">
+						Position	
+					</th>
+					<th class="sortableheader" width="8%">
+						Games<br>
+						Played
+					</th>
+					<th class="sortableheader" width="8%">
+						Avg<br>
+						Kills
+					</th>
+					<th class="sortableheader" width="8%">
+						Avg<br>
+						Deaths
+					</th>
+					<th class="sortableheader" width="8%">
+						Avg<br>
+						Assists
+					</th>
+					<th class="sortableheader" width="8%">
+						KDA
+					</th>
+					<th class="sortableheader" width="10%">
+						Kill
+						</br>
+						Participation
+					</th>
+					<th class="sortableheader" width="8%">
+						CS Diff
+						</br>
+						@ 15
+					</th>
+					<th class="sortableheader" width="8%">
+						{% if season.id > 2 %}
+						CS/Min
+						{% else %}
+						CS/Game
+						{% endif %}
+					</th>
+					<th class="sortableheader" width="10%">
+						Team Damage %
+					</th>
+					<th class="sortableheader" width="10%">
+						Vision Score
+					</th>
+				</tr>
+				</thead>
+				<tbody>
+				{% for team_player in team_players %}
+				{% if team_player.get_player_matches.count > 0 %}
+				<tr class="alternating-back">
+					<td>
+						<a href="/stats/season/{{ season.id }}/team/{{ team_player.team.id }}/player/{{ team_player.player.id }}/role/{{ team_player.role.id }}/">{{ team_player.player.name }}</a>
+					</td>
+					<td>
+						<div style="position: absolute; opacity: 0.0;">{{ team_player.team.id }}</div>
+						<img height="50" width="50" src="{{ team_player.team.icon.url }}" title="{{ team_player.team.name }}">
+					</td>
+					<td>
+						<div style="position: absolute; opacity: 0.0;">{{ team_player.role.id }}</div>
+						<img height="40" width="40" src="{{ team_player.role.icon.url }}" title="{{ team_player.role.name }}">
+					</td>
+					<td>
+						{{ team_player.get_num_matches }}
+					</td>
+
+					<td>
+						{{ team_player.get_avg_kills|floatformat:"1" }}
+					</td>
+					<td>
+						{{ team_player.get_avg_deaths|floatformat:"1" }}
+					</td>
+					<td>
+						{{ team_player.get_avg_assists|floatformat:"1" }}
+					</td>
+					<td>
+						{% if team_player.get_kda == 1000000 %}
+							<div style="position: absolute; opacity: 0.0;">{{ team_player.get_kda|floatformat:"2" }}</div>
+							Perfect
+						{% else %}
+							{{ team_player.get_kda|floatformat:"2" }}
+						{% endif %}
+					</td>
+					<td>
+						{{ team_player.get_kill_participation|floatformat:"1" }}%
+					</td>
+					<td>
+						{% if team_player.get_cs_diff_at_15 > 0 %}
+						+{% endif %}{{ team_player.get_cs_diff_at_15|floatformat:"1" }}
+					</td>
+					<td>
+						{% if season.id > 2 %}
+							{{ team_player.get_cs_per_min|floatformat:"2" }}
+						{% else %}
+							{{ team_player.get_cs_per_game|floatformat:"1" }}
+						{% endif %}
+					</td>
+					<td>
+						{{ team_player.get_percent_team_damage|floatformat:"1" }}%
+					</td>
+					<td>
+						{{ team_player.get_avg_vision|floatformat:"1" }}
+					</td>
+
+				</tr>
+				{% endif %}
+				{% endfor %}
+				</tbody>
+			</table>
+		</td>
+	</tr>
+</table>
+<script type="text/javascript">
+$(document).ready(function() 
+    { 
+	    $("#playerTable").tablesorter( {sortList: [[0,0]]} ); 
+    } 
+); 
+	</script>
+
+{% endblock %}

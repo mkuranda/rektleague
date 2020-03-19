@@ -1,7 +1,7 @@
 {% extends "stats/base.html" %}
 {% load staticfiles %}
 
-{% block title %} Rekt League | Season {{ season.id }} | {{ team.name }} {% endblock %}
+{% block title %} Rekt League | Season {{ season.id }} | {{ team.media.name }} {% endblock %}
 
 {% block head %}
 <link rel="stylesheet" href="{% static 'stats/css/team.css' %}">
@@ -17,7 +17,7 @@
             <!-- HERO IMAGE -->
           
             <section id="banner">
-		    <h1><span class="rekt-red">TEAM</span> {{ team.name }}</h1>
+		    <h1><span class="rekt-red">TEAM</span> {{ team.media.name }}</h1>
             </section>
 
             <!-- FILTERS -->

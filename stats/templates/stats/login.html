@@ -1,37 +1,36 @@
 {% extends "stats/base.html" %}
+{% load staticfiles %}
 
 {% block title %}Rekt League | Login{% endblock %}
 
+{% block head %}
+<link rel="stylesheet" href="{% static 'stats/css/sign-in.css' %}">
+{% endblock %}
+
 {% block content %}
 
+<h1>SIGN IN</h1>
 {% if form.errors %}
 <p>Your username and password didn't match. Please try again.</p>
+{% else %}
+<p><strong>Please Note:</strong> Sign in is currently only for Team Representatives to lock in rosters.</p>
 {% endif %}
 
-{% if next %}
-    {% if user.is_authenticated %}
-    <p>Your account doesn't have access to this page. To proceed,
-    please login with an account that has access.</p>
-    {% else %}
-    <p>Please login to see this page.</p>
-    {% endif %}
-{% endif %}
-
-<form method="post" action="{% url 'django.contrib.auth.views.login' %}">
+<form method="post" id="add_form" action="{% url 'loginpage' %}">
 {% csrf_token %}
-<table>
-<tr>
-    <td>{{ form.username.label_tag }}</td>
-    <td>{{ form.username }}</td>
-</tr>
-<tr>
-    <td>{{ form.password.label_tag }}</td>
-    <td>{{ form.password }}</td>
-</tr>
-</table>
-
-<input type="submit" value="login" />
-<input type="hidden" name="next" value="{{ next }}" />
+<fieldset>        
+  <section>
+    <label for="username">Username:</label>
+    <input type="text" id="username" name="username" required>
+  </section>
+  <section>
+    <label for="pass">Password:</label>
+    <input type="password" id="pass" name="password" required>
+  </section>
+</fieldset>
+<div class="button">
+<span><a href="#">SUBMIT</a></span>
+</div>
 </form>
 
 {% endblock %}

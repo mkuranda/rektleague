@@ -17,7 +17,7 @@ class Season(models.Model):
     splash = models.ImageField(upload_to='stats/season_splashes', default='')
 
     def __str__(self):
-        return "Season " + str(self.pk)
+        return "SEASON " + str(self.pk)
 
     def get_weeks(self):
         return Week.objects.filter(season=self).order_by('-number')
@@ -640,7 +640,7 @@ class Team(models.Model):
         return TeamMatch.objects.filter(team=self).aggregate(Sum('baron_kills'))
 
     def __str__(self):
-        return self.name + " (" + str(self.season) + ")"
+        return self.media.name + " (" + str(self.season) + ")"
 
 class SeasonTimeline(models.Model):
     season = models.ForeignKey(Season)
