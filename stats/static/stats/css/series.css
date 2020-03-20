@@ -84,7 +84,7 @@ section > img{
 }
 
 .playerPhotoRight,.playerPhotoLeft{
-    width: 18%;
+    width: 13%;
 
 }
 
@@ -156,6 +156,7 @@ section > img{
     text-transform: capitalize;
     line-height: 22px;
     text-align: center;
+    color: black;
 }
   
   .grey-search-button-container ul#rome-menu li.tophelp  {
@@ -251,7 +252,7 @@ section > img{
   }
 
   td img{
-    width: 47%;
+    width: 120px;
   }
 
   th {
@@ -262,6 +263,7 @@ section > img{
     border: 0px solid black;
     padding: 0 0 5px 0;
 }
+
 
 td {
     text-align: center;
@@ -386,5 +388,13 @@ td img {
 
   #filter {
     height: 47px;
+}
+
+  table {
+    font-size: 1em;
+  }
+
+  td img {
+    width: 30px;
 }
 }

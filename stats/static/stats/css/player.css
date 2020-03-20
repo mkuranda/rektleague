@@ -20,7 +20,7 @@
       grid-column-end: 3;
       grid-row-start: 1;
       grid-row-end: 1;
-      width: 333px;
+      width: 300px;
       justify-self: end;
       border: 9px solid rgba(0, 0, 0, 0.2);
       border-radius: 16px;
@@ -78,6 +78,7 @@
       text-transform: capitalize;
       line-height: 22px;
       text-align: center;
+      color: black;
   }
     
     .grey-search-button-container ul#rome-menu li.tophelp  {
@@ -206,6 +207,11 @@
     padding: 1% 0;
   }
 
+  .statSection a:hover{
+    text-decoration: none;
+    color: #bf1f2f;
+  }
+
   .statTitle {
     background: #bf1f2f;
     padding: 1% 2%;
@@ -224,7 +230,7 @@ table {
 }
 
 th {
-    font-size: 2.2em;
+    font-size: 1.2em;
     font-weight: 800;
     text-align: center;
     background: #bf1f2f;

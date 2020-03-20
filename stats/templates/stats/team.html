@@ -31,7 +31,7 @@
                            <li class="tophelp"><a class="menu-trigger" href="#">SEASONS</a>
                             <ul id="subrome">
 				    {% for all_season_team in all_season_teams %}
-				    <li><a href="/season/{{ all_season_team.season.id }}/team/{{ all_season_team.id }}/">{{ all_season_team.season }}</a></li>
+				    <a href="/season/{{ all_season_team.season.id }}/team/{{ all_season_team.id }}/"><li>{{ all_season_team.season }}</li></a>
 				    {% endfor %}
                         </ul> 
                       </li>              
@@ -49,7 +49,7 @@
                            <li class="tophelp"><a class="menu-trigger" id="team" href="#">PLAYERS</a>
                             <ul id="subrome">
 				    {% for player in players %}
-				    <li><a href="/season/{{ team.season.id }}/team/{{ team.id }}/player/{{ player.id }}/">{{ player.name }}</a></li>
+				    <a href="/season/{{ team.season.id }}/team/{{ team.id }}/player/{{ player.id }}/"><li>{{ player.name }}</li></a>
 				    {% endfor %}
                         </ul> 
                       </li>              
@@ -140,4 +140,5 @@
 
 
             </body>
+            <div class="clearfix"></div>
 {% endblock %}

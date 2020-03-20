@@ -48,7 +48,7 @@
                            <li class="tophelp"><a class="menu-trigger" href="#">SEASONS</a>
                             <ul id="subrome">
 				    {% for team_player in team_set %}
-				    <li><a href="/season/{{ team_player.team.season.id }}/team/{{ team_player.team.id }}/player/{{ player.id }}/">{{ team_player.team }}</a></li>
+				    <a href="/season/{{ team_player.team.season.id }}/team/{{ team_player.team.id }}/player/{{ player.id }}/"><li>{{ team_player.team }}</li></a>
 				    {% endfor %}
                         </ul> 
                       </li>              
@@ -63,10 +63,10 @@
                     <div class="drop-item drop-list">
               
                       <ul id="rome-menu">
-                           <li class="tophelp"><a class="menu-trigger" id="team" href="#">TEAMMATES</a>
+                        <li class="tophelp"><a class="menu-trigger" id="team" href="#">TEAMMATES</a>
                             <ul id="subrome">
 				    {% for teammate in teammates %}
-				    <li><a href="/season/{{ season.id }}/team/{{ teammate.team.id }}/player/{{ teammate.player.id }}/">{{ teammate.player.name }}</a></li>
+				    <a href="/season/{{ season.id }}/team/{{ teammate.team.id }}/player/{{ teammate.player.id }}/"><li>{{ teammate.player.name }}</li></a>
 				    {% endfor %}
                         </ul> 
                       </li>              
@@ -84,10 +84,10 @@
                           <ul id="subrome">
 				{% for team_player in team_players %}
 				{% if team_player.get_num_matches > 0 %}
-				<li><a href="/season/{{ season.id }}/team/{{ team_player.team.id }}/player/{{ team_player.player.id }}/role/{{ team_player.role.id }}/">{{ team_player.role }}</a></li>
+				<a href="/season/{{ season.id }}/team/{{ team_player.team.id }}/player/{{ team_player.player.id }}/role/{{ team_player.role.id }}/"><li>{{ team_player.role }}</li></a>
 				{% endif %}
 				{% endfor %}
-				<li><a href="/season/{{ season.id }}/team/{{ team.id }}/player/{{ player.id }}/">TOTAL</a></li>
+				<a href="/season/{{ season.id }}/team/{{ team.id }}/player/{{ player.id }}/"><li>TOTAL</li></a>
                       </ul> 
                     </li>              
                     </ul>
@@ -169,4 +169,5 @@
 		  {% endfor %}
                 </table>
             </body>
+            <div class="clearfix"></div>
 {% endblock %}

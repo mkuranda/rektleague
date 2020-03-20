@@ -32,7 +32,7 @@ window.onload = function() {
 
     <section>
 	    <h2>WEEK {{ series.week.number }}</h2>
-	    <h1>{{ series.get_team_1.media.name }}<span class="recordSmall">({{ series.get_series_team_1.get_record_before }})</span> <span class="rekt-red">vs</span> {{ series.get_team_2.media.name }}<span class="recordSmall">({{ series.get_series_team_2.get_record_before }})</span></h1>
+	    <h1>{{ series.get_team_1.media.name }} <span class="recordSmall">({{ series.get_series_team_1.get_record_before }})</span> <span class="rekt-red">vs</span> {{ series.get_team_2.media.name }} <span class="recordSmall">({{ series.get_series_team_2.get_record_before }})</span></h1>
       <div class="matchDate">
 	      <p>{{ series.date|date:"g:i a" }} EST</p>
 	      <p>{{ series.date|date:"F j, Y" }}</p>
@@ -78,6 +78,7 @@ window.onload = function() {
     {% endif %}
 
     <!-- FILTERS -->
+    <div class="clearfix"></div>
     <section>
     <h2 class="postGameHead">POST GAME</h2>
                   <!-- MATCH FILTER -->
@@ -90,7 +91,7 @@ window.onload = function() {
                              <li class="tophelp"><a class="menu-trigger" href="#">MATCH</a>
                               <ul id="subrome">
 			      {% for match in matches %}
-			      <li><a href="javascript:ReplaceGame{{ match.game_num }}();">MATCH {{ match.game_num }}</a></li>
+			      <a href="javascript:ReplaceGame{{ match.game_num }}();"><li>MATCH {{ match.game_num }}</li></a>
 			      {% endfor %}
                           </ul> 
                         </li>              
@@ -99,6 +100,7 @@ window.onload = function() {
                      </div>
                     </div>
                   </section>
+                  <div class="clearfix"></div>
                   <!-- TEAM FILTER -->
 
                   <!-- <div id="filter">    

@@ -51,6 +51,7 @@
       text-transform: capitalize;
       line-height: 22px;
       text-align: center;
+      color: black;
   }
     
     .grey-search-button-container ul#rome-menu li.tophelp  {
@@ -210,6 +211,11 @@
   padding: 4% 10%;
   width: 100%;
   display: flex;
+}
+
+.statSection a:hover{
+  text-decoration: none;
+  color: #bf1f2f;
 }
 
 .popBansSection > div {
