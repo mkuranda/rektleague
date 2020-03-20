@@ -241,11 +241,11 @@ class Week(models.Model):
 
     def name_w_title(self):
         if self.title != "" and self.title != " ":
-            return "Week " + str(self.number) + " - " + self.title
-        return "Week " + str(self.number)
+            return "WEEK " + str(self.number) + " - " + self.title
+        return "WEEK " + str(self.number)
 
     def __str__(self):
-        return str(self.season) + ": Week " + str(self.number)
+        return str(self.season) + ": WEEK " + str(self.number)
 
 class Role(models.Model):
     name = models.CharField(max_length=15)

@@ -53,7 +53,7 @@ window.onload = function() {
 	  {% if seriesplayer.player.photo %}
           <img class="playerPhotoLeft" src="{{ seriesplayer.player.photo.url }}">
 	  {% else %}
-	  <img class="playerPhotoRight" src="/static/stats/player-photos/missing.png">
+	  <img class="playerPhotoLeft" src="/static/stats/player-photos/missing.png">
 	  {% endif %}
 	  <p>{{ seriesplayer.player.name }}</p>
 	  <img class="laneLeft" src="{{ seriesplayer.role.icon.url }}">
@@ -225,7 +225,7 @@ window.onload = function() {
                     <div class="clearfix"></div>
                     <!-- Lock In -->
                     <div class="button">
-                    <span><a href="#">LOCK IN</a></span>
+		    <span><a href="/season/{{ season.id }}/series/{{ series.id }}/lockin/{{ team1.team.id }}">LOCK IN</a></span>
                     </div>
                   
             </body>
