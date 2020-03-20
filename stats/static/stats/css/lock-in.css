@@ -67,8 +67,7 @@ section > img{
 }
 
 .teams{
-    width: 50%;
-    float: left;
+    width: 100%;
     padding: 1%;
 }
 
@@ -119,7 +118,7 @@ section > img{
 .laneLeft {
   order: 3;
   margin: 0% 4% 0 0;
-  width: 10%;
+  width: 7%;
   padding: 5% 0;
 }
 
@@ -289,7 +288,7 @@ td {
 @media (max-width: 1180px){
 
 .laneLeft, .laneRight{
-  width: 15%;
+  width: 10%;
 }
 
 .teamNameRight, .teamNameLeft {
