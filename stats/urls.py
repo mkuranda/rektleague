@@ -17,8 +17,6 @@ urlpatterns = [
 
 
 
-    url(r'^news/$', views.news, name='news'),
-    url(r'^all_posts/$', views.all_posts, name='all_posts'),
     url(r'^about/$', views.about, name='about'),
     url(r'^faq/$', views.faq, name='faq'),
     url(r'^propagate_teams/$', views.propagate_teams, name='propagate_teams'),
@@ -43,10 +41,5 @@ urlpatterns = [
     url(r'^champion/(?P<champion_id>[0-9]+)/$', views.champion_detail, name='champion_detail'),
     url(r'^create_code/(?P<match_id>[0-9]+)/$', views.create_code, name='create_code'),
     url(r'^caster_tools/player_matchup/(?P<blue_player_id>[0-9]+)/(?P<red_player_id>[0-9]+)/team/(?P<blue_team_id>[0-9]+)/(?P<red_team_id>[0-9]+)/role/(?P<role_id>[0-9]+)/$', views.player_matchup, name='player_matchup'),
-    url(r'^post/(?P<url_name>[a-zA-Z0-9_]+)/$', views.article, name='article'),
-    url(r'^api/season/(?P<season_id>[0-9]+)/$', views.season_api_detail, name='season_api_detail'),
-    url(r'^api/season/(?P<season_id>[0-9]+)/teams/$', views.teams_api_detail, name='teams_api_detail'),
-    url(r'^api/team/(?P<team_id>[0-9]+)/$', views.team_api_detail, name='team_api_detail'),
-    url(r'^api/player/(?P<player_id>[0-9]+)$', views.player_api_detail, name='player_api_detail'),
     url(r'^match_complete/$', views.match_complete, name='match_complete'),
 ]

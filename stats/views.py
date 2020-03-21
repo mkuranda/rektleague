@@ -6,8 +6,7 @@ from django.db.models import Avg, Count, Sum, F, When, Q
 from django.utils.timezone import utc
 from django.conf import settings
 from riot_request import RiotRequester
-from .models import Player, TeamPlayer, Team, Season, Champion, Match, Week, Series, SeriesTeam, TeamMatch, MatchCaster, SeasonChampion, PlayerMatch, HypeVideo, Role, TeamRole, SeriesPlayer, Summoner
-from .models import HomePageCarouselObject, ArticlePage, TestObject
+from .models import Player, TeamPlayer, Team, Season, Champion, Match, Week, Series, SeriesTeam, TeamMatch, SeasonChampion, PlayerMatch, Role, TeamRole, SeriesPlayer, Summoner
 from .forms import TournamentCodeForm, InitializeMatchForm, CreateRosterForm
 from get_riot_object import ObjectNotFound, get_item, get_champions, get_champion, get_match, get_all_items, get_match_timeline, update_playermatchkills, update_team_timelines, update_season_timelines, update_team_player_timelines
 from datetime import datetime
@@ -74,252 +73,6 @@ def season_detail(request, season_id):
         'next_week': next_week
     }
     return render(request, 'stats/season.html', context)
-
-def player_api_detail(request, player_id):
-    player = get_object_or_404(Player, id=player_id)
-
-    summoners_json = []
-
-    for summoner in Summoner.objects.filter(player=player):
-        summoners_json.append({
-            'name' : summoner.name,
-            'link' : 'https://na.op.gg/summoner/userName=' + summoner.link
-        })
-
-    team_roles_json = []
-    
-    for team_role in TeamPlayer.objects.filter(player=player, role__isFill=False):
-        if team_role.get_num_matches() > 0:
-            champions = []
-            for champion in team_role.get_played_champion_list():
-                champions.append({
-                    'id' : champion['playermatch__champion'],
-                    'name' : champion['playermatch__champion__name'],
-                    'icon' : champion['playermatch__champion__icon'],
-                    'num_matches' : champion['champion_count'],
-                    'avg_kills' : champion['avg_kills'],
-                    'avg_deaths' : champion['avg_deaths'],
-                    'avg_assists' : champion['avg_assists'],
-                    'winrate' : champion['winrate'],
-                    'cs_per_min' : champion['cs_per_min']
-                    })
-                if champion['cs_per_min'] > 100:
-                    champions[-1].update({
-                        'cs_per_min' : None
-                        })
-            team = {
-                'id' : team_role.team.id,
-                'season' : team_role.team.season.id,
-                'name' : team_role.team.name
-                }
-            team_roles_json.append({
-                'team' : team,
-                'role' : team_role.role.name,
-                'icon' : team_role.role.icon.url,
-                'kda' : team_role.get_kda(),
-                'avg_kills' : team_role.get_avg_kills(),
-                'avg_deaths' : team_role.get_avg_deaths(),
-                'avg_assists' : team_role.get_avg_assists(),
-                'kill_participation' : team_role.get_kill_participation(),
-                'pct_team_damage' : team_role.get_percent_team_damage(),
-                'champions' : champions
-            })
-
-    
-    context = {
-        'name' : player.name,
-        'summoners' : summoners_json,
-        'team_roles' : team_roles_json
-    }
-    return HttpResponse(json.dumps(context))
-
-
-def team_api_detail(request, team_id):
-    team = get_object_or_404(Team, id=team_id)
-
-#    for team_player in team_players:
-#        team_player_roles = TeamPlayer.objects.filter(player=team_player.player, team=team)
-#        roles = []
-#        for team_player_role in team_player_roles:
-#            if team_player_role.get_num_matches() > 0:
-#                champions = []
-#                for champion in team_player_role.get_played_champion_list():
-#                    champions.append({
-#                        'id' : champion['playermatch__champion'],
-#                        'name' : champion['playermatch__champion__name'],
-#                        'icon' : champion['playermatch__champion__icon'],
-#                        'num_matches' : champion['champion_count'],
-#                        'avg_kills' : champion['avg_kills'],
-#                        'avg_deaths' : champion['avg_deaths'],
-#                        'avg_assists' : champion['avg_assists'],
-#                        'winrate' : champion['winrate'],
-#                        'cs_per_min' : champion['cs_per_min']
-#                        })
-#                roles.append({
-#                    'name' : team_player_role.role.name,
-#                    'icon' : team_player_role.role.icon.url,
-#                    'kda' : team_player_role.get_kda(),
-#                    'avg_kills' : team_player_role.get_avg_kills(),
-#                    'avg_deaths' : team_player_role.get_avg_deaths(),
-#                    'avg_assists' : team_player_role.get_avg_assists(),
-#                    'kill_participation' : team_player_role.get_kill_participation(),
-#                    'pct_team_damage' : team_player_role.get_percent_team_damage(),
-#                    'champions' : champions
-#                })
-
-    team_players = team.get_players()
-
-    players_json = []
-
-    for team_player in team_players:
-
-        players_json.append({
-            'id' : team_player.player.id,
-            'name' : team_player.player.name
-            })
-
-    popular_bans_json = []
-
-    for champion in team.get_top_banned():
-        popular_bans_json.append({
-            'id' : champion['champion'],
-            'name' : champion['champion__name'],
-            'icon' : champion['champion__icon'],
-            'ban_rate' : champion['ban_rate'],
-            })
-
-    team_json = {
-        'id' : team.id,
-        'name' : team.name,
-        'splash' : team.splash.url,
-        'wins' : team.get_wins(),
-        'losses' : team.get_losses(),
-        'first_blood_pct' : team.get_first_blood_percent(),
-        'first_tower_pct' : team.get_first_tower_percent(),
-        'popular_bans' : popular_bans_json
-    }
-
-    context = {
-        'team' : team_json,
-        'players': players_json
-    }
-    return HttpResponse(json.dumps(context))
-
-def teams_api_detail(request, season_id):
-    season = get_object_or_404(Season, id=season_id)
-
-    teams = Team.objects.filter(season=season_id)
-
-    teams_json = []
-
-    for team in teams:
-        teams_json.append({
-            'id' : team.id,
-            'name' : team.name,
-            'icon' : team.icon.url,
-            'wins' : team.get_wins(),
-            'losses' : team.get_losses(),
-            'first_blood_pct' : team.get_first_blood_percent(),
-            'first_tower_pct' : team.get_first_tower_percent(),
-            'tower_kills' : team.get_tower_kills(),
-            'baron_kills' : team.get_baron_kills(),
-            'avg_win_time': team.get_average_win_duration_str()
-            })
-
-    context = {
-        'season': season.id,
-        'teams': teams_json
-    }
-    return HttpResponse(json.dumps(context))
-
-
-def season_api_detail(request, season_id):
-    season = get_object_or_404(Season, id=season_id)
-
-    teams = Team.objects.filter(season=season_id)
-    sorted_teams = sorted(teams, key= lambda t: t.get_sort_record())
-
-    standings = []
-
-    i = 1
-    for team in sorted_teams:
-        standings.append({
-            'rank' : i,
-            'team' : { 'id' : team.id, 'name' : team.name, 'icon' : team.icon.url },
-            'wins' : team.get_regular_wins(),
-            'losses' : team.get_regular_losses()
-            })
-        i = i + 1
-
-    schedule = []
-
-    i = 0
-    weeks = season.get_weeks_desc()
-    for week in weeks:
-        schedule.append({
-            'id' : i,
-            'name' : week.name_w_title(),
-            'series' : [] 
-            })
-        if week.date:
-            schedule[-1].update({'date' : week.date.date().strftime('%B %d, %Y')})
-        else:
-            schedule[-1].update({'date' : None})
-
-        i = i + 1
-        for series in Series.objects.filter(week=week):
-            team_1 = series.get_team_1()
-            team_2 = series.get_team_2()
-            series_team_1 = series.get_series_team_1()
-            series_team_2 = series.get_series_team_2()
-            schedule[-1]['series'].append({
-                'id' : series.id,
-                'team_1' : { 
-                    'id' : team_1.id,
-                    'name' : team_1.name,
-                    'wins' : series_team_1.get_wins(),
-                    'season_wins' : series_team_1.get_wins_before(),
-                    'season_losses' : series_team_1.get_losses_before(),
-                    'icon' : team_1.icon.url
-                    },
-                'team_2' : { 
-                    'id' : team_2.id,
-                    'name' : team_2.name,
-                    'wins' : series_team_2.get_wins(),
-                    'season_wins' : series_team_2.get_wins_before(),
-                    'season_losses' : series_team_2.get_losses_before(),
-                    'icon' : team_2.icon.url
-                    }
-                })
-
-    if season.get_winner():
-        winning_team = season.get_winner()[0]
-        winner = {
-            'id' : winning_team.id,
-            'name' : winning_team.name,
-            'splash' : winning_team.splash.url
-        }
-    else:
-        winner = None
-
-    top_picks = []
-
-    for champion in season.get_top_picked():
-        top_picks.append({
-                'name' : champion['champion__name'],
-                'icon' : champion['champion__icon'],
-                'pick_rate' : champion['pick_rate']
-            })
-
-    context = {
-        'season': season.id,
-        'banner': season.splash.url,
-        'winner': winner,
-        'standings': standings,
-        'schedule': schedule,
-        'top_picks' : top_picks
-    }
-    return HttpResponse(json.dumps(context))
 
 def season_players_detail(request, season_id):
     latest_season = Season.objects.latest('id')
@@ -501,41 +254,7 @@ def get_items(request):
         get_all_items(1)
     except ObjectNotFound:
         raise Http404("Items do not exist")
-    return HttpResponseRedirect('news/')
-
-def news(request):
-    season = Season.objects.latest('id')
-    week = Week.objects.filter(season=season).latest('id')
-    teams = Team.objects.filter(season=season)
-    sorted_teams = sorted(teams, key= lambda t: t.get_sort_record())
-    series_list = Series.objects.filter(week=week)
-    carousel_objects = HomePageCarouselObject.objects.all().exclude(number__isnull=True).order_by('number')
-    articles = ArticlePage.objects.all().order_by('-id')[:4]
-    featured_players = TeamPlayer.objects.filter(role__isFill=True, team__season=season).exclude(player__photo__isnull=True).exclude(player__photo__exact='').annotate(avg_kills=Avg('player__playermatch__kills'), avg_deaths=Avg('player__playermatch__deaths'), avg_assists=Avg('player__playermatch__assists'), num_champs_played=Count('player__playermatch__champion')).order_by('-role__isFill')
-    now = datetime.now()
-    random.seed(a=(now.day+now.month+now.year+3))
-    if len(featured_players) > 0:
-        rand = random.randint(0, len(featured_players))
-        featured_player = featured_players[rand - 1]
-        featured_player_roles = TeamPlayer.objects.filter(player=featured_player.player, team=featured_player.team).annotate(avg_kills=Avg('player__playermatch__kills'), avg_deaths=Avg('player__playermatch__deaths'), avg_assists=Avg('player__playermatch__assists'), num_champs_played=Count('player__playermatch__champion')).order_by('-role__isFill')
-    context = {
-        'latest_season': season,
-        'week': week,
-        'teams': teams,
-        'carousel_objects': carousel_objects,
-        'articles': articles,
-        'featured_player': featured_player,
-        'featured_player_roles': featured_player_roles
-    }
-    return render(request, 'stats/news.html', context)
-
-def all_posts(request):
-    season = Season.objects.latest('id')
-    articles = ArticlePage.objects.all().order_by('-id')
-    context = {
-        'articles': articles
-    }
-    return render(request, 'stats/all_posts.html', context)
+    return HttpResponseRedirect('/schedule/')
 
 def index(request):
     seasons = Season.objects.all().order_by('-id')
@@ -884,7 +603,7 @@ def load_match(request, season_id, match_id):
     return render(request, 'stats/load_match.html', context)
 
 def propagate_teams(request):
-    teamplayers = TeamPlayer.objects.filter(team__season__id = 4)
+    teamplayers = TeamPlayer.objects.filter(team__season__id = 6)
     for teamplayer in teamplayers:
         for role in Role.objects.all():
             teamplayerrole = TeamPlayer.objects.filter(team=teamplayer.team, player=teamplayer.player, role=role)
@@ -929,13 +648,3 @@ def loginpage(request):
         else:
             return HttpResponseRedirect('stats/invalid_login')
     return render(request, 'stats/login.html', {})
-
-def article(request, url_name):
-    content = get_object_or_404(ArticlePage, url_name=url_name)
-    file_content = content.content.read()
-    context = {
-        'content': content,
-        'file_content': file_content
-    }
-    return render(request, 'stats/article.html', context)
-    

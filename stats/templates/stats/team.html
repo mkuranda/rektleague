@@ -118,14 +118,14 @@
 		  <tr>
 	          {% endif %}
 		  {% if series.get_team_1 == team %}
-		  <td><a href=""><img src="{{ series.get_team_2.icon.url }}" /></a></td>
+		  <td><a href="/season/{{ team.season.id }}/team/{{ series.get_team_2.id }}/"><img src="{{ series.get_team_2.media.icon.url }}" /></a></td>
 		    <td>{{ series.week }}</td>
 		    <td>{{ series.get_team_1_wins }}-{{ series.get_team_2_wins }}</td>
                     <td><a href="#" class="matchupButton">VIEW MATCH UP</a></td>
                   </tr>
 		  {% endif %}
 		  {% if series.get_team_2 == team %}
-		  <td><a href=""><img src="{{ series.get_team_1.icon.url }}" /></a></td>
+		  <td><a href="/season/{{ team.season.id }}/team/{{ series.get_team_1.id }}"><img src="{{ series.get_team_1.media.icon.url }}" /></a></td>
 		    <td>{{ series.week }}</td>
 		    <td>{{ series.get_team_2_wins }}-{{ series.get_team_1_wins }}</td>
                     <td><a href="#" class="matchupButton">VIEW MATCH UP</a></td>
