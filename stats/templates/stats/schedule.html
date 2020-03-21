@@ -10,32 +10,30 @@
 {% block content %}
 <h1>SEASON <span class="rekt-red">{{ season.id }}</span></h1>
             <h2 class="subhead">SCHEDULE</h2>
-	    {% for week in season.get_weeks_desc %}
-	    {% if forloop.counter <= season.next_week.number and week.regular %}
+	    {% for week in season.get_regular_weeks_desc %}
            <section>
-		   <button class="collapsible" id="week1"><span class="week">WEEK {{ week.number }}</span><span class="date">{% if week.date %}{{ week.date|date:"n/j" }}{% endif %}</span></button>
+		   <button class="collapsible{% if season.next_week.number == week.number %} active {% endif %}" id="week{{ week.numer }}"><span class="week">WEEK {{ week.number }}</span><span class="date">{% if week.date %}{{ week.date|date:"n/j" }}{% endif %}</span></button>
             <div class="content">
 	{% for series in week.series_set.all %}
-	<p><a href="#"><span class="rekt-red">({{ series.get_series_team_1.get_record_before }})</span> {{ series.get_team_1.media.name }} <span class="rekt-red vs">VS.</span> {{ series.get_team_2.media.name }} <span class="rekt-red">({{ series.get_series_team_2.get_record_before }})</span><span class="rekt-red time">{{ series.date|date:"g:i a" }}</span></a><a href="/season/{{ season.id }}/series/{{ series.id }}/" class="matchupButton">VIEW MATCH UP</a></p>
+	<p><span class="rekt-red">({{ series.get_series_team_1.get_record_before }})</span><a href="/season/{{ season.id }}/team/{{ series.get_team_1.id }}/">{{ series.get_team_1.media.name }} </a><span class="rekt-red vs">VS.</span> <a href="/season/{{ season.id }}/team/{{ series.get_team_2.id }}/"> {{ series.get_team_2.media.name }} </a><span class="rekt-red">({{ series.get_series_team_2.get_record_before }})</span><span class="rekt-red time">{{ series.date|date:"g:i a" }}</span></a><a href="/season/{{ season.id }}/series/{{ series.id }}/" class="matchupButton">VIEW MATCH UP</a></p>
 	{% endfor %}
             </div>
           </section>
-	  {% endif %}
 	  {% endfor %}
          
+	  {% if season.get_playoff_weeks_desc %}
           <h2>PLAY<span class="rekt-red">OFFS</span></h2>
-	    {% for week in season.get_weeks_desc %}
-	    {% if forloop.counter <= season.next_week.number and not week.regular %}
+	    {% for week in season.get_playoff_weeks_desc %}
            <section>
-		   <button class="collapsible" id="week1"><span class="week">{{ week.title }}</span><span class="date">{% if week.date %}{{ week.date|date:"n/j" }}{% endif %}</span></button>
+		   <button class="collapsible" id="week{{ week.number }}"><span class="week">{{ week.title }}</span><span class="date">{% if week.date %}{{ week.date|date:"n/j" }}{% endif %}</span></button>
             <div class="content">
 	{% for series in week.series_set.all %}
-	<p><a href="#"><span class="rekt-red">({{ series.get_series_team_1.get_record_before }})</span> {{ series.get_team_1.media.name }} <span class="rekt-red vs">VS.</span> {{ series.get_team_2.media.name }} <span class="rekt-red">({{ series.get_series_team_2.get_record_before }})</span><span class="rekt-red time">{{ series.date|date:"g:i a" }}</span></a><a href="/season/{{ season.id }}/series/{{ series.id }}/" class="matchupButton">VIEW MATCH UP</a></p>
+	<p><span class="rekt-red">({{ series.get_series_team_1.get_record_before }})</span><a href="/season/{{ season.id }}/team/{{ series.get_team_1.id }}/"> {{ series.get_team_1.media.name }} </a><span class="rekt-red vs">VS.</span><a href="/season/{{ season.id }}/team/{{ series.get_team_2.id }}/"> {{ series.get_team_2.media.name }} </a><span class="rekt-red">({{ series.get_series_team_2.get_record_before }})</span><span class="rekt-red time">{{ series.date|date:"g:i a" }}</span><a href="/season/{{ season.id }}/series/{{ series.id }}/" class="matchupButton">VIEW MATCH UP</a></p>
 	{% endfor %}
             </div>
           </section>
-	  {% endif %}
 	  {% endfor %}
+	  {% endif %}
 
           <script>
             var coll = document.getElementsByClassName("collapsible");

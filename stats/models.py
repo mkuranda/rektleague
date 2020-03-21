@@ -22,6 +22,12 @@ class Season(models.Model):
     def get_weeks(self):
         return Week.objects.filter(season=self).order_by('-number')
 
+    def get_regular_weeks_desc(self):
+        return Week.objects.filter(season=self, regular=True).order_by('number')
+
+    def get_playoff_weeks_desc(self):
+        return Week.objects.filter(season=self, regular=False).order_by('number')
+
     def get_weeks_desc(self):
         return Week.objects.filter(season=self).order_by('number')
 
