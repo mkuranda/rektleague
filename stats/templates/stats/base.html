@@ -43,8 +43,28 @@
                             <label for="drop" class="toggle">Menu</label>
                             <input type="checkbox" id="drop" />
                             <ul class="menu">
-                              <li><a href="/schedule/">SCHEDULE</a></li>
-                              <li><a href="/standings/">STANDINGS</a></li>
+			      <li> 
+                                <!-- First Tier Drop Down -->
+                                <label for="drop-1" class="toggle">SCHEDULE</label>
+				<a href="/schedule/">SCHEDULE</span></a>
+                                <input type="checkbox" id="drop-1"/>
+                                <ul>
+				{% for season in seasons %}
+				<li><a href="/season/{{ season.id }}/schedule/">SEASON {{ season.id }}</a></li>
+				{% endfor %}
+                                </ul>
+                              </li>
+			      <li> 
+                                <!-- First Tier Drop Down -->
+                                <label for="drop-1" class="toggle">STANDINGS</label>
+				<a href="/standings/">STANDINGS</span></a>
+                                <input type="checkbox" id="drop-1"/>
+                                <ul>
+				{% for season in seasons %}
+				<li><a href="/season/{{ season.id }}/standings/">SEASON {{ season.id }}</a></li>
+				{% endfor %}
+                                </ul>
+                              </li>
 		              <li> 
                                 <!-- First Tier Drop Down -->
                                 <label for="drop-1" class="toggle">STATS</label>
@@ -81,7 +101,6 @@
                                 </ul>
                               </li> -->
                               <li><a href="https://docs.google.com/document/d/1CXoNUVz3K5vAqq_qPV36BGLRZEKzaxmvD79JkOJtq3g/edit#heading=h.mfjb9322hbzf">RULES</a></li>
-                              <li><a href="#">SIGN UP</a></li>
                               <li class="signinFloat"><a href="/signin/">SIGN IN</a></li>
                             </ul>
                           </nav>

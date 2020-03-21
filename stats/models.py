@@ -22,6 +22,12 @@ class Season(models.Model):
     def get_weeks(self):
         return Week.objects.filter(season=self).order_by('-number')
 
+    def get_regular_weeks_desc(self):
+        return Week.objects.filter(season=self, regular=True).order_by('number')
+
+    def get_playoff_weeks_desc(self):
+        return Week.objects.filter(season=self, regular=False).order_by('number')
+
     def get_weeks_desc(self):
         return Week.objects.filter(season=self).order_by('number')
 
@@ -466,7 +472,9 @@ class Team(models.Model):
         return TeamMatch.objects.filter(team=self, win=True, match__duration__gte=5).aggregate(Avg('match__duration'))['match__duration__avg']
 
     def get_average_win_duration_str(self):
-        return time.strftime('%M:%S', time.gmtime(TeamMatch.objects.filter(team=self, win=True, match__duration__gte=5).aggregate(Avg('match__duration'))['match__duration__avg']))
+        if TeamMatch.objects.filter(team=self, win=True, match__duration__gte=5):
+            return time.strftime('%M:%S', time.gmtime(TeamMatch.objects.filter(team=self, win=True, match__duration__gte=5).aggregate(Avg('match__duration'))['match__duration__avg']))
+        return "N/A"
 
     def get_kill_timelines(self):
         return TeamTimeline.objects.filter(team=self)
@@ -1252,113 +1260,7 @@ class PlayerMatchTimeline(models.Model):
     position_y = models.IntegerField(default=0)
     xp = models.IntegerField(default=0)
 
-class SummonerSpell(models.Model):
-    riot_id = models.IntegerField(default=0)
-    name = models.CharField(max_length=20)
-    icon = models.ImageField(upload_to='stats/summoner-spell/icon', default='')
-
-class PlayerMatchSummonerSpell(models.Model):
-    player = models.ForeignKey(Player)
-    match = models.ForeignKey(Match)
-    summoner_spell = models.ForeignKey(SummonerSpell)
-
-
-class MatchCaster(models.Model):
-    match = models.ForeignKey(Match)
-    player = models.ForeignKey(Player)
-
 class HypeVideo(models.Model):
     season = models.ForeignKey(Season)
     creator = models.ForeignKey(Player)
     youtube_link = models.CharField(max_length=100, default='')
-
-
-
-# PAGE STUFF
-
-class HomePageCarouselObject(models.Model):
-    number = models.IntegerField(unique=True, blank=True, null=True)
-    url_name = models.CharField(max_length=100, blank=True, null=True)
-    splash = models.ImageField(upload_to='stats/carousel_images', blank=True, null=True)
-
-    def __str__(self):
-        return "Carousel Position " + str(self.number)
-
-
-
-#class HomePagePosition(models.Model):
-#    number = models.IntegerField(unique=True)
-#
-#    def __str__(self):
-#        return "Home Page Position " + str(self.number)
-#
-#class HomePageStaticImage(models.Model):
-#    position = models.ForeignKey(HomePagePosition, blank=True, null=True)
-#    image = models.ImageField(upload_to='stats/announcement_splashes', default='', blank=True, null=True)
-#    style = models.CharField(max_length=100, default="")
-#
-#    def __str__(self):
-#        return "Image at " + str(self.position)
-#
-#class HomePageStaticContent(models.Model):
-#    position = models.ForeignKey(HomePagePosition, blank=True, null=True)
-#    content = models.FileField(upload_to='stats/articles', blank=True, null=True)
-#
-#    def __str__(self):
-#        return "Content at " + str(self.position)
-#
-#class HomePageCarousel(models.Model):
-#    position = models.ForeignKey(HomePagePosition, blank=True, null=True)
-#
-#    def __str__(self):
-#        return "Carousel at " + str(self.position)
-#
-#class HomePageSchedule(models.Model):
-#    position = models.ForeignKey(HomePagePosition, blank=True, null=True)
-#    season = models.ForeignKey(Season)
-#
-#    def __str__(self):
-#        return "Schedule for Season " + str(self.season.id) + " at " + str(self.position)
-#
-#class HomePageCarouselPosition(models.Model):
-#    number = models.IntegerField()
-#    carousel = models.ForeignKey(HomePageCarousel)
-#
-#    class Meta:
-#        unique_together = (("number", "carousel"))
-#
-#    def __str__(self):
-#        return "Carousel at " + str(self.carousel.position) + ": Position " + str(self.number)
-
-
-class ArticlePage(models.Model):
-    url_name = models.CharField(max_length=50, unique=True)
-    title = models.CharField(max_length=100)
-    synopsis = models.CharField(max_length=100)
-    youtube_link = models.CharField(max_length=100, blank=True, null=True)
-    content = models.FileField(upload_to='stats/articles', blank=True, null=True)
-    splash = models.ImageField(upload_to='stats/announcement_splashes', default='', blank=True, null=True)
-    header = models.ImageField(upload_to='stats/announcement_headers', default='', blank=True, null=True)
-    team_tag = models.ManyToManyField(Team)
-
-    def clean_content(self):
-        if self.content:
-            file_content = self.content.read()
-            cleanr = re.compile('<.*?>')
-            cleantext = re.sub(cleanr, '', file_content)
-            cleantext = cleantext.strip('\n')
-            cleantext = cleantext.strip('\t')
-            return cleantext
-        else:
-            return ""
-
-    def __str__(self):
-        return self.title
-
-
-class TestObject(models.Model):
-    shortCode = models.CharField(max_length=100)
-    winningTeam = models.CharField(max_length=3000)
-    losingTeam = models.CharField(max_length=3000)
-    gameId = models.IntegerField()
-

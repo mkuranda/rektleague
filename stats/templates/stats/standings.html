@@ -13,7 +13,7 @@
             <!--FIRST PLACE-->
 	    {% for team in sorted_teams %}
             <section>
-		    <button class="collapsible"><img src="{{ team.media.banner.url }}" alt="air drake"><span class="standing">{{ forloop.counter }}</span><span class="team">{{ team.name }}</span></button>
+		    <button class="collapsible"><img src="{{ team.media.banner.url }}" alt="air drake"><span class="standing">{{ forloop.counter }}</span><span class="team">{{ team.media.name }}</span></button>
               <div class="content">
 		      <p>WINS: <span class="rekt-red result">{{ team.get_regular_wins }}</span></p>
 		      <p>LOSSES: <span class="rekt-red result"><span class="rekt-red result">{{ team.get_regular_losses }}</span></p>
