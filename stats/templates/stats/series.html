@@ -121,18 +121,36 @@ window.onload = function() {
                      </div> -->
 
                      <!--POST GAME STATS-->
-                    
+                  
                      <!-- TEAM 1 -->
                      <div class="tableContainer">
-                       <table>
+                       <table id="bansTableBlue">
+                         <tr class="bans">
+                          <td><img src="/media/stats/champion/icon/Bard.png"></td>
+                          <td><img src="/media/stats/champion/icon/Bard.png"></td>
+                          <td><img src="/media/stats/champion/icon/Bard.png"></td>
+                          <td><img src="/media/stats/champion/icon/Bard.png"></td>
+                          <td><img src="/media/stats/champion/icon/Bard.png"></td>
+                         </tr>
+                       </table>
+                       <table class="first">                       
                          <thead>
-                           <th>
-                             <img src="/static/stats/scoreboardicon_champion.png" alt="champion">
-                           </th>
-                           <th></th>
-                           <th><img src="/static/stats/scoreboardicon_score.png"></th>
-                           <th><img src="/static/stats/scoreboardicon_minion.png"></th>
-                           <th><img src="/static/stats/scoreboardicon_gold.png"></th>
+                           
+                              <!-- <td><img src="/media/stats/champion/icon/Bard.png"></td>
+                              <td><img src="/media/stats/champion/icon/Bard.png"></td>
+                              <td><img src="/media/stats/champion/icon/Bard.png"></td>
+                              <td><img src="/media/stats/champion/icon/Bard.png"></td>
+                              <td><img src="/media/stats/champion/icon/Bard.png"></td> -->
+                          
+                           <tr class="blueSide">
+                              <th>
+                                <img src="/static/stats/scoreboardicon_champion.png" alt="champion">
+                              </th>
+                              <th></th>
+                              <th><img src="/static/stats/scoreboardicon_score.png"></th>
+                              <th><img src="/static/stats/scoreboardicon_minion.png"></th>
+                              <th><img src="/static/stats/scoreboardicon_gold.png"></th>
+                           </tr>
                          </thead>
                          <tbody>
                           <tr class="whiteRow">
@@ -173,15 +191,32 @@ window.onload = function() {
                          </tbody>
                        </table>
                      <!-- TEAM 2 -->
+                     
+                     <table id="bansTableRed">
+                      <tr class="bans">
+                       <td><img src="/media/stats/champion/icon/Bard.png"></td>
+                       <td><img src="/media/stats/champion/icon/Bard.png"></td>
+                       <td><img src="/media/stats/champion/icon/Bard.png"></td>
+                       <td><img src="/media/stats/champion/icon/Bard.png"></td>
+                       <td><img src="/media/stats/champion/icon/Bard.png"></td>
+                      </tr>
+                    </table>
                       <table class="second">
                         <thead>
-                          <th>
-                            <img src="/static/stats/scoreboardicon_champion.png" alt="champion">
-                          </th>
-                          <th></th>
-                          <th><img src="/static/stats/scoreboardicon_score.png"></th>
-                          <th><img src="/static/stats/scoreboardicon_minion.png"></th>
-                          <th><img src="/static/stats/scoreboardicon_gold.png"></th>
+                            <!-- <td><img src="/media/stats/champion/icon/Bard.png"></td>
+                            <td><img src="/media/stats/champion/icon/Bard.png"></td>
+                            <td><img src="/media/stats/champion/icon/Bard.png"></td>
+                            <td><img src="/media/stats/champion/icon/Bard.png"></td>
+                            <td><img src="/media/stats/champion/icon/Bard.png"></td> -->
+                          <tr>
+                              <th>
+                                <img src="/static/stats/scoreboardicon_champion.png" alt="champion">
+                              </th>
+                              <th></th>
+                              <th><img src="/static/stats/scoreboardicon_score.png"></th>
+                              <th><img src="/static/stats/scoreboardicon_minion.png"></th>
+                              <th><img src="/static/stats/scoreboardicon_gold.png"></th>
+                          </tr>
                         </thead>
                         <tbody>
                            <tr class="whiteRow">
@@ -223,6 +258,37 @@ window.onload = function() {
                       </table>
                     </div>
                     <div class="clearfix"></div>
+
+                    <section class="statSection">
+                    <div class="statTitle">WINNER</div>
+                      <p>AIR</p>
+                      <p>27:00</p>
+                    </section>
+                    <!-- MATCH UP GENERATOR -->
+                    <div class="matchupMaker">
+                    <div class="statTitle">MATCHUPS</div>
+                    <select name="blue-players" id="blue-player-select">
+                      <option value="dog">BlueTeamPlayer1_name</option>
+                      <option value="cat">BlueTeamPlayer2_name</option>
+                      <option value="hamster">BlueTeamPlayer3_name</option>
+                      <option value="parrot">BlueTeamPlayer4_name</option>
+                      <option value="spider">BlueTeamPlayer5_name</option>
+                    </select>
+
+                    <select name="red-players" id="red-player-select">
+                      <option value="dog">RedTeamPlayer1_name</option>
+                      <option value="cat">RedTeamPlayer2_name</option>
+                      <option value="hamster">RedTeamPlayer3_name</option>
+                      <option value="parrot">RedTeamPlayer4_name</option>
+                      <option value="spider">RedTeamPlayer5_name</option>
+                    </select>
+                    </div>
+
+                    <div class="buttonGenerate">
+                      <span><a href="">GENERATE</a></span>
+                                  </div>
+
+                    
                     <!-- Lock In -->
                     <div class="button">
 		    <span><a href="/season/{{ season.id }}/series/{{ series.id }}/lockin/{{ team1.team.id }}">LOCK IN</a></span>
