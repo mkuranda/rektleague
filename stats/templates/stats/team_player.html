@@ -16,7 +16,7 @@
 {% block content %}
 
             <!-- HERO IMAGE -->
-         <a id="teamLink" href="#"> 
+	   <a id="teamLink" href="/season/{{ season.id }}/team/{{ team.id }}/"> 
             <section id="banner">
 		    {% if player.photo %}
 		    <img class="playerPhoto" src="{{ player.photo.url }}">

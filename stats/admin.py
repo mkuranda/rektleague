@@ -48,7 +48,7 @@ class SummonerInline(admin.TabularInline):
 
 class PlayerAdmin(admin.ModelAdmin):
     fieldsets = [
-        ('Player Info', {'fields': ['name', 'riot_id', 'photo']}),
+        ('Player Info', {'fields': ['name', 'riot_id', 'photo', 'elo_value']}),
     ]
     inlines = [TeamPlayerInline, SummonerInline]
 

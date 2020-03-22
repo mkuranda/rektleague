@@ -251,6 +251,8 @@ class Week(models.Model):
         return "WEEK " + str(self.number)
 
     def __str__(self):
+        if self.title != "" and self.title != " ":
+            return str(self.season) + ": " + self.title
         return str(self.season) + ": WEEK " + str(self.number)
 
 class Role(models.Model):
@@ -412,6 +414,7 @@ class Player(models.Model):
     riot_id = models.IntegerField(default=0)
     matches = models.ManyToManyField(Match, through='PlayerMatch')
     photo = models.ImageField(upload_to='stats/player_photos', blank=True, null=True)
+    elo_value = models.IntegerField(default=100)
 
     def team_players(self):
         return TeamPlayer.objects.filter(player=self)
@@ -423,7 +426,7 @@ class Player(models.Model):
         return Season.objects.filter(pk__in=self.teams())
 
     def __str__(self):
-        return self.name
+        return self.name + " (" + str(self.elo_value) + ")"
 
 @python_2_unicode_compatible
 class Summoner(models.Model):

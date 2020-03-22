@@ -11,6 +11,42 @@ class CreateRosterForm(forms.Form):
     sup = forms.ModelChoiceField(queryset=Team.objects.none())
     sub = forms.ModelChoiceField(queryset=Team.objects.none(), required=False)
 
+    def clean(self):
+        cleaned_data = super(CreateRosterForm, self).clean()
+        s = set()
+        top = cleaned_data.get('top')
+        jun = cleaned_data.get('jun')
+        mid = cleaned_data.get('mid')
+        bot = cleaned_data.get('bot')
+        sup = cleaned_data.get('sup')
+        sub = cleaned_data.get('sub')
+
+        failed = False
+        s.add(top)
+        if jun in s: 
+            failed=True
+        s.add(jun)
+        if mid in s: 
+            failed=True
+        s.add(mid)
+        if bot in s: 
+            failed=True
+        s.add(bot)
+        if sup in s: 
+            failed=True
+        s.add(sup)
+        if sub in s: 
+            failed=True
+        s.add(sub)
+
+        if failed:
+            raise forms.ValidationError("You can only assign a player to one role at a time")
+
+        total_elo = cleaned_data.get('top').elo_value + cleaned_data.get('jun').elo_value + cleaned_data.get('mid').elo_value + cleaned_data.get('bot').elo_value + cleaned_data.get('sup').elo_value
+        if total_elo > 0:
+            raise forms.ValidationError("Submitted roster is above the elo limit at +" + str(total_elo))
+ 
+
     def __init__(self, *args, **kwargs):
         team_id = kwargs.pop('team_id')
         series_id = kwargs.pop('series_id')

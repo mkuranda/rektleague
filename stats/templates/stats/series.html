@@ -7,7 +7,11 @@
 <script type="text/javascript">
 {% for match in matches %}
 function ReplaceGame{{ match.game_num }}() {
+	document.getElementById("Duration").innerHTML = "{{ match.duration_str }}";
         {% for teammatch in match.teammatch_set.all %}
+	{% if teammatch.win %}
+        document.getElementById("WinnerName").innerHTML = "{{ teammatch.team.media.name }}";
+	{% endif %}
         {% for playermatch in teammatch.get_player_matches %}
         document.getElementById("{{ teammatch.side }}TeamPlayer{{ forloop.counter }}_name").innerHTML = "{{ playermatch.player.name }}";
         document.getElementById("{{ teammatch.side }}TeamPlayer{{ forloop.counter }}_kda").innerHTML = "{{ playermatch.kills }}/{{ playermatch.deaths }}/{{ playermatch.assists }}";
@@ -15,6 +19,9 @@ function ReplaceGame{{ match.game_num }}() {
         document.getElementById("{{ teammatch.side }}TeamPlayer{{ forloop.counter }}_gold").innerHTML = "{{ playermatch.gold_earned }}";
         document.getElementById("{{ teammatch.side }}TeamPlayer{{ forloop.counter }}_champ").src = "{{ playermatch.champion.icon.url }}";
         {% endfor %}
+	{% for ban in teammatch.get_team_bans %}
+        document.getElementById("{{ teammatch.side }}TeamBan{{ forloop.counter }}").src = "{{ ban.champion.icon.url }}";
+	{% endfor %}
         {% endfor %}
 }
 {% if matches %}
@@ -44,9 +51,21 @@ window.onload = function() {
       <img class="imageRight" src="{{ series.get_team_2.media.banner.url }}">
       <span class="teamNameRight">{{ series.get_team_2.media.name }}</span>
     </section>
+
     
-    {% if series.rosters_submitted and series.past_deadline and season.id > 2 %}
+    {% if series.rosters_submitted and series.past_deadline and season.id > 2 or request.user.id == series.get_team_1.user.id and series.get_team_1_players or request.user.id == series.get_team_2.user.id and series.get_team_2_players %}
     <div class="teamsContainer">
+    {% if request.user.id == series.get_team_2.user.id and not series.past_deadline %}
+     <div class="teams">
+	{% for role in roles %}
+        <div class="playerSection">
+	  <img class="playerPhotoLeft" src="/static/stats/player-photos/missing.png">
+	  <p>???</p>
+	  <img class="laneLeft" src="{{ role.icon.url }}">
+        </div>
+	{% endfor %}
+      </div>
+    {% else %}
       <div class="teams">
         {% for seriesplayer in series.get_team_1_players %}
         <div class="playerSection">
@@ -60,7 +79,18 @@ window.onload = function() {
         </div>
 	{% endfor %}
       </div>
-
+    {% endif %}
+    {% if request.user.id == series.get_team_1.user.id and not series.past_deadline %}
+     <div class="teams">
+	{% for role in roles %}
+        <div class="playerSection">
+	  <img class="laneRight" src="{{ role.icon.url }}">
+	  <p>???</p>
+	  <img class="playerPhotoRight" src="/static/stats/player-photos/missing.png">
+        </div>
+	{% endfor %}
+      </div>
+    {% else %}
       <div class="teams">
         {% for seriesplayer in series.get_team_2_players %}
         <div class="playerSection">
@@ -74,217 +104,199 @@ window.onload = function() {
         </div>
 	{% endfor %}
       </div>
+    {% endif %}
     </div>
     {% endif %}
 
+    {% if matches %}
     <!-- FILTERS -->
     <div class="clearfix"></div>
     <section>
     <h2 class="postGameHead">POST GAME</h2>
-                  <!-- MATCH FILTER -->
-                  <div id="filter">    
-                    <div class="grey-search-button-container">
+    <!-- MATCH FILTER -->
+    <div id="filter">    
+      <div class="grey-search-button-container">
   
-                      <div class="drop-item drop-list">
-                
-                        <ul id="rome-menu">
-                             <li class="tophelp"><a class="menu-trigger" href="#">MATCH</a>
-                              <ul id="subrome">
-			      {% for match in matches %}
-			      <a href="javascript:ReplaceGame{{ match.game_num }}();"><li>MATCH {{ match.game_num }}</li></a>
-			      {% endfor %}
-                          </ul> 
-                        </li>              
-                        </ul>
-                       </div>
-                     </div>
+        <div class="drop-item drop-list">
+    
+          <ul id="rome-menu">
+               <li class="tophelp"><a class="menu-trigger" href="#">MATCH</a>
+                <ul id="subrome">
+                {% for match in matches %}
+                <a href="javascript:ReplaceGame{{ match.game_num }}();"><li>MATCH {{ match.game_num }}</li></a>
+                {% endfor %}
+            </ul> 
+          </li>              
+          </ul>
+         </div>
+       </div>
+      </div>
+    </section>
+    <div class="clearfix"></div>
+
+     <!--POST GAME STATS-->
+    
+     <!-- TEAM 1 -->
+     <div class="tableContainer">
+       <table id="bansTableBlue">
+         <tr class="bans">
+          <td><img id="BlueTeamBan1"></td>
+          <td><img id="BlueTeamBan2"></td>
+          <td><img id="BlueTeamBan3"></td>
+          <td><img id="BlueTeamBan4"></td>
+          <td><img id="BlueTeamBan5"></td>
+         </tr>
+       </table>
+       <table class="first">                       
+         <thead>
+         
+           <tr class="blueSide">
+              <th>
+                <img src="/static/stats/scoreboardicon_champion.png" alt="champion">
+              </th>
+              <th></th>
+              <th><img src="/static/stats/scoreboardicon_score.png"></th>
+              <th><img src="/static/stats/scoreboardicon_minion.png"></th>
+              <th><img src="/static/stats/scoreboardicon_gold.png"></th>
+           </tr>
+         </thead>
+         <tbody>
+          <tr class="whiteRow">
+              <td><img id="BlueTeamPlayer1_champ"></td>
+              <td id="BlueTeamPlayer1_name"></td>
+              <td id="BlueTeamPlayer1_kda"></td>
+              <td id="BlueTeamPlayer1_cs"></td>
+              <td id="BlueTeamPlayer1_gold"></td>
+           </tr>
+           <tr>
+              <td><img id="BlueTeamPlayer2_champ"></td>
+              <td id="BlueTeamPlayer2_name"></td>
+              <td id="BlueTeamPlayer2_kda"></td>
+              <td id="BlueTeamPlayer2_cs"></td>
+              <td id="BlueTeamPlayer2_gold"></td>
+           </tr>
+           <tr class="whiteRow">
+              <td><img id="BlueTeamPlayer3_champ"></td>
+              <td id="BlueTeamPlayer3_name"></td>
+              <td id="BlueTeamPlayer3_kda"></td>
+              <td id="BlueTeamPlayer3_cs"></td>
+              <td id="BlueTeamPlayer3_gold"></td>
+           </tr>
+           <tr>
+              <td><img id="BlueTeamPlayer4_champ"></td>
+              <td id="BlueTeamPlayer4_name"></td>
+              <td id="BlueTeamPlayer4_kda"></td>
+              <td id="BlueTeamPlayer4_cs"></td>
+              <td id="BlueTeamPlayer4_gold"></td>
+           </tr>
+           <tr class="whiteRow">
+              <td><img id="BlueTeamPlayer5_champ"></td>
+              <td id="BlueTeamPlayer5_name"></td>
+              <td id="BlueTeamPlayer5_kda"></td>
+              <td id="BlueTeamPlayer5_cs"></td>
+              <td id="BlueTeamPlayer5_gold"></td>
+           </tr>
+         </tbody>
+       </table>
+     <!-- TEAM 2 -->
+     
+     <table id="bansTableRed">
+      <tr class="bans">
+       <td><img id="RedTeamBan1"></td>
+       <td><img id="RedTeamBan2"></td>
+       <td><img id="RedTeamBan3"></td>
+       <td><img id="RedTeamBan4"></td>
+       <td><img id="RedTeamBan5"></td>
+      </tr>
+    </table>
+        <table class="second">
+          <thead>
+            <tr>
+                <th>
+                  <img src="/static/stats/scoreboardicon_champion.png" alt="champion">
+                </th>
+                <th></th>
+                <th><img src="/static/stats/scoreboardicon_score.png"></th>
+                <th><img src="/static/stats/scoreboardicon_minion.png"></th>
+                <th><img src="/static/stats/scoreboardicon_gold.png"></th>
+            </tr>
+          </thead>
+          <tbody>
+             <tr class="whiteRow">
+                <td><img id="RedTeamPlayer1_champ"></td>
+                <td id="RedTeamPlayer1_name"></td>
+                <td id="RedTeamPlayer1_kda"></td>
+                <td id="RedTeamPlayer1_cs"></td>
+                <td id="RedTeamPlayer1_gold"></td>
+             </tr>
+             <tr>
+                <td><img id="RedTeamPlayer2_champ"></td>
+                <td id="RedTeamPlayer2_name"></td>
+                <td id="RedTeamPlayer2_kda"></td>
+                <td id="RedTeamPlayer2_cs"></td>
+                <td id="RedTeamPlayer2_gold"></td>
+             </tr>
+             <tr class="whiteRow">
+                <td><img id="RedTeamPlayer3_champ"></td>
+                <td id="RedTeamPlayer3_name"></td>
+                <td id="RedTeamPlayer3_kda"></td>
+                <td id="RedTeamPlayer3_cs"></td>
+                <td id="RedTeamPlayer3_gold"></td>
+             </tr>
+             <tr>
+                <td><img id="RedTeamPlayer4_champ"></td>
+                <td id="RedTeamPlayer4_name"></td>
+                <td id="RedTeamPlayer4_kda"></td>
+                <td id="RedTeamPlayer4_cs"></td>
+                <td id="RedTeamPlayer4_gold"></td>
+             </tr>
+             <tr class="whiteRow">
+                <td><img id="RedTeamPlayer5_champ"></td>
+                <td id="RedTeamPlayer5_name"></td>
+                <td id="RedTeamPlayer5_kda"></td>
+                <td id="RedTeamPlayer5_cs"></td>
+                <td id="RedTeamPlayer5_gold"></td>
+             </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="clearfix"></div>
+
+      <section class="statSection">
+      <div class="statTitle">WINNER</div>
+        <p id="WinnerName"></p>
+        <p id="Duration"></p>
+      </section>
+      {% endif %}
+      {% if series.rosters_submitted and series.past_deadline and season.id > 2 %}
+      <!-- MATCH UP GENERATOR -->
+      <div class="matchupMaker">
+      <div class="statTitle">MATCHUPS</div>
+      <select name="positions" id="matchupPositions">
+        {% for role in roles %}
+        <option value="dog">{{ role.name }}</option>
+        {% endfor %}
+      </select>
+      </div>
+
+      <div class="buttonGenerate">
+        <span><a href="">GENERATE</a></span>
                     </div>
-                  </section>
-                  <div class="clearfix"></div>
-                  <!-- TEAM FILTER -->
+      {% endif %}
 
-                  <!-- <div id="filter">    
-                    <div class="grey-search-button-container">
-  
-                      <div class="drop-item drop-list">
-                
-                        <ul id="rome-menu">
-                             <li class="tophelp"><a class="menu-trigger" href="#">TEAM</a>
-                              <ul id="subrome">
-                                  <li><a href="#">AIR</a></li>
-                                  <li><a href="#">BRAMBLEBACK</a></li>
-                          </ul> 
-                        </li>              
-                        </ul>
-                       </div>
-                    
-                     </div> -->
-
-                     <!--POST GAME STATS-->
-                  
-                     <!-- TEAM 1 -->
-                     <div class="tableContainer">
-                       <table id="bansTableBlue">
-                         <tr class="bans">
-                          <td><img src="/media/stats/champion/icon/Bard.png"></td>
-                          <td><img src="/media/stats/champion/icon/Bard.png"></td>
-                          <td><img src="/media/stats/champion/icon/Bard.png"></td>
-                          <td><img src="/media/stats/champion/icon/Bard.png"></td>
-                          <td><img src="/media/stats/champion/icon/Bard.png"></td>
-                         </tr>
-                       </table>
-                       <table class="first">                       
-                         <thead>
-                           
-                              <!-- <td><img src="/media/stats/champion/icon/Bard.png"></td>
-                              <td><img src="/media/stats/champion/icon/Bard.png"></td>
-                              <td><img src="/media/stats/champion/icon/Bard.png"></td>
-                              <td><img src="/media/stats/champion/icon/Bard.png"></td>
-                              <td><img src="/media/stats/champion/icon/Bard.png"></td> -->
-                          
-                           <tr class="blueSide">
-                              <th>
-                                <img src="/static/stats/scoreboardicon_champion.png" alt="champion">
-                              </th>
-                              <th></th>
-                              <th><img src="/static/stats/scoreboardicon_score.png"></th>
-                              <th><img src="/static/stats/scoreboardicon_minion.png"></th>
-                              <th><img src="/static/stats/scoreboardicon_gold.png"></th>
-                           </tr>
-                         </thead>
-                         <tbody>
-                          <tr class="whiteRow">
-                              <td><img id="BlueTeamPlayer1_champ"></td>
-                              <td id="BlueTeamPlayer1_name"></td>
-                              <td id="BlueTeamPlayer1_kda"></td>
-                              <td id="BlueTeamPlayer1_cs"></td>
-                              <td id="BlueTeamPlayer1_gold"></td>
-                           </tr>
-                           <tr>
-                              <td><img id="BlueTeamPlayer2_champ"></td>
-                              <td id="BlueTeamPlayer2_name"></td>
-                              <td id="BlueTeamPlayer2_kda"></td>
-                              <td id="BlueTeamPlayer2_cs"></td>
-                              <td id="BlueTeamPlayer2_gold"></td>
-                           </tr>
-                           <tr class="whiteRow">
-                              <td><img id="BlueTeamPlayer3_champ"></td>
-                              <td id="BlueTeamPlayer3_name"></td>
-                              <td id="BlueTeamPlayer3_kda"></td>
-                              <td id="BlueTeamPlayer3_cs"></td>
-                              <td id="BlueTeamPlayer3_gold"></td>
-                           </tr>
-                           <tr>
-                              <td><img id="BlueTeamPlayer4_champ"></td>
-                              <td id="BlueTeamPlayer4_name"></td>
-                              <td id="BlueTeamPlayer4_kda"></td>
-                              <td id="BlueTeamPlayer4_cs"></td>
-                              <td id="BlueTeamPlayer4_gold"></td>
-                           </tr>
-                           <tr class="whiteRow">
-                              <td><img id="BlueTeamPlayer5_champ"></td>
-                              <td id="BlueTeamPlayer5_name"></td>
-                              <td id="BlueTeamPlayer5_kda"></td>
-                              <td id="BlueTeamPlayer5_cs"></td>
-                              <td id="BlueTeamPlayer5_gold"></td>
-                           </tr>
-                         </tbody>
-                       </table>
-                     <!-- TEAM 2 -->
-                     
-                     <table id="bansTableRed">
-                      <tr class="bans">
-                       <td><img src="/media/stats/champion/icon/Bard.png"></td>
-                       <td><img src="/media/stats/champion/icon/Bard.png"></td>
-                       <td><img src="/media/stats/champion/icon/Bard.png"></td>
-                       <td><img src="/media/stats/champion/icon/Bard.png"></td>
-                       <td><img src="/media/stats/champion/icon/Bard.png"></td>
-                      </tr>
-                    </table>
-                      <table class="second">
-                        <thead>
-                            <!-- <td><img src="/media/stats/champion/icon/Bard.png"></td>
-                            <td><img src="/media/stats/champion/icon/Bard.png"></td>
-                            <td><img src="/media/stats/champion/icon/Bard.png"></td>
-                            <td><img src="/media/stats/champion/icon/Bard.png"></td>
-                            <td><img src="/media/stats/champion/icon/Bard.png"></td> -->
-                          <tr>
-                              <th>
-                                <img src="/static/stats/scoreboardicon_champion.png" alt="champion">
-                              </th>
-                              <th></th>
-                              <th><img src="/static/stats/scoreboardicon_score.png"></th>
-                              <th><img src="/static/stats/scoreboardicon_minion.png"></th>
-                              <th><img src="/static/stats/scoreboardicon_gold.png"></th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                           <tr class="whiteRow">
-                              <td><img id="RedTeamPlayer1_champ"></td>
-                              <td id="RedTeamPlayer1_name"></td>
-                              <td id="RedTeamPlayer1_kda"></td>
-                              <td id="RedTeamPlayer1_cs"></td>
-                              <td id="RedTeamPlayer1_gold"></td>
-                           </tr>
-                           <tr>
-                              <td><img id="RedTeamPlayer2_champ"></td>
-                              <td id="RedTeamPlayer2_name"></td>
-                              <td id="RedTeamPlayer2_kda"></td>
-                              <td id="RedTeamPlayer2_cs"></td>
-                              <td id="RedTeamPlayer2_gold"></td>
-                           </tr>
-                           <tr class="whiteRow">
-                              <td><img id="RedTeamPlayer3_champ"></td>
-                              <td id="RedTeamPlayer3_name"></td>
-                              <td id="RedTeamPlayer3_kda"></td>
-                              <td id="RedTeamPlayer3_cs"></td>
-                              <td id="RedTeamPlayer3_gold"></td>
-                           </tr>
-                           <tr>
-                              <td><img id="RedTeamPlayer4_champ"></td>
-                              <td id="RedTeamPlayer4_name"></td>
-                              <td id="RedTeamPlayer4_kda"></td>
-                              <td id="RedTeamPlayer4_cs"></td>
-                              <td id="RedTeamPlayer4_gold"></td>
-                           </tr>
-                           <tr class="whiteRow">
-                              <td><img id="RedTeamPlayer5_champ"></td>
-                              <td id="RedTeamPlayer5_name"></td>
-                              <td id="RedTeamPlayer5_kda"></td>
-                              <td id="RedTeamPlayer5_cs"></td>
-                              <td id="RedTeamPlayer5_gold"></td>
-                           </tr>
-                        </tbody>
-                      </table>
-                    </div>
-                    <div class="clearfix"></div>
-
-                    <section class="statSection">
-                    <div class="statTitle">WINNER</div>
-                      <p>AIR</p>
-                      <p>27:00</p>
-                    </section>
-                    <!-- MATCH UP GENERATOR -->
-                    <div class="matchupMaker">
-                    <div class="statTitle">MATCHUPS</div>
-                    <select name="positions" id="matchupPositions">
-                      <option value="dog">RedTeamPlayer1_name</option>
-                      <option value="cat">RedTeamPlayer2_name</option>
-                      <option value="hamster">RedTeamPlayer3_name</option>
-                      <option value="parrot">RedTeamPlayer4_name</option>
-                      <option value="spider">RedTeamPlayer5_name</option>
-                    </select>
-                    </div>
-
-                    <div class="buttonGenerate">
-                      <span><a href="">GENERATE</a></span>
-                                  </div>
-
-                    
-                    <!-- Lock In -->
-                    <div class="button">
-		    <span><a href="/season/{{ season.id }}/series/{{ series.id }}/lockin/{{ team1.team.id }}">LOCK IN</a></span>
-                    </div>
+      {% if request.user.id == series.get_team_1.user.id and season.id > 2 and not series.past_deadline %}
+      <!-- Lock In -->
+      <div class="button">
+      <span><a href="/season/{{ season.id }}/series/{{ series.id }}/lockin/{{ team1.team.id }}">LOCK IN</a></span>
+      </div>
+      {% endif %}
+     
+      {% if request.user.id == series.get_team_2.user.id and season.id > 2 and not series.past_deadline %}
+      <!-- Lock In -->
+      <div class="button">
+      <span><a href="/season/{{ season.id }}/series/{{ series.id }}/lockin/{{ team1.team.id }}">LOCK IN</a></span>
+      </div>
+      {% endif %}
                   
             </body>
 {% endblock %}

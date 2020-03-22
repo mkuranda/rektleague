@@ -26,7 +26,7 @@
     <h1>{{ team.media.name }} MAIN ROSTER</h1>
     <form action="/season/{{ season.id }}/series/{{ series.id }}/lockin/{{ team.id }}/" method="post">
     {% csrf_token %}
-    {{ form.non_field_errors }}
+    <div class="lockInError">{{ form.non_field_errors }}</div>
     <div class="teamsContainer">
       <div class="teams">
         <div class="playerSection">
@@ -73,7 +73,7 @@
     <div class="clearfix"></div>
     <!-- Lock In -->
     <div class="button">
-    <span><a href="#">LOCK IN</a></span>
+    <input type="submit" value="Lock In"/>
     </div>
     </form>
 {% endblock %}

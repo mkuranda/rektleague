@@ -1,4 +1,5 @@
 from django.shortcuts import get_object_or_404, render, redirect
+from django import forms
 from django.contrib.auth import authenticate, login
 from django.http import HttpResponse, HttpResponseRedirect, Http404
 from django.template import loader
@@ -369,85 +370,59 @@ def series_lockin_detail(request, season_id, series_id, team_id):
     if request.method == 'POST':
         form = CreateRosterForm(request.POST, series_id=series_id, team_id=team_id)
         if form.is_valid():
-            s = set()
-            top = form.cleaned_data['top']
-            jun = form.cleaned_data['jun']
-            mid = form.cleaned_data['mid']
-            bot = form.cleaned_data['bot']
-            sup = form.cleaned_data['sup']
-            sub = form.cleaned_data['sub']
+            team = Team.objects.get(id=team_id)
+            series = Series.objects.get(id=series_id)
+            SeriesPlayer.objects.filter(series=series, team=team).delete()
+            p1 = SeriesPlayer.objects.create(player=top, team=team, series=series, role=Role.objects.get(name='TOP'))
+            p2 = SeriesPlayer.objects.create(player=jun, team=team, series=series, role=Role.objects.get(name='JUNGLE'))
+            p3 = SeriesPlayer.objects.create(player=mid, team=team, series=series, role=Role.objects.get(name='MID'))
+            p4 = SeriesPlayer.objects.create(player=bot, team=team, series=series, role=Role.objects.get(name='BOT'))
+            p5 = SeriesPlayer.objects.create(player=sup, team=team, series=series, role=Role.objects.get(name='SUPPORT'))
+            if sub is not None:
+                p6 = SeriesPlayer.objects.create(player=sub, team=team, series=series, role=Role.objects.get(name='SUBSTITUTE'))
+                p6.save()
+            p1.save()
+            p2.save()
+            p3.save()
+            p4.save()
+            p5.save()
+            return HttpResponseRedirect('/season/' + str(season_id) + '/series/' + str(series.id) + '/')
 
-            failed = False
-            s.add(top)
-            if jun in s: 
-                failed=True
-            s.add(jun)
-            if mid in s: 
-                failed=True
-            s.add(mid)
-            if bot in s: 
-                failed=True
-            s.add(bot)
-            if sup in s: 
-                failed=True
-            s.add(sup)
-            if sub in s: 
-                failed=True
-            s.add(sub)
-
-            if failed:
-                return HttpResponseRedirect('/create_roster_error/' + str(series_id) + '/')
-            else:
-                team = Team.objects.get(id=team_id)
-                series = Series.objects.get(id=series_id)
-                SeriesPlayer.objects.filter(series=series, team=team).delete()
-                p1 = SeriesPlayer.objects.create(player=top, team=team, series=series, role=Role.objects.get(name='TOP'))
-                p2 = SeriesPlayer.objects.create(player=jun, team=team, series=series, role=Role.objects.get(name='JUNGLE'))
-                p3 = SeriesPlayer.objects.create(player=mid, team=team, series=series, role=Role.objects.get(name='MID'))
-                p4 = SeriesPlayer.objects.create(player=bot, team=team, series=series, role=Role.objects.get(name='BOT'))
-                p5 = SeriesPlayer.objects.create(player=sup, team=team, series=series, role=Role.objects.get(name='SUPPORT'))
-                if sub is not None:
-                    p6 = SeriesPlayer.objects.create(player=sub, team=team, series=series, role=Role.objects.get(name='SUBSTITUTE'))
-                    p6.save()
-                p1.save()
-                p2.save()
-                p3.save()
-                p4.save()
-                p5.save()
-                return HttpResponseRedirect('/season/' + str(season_id) + '/series/' + str(series.id) + '/')
     else:
         form = CreateRosterForm(series_id=series_id, team_id=team_id)
-        season = get_object_or_404(Season, id=season_id)
-        seasons = Season.objects.all().order_by('-id')
-        series = get_object_or_404(Series, id=series_id)
-        team = get_object_or_404(Team, id=team_id)
-        seriesteam = SeriesTeam.objects.get(series=series, team=team)
-        top = Role.objects.get(name = 'TOP')
-        jun = Role.objects.get(name = 'JUNGLE')
-        mid = Role.objects.get(name = 'MID')
-        bot = Role.objects.get(name = 'BOT')
-        sup = Role.objects.get(name = 'SUPPORT')
-        sub = Role.objects.get(name = 'SUBSTITUTE')
-        context = {
-                'form': form,
-                'season': season,
-                'seasons': seasons,
-                'series': series,
-                'team': team,
-                'seriesteam': seriesteam,
-                'top': top,
-                'jun': jun,
-                'mid': mid,
-                'bot': bot,
-                'sup': sup,
-                'sub': sub
-        }
-        return render(request, 'stats/lock-in.html', context)
+
+    season = get_object_or_404(Season, id=season_id)
+    seasons = Season.objects.all().order_by('-id')
+    series = get_object_or_404(Series, id=series_id)
+    team = get_object_or_404(Team, id=team_id)
+    seriesteam = SeriesTeam.objects.get(series=series, team=team)
+    top = Role.objects.get(name = 'TOP')
+    jun = Role.objects.get(name = 'JUNGLE')
+    mid = Role.objects.get(name = 'MID')
+    bot = Role.objects.get(name = 'BOT')
+    sup = Role.objects.get(name = 'SUPPORT')
+    sub = Role.objects.get(name = 'SUBSTITUTE')
+    context = {
+            'form': form,
+            'season': season,
+            'seasons': seasons,
+            'series': series,
+            'team': team,
+            'seriesteam': seriesteam,
+            'top': top,
+            'jun': jun,
+            'mid': mid,
+            'bot': bot,
+            'sup': sup,
+            'sub': sub
+    }
+    return render(request, 'stats/lock-in.html', context)
 
 def series_detail(request, season_id, series_id):
     season = get_object_or_404(Season, id=season_id)
     seasons = Season.objects.all().order_by('-id')
     series = get_object_or_404(Series, id=series_id)
+    roles = Role.objects.filter(isFill=False)
     matches = Match.objects.prefetch_related('playermatch_set').filter(series=series).order_by('game_num')
     seriesteams = SeriesTeam.objects.prefetch_related('team__teamplayer_set').filter(series=series)
     num_match_links = matches.count()
@@ -460,6 +435,7 @@ def series_detail(request, season_id, series_id):
         'seasons': seasons,
         'season': season,
         'series': series,
+        'roles': roles,
         'matches': matches,
         'num_match_links': num_match_links,
         'team1': team1,
@@ -635,6 +611,10 @@ def match_complete(request):
     return HttpResponse(status=200)
 
 def loginpage(request):
+    seasons = Season.objects.all().order_by('-id')
+    context = {
+        'seasons': seasons
+    }
     if request.method == 'POST':
         username = request.POST['username']
         password = request.POST['password']
@@ -642,9 +622,9 @@ def loginpage(request):
         if user is not None:
             if user.is_active:
                 login(request, user)
-                return HttpResponseRedirect('stats/')
+                return HttpResponseRedirect('/stats/schedule/')
             else:
-                return HttpResponseRedirect('stats/disabled_account')
+                return HttpResponseRedirect('/stats/disabled_account')
         else:
-            return HttpResponseRedirect('stats/invalid_login')
-    return render(request, 'stats/login.html', {})
+            return HttpResponseRedirect('/stats/invalid_login')
+    return render(request, 'stats/login.html', context)
