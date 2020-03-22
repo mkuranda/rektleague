@@ -253,7 +253,7 @@ td{
   padding: 1% 2%;
 }
 
-.whiteRow {
+tr:nth-child(2n) {
   background: white;
   color: black;
 }
