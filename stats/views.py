@@ -372,6 +372,13 @@ def series_lockin_detail(request, season_id, series_id, team_id):
         if form.is_valid():
             team = Team.objects.get(id=team_id)
             series = Series.objects.get(id=series_id)
+            top = form.cleaned_data.get('top')
+            jun = form.cleaned_data.get('jun')
+            mid = form.cleaned_data.get('mid')
+            bot = form.cleaned_data.get('bot')
+            sup = form.cleaned_data.get('sup')
+            sub = form.cleaned_data.get('sub')
+
             SeriesPlayer.objects.filter(series=series, team=team).delete()
             p1 = SeriesPlayer.objects.create(player=top, team=team, series=series, role=Role.objects.get(name='TOP'))
             p2 = SeriesPlayer.objects.create(player=jun, team=team, series=series, role=Role.objects.get(name='JUNGLE'))

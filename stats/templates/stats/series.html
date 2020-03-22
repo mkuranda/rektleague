@@ -287,14 +287,22 @@ window.onload = function() {
       {% if request.user.id == series.get_team_1.user.id and season.id > 2 and not series.past_deadline %}
       <!-- Lock In -->
       <div class="button">
+      {% if series.get_team_1_players %}
+      <span><a href="/season/{{ season.id }}/series/{{ series.id }}/lockin/{{ team1.team.id }}">EDIT</a></span>
+      {% else %}
       <span><a href="/season/{{ season.id }}/series/{{ series.id }}/lockin/{{ team1.team.id }}">LOCK IN</a></span>
+      {% endif %}
       </div>
       {% endif %}
      
       {% if request.user.id == series.get_team_2.user.id and season.id > 2 and not series.past_deadline %}
       <!-- Lock In -->
       <div class="button">
+      {% if series.get_team_2_players %}
+      <span><a href="/season/{{ season.id }}/series/{{ series.id }}/lockin/{{ team1.team.id }}">EDIT</a></span>
+      {% else %}
       <span><a href="/season/{{ season.id }}/series/{{ series.id }}/lockin/{{ team1.team.id }}">LOCK IN</a></span>
+      {% endif %}
       </div>
       {% endif %}
                   
