@@ -275,7 +275,7 @@ h2{
   color: white;
 }
 
-.whiteRow {
+tr:nth-child(2n) {
   background: white;
   color: black;
 }
