@@ -42,21 +42,27 @@ td {
 }
 
 
-.whiteRow {
+tr:nth-child(2n) {
   background: white;
   color: black;
+}
+
+
+tr:nth-child(2n):visited {
+  color: white!important;
 }
 
 .blankCell{
   background: none;
 }
 
-tr a{
-  text-decoration: none;
+tr:nth-child(1n) a{
+  text-decoration: none!important;
   color: white;
 }
 
-.whiteRow a{
+tr:nth-child(2n) a{
+  text-decoration: none!important;
   color: black;
 }
 
