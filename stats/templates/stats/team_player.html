@@ -22,7 +22,8 @@
 		    <img class="playerPhoto" src="{{ player.photo.url }}">
 		    {% else %}
 		    <img class="playerPhoto" src="/static/stats/player-photos/missing.png">
-		    {% endif %}
+        {% endif %}
+        <h3>SEASON <span class="rekt-red">6</span></h3>
 		    <h1>{{ player.name }}</h1>
               <div class="laneIcons">
 	      {% if team_player_role.role.isFill %}

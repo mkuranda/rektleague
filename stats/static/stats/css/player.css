@@ -43,7 +43,22 @@
     filter: drop-shadow(2px 4px 6px black);
     font-weight: 900;
     margin: 0% 0% 0% 0;
+    align-self: center;
     
+}
+
+h3{
+  grid-column-start: 2;
+    grid-column-end: 2;
+    grid-row-start: 1;
+    grid-row-end: 1;
+    color: white;
+    text-align: right;
+    font-size: 4em;
+    filter: drop-shadow(2px 4px 6px black);
+    font-weight: 900;
+    margin: 0% 0% 0% 0;
+    align-self: center;
 }
 
     .laneIcons {
@@ -282,6 +297,10 @@ tr:nth-child(2n) {
     font-size: 6em;
   }
 
+  h3 {
+    margin: 9% 10% 0% 0;
+  }
+
   .laneIcons{
     margin: 0 8% 0% 0;
   }
@@ -326,6 +345,10 @@ h1 {
 h1 {
   margin: 2% 17% 0% 0;
 }
+
+h3 {
+  margin: 9% 17% 0% 0;
+}
 .slider {
   width: 69%;
 }
@@ -346,6 +369,10 @@ h1 {
 }
 h1 {
   margin: 2% 21% 0% 0;
+}
+
+h3 {
+  margin: 9% 21% 0% 0;
 }
 
 .laneIcons {
@@ -388,6 +415,16 @@ section {
   margin: 0% 0% 0% 4%;
 }
 
+h3 {
+  margin: 20% 0% 0 4%;
+  justify-self: start;
+  grid-column-start: 1;
+  grid-column-end: 1;
+  grid-row-start: 2;
+  grid-row-end: 2;
+  font-size: 1.4em;
+}
+
 h1 {
   margin: 9% 0% 0 4%;
   justify-self: start;
@@ -399,7 +436,7 @@ h1 {
 }
 
   th {
-    font-size: 1.2em;
+    font-size: .8em;
     padding: 1% 1%;
   }
 
