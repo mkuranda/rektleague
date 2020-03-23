@@ -101,7 +101,11 @@
                                 </ul>
                               </li> -->
                               <li><a href="https://docs.google.com/document/d/1CXoNUVz3K5vAqq_qPV36BGLRZEKzaxmvD79JkOJtq3g/edit#heading=h.mfjb9322hbzf">RULES</a></li>
+			      {% if request.user.is_authenticated %}
+                              <li class="signinFloat"><a href="/logout/">SIGN OUT</a></li>
+			      {% else %}
                               <li class="signinFloat"><a href="/signin/">SIGN IN</a></li>
+			      {% endif %}
                             </ul>
                           </nav>
             </header>
