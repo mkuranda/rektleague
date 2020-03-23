@@ -194,8 +194,12 @@
       }
 
       .content > p {
-        font-size: 15px;
+        font-size: 12px;
       }
+
+      .vs {
+        font-size: 12px;
+    }
 
       .date{
         font-size: 28px;

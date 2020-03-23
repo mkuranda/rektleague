@@ -329,6 +329,11 @@ a:visited{
         text-decoration: none;
     }
 
+    #disclaimer {
+      font-size: 0.8em;
+      padding: 4px;
+  }
+
     @media (max-width: 768px){
 
         .splash-button{
@@ -373,6 +378,10 @@ a:visited{
 
     }
 
+    
+
+    
+
     @media (max-width: 768px){
 
     .social-media{
@@ -391,11 +400,19 @@ a:visited{
 
     }
 
+    #disclaimer {
+      font-size: 0.4em;
+    }
+
     @media (min-width: 768px){
 
         .social-media{
             width:50%;
     
+        }
+
+        #disclaimer {
+          font-size: 0.8em;
         }
     
         .contact-us{
