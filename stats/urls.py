@@ -3,12 +3,15 @@ from django.conf.urls import url
 from . import views
 
 urlpatterns = [
+    url(r'^/$', views.index, name='index'),
     url(r'^index/$', views.index, name='index'),
     url(r'^signin/$', views.loginpage, name='loginpage'),
     url(r'^schedule/$', views.latest_schedule, name='latest_schedule'),
     url(r'^standings/$', views.latest_standings, name='latest_standings'),
+    url(r'^players/$', views.latest_season_players, name='latest_season_players'),
     url(r'^season/(?P<season_id>[0-9]+)/schedule/$', views.schedule, name='schedule'),
     url(r'^season/(?P<season_id>[0-9]+)/standings/$', views.standings, name='standings'),
+    url(r'^season/(?P<season_id>[0-9]+)/players/$', views.season_players, name='season_players'),
     url(r'^season/(?P<season_id>[0-9]+)/team/(?P<team_id>[0-9]+)/$', views.team_detail, name='team_detail'),
     url(r'^season/(?P<season_id>[0-9]+)/team/(?P<team_id>[0-9]+)/player/(?P<player_id>[0-9]+)/$', views.team_player_detail, name='team_player_detail'),
     url(r'^season/(?P<season_id>[0-9]+)/team/(?P<team_id>[0-9]+)/player/(?P<player_id>[0-9]+)/role/(?P<role_id>[0-9]+)/$', views.team_player_role_detail, name='team_player_role_detail'),
@@ -24,7 +27,6 @@ urlpatterns = [
     url(r'^create_roster_error/(?P<series_id>[0-9]+)/$', views.create_roster_error, name='create_roster_error'),
     url(r'^season/(?P<season_id>[0-9]+)/$', views.season_detail, name='season'),
     url(r'^season/(?P<season_id>[0-9]+)/questions$', views.questions, name='questions'),
-    url(r'^season/(?P<season_id>[0-9]+)/players/$', views.season_players_detail, name='season_players'),
     url(r'^season/(?P<season_id>[0-9]+)/teams/$', views.season_teams_detail, name='season_teams'),
     url(r'^season/(?P<season_id>[0-9]+)/champions/$', views.season_champions_detail, name='season_champions'),
     url(r'^season/(?P<season_id>[0-9]+)/graphs/$', views.season_graphs_empty_detail, name='season_graphs_empty'),

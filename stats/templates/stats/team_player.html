@@ -49,7 +49,7 @@
                            <li class="tophelp"><a class="menu-trigger" href="#">SEASONS</a>
                             <ul id="subrome">
 				    {% for team_player in team_set %}
-				    <a href="/season/{{ team_player.team.season.id }}/team/{{ team_player.team.id }}/player/{{ player.id }}/"><li>{{ team_player.team }}</li></a>
+				    <a href="/season/{{ team_player.team.season.id }}/team/{{ team_player.team.id }}/player/{{ player.id }}/"><li>{{ team_player.team.media.name }}<br>({{ team_player.team.season }})</li></a>
 				    {% endfor %}
                         </ul> 
                       </li>              
