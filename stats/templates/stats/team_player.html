@@ -23,7 +23,7 @@
 		    {% else %}
 		    <img class="playerPhoto" src="/static/stats/player-photos/missing.png">
         {% endif %}
-        <h3>SEASON <span class="rekt-red">6</span></h3>
+	<h3>SEASON <span class="rekt-red">{{ team.season.id }}</span></h3>
 		    <h1>{{ player.name }}</h1>
               <div class="laneIcons">
 	      {% if team_player_role.role.isFill %}
@@ -152,11 +152,7 @@
 		    {% endif %}
                   </tr>
 		  {% for champion in team_player_role.get_played_champion_list %}
-		  {% if forloop.counter|divisibleby:2 %}
-                  <tr class="whiteRow">
-		  {% else %}
 		  <tr>
-		  {% endif %}
 			  <td><img src="{{ MEDIA_URL }}{{ champion.playermatch__champion__icon }}"/></td>
 			  <td>{{ champion.champion_count }}</td>
 			  <td>{{ champion.avg_kills|floatformat:"1" }}/{{ champion.avg_deaths|floatformat:"1" }}/{{ champion.avg_assists|floatformat:"1" }}</td>

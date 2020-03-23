@@ -24,11 +24,25 @@ function ReplaceGame{{ match.game_num }}() {
 	{% endfor %}
         {% endfor %}
 }
-{% if matches %}
-window.onload = function() {
-	ReplaceGame1();
+function report() {
+	var dropdown = document.getElementById("matchupPositions");
+	var generateButton = document.getElementById("generateButton");
+	{% for series_player_1 in series.get_team_1_players %}
+	{% for series_player_2 in series.get_team_2_players %}
+	{% if series_player_1.role == series_player_2.role %}
+	if (dropdown.value == "{{ series_player_1.role.name }}") {
+		generateButton.href = "/caster_tools/player_matchup/{{ series_player_1.player.id }}/{{ series_player_2.player.id }}/team/{{ series_player_1.team.id }}/{{ series_player_2.team.id }}/role/{{ series_player_1.role.id }}/";
+	}
+	{% endif %}
+	{% endfor %}
+	{% endfor %}
 }
+window.onload = function() {
+	report();
+{% if matches %}
+	ReplaceGame1();
 {% endif %}
+}
 {% endfor %}
 </script>
 
@@ -106,6 +120,11 @@ window.onload = function() {
       </div>
     {% endif %}
     </div>
+    {% if series.rosters_submitted and series.past_deadline and season.id > 2 %}
+    <div class="buttonGenerate">
+        <span><a href="/season/{{ series.week.season.id }}/series/{{ series.id }}/head_to_head/">CASTER TOOLS</a></span>
+    </div>
+    {% endif %}
     {% endif %}
 
     {% if matches %}
@@ -272,16 +291,16 @@ window.onload = function() {
       <!-- MATCH UP GENERATOR -->
       <div class="matchupMaker">
       <div class="statTitle">MATCHUPS</div>
-      <select name="positions" id="matchupPositions">
+      <select name="positions" onchange="report()" id="matchupPositions">
         {% for role in roles %}
-        <option value="dog">{{ role.name }}</option>
+	<option value="{{ role.name }}">{{ role.name }}</option>
         {% endfor %}
       </select>
       </div>
 
       <div class="buttonGenerate">
-        <span><a href="">GENERATE</a></span>
-                    </div>
+        <span><a class="generateButton" id="generateButton" href="">GENERATE</a></span>
+      </div>
       {% endif %}
 
       {% if request.user.id == series.get_team_1.user.id and season.id > 2 and not series.past_deadline %}
@@ -305,9 +324,6 @@ window.onload = function() {
       {% endif %}
       </div>
       {% endif %}
-      <div class="buttonGenerate">
-        <span><a href="">CASTER TOOLS</a></span>
-                    </div>
             </body>
 {% endblock %}
 

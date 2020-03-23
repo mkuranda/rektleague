@@ -17,7 +17,7 @@
             <!-- HERO IMAGE -->
           
             <section id="banner">
-              <h3>SEASON <span class="rekt-red">6</span></h3>
+		    <h3>SEASON <span class="rekt-red">{{ team.season.id }}</span></h3>
 		          <h1><span class="rekt-red">TEAM</span> {{ team.media.name }}</h1>
             </section>
 
@@ -113,19 +113,15 @@
                     <th class="blankCell"></th>
                   </tr>
 		  {% for series in series_list %}
-		  {% if forloop.counter|divisibleby:2 %}
-                  <tr class="whiteRow">
-		  {% else %}
 		  <tr>
-	          {% endif %}
 		  {% if series.get_team_1 == team %}
 		  <td><a href="/season/{{ team.season.id }}/team/{{ series.get_team_2.id }}/"><img src="{{ series.get_team_2.media.icon.url }}" /></a></td>
-		    <td>{{ series.week }}</td>
+		    <td>WEEK {{ series.week.number }}</td>
 		    <td>{{ series.get_team_1_wins }}-{{ series.get_team_2_wins }}</td>
 		  {% endif %}
 		  {% if series.get_team_2 == team %}
 		  <td><a href="/season/{{ team.season.id }}/team/{{ series.get_team_1.id }}"><img src="{{ series.get_team_1.media.icon.url }}" /></a></td>
-		    <td>{{ series.week }}</td>
+		    <td>WEEK {{ series.week.number }}</td>
 		    <td>{{ series.get_team_2_wins }}-{{ series.get_team_1_wins }}</td>
 		  {% endif %}
 		    <td><a href="/season/{{ team.season.id }}/series/{{ series.id }}/" class="matchupButton">VIEW MATCH UP</a></td>
@@ -134,10 +130,6 @@
                  
                 </table>
                 
-              <!-- GOLD TABLE -->
-              
-
-
             </body>
             <div class="clearfix"></div>
 {% endblock %}
