@@ -30,7 +30,7 @@ th {
   display: none;
 }
 
-td > img{
+td > img, td > a > img {
   width: 50px;
 }
 
