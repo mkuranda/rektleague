@@ -53,20 +53,6 @@ def season_detail(request, season_id):
     teams = Team.objects.filter(season=season_id)
     sorted_teams = sorted(teams, key= lambda t: t.get_sort_record())
     next_week = season.next_week()
-#    for team in teams:
-#        for team_player in team.get_players():
-#            for role in Role.objects.all():
-#                team_player_role = TeamPlayer.objects.filter(team=team, player=team_player.player, role=role)
-#                if not team_player_role:
-#                    team_player_role = TeamPlayer.objects.create(team=team, player=team_player.player, role=role)
-#                    team_player_role.save()
-#    for team in teams:
-#        for team_player in team.get_players():
-#            for role in Role.objects.all():
-#                update_team_player_timelines(team, team_player.player, role)
-#    update_season_timelines(season.id)
-#    for team in teams:
-#        update_team_timelines(team.id)
     context = {
         'latest_season': latest_season,
         'season': season,
@@ -75,22 +61,20 @@ def season_detail(request, season_id):
     }
     return render(request, 'stats/season.html', context)
 
-def season_players_detail(request, season_id):
-    latest_season = Season.objects.latest('id')
+def season_players(request, season_id):
     seasons = Season.objects.all().order_by('-id')
-    context = {
-        'latest_season': latest_season
-    }
     season = get_object_or_404(Season, id=season_id)
     team_players = TeamPlayer.objects.filter(team__season=season_id, role__isFill=False)
     context = {
-        'latest_season': latest_season,
         'season': season,
         'seasons': seasons,
         'team_players': team_players
     }
     return render(request, 'stats/season_players.html', context)
 
+def latest_season_players(request):
+    latest_season = Season.objects.latest('id')
+    return season_players(request, latest_season.id)
 
 def season_graphs_empty_detail(request, season_id):
     return season_graphs_detail(request, season_id, "gold", "")
@@ -216,7 +200,7 @@ def team_player_role_detail(request, season_id, team_id, player_id, role_id):
     player = get_object_or_404(Player, id=player_id)
     team_player_role = TeamPlayer.objects.filter(player=player_id, team=team_id, role=role_id)[0]
     team_players = TeamPlayer.objects.filter(player=player_id, team=team_id, role__isFill=False).annotate(avg_kills=Avg('player__playermatch__kills'), avg_deaths=Avg('player__playermatch__deaths'), avg_assists=Avg('player__playermatch__assists'), num_champs_played=Count('player__playermatch__champion'))
-    team_set = TeamPlayer.objects.filter(player=player_id, role__isFill=True)
+    team_set = TeamPlayer.objects.filter(player=player_id, role__isFill=True).order_by('-team__season')
     teammates = TeamPlayer.objects.filter(team=team, role__isFill=True).exclude(player=player_id)
     #series_list = Series.objects.filter(seriesteam__team = team).order_by('-week__number')
     #timelines = team_player_role.get_gold_timeline()
@@ -262,7 +246,6 @@ def index(request):
     context = {
         'seasons': seasons
     }
-
     return render(request, 'stats/index.html', context)
 
 def schedule(request, season_id):

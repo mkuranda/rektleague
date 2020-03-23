@@ -1,7 +1,7 @@
 {% extends "stats/base.html" %}
 {% load staticfiles %}
 
-{% block title %} Rekt League | Season {{ season.id }} | {{ team.media.name }} {% endblock %}
+{% block title %} Rekt League | Season {{ team.season.id }} | {{ team.media.name }} {% endblock %}
 
 {% block head %}
 <link rel="stylesheet" href="{% static 'stats/css/team.css' %}">

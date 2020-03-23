@@ -1,5 +1,6 @@
 // SEARCH BAR
 
+
 var $rows = $('#table tr');
 $('#search').keyup(function() {
 
