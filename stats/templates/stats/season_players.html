@@ -15,16 +15,16 @@
   <table id="dataTable">
     <thead>
       <tr id="tableHeader">
-        <th onclick="sortTable(0)">PLAYER</th>
-        <th onclick="sortTable(1)">TEAM</th> 
-        <th onclick="sortTable(2)">POSITION</th>
-        <th onclick="sortTable(3)">GAMES PLAYED</th>
-        <th onclick="sortTable(4)">AVG KILLS</th>
-        <th onclick="sortTable(5)">AVG DEATHS</th>
-        <th onclick="sortTable(6)">AVG ASSISTS</th>
-        <th onclick="sortTable(7)">KDA</th>
-        <th onclick="sortTable(8)">KILL PARTICIPATION</th>
-        <th onclick="sortTable(9)">CS DIFF @ 15</th>
+        <th id="playerName" onclick="sortTable(0)">PLAYER</th>
+        <th id="teamName" onclick="sortTable(1)">TEAM</th> 
+        <th id="position" onclick="sortTable(2)">POSITION</th>
+        <th id="gamesPlayed" onclick="sortTable(3)">GAMES PLAYED</th>
+        <th id="avgKills" onclick="sortTable(4)">AVG KILLS</th>
+        <th id="avgDeaths" onclick="sortTable(5)">AVG DEATHS</th>
+        <th id="avgAssists" onclick="sortTable(6)">AVG ASSISTS</th>
+        <th id="KDA" onclick="sortTable(7)">KDA</th>
+        <th id="killParticipation" onclick="sortTable(8)">KILL PARTICIPATION</th>
+        <th id="csDiff" onclick="sortTable(9)">CS DIFF @ 15</th>
 	{% if season.id > 2 %}
         <th onclick="sortTable(10)">CS/MIN</th>
 	{% else %}
