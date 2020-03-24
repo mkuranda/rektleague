@@ -249,6 +249,24 @@ a:visited{
   }
 }
 
+/* ERROR */
+
+.errorlist {
+  color: #bf1f2f;
+  text-align: center;
+  font-size: 3em;
+  opacity: 1;
+  font-weight: 800;
+  list-style-type: none;
+  animation: blinker 1s linear infinite;
+}
+
+@keyframes blinker {
+  50% {
+    opacity: 0;
+  }
+}
+
 /* MEDIA QUERIES FOR RESPONSIVE NAV */
 
 @media all and (max-width : 1100px) {
