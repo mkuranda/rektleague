@@ -374,11 +374,11 @@
     }
     .standing {
       font-size: 65px;
-      margin: 9px 0px 0px -87%;
+      margin: 9px 0px 0px -50%;
   }
 
   .content{
-    width: 87%;
+    width: 84%;
   }
   }
   @media all and (max-width : 375px) {
@@ -393,11 +393,11 @@
 
     .standing {
       font-size: 65px;
-      margin: 9px 0px 0px -70%;
+      margin: 9px 0px 0px -50%;
   }
 
   .content{
-    width: 86%;
+    width: 83%;
   }
 
 
