@@ -146,7 +146,7 @@
       transition: max-height 0.2s ease-out;
       background-color: #f1f1f1;
       width: 98.5%;
-      margin-left: auto;
+      margin: auto;
     }
 
     .content > p{
@@ -390,7 +390,7 @@
 
     .standing {
       font-size: 65px;
-      margin: 9px 0px 0px -87%;
+      margin: 9px 0px 0px -80%;
   }
 
 
