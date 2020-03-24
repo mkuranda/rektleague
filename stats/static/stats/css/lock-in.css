@@ -331,7 +331,7 @@ td img {
   }
 }
 
-@media (width: 636px) {
+@media (width: 736px) {
   section > img {
     height: 83px;
   }
@@ -340,6 +340,12 @@ td img {
 @media (width: 667px) {
   section > img {
     height: 75px;
+  }
+}
+
+@media (width: 640px) {
+  section > img {
+    height: 73px;
   }
 }
 
