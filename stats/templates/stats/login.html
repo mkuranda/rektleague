@@ -18,6 +18,7 @@
 
 <form method="post" id="add_form" action="{% url 'loginpage' %}">
 {% csrf_token %}
+<div class="lockInError">{{ form.non_field_errors }}</div>
 <fieldset>        
   <section>
     <label for="username">Username:</label>

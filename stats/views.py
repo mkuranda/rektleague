@@ -8,7 +8,7 @@ from django.utils.timezone import utc
 from django.conf import settings
 from riot_request import RiotRequester
 from .models import Player, TeamPlayer, Team, Season, Champion, Match, Week, Series, SeriesTeam, TeamMatch, SeasonChampion, PlayerMatch, Role, TeamRole, SeriesPlayer, Summoner
-from .forms import TournamentCodeForm, InitializeMatchForm, CreateRosterForm
+from .forms import TournamentCodeForm, InitializeMatchForm, CreateRosterForm, LoginForm
 from get_riot_object import ObjectNotFound, get_item, get_champions, get_champion, get_match, get_all_items, get_match_timeline, update_playermatchkills, update_team_timelines, update_season_timelines, update_team_player_timelines
 from datetime import datetime
 from django.views.decorators.csrf import csrf_exempt
@@ -602,19 +602,18 @@ def match_complete(request):
 
 def loginpage(request):
     seasons = Season.objects.all().order_by('-id')
-    context = {
-        'seasons': seasons
-    }
-    if request.method == 'POST':
+    form = LoginForm(request.POST or None)
+    if request.method == 'POST' and form.is_valid():
         username = request.POST['username']
         password = request.POST['password']
         user = authenticate(username=username, password=password)
+        user = form.login(request)
         if user is not None:
             if user.is_active:
                 login(request, user)
                 return HttpResponseRedirect('/stats/schedule/')
-            else:
-                return HttpResponseRedirect('/stats/disabled_account')
-        else:
-            return HttpResponseRedirect('/stats/invalid_login')
+    context = {
+        'form': form,
+        'seasons': seasons
+    }
     return render(request, 'stats/login.html', context)
