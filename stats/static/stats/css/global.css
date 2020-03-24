@@ -192,7 +192,6 @@ li > a:only-child:after { content: ''; }
 
 a:visited{
     text-decoration: none;
-    color: white;
 }
 
 #logo a{

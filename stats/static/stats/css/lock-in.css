@@ -39,6 +39,7 @@ section > img{
     width: 50%;
     opacity: 50%;
     align-items: flex-start;
+    height: 100%;
 }
 
 .teamNameRight, .teamNameLeft{
@@ -316,42 +317,6 @@ td img {
   left: 20%;
 }
 
-}
-
-@media (width: 1024px) {
-  section > img {
-    height: 117px;
-  }
-}
-
-@media (width: 768px) {
-  section > img {
-    height: 87px;
-  }
-}
-
-@media (width: 667px) {
-  section > img {
-    height: 83px;
-  }
-}
-
-@media (width: 667px) {
-  section > img {
-    height: 75px;
-  }
-}
-
-@media (width: 414px) {
-  section > img {
-    height: 47px;
-  }
-}
-
-@media (width: 375px) {
-  section > img {
-    height: 43px;
-  }
 }
 
 @media (min-width:375px) and (max-width:768px){
