@@ -23,6 +23,9 @@
       <span class="teamNameRight">{{ series.get_team_2.media.name }}</span>
     </section>
     
+{% if request.user.id != team.user.id %}
+<div class="errorlist">You have no power here!</div>
+{% else %}
     <h1>{{ team.media.name }} MAIN ROSTER</h1>
     <form action="/season/{{ season.id }}/series/{{ series.id }}/lockin/{{ team.id }}/" method="post">
     {% csrf_token %}
@@ -76,4 +79,5 @@
     <input type="submit" value="Lock In"/>
     </div>
     </form>
+{% endif %}
 {% endblock %}
