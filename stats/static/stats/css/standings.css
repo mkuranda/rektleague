@@ -291,6 +291,10 @@
       margin: 26px 0px 0px -73%;
   }
 
+  .content{
+    width: 91%;
+  }
+
   .team {
     font-size: 27px;
     margin: 79px 0px 0px -49%;
@@ -300,11 +304,6 @@
     @media (min-width:374px) and (max-width : 768px) {
       section{
         width:100%;
-        margin: auto;
-    }
-
-    .content{
-      width: 90%;
     }
     }
 
@@ -377,6 +376,10 @@
       font-size: 65px;
       margin: 9px 0px 0px -87%;
   }
+
+  .content{
+    width: 87%;
+  }
   }
   @media all and (max-width : 375px) {
     .collapsible:after {
@@ -390,7 +393,11 @@
 
     .standing {
       font-size: 65px;
-      margin: 9px 0px 0px -80%;
+      margin: 9px 0px 0px -70%;
+  }
+
+  .content{
+    width: 86%;
   }
 
 
