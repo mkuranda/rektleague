@@ -54,9 +54,9 @@
                               </li>
 			      <li> 
                                 <!-- First Tier Drop Down -->
-                                <label for="drop-1" class="toggle">STANDINGS</label>
+                                <label for="drop-2" class="toggle">STANDINGS</label>
 				<a href="/standings/">STANDINGS</span></a>
-                                <input type="checkbox" id="drop-1"/>
+                                <input type="checkbox" id="drop-2"/>
                                 <ul>
 				{% for season in seasons %}
 				<li><a href="/season/{{ season.id }}/standings/">SEASON {{ season.id }}</a></li>
@@ -65,9 +65,9 @@
                               </li>
 		              <li> 
                                 <!-- First Tier Drop Down -->
-                                <label for="drop-1" class="toggle">STATS</label>
+                                <label for="drop-3" class="toggle">STATS</label>
 				<a href="/players/">STATS</span></a>
-                                <input type="checkbox" id="drop-1"/>
+                                <input type="checkbox" id="drop-3"/>
                                 <ul>
 				{% for season in seasons %}
 				<li><a href="/season/{{ season.id }}/players/">SEASON {{ season.id }}</a></li>
