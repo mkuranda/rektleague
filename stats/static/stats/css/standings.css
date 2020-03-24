@@ -297,9 +297,10 @@
 }
     }
 
-    @media (min-width:375px) and (max-width : 768px) {
+    @media (min-width:374px) and (max-width : 768px) {
       section{
         width:100%;
+        margin: auto;
     }
     }
 
