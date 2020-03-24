@@ -39,6 +39,7 @@ section > img{
     width: 50%;
     opacity: 50%;
     align-items: flex-start;
+    height: 100%;
 }
 
 .teamNameRight, .teamNameLeft{
