@@ -292,10 +292,6 @@ tr:nth-child(2n) {
 }
 
 @media (max-width: 1135px){
-  h1{
-    margin: 2% 10% 0% 0;
-    font-size: 6em;
-  }
 
   h3 {
     margin: 9% 10% 0% 0;
@@ -313,10 +309,10 @@ tr:nth-child(2n) {
   }
 
   .laneIcons {
-    grid-column-start: 2;
-    grid-column-end: 2;
-    grid-row-start: 3;
-    grid-row-end: 3;
+    grid-column-start: 1;
+    grid-column-end: 1;
+    grid-row-start: 1;
+    grid-row-end: 1;
     justify-self: start;
     margin: 0% 0% 0% 4%;
   }

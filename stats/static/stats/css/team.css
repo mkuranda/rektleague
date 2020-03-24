@@ -311,7 +311,7 @@ tr:nth-child(2n) {
 
 @media (max-width: 1135px){
   h1{
-    font-size: 6em;
+    font-size: 4em;
   }
 
   h3 {
@@ -339,13 +339,6 @@ tr:nth-child(2n) {
 h3 {
   font-size: 2.8em;
 }
-
-h1 {
-  font-size: 5em;
-}
-
-
-
 
 }
 
