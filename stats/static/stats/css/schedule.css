@@ -182,7 +182,7 @@
         .week {
             font-size: 51px;
             font-weight: 800;
-            margin: 0px 93px 0 0;
+            margin: 0px 20px 0 0;
       }
 
       .collapsible:after {
@@ -195,6 +195,7 @@
 
       .content > p {
         font-size: 12px;
+        padding: 17px 6px;
       }
 
       .vs {
@@ -219,6 +220,22 @@
     h1, h2{
         font-size: 74px;
     }
+
+    .time {
+      padding-left: 6px;
+  }
+
+  .matchupButton {
+    background: #bf1e2d;
+    color: white;
+    padding: 5px 3px;
+    font-size: 9px;
+    font-weight: 800;
+    text-decoration: none;
+    border-radius: 10px;
+    float: right;
+  }
+
     }
 
      
