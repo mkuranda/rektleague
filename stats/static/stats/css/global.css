@@ -53,6 +53,10 @@ body {
     color: #bf1f2f;
 }
 
+img {
+  height: auto !important;
+}
+
 /******************************************
 /* LAYOUT
 /*******************************************/
@@ -187,7 +191,7 @@ nav {
 li > a:only-child:after { content: ''; }
 
 a:visited{
-    text-decoration: 
+    text-decoration: none;
     color: white;
 }
 
@@ -314,7 +318,6 @@ a:visited{
         background: black;
         position: relative;
         text-align: center;
-        z-index: -1;
     }
 
     .splash-button {
@@ -327,6 +330,11 @@ a:visited{
         left: 50%;
         transform: translate(-50%, -50%);
         text-decoration: none;
+    }
+
+    .splash-button:hover {
+      color: #bf1f2f;
+      border: 3px solid #bf1f2f;
     }
 
     #disclaimer {
