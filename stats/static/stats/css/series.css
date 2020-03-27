@@ -378,6 +378,16 @@ select {
   background-color: #800c17;
 }
 
+.playerSection a:hover{
+  color: #bf1f2f;
+  text-decoration: none;
+}
+
+.playerSection a:visited{
+  color: white;
+  text-decoration: none;
+}
+
 
   /* RESPONSIVE */
 
