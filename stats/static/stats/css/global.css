@@ -378,6 +378,10 @@ a:visited{
       padding: 4px;
   }
 
+  #patreon {
+    margin-top: 10px;
+  }
+
     @media (max-width: 768px){
 
         .splash-button{
