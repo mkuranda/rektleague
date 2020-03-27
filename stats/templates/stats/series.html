@@ -88,7 +88,7 @@ window.onload = function() {
 	  {% else %}
 	  <img class="playerPhotoLeft" src="/static/stats/player-photos/missing.png">
 	  {% endif %}
-	  <p>{{ seriesplayer.player.name }}</p>
+	  <p><a href="/season/{{ season.id }}/team/{{ seriesplayer.team.id }}/player/{{ seriesplayer.player.id }}/">{{ seriesplayer.player.name }}</a></p>
 	  <img class="laneLeft" src="{{ seriesplayer.role.icon.url }}">
         </div>
 	{% endfor %}
@@ -109,7 +109,7 @@ window.onload = function() {
         {% for seriesplayer in series.get_team_2_players %}
         <div class="playerSection">
           <img class="laneRight" src="{{ seriesplayer.role.icon.url }}">
-	  <p>{{ seriesplayer.player.name }}</p>
+	  <p><a href="/season/{{ season.id }}/team/{{ seriesplayer.team.id }}/player/{{ seriesplayer.player.id }}/">{{ seriesplayer.player.name }}</a></p>
 	  {% if seriesplayer.player.photo %}
 	  <img class="playerPhotoRight" src="{{ seriesplayer.player.photo.url }}">
 	  {% else %}
