@@ -97,4 +97,18 @@ $("#csDiff").click(function(){
   var n = $(this).prevAll().length;
   sortTable(f_sl,n);
 });
-
+$("#csPerMin").click(function(){
+  f_sl *= -1;
+  var n = $(this).prevAll().length;
+  sortTable(f_sl,n);
+});
+$("#teamDamagePercent").click(function(){
+  f_sl *= -1;
+  var n = $(this).prevAll().length;
+  sortTable(f_sl,n);
+});
+$("#visionScore").click(function(){
+  f_sl *= -1;
+  var n = $(this).prevAll().length;
+  sortTable(f_sl,n);
+});

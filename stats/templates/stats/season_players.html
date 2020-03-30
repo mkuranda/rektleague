@@ -26,12 +26,12 @@
         <th id="killParticipation" onclick="sortTable(8)">KILL PARTICIPATION</th>
         <th id="csDiff" onclick="sortTable(9)">CS DIFF @ 15</th>
 	{% if season.id > 2 %}
-        <th onclick="sortTable(10)">CS/MIN</th>
+        <th id="csPerMin" onclick="sortTable(10)">CS/MIN</th>
 	{% else %}
-        <th onclick="sortTable(10)">CS/MIN</th>
+        <th id="csPerMin" onclick="sortTable(10)">CS/MIN</th>
 	{% endif %}
-        <th onclick="sortTable(11)">TEAM DAMAGE %</th>
-        <th onclick="sortTable(12)">VISION SCORE</th>
+        <th id="teamDamagePercent" onclick="sortTable(11)">TEAM DAMAGE %</th>
+        <th id="visionScore" onclick="sortTable(12)">VISION SCORE</th>
       </tr>
     </thead>
     <tbody id="table">
