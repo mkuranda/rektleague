@@ -24,6 +24,7 @@ function ReplaceGame{{ match.game_num }}() {
 	{% endfor %}
         {% endfor %}
 }
+{% endfor %}
 function report() {
 	var dropdown = document.getElementById("matchupPositions");
 	var generateButton = document.getElementById("generateButton");
@@ -43,7 +44,6 @@ window.onload = function() {
 	ReplaceGame1();
 {% endif %}
 }
-{% endfor %}
 </script>
 
 <link rel="stylesheet" href="{% static 'stats/css/series.css' %}">
