@@ -7,7 +7,11 @@
 <script type="text/javascript">
 {% for match in matches %}
 function ReplaceGame{{ match.game_num }}() {
+	{% if match.duration > 5 %}
 	document.getElementById("Duration").innerHTML = "{{ match.duration_str }}";
+	{% else %}
+	document.getElementById("Duration").innerHTML = "";
+	{% endif %}
         {% for teammatch in match.teammatch_set.all %}
 	{% if teammatch.win %}
         document.getElementById("WinnerName").innerHTML = "{{ teammatch.team.media.name }}";
