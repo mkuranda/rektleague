@@ -36,7 +36,7 @@ function sortTable(f,n){
 	function getVal(elm){
 		var v = $(elm).children('td').eq(n).text().toUpperCase().replace(/%$/g, "");
 		if($.isNumeric(v)){
-			v = parseInt(v,10);
+			v = parseFloat(v,10);
 		}
 		return v;
 	}
