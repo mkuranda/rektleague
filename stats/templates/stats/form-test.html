@@ -1,0 +1,42 @@
+{% extends "stats/base.html" %}
+{% load staticfiles %}
+
+{% block title %}Rekt League | Login{% endblock %}
+
+{% block head %}
+<link rel="stylesheet" href="{% static 'stats/css/sign-in.css' %}">
+{% endblock %}
+
+{% block content %}
+
+<h1>SIGN IN</h1>
+
+<form id="test-form">
+  
+  <div>
+    <label>Field 1</label>
+    <input type="text" name="form_field_1" placeholder="Field 1"/>
+  </div>
+
+  <div>
+    <label>Field 2</label>
+    <input type="text" name="form_field_2" placeholder="Field 2"/>
+  </div>
+  
+  <div>
+    <label>Field 3</label>
+    <input type="text" name="form_field_3" placeholder="Field 3"/>
+  </div>
+  
+  <div>
+    <label>Field 4</label>
+    <input type="text" name="form_field_4" placeholder="Field 4"/>
+  </div>
+
+  <div>
+    <button type="submit"id="submit-form">Submit</button>
+  </div>
+
+</form>
+<script type="text/javascript" src="{% static 'stats/js/form_test.js' %}"></script>
+{% endblock %}
