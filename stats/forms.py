@@ -1,7 +1,7 @@
 from django import forms
 from django.contrib.auth import authenticate, login
 from django.db.models import Q
-from .models import Team, Series, SeriesTeam, Player, TeamPlayer, Role
+from .models import Team, Series, SeriesTeam, Player, TeamPlayer, Role, Summoner
 
 class CreateRosterForm(forms.Form):
 
@@ -116,6 +116,21 @@ class TournamentCodeForm(forms.Form):
 	super(TournamentCodeForm, self).__init__(*args, **kwargs)
         self.fields["team_1"].queryset = Team.objects.filter(seriesteam__series=series_id)
         self.fields["team_2"].queryset = Team.objects.filter(seriesteam__series=series_id)
+
+class EditProfileForm(forms.Form):
+
+    new_summoner = forms.CharField(max_length=255)
+
+    def __init__(self, user, *args, **kwargs):
+	super(EditProfileForm, self).__init__(*args, **kwargs)
+        player = Player.objects.get(user=user)
+        self.fields['name'] = forms.CharField(max_length=255, initial=player.name)
+        summoners = Summoner.objects.filter(player=player)
+        i = 1
+        for summoner in summoners:
+            self.fields["summoner" + str(i)] = forms.CharField(max_length=255, initial=summoner.name)
+            i = i + 1
+
 
 class LoginForm(forms.Form):
     username = forms.CharField(max_length=255, required=True)

@@ -1,0 +1,11 @@
+    .playerPhoto {
+      grid-column-start: 3;
+      grid-column-end: 3;
+      grid-row-start: 1;
+      grid-row-end: 1;
+      width: 300px;
+      justify-self: end;
+      border: 9px solid rgba(0, 0, 0, 0.2);
+      border-radius: 16px;
+      margin: 1% 1% 0 0;
+  }

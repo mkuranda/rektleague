@@ -5,6 +5,7 @@ from . import views
 urlpatterns = [
     url(r'^$', views.index, name='index'),
     url(r'^index/$', views.index, name='index'),
+    url(r'^email-signup/$', views.email_signup, name='email_signup'),
     url(r'^signin/$', views.loginpage, name='loginpage'),
     url(r'^schedule/$', views.latest_schedule, name='latest_schedule'),
     url(r'^standings/$', views.latest_standings, name='latest_standings'),
@@ -18,6 +19,7 @@ urlpatterns = [
     url(r'^season/(?P<season_id>[0-9]+)/series/(?P<series_id>[0-9]+)/$', views.series_detail, name='series_detail'),
     url(r'^season/(?P<season_id>[0-9]+)/series/(?P<series_id>[0-9]+)/lockin/(?P<team_id>[0-9]+)/$', views.series_lockin_detail, name='series_lockin_detail'),
     url(r'^season/(?P<season_id>[0-9]+)/series/(?P<series_id>[0-9]+)/load/(?P<game_num>[0-9]+)/$', views.load_match, name='load_match'),
+    #url(r'^profile/$', views.profile, name='profile'),
 
     #url(r'^season/(?P<season_id>[0-9]+)/$', views.season_detail, name='season'),
     #url(r'^season/(?P<season_id>[0-9]+)/questions$', views.questions, name='questions'),

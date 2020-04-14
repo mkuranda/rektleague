@@ -8,13 +8,41 @@ from django.utils.timezone import utc
 from django.conf import settings
 from riot_request import RiotRequester
 from .models import Player, TeamPlayer, Team, Season, Champion, Match, Week, Series, SeriesTeam, TeamMatch, SeasonChampion, PlayerMatch, Role, TeamRole, SeriesPlayer, Summoner
-from .forms import TournamentCodeForm, InitializeMatchForm, CreateRosterForm, LoginForm
+from .forms import TournamentCodeForm, InitializeMatchForm, CreateRosterForm, LoginForm, EditProfileForm
 from get_riot_object import ObjectNotFound, get_item, get_champions, get_champion, get_match, get_all_items, get_match_timeline, update_playermatchkills, update_team_timelines, update_season_timelines, update_team_player_timelines
 from datetime import datetime
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
 import random
 import json
+
+def email_signup(request):
+    latest_season = Season.objects.latest('id')
+    context = {
+        'season': latest_season
+    }
+    return render(request, 'stats/email-signup.html', context)
+
+#def profile(request):
+#    latest_season = Season.objects.latest('id')
+#    player = get_object_or_404(Player, user=request.user)
+#    summoners = Summoner.objects.filter(player=player)
+#    if request.method == 'POST':
+#        form = EditProfileForm(request.POST, user=request.user)
+#        if form.is_valid():
+#            new_summoner_name = request.POST['new_summoner']
+#            new_summoner = Summoner.objects.create(player=player, name=new_summoner_name)
+#            new_summoner.save()
+#    else:
+#        form = EditProfileForm(user=request.user)
+#
+#    context = {
+#        'season': latest_season,
+#        'player': player,
+#        'summoners': summoners,
+#        'form': form
+#    }
+#    return render(request, 'stats/profile.html', context)
 
 def create_roster_error(request, series_id):
     latest_season = Season.objects.latest('id')

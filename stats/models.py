@@ -411,6 +411,7 @@ class Match(models.Model):
 @python_2_unicode_compatible
 class Player(models.Model):
     name = models.CharField(max_length=40)
+    user = models.ForeignKey(User, default=0)
     riot_id = models.IntegerField(default=0)
     matches = models.ManyToManyField(Match, through='PlayerMatch')
     photo = models.ImageField(upload_to='stats/player_photos', blank=True, null=True)
