@@ -4,8 +4,11 @@
 {% block title %}Rekt League | {{ series }}{% endblock %}
 
 {% block head %}
+<script type="text/javascript" src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>
 <script type="text/javascript">
 {% for match in matches %}
+
+
 function ReplaceGame{{ match.game_num }}() {
 	{% if match.duration > 5 %}
 	document.getElementById("Duration").innerHTML = "{{ match.duration_str }}";
@@ -27,6 +30,47 @@ function ReplaceGame{{ match.game_num }}() {
         document.getElementById("{{ teammatch.side }}TeamBan{{ forloop.counter }}").src = "{{ ban.champion.icon.url }}";
 	{% endfor %}
         {% endfor %}
+	var chart = new CanvasJS.Chart("goldGraph", {
+            animationEnabled: true,
+            backgroundColor: "black",
+            title: {
+            	fontColor: "#727272",
+            	fontFamily: 'Noto Sans',
+            	fontSize: 24,
+            },
+            axisX: {
+            	minimum: 0,
+            	maximum: {{ match.get_max_timeline_minute }},
+            	labelFontColor: "#727272",
+            },
+            axisY: {
+            	labelFontColor: "#727272",
+            },
+            data: [{
+            	labelFontColor: "#727272",
+            	fillOpacity: "0.3",
+            	name: "views",
+            	type: "area",
+            	dataPoints: [
+            		{% for timeline in match.get_blue_team.get_timelines %}
+            		{ x: {{ timeline.minute }}, y: {{ timeline.sumGold }}, label: "{{ timeline.minute }}:00" },
+                            {% endfor %}
+            	]
+            },{
+            	labelFontColor: "#727272",
+            	fillOpacity: "0.3",
+            	name: "views",
+            	type: "area",
+            	dataPoints: [
+            		{% for timeline in match.get_red_team.get_timelines %}
+            		{ x: {{ timeline.minute }}, y: {{ timeline.sumGold }}, label: "{{ timeline.minute }}:00" },
+                            {% endfor %}
+            	]
+            }
+            ]
+        });
+
+        chart.render();
 }
 {% endfor %}
 function report() {
@@ -290,6 +334,11 @@ window.onload = function() {
         <p id="WinnerName"></p>
         <p id="Duration"></p>
       </section>
+      <section class="statSection">
+      <div class="statTitle">GOLD</div>
+      <p><div id="goldGraph{{ match.game_num }}" style="height: 370px; width: 100%;"></div></p>
+      </section>
+
       {% endif %}
       {% if series.rosters_submitted and series.past_deadline and season.id > 2 %}
       <!-- MATCH UP GENERATOR -->
