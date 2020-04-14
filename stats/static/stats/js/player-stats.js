@@ -38,7 +38,6 @@ function sortTable(f,n){
 		if($.isNumeric(v)){
 			v = parseFloat(v,10);
 		}
->>>>>>> 11ccfa7af03d132ee6e7b7cfe09213a5e2b9afa8
 		return v;
 	}
 
