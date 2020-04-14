@@ -247,6 +247,30 @@ a:visited{
   .emailTitle {
     margin-top: 1%;
   }
+/* GRAPHS */
+
+
+/* SERIES GRAPHS */
+#graph {
+  height: 370px;
+  width: 75%;
+  margin: 5% auto 0 auto;
+}
+
+#graph > p {
+  display: none;
+}
+
+.canvasjs-chart-credit {
+  display: none;
+}
+
+@media (max-width:900px) {
+  #graph {
+    width: 98%;
+  }
+}
+
 
 
 /* ERROR */

@@ -30,24 +30,27 @@ function ReplaceGame{{ match.game_num }}() {
         document.getElementById("{{ teammatch.side }}TeamBan{{ forloop.counter }}").src = "{{ ban.champion.icon.url }}";
 	{% endfor %}
         {% endfor %}
-	var chart = new CanvasJS.Chart("goldGraph", {
+	var chart = new CanvasJS.Chart("graph", {
             animationEnabled: true,
             backgroundColor: "black",
             title: {
-            	fontColor: "#727272",
-            	fontFamily: 'Noto Sans',
+            	fontColor: "#ffffff",
+            	fontFamily: 'Lato',
             	fontSize: 24,
             },
             axisX: {
             	minimum: 0,
             	maximum: {{ match.get_max_timeline_minute }},
-            	labelFontColor: "#727272",
+              labelFontColor: "#ffffff",
+              fontFamily: 'Lato',
+            	fontSize: 34,
             },
             axisY: {
-            	labelFontColor: "#727272",
+            	labelFontColor: "#ffffff",
             },
             data: [{
-            	labelFontColor: "#727272",
+              labelFontColor: "#ffffff",
+              markerType: 'none',
             	fillOpacity: "0.3",
             	name: "views",
             	type: "area",
@@ -57,7 +60,8 @@ function ReplaceGame{{ match.game_num }}() {
                             {% endfor %}
             	]
             },{
-            	labelFontColor: "#727272",
+              labelFontColor: "#ffffff",
+              markerType: 'none',
             	fillOpacity: "0.3",
             	name: "views",
             	type: "area",
@@ -336,7 +340,7 @@ window.onload = function() {
       </section>
       <section class="statSection">
       <div class="statTitle">GOLD</div>
-      <p><div id="goldGraph{{ match.game_num }}" style="height: 370px; width: 100%;"></div></p>
+      <div id="graph"></div>
       </section>
 
       {% endif %}

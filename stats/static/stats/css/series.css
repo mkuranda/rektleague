@@ -330,6 +330,10 @@ td {
   margin: 4% auto 0 auto;
 }
 
+.statSection {
+  flex-direction: column;
+}
+
 .statSection > p{
   text-align: center;
   font-size: 2.9em;
