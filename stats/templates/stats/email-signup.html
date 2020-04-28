@@ -5,10 +5,57 @@
 
 {% block head %}
 <link rel="stylesheet" href="{% static 'stats/css/email-signup.css' %}">
+<meta http-equiv="X-UA-Compatible" content="IE=edge" /> <!-- Optimal Internet Explorer compatibility -->
 {% endblock %}
 
 {% block content %}
+<script
+    src="https://www.paypal.com/sdk/js?client-id=AbH5ZXH4_lHONTE8asGtqlPlEjSlqYftl_u3D5-9f58iv4VZq3h7wzYl1ZQ36T05rsFt0wWQQYM_pCkZ"> // Required. Replace SB_CLIENT_ID with your sandbox client ID.
+  </script>
 
-<!-- add stuff here -->
+<h1>MERCH</h1>
 
+<div class="flexContainer">
+    <section>
+        <h3>REKT GLASSES</h3>
+        <img src="/media/stats/merch/Shotglasses.png">
+        <p>I'm baby ennui activated charcoal YOLO pitchfork irony, truffaut unicorn bitters literally biodiesel. 8-bit intelligentsia twee tilde normcore activated charcoal quinoa 90's. Bicycle rights brunch pickled sustainable. Deep v schlitz gluten-free quinoa whatever hammock. Synth portland cred XOXO sriracha PBR&B knausgaard af single-origin coffee brunch chia wayfarers enamel pin.</p>
+        <div class="priceTag">$5.99</div>
+        <div class="addToOrderButtons">
+            <button class="down" id="downShots">-</button>
+            <span id="numberOfItemsShots"></span>
+            <button class="up" id="upShots">+</button><br>
+            <button id="addShotsToCart">ADD TO CART</button>
+        </div>
+    </section>
+    <section>
+        <h3>REKT STICKERS</h3>
+        <img src="/media/stats/merch/stickers.png">
+        <p>I'm baby ennui activated charcoal YOLO pitchfork irony, truffaut unicorn bitters literally biodiesel. 8-bit intelligentsia twee tilde normcore activated charcoal quinoa 90's. Bicycle rights brunch pickled sustainable. Deep v schlitz gluten-free quinoa whatever hammock. Synth portland cred XOXO sriracha PBR&B knausgaard af single-origin coffee brunch chia wayfarers enamel pin.</p>
+        <div class="priceTag">$1.99</div>
+        <div class="addToOrderButtons">
+            <button class="down" id="downStickers">-</button>
+            <span id="numberOfItemsStickers"></span>
+            <button class="up" id="upStickers">+</button><br>
+            <button id="addStickersToCart">ADD TO CART</button>
+        </div>
+    </section>
+</div>
+
+<div class="flexContainerCart">
+    <section>
+        <div class="cart">
+            <h2>CART</h2>
+            <p id="hideShots">REKT SHOTS: <span id="shotsInCart"></span>x  $<span id="shotsTotal"></span><button class="remove" id="removeShots">X</button></p>
+            <p id="hideStickers">REKT STICKERS: <span id="stickersInCart"></span>x  $<span id="stickersTotal"></span><button class="remove" id="removeStickers">X</button></p>
+            <p id="hideTotal"><strong>TOTAL</strong>: $<span id="total">0.00</span></p>
+        </div>
+    </section>
+    <section>
+        <h2>CHECKOUT</h2>
+        <div id="paypal-button-container"></div>
+    </section>
+</div>
+
+<script type="text/javascript" src="stats\static\stats\js\email-signup.js"></script>
 {% endblock %}
