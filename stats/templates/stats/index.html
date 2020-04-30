@@ -6,10 +6,69 @@
 {% block head %}{% endblock %}
 
 {% block content %}
+<link rel="stylesheet" type="text/css" href="{% static 'stats/css/slick.css' %}"/>
+<link rel="stylesheet" type="text/css" href="{% static 'stats/css/slick-theme.css' %}"/>
 <!--START OF BODY CONTENT-->
-<div class="main-body">
-    <img class="homepage-splash" src="/media/stats/homepageSplash/homepage.png">
-    <a href="/season/{{ seasons.first.id }}/schedule/" class="splash-button">EXPLORE {{ seasons.first }}</a>
-</div>  
+<div class="homepageContainer">
+ <video loop="" muted="" autoplay="" class="video-background" id="bg_video" data-videourl="/media/stats/homepageSplash/banner1.mp4"><source src="/media/stats/homepageSplash/banner1.mp4" type="video/mp4"></video>
+
+<div class="welcome title">
+    <p class="welcomeZIndex">WELCOME TO</p> 
+    <img class="inlineLogo" src="/media/stats/medium.png">      
+</div>
+
+<div class="bucket1" id="who">
+    WHO WE ARE
+    </div>
+
+<div class="bucket2" id="whoCopy">
+    Man braid helvetica jean shorts single-origin coffee, franzen synth food truck man bun activated charcoal DIY unicorn kitsch kale chips knausgaard meh. Offal marfa raclette, single-origin coffee cold-pressed blog letterpress literally XOXO truffaut. Knausgaard tattooed man bun next level slow-carb air plant cardigan. Knausgaard la croix leggings vinyl mustache.
+</div>
+
+<section class="teamsBanners">
+    <img src="/media/stats/homepageSplash/air-homepage.png" id="air">
+    <img src="/media/stats/homepageSplash/ocean-homepage.png" id="ocean">
+    <img src="/media/stats/homepageSplash/mountain-homepage.png" id="mountain">
+    <img src="/media/stats/homepageSplash/infernal-homepage.png" id="infernal">
+    <img src="/media/stats/homepageSplash/raptors-homepage.png" id="raptors">
+    <img src="/media/stats/homepageSplash/scuttle-homepage.png" id="scuttle">
+    <img src="/media/stats/homepageSplash/sentinels-homepage.png" id="sentinels">
+    <img src="/media/stats/homepageSplash/brambleback-homepage.png" id="brambleback">
+</section>
+
+<div class="bucket2" id="whyCopy">
+    Man braid helvetica jean shorts single-origin coffee, franzen synth food truck man bun activated charcoal DIY unicorn kitsch kale chips knausgaard meh. Offal marfa raclette, single-origin coffee cold-pressed blog letterpress literally XOXO truffaut. Knausgaard tattooed man bun next level slow-carb air plant cardigan. Knausgaard la croix leggings vinyl mustache.
+</div>
+
+<div class="bucket1" id="why">
+WHY JOIN?
+</div>
+
+<div class="homepageSlider">
+    <div><img src="/media/stats/homepageSplash/slide1.png"></div>
+    <div><img src="/media/stats/homepageSplash/slide2.png"></div>
+    <div><img src="/media/stats/homepageSplash/slide3.png"></div>
+    <div><img src="/media/stats/homepageSplash/slide4.png"></div>
+    <div><img src="/media/stats/homepageSplash/slide5.png"></div>
+    <div><img src="/media/stats/homepageSplash/slide6.png"></div>
+    <div><img src="/media/stats/homepageSplash/slide7.png"></div>
+  </div>
+
+<div class="bucket1" id="join">
+ YOU GAME?
+</div>
+
+<div class="bucket2" id="joinCopy">
+    Man braid helvetica jean shorts single-origin coffee, franzen synth food truck man bun activated charcoal DIY unicorn kitsch kale chips knausgaard meh. Offal marfa raclette, single-origin coffee cold-pressed blog letterpress literally XOXO truffaut. Knausgaard tattooed man bun next level slow-carb air plant cardigan. Knausgaard la croix leggings vinyl mustache.
+</div>
+
+</div>
+
+
+<script type="text/javascript" src="{% static 'stats/js/jquery-3.4.1.min.js' %}"></script>
+<script type="text/javascript" src="{% static 'stats\js\slick.js' %}"></script>
+<script type="text/javascript" src="{% static 'stats/js/index.js' %}"></script>
+
+
 </body>
 {% endblock %}
