@@ -43,13 +43,13 @@ document.getElementById('downStickers').onclick = function numberDownStickers() 
         stickers = stickers - 1;
     }
     document.getElementById('numberOfItemsStickers').innerHTML = stickers;
-    return stickers
+    return stickers;
 }
 
 document.getElementById('upStickers').onclick = function numberUpStickers() {
     stickers++;
     document.getElementById('numberOfItemsStickers').innerHTML = stickers;
-    return stickers
+    return stickers;
 }
 
 // REMOVE SHOTS FROM CART
@@ -114,7 +114,7 @@ document.getElementById('total').innerHTML = Number(Math.round(parseFloat(total 
     style: {
     color:  'blue',
     shape:  'pill',
-    height: 40
+    height: 40,
 },
     createOrder: function(data, actions) {
       // This function sets up the details of the transaction, including the amount and line item details.
