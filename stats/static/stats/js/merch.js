@@ -118,13 +118,46 @@ document.getElementById('total').innerHTML = Number(Math.round(parseFloat(total 
 },
     createOrder: function(data, actions) {
       // This function sets up the details of the transaction, including the amount and line item details.
-      return actions.order.create({
+      request = {
+        intent: "capture",
         purchase_units: [{
           amount: {
-            value: (stickers * 1.99) + (shots * 5.99)
-          }
+            currency_code: "USD",
+            value: (stickers * 1.99) + (shots * 5.99),
+            breakdown: {
+              item_total: {
+                currency_code: "USD",
+                value: (stickers * 1.99) + (shots * 5.99)
+              }
+	    }
+          },
+	  items: [
+	  ]
         }]
-      });
+      };
+      if (stickers > 0)
+      {
+        request.purchase_units[0].items.push({
+          name: "Rekt Sticker",
+          unit_amount: {
+            currency_code: "USD",
+            value: 1.99
+          },
+          quantity: stickers
+        });
+      }
+      if (shots > 0)
+      {
+        request.purchase_units[0].items.push({
+          name: "Rekt Shot Glass",
+          unit_amount: {
+            currency_code: "USD",
+            value: 5.99
+          },
+          quantity: shots
+        });
+      }
+      return actions.order.create(request);
     },
     onApprove: function(data, actions) {
       // This function captures the funds from the transaction.
