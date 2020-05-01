@@ -16,6 +16,14 @@ from django.views.decorators.http import require_POST
 import random
 import json
 
+def merch(request):
+    latest_season = Season.objects.latest('id')
+    context = {
+        'season': latest_season
+    }
+    return render(request, 'stats/merch.html', context)
+
+
 def email_signup(request):
     latest_season = Season.objects.latest('id')
     context = {

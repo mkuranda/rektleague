@@ -1,0 +1,156 @@
+h1, h2{
+    color:white;
+    text-align: center;
+    font-size: 7em;
+    font-weight: 800;
+}
+
+h2{
+    color:white;
+    text-align: center;
+    font-size: 5em;
+    font-weight: 800;
+    margin-bottom: 15px;
+}
+
+h3 {
+    color: black;
+    text-align: center;
+    font-size: 5em;
+    font-weight: 1000;
+    font-family: 'raleway', sans-serif;
+    margin-bottom: 5%;
+    padding: 0 6%;
+}
+.flexContainer, .flexContainerCart{
+    display: flex;
+    flex-flow: row wrap;
+    align-content: flex-start;
+    justify-content: space-evenly;
+}
+
+section {
+    width: 40%;
+    background: white;
+    padding: 3%;
+    min-width: 450px;
+    margin-bottom: 5%;
+    border-radius: 40px;
+}
+
+.priceTag {
+    background: #bf1f2f;
+    padding: 1% 2%;
+    color: white;
+    font-size: 3em;
+    text-align: center;
+    font-weight: 800;
+    margin: 2% auto;
+    width: 50%;
+}
+
+.flexContainer > section > img {
+    width: 100%;
+    border-radius: 40px;
+    box-shadow: #000000b0 0px 2px 6px;
+}
+
+.flexContainer > section p {
+    padding: 3%;
+    font-size: 1.7em;
+}
+
+.addToOrderButtons {
+    margin: auto;
+    text-align: center;
+}
+
+#numberOfItemsShots, #numberOfItemsStickers {
+    font-size: 2em;
+    font-weight: 600;
+}
+
+.down, .up {
+    padding: 1.5% 4%;
+    background: #80808075;
+    border-radius: 25px;
+    margin: 0 3%;
+    border: none;
+    box-shadow: #000000b0 0px 2px 6px;
+    font-size: 1.8em;
+    font-weight: 600;
+}
+
+.down:hover, .up:hover {
+    background: #bf1e2e;
+    color: white;
+}
+
+#paypal-button-container {
+    text-align: center;
+}
+
+.flexContainerCart > section {
+    width: 40%;
+    padding: 3%;
+    min-width: 450px;
+    background-color: black;
+}
+
+.cart{
+    color: white;
+    text-align: center;
+}
+
+.cart > p {
+    font-size: 2em;
+}
+
+.cart > h2{
+    font-size: 5em;
+}
+
+.remove {
+    background: #bf1f2f;
+    padding: .5% 2%;
+    color: white;
+    font-size: .7em;
+    text-align: center;
+    font-weight: 600;
+    border-radius: 10px;
+    margin-left: 10px;
+    border: none;
+}
+
+#hideStickers, #hideShots {
+    display: none;
+}
+
+#addShotsToCart, #addStickersToCart {
+    background: #bf1e2d;
+    color: white;
+    padding: 5px 10px;
+    font-size: 2em;
+    font-weight: 800;
+    border-radius: 10px;
+    margin-top: 20px;
+    border: none;
+}
+
+#addShotsToCart:hover, #addStickersToCart:hover, .remove:hover{
+    background: #8c1621;
+}
+
+@media (min-width: 917px){
+    section {
+        margin-bottom: 0;
+    }
+}
+
+@media (max-width: 500px){
+    section {
+        width: 90%;
+        min-width: 0px;
+
+    }
+}
