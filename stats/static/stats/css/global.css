@@ -416,6 +416,10 @@ a:visited{
 .welcome {
   margin-top: 20px;
   width: 100%;
+  -moz-box-shadow: 0px 0px 62px 8px rgba(0,0,0,.5);
+    -webkit-box-shadow: 0px 0px 101px 37px rgba(0,0,0,.5);
+    box-shadow: 0px 0px 101px 37px rgba(0,0,0,.5);
+    z-index: 1;
 }
 
 .bucket1{
@@ -431,7 +435,7 @@ a:visited{
 }
 
 .bucket2{
-  font-size: 1.7em;
+  font-size: 1.9rem;
   font-weight: 1000;
   font-family: 'raleway', sans-serif;
   color: white;
@@ -441,16 +445,179 @@ a:visited{
   padding: 15% 6%;
 }
 
+.bucket2 p {
+  font-weight: 800;
+  font-family: 'raleway', sans-serif;
+  text-align: center;
+}
+
 .teamsBanners{
   width: 100%;
   display: flex;
   flex-flow: row nowrap;
   justify-content: flex-start;
+  -moz-box-shadow: 0px 0px 101px 37px rgba(0,0,0,.5);
+  -webkit-box-shadow: 0px 0px 101px 37px rgba(0,0,0,.5);
+  box-shadow: 0px 0px 101px 37px rgba(0,0,0,.5);
+  z-index: 1;
+}
+.supportUs {
+  width: 100%;
+  background: black;
+  text-align: center;
+  color: white;
+  padding: 2% 0px;
+  -moz-box-shadow: 0px 0px 101px 37px rgba(0,0,0,.5);
+  -webkit-box-shadow: 0px 0px 101px 37px rgba(0,0,0,.5);
+  box-shadow: 0px 0px 101px 37px rgba(0,0,0,.5);
+  z-index: 1;
+}
+
+.supportUs h3 {
+  font-size: 5rem;
+  font-weight: 1000;
+  font-family: 'raleway', sans-serif;
+}
+.supportIcons {
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: space-evenly;
+}
+
+.icon {
+  text-align: center;
+  width: 33%;
+}
+
+.icon p {
+  font-family: 'raleway', sans-serif;
+  font-size: 2rem;
+  font-weight: 800;
+}
+
+.icon a {
+  text-decoration: none;
+  transition: 1s ease;
+}
+
+.icon a:visited {
+  text-decoration: none!important;
+}
+
+.icon a:hover {
+  color: #bf1f2f;
+  transition: 1s ease;
+}
+
+.icon img {
+  width: 65%;
+  opacity: 1;
+  transition: 1s ease;
+}
+
+.icon img:hover {
+  width: 65%;
+  opacity: .4;
+  transition: 1s ease;
+}
+
+#joinCopy {
+  padding: 8% 6%;
+}
+
+#joinCopy strong {
+  font-size: 3.5rem;
+  font-weight: 900;
+  color: #bf1f2f;
+}
+
+/* TEAM DESCRIPTIONS */
+
+.teamDescriptionContainerAir {
+  background: black;
+  width: 100%;
+  padding: 2%;
+  display: none;
+  transition: 1s;
+}
+
+.teamDescriptionContainerOcean {
+  background: black;
+  width: 100%;
+  padding: 2%;
+  display: none;
+  transition: 1s;
+}
+
+.teamDescriptionContainerMountain {
+  background: black;
+  width: 100%;
+  padding: 2%;
+  display: none;
+  transition: 1s;
+}
+
+.teamDescriptionContainerInfernal {
+  background: black;
+  width: 100%;
+  padding: 2%;
+  display: none;
+  transition: 1s;
+}
+
+.teamDescriptionContainerRaptors {
+  background: black;
+  width: 100%;
+  padding: 2%;
+  display: none;
+  transition: 1s;
+}
+
+.teamDescriptionContainerSC {
+  background: black;
+  width: 100%;
+  padding: 2%;
+  display: none;
+  transition: 1s;
+}
+
+.teamDescriptionContainerSentinels {
+  background: black;
+  width: 100%;
+  padding: 2%;
+  display: none;
+  transition: 1s;
+}
+
+.teamDescriptionContainerBramble {
+  background: black;
+  width: 100%;
+  padding: 2%;
+  display: none;
+  transition: 1s;
+}
+
+.display{
+  display: block;
+  transition: 1s;
+}
+
+#teamDescription{
+  color: white;
+  text-align: center;
+}
+
+#teamName {
+  color: white;
+  font-size: 3em;
+  text-align: center;
+  font-weight: 900;
 }
 
 .teamsBanners > img {
   width: 12.5%;
   opacity: .5;
+  transition: 1s;
 }
 
 .teamsBanners > img:hover {
@@ -461,9 +628,17 @@ a:visited{
 .homepageSlider {
   opacity: .5;
   width: 100%;
+  -moz-box-shadow: 0px 0px 101px 37px rgba(0,0,0,.5);
+    -webkit-box-shadow: 0px 0px 101px 37px rgba(0,0,0,.5);
+    box-shadow: 0px 0px 101px 37px rgba(0,0,0,.5);
+    z-index: 1;
 }
 
 .homepageSlider img {
+  width: 100%;
+}
+
+.homepageSlider iframe {
   width: 100%;
 }
 
@@ -581,6 +756,10 @@ text-decoration: none;
   #joinCopy {
     order: 10;
   }
+
+  .supportUs {
+    order: 11;
+  }
 }
 
   @media (max-width: 768px){
@@ -637,9 +816,27 @@ text-decoration: none;
   }
 
   .bucket2 {
-    font-size: 1.2em;
+    font-size: 1.4rem;
+    font-weight: 800;
     text-align: center;
   }
+
+  #joinCopy strong {
+    font-size: 3rem;
+}
+
+.bucket2 p {
+  font-size: 1.4rem;
+  font-weight: 800;
+}
+
+.supportUs h3 {
+  font-size: 4rem;
+}
+
+.icon p {
+  font-size: 1.5rem;
+}
 
 }
     
