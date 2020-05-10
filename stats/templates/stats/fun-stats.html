@@ -1,0 +1,150 @@
+{% extends "stats/base.html" %}
+{% load staticfiles %}
+
+{% block title %}Rekt League | Home{% endblock %}
+
+{% block head %}{% endblock %}
+
+{% block content %}
+<!--START OF BODY CONTENT-->
+<div height=500>top</div>
+<div class="main-body" style="color: white;">
+	<h1>Top Counterjunglers</h1>
+	{% for jungler in top_counterjunglers %}
+	{% if forloop.counter < 5 %}
+	<p>
+	{{ jungler.name }} : {{ jungler.counterjungle_percent | floatformat:"2"}}%
+	</p>
+	{% endif %}
+	{% endfor %}
+
+	<h1>Most Solo Kills</h1>
+	{% for player in most_solo_kills %}
+	{% if forloop.counter < 5 %}
+	<p>
+	{{ player.name }} : {{ player.solo_kills|floatformat:"2" }}%
+	</p>
+	{% endif %}
+	{% endfor %}
+
+	<h1>Most Percentage of Gold Spent on Control Wards</h1>
+	{% for player in control_ward_pct %}
+	{% if forloop.counter < 5 %}
+	<p>
+	{{ player.name }} : {{ player.percent|floatformat:"2" }}%
+	</p>
+	{% endif %}
+	{% endfor %}
+
+	<h1>Lane First Tower Percent</h1>
+	{% for lane in tower_lane_pct %}
+	{% if forloop.counter < 5 %}
+	<p>
+	{{ lane.name }} : {{ lane.pct|floatformat:"2" }}%
+	</p>
+	{% endif %}
+	{% endfor %}
+
+	<h1>Lane First Inhibitor Percent</h1>
+	{% for lane in inhib_lane_pct %}
+	{% if forloop.counter < 5 %}
+	<p>
+	{{ lane.name }} : {{ lane.pct|floatformat:"2" }}%
+	</p>
+	{% endif %}
+	{% endfor %}
+
+	<h1>Elemental Rift Percent</h1>
+	{% for dragon in dragon_map_pct %}
+	{% if forloop.counter < 5 %}
+	<p>
+	{{ dragon.name }} : {{ dragon.pct|floatformat:"2" }}%
+	</p>
+	{% endif %}
+	{% endfor %}
+
+	<h1>Dragon Soul Percent</h1>
+	{% for dragon in dragon_soul_pct %}
+	{% if forloop.counter < 5 %}
+	<p>
+	{{ dragon.name }} : {{ dragon.pct|floatformat:"2" }}%
+	</p>
+	{% endif %}
+	{% endfor %}
+
+	<h1>Kill Participation Before 15</h1>
+	{% for player in kp_pre_15 %}
+	{% if forloop.counter < 5 %}
+	<p>
+	{{ player.name }} : {{ player.pct|floatformat:"2" }}%
+	</p>
+	{% endif %}
+	{% endfor %}
+
+	<h1>Most Unique Kills Pre 15</h1>
+	{% for player in unique_kills %}
+	{% if forloop.counter < 5 %}
+	<p>
+	{{ player.name }} : {{ player.kills }}
+	</p>
+	{% endif %}
+	{% endfor %}
+
+	<h1>Most Blue Wards</h1>
+	{% for team in blue_wards %}
+	{% if forloop.counter < 5 %}
+	<p>
+	{{ team.name }} : {{ team.blue_wards }}
+	</p>
+	{% endif %}
+	{% endfor %}
+
+	<h1>Percent of Wards Destroyed</h1>
+	{% for team in pct_wards_destroyed %}
+	{% if forloop.counter < 5 %}
+	<p>
+	{{ team.name }} : {{ team.pct|floatformat:"2" }}%
+	</p>
+	{% endif %}
+	{% endfor %}
+
+	<h1>First Two Dragons Winrate</h1>
+	<p>
+	{{ two_drags_pct|floatformat:"2" }}%
+	</p>
+
+	<h1>First Two Rift Heralds Winrate</h1>
+	<p>
+	{{ two_rifts_pct|floatformat:"2" }}%
+	</p>
+
+	<h1>Number of Assists on First Tower</h1>
+	{% for team in first_tower_assists %}
+	{% if forloop.counter < 5 %}
+	<p>
+	{{ team.name }} : {{ team.assists|floatformat:"2" }}
+	</p>
+	{% endif %}
+	{% endfor %}
+
+	<h1>CS Diff when laning against people +5 or higher</h1>
+	{% for team in cs_diff_below_elo %}
+	{% if forloop.counter < 5 %}
+	<p>
+	{{ team.name }} : {{ team.total|floatformat:"2" }}
+	</p>
+	{% endif %}
+	{% endfor %}
+
+	<h1>First Bloods</h1>
+	{% for player in first_bloods %}
+	{% if forloop.counter < 5 %}
+	<p>
+	{{ player.name }} : {{ player.kills }}
+	</p>
+	{% endif %}
+	{% endfor %}
+
+</div>  
+</body>
+{% endblock %}

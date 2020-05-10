@@ -1,0 +1,15 @@
+{% extends "stats/base.html" %}
+{% load staticfiles %}
+
+{% block title %}Rekt League | Home{% endblock %}
+
+{% block head %}{% endblock %}
+
+{% block content %}
+<!--START OF BODY CONTENT-->
+<div class="main-body">
+    <img class="homepage-splash" src="/media/stats/homepageSplash/homepage.png">
+    <a href="/season/{{ seasons.first.id }}/schedule/" class="splash-button">EXPLORE {{ seasons.first }}</a>
+</div>
+</body>
+{% endblock %}
