@@ -29,9 +29,10 @@ $(document).ready(function(){
 <div class="homepageContainer">
  <video loop="" muted="" autoplay="" class="video-background" id="bg_video" data-videourl="/media/stats/homepageSplash/banner1.mp4"><source src="/media/stats/homepageSplash/banner1.mp4" type="video/mp4"></video>
 
-<div class="welcome title">
+<div class="welcome title" id="welcome">
     <p class="welcomeZIndex">WELCOME TO</p> 
-    <img class="inlineLogo" src="/media/stats/medium.png">      
+    <img class="inlineLogo" src="/media/stats/medium.png">
+    <!-- <div id="twitch-embed"></div> -->
 </div>
 
 <div class="bucket1" id="who">
@@ -111,6 +112,7 @@ WHY JOIN?
 
 </div>
 
+<script src="https://embed.twitch.tv/embed/v1.js"></script>
 <script src="https://code.jquery.com/jquery-3.5.0.js"></script>
 <script type="text/javascript" src="{% static 'stats/js/jquery-3.4.1.min.js' %}"></script>
 <script type="text/javascript" src="{% static 'stats/js/slick.js' %}"></script>
