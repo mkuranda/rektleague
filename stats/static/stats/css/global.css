@@ -451,16 +451,6 @@ a:visited{
   text-align: center;
 }
 
-.teamsBanners{
-  width: 100%;
-  display: flex;
-  flex-flow: row nowrap;
-  justify-content: flex-start;
-  -moz-box-shadow: 0px 0px 101px 37px rgba(0,0,0,.5);
-  -webkit-box-shadow: 0px 0px 101px 37px rgba(0,0,0,.5);
-  box-shadow: 0px 0px 101px 37px rgba(0,0,0,.5);
-  z-index: 1;
-}
 .supportUs {
   width: 100%;
   background: black;
@@ -533,12 +523,28 @@ a:visited{
 
 /* TEAM DESCRIPTIONS */
 
+.teamsBanners{
+  width: 100%;
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: flex-start;
+  -moz-box-shadow: 0px 0px 101px 37px rgba(0,0,0,.5);
+  -webkit-box-shadow: 0px 0px 101px 37px rgba(0,0,0,.5);
+  box-shadow: 0px 0px 101px 37px rgba(0,0,0,.5);
+  z-index: 1;
+}
+
 .teamDescriptionContainer {
   background: black;
   width: 100%;
   padding: 2%;
   display: none;
   transition: 1s;
+  z-index: 2;
+}
+
+.teamsBanners > a {
+  width: 100%;
 }
 
 .display{
@@ -558,13 +564,10 @@ a:visited{
   font-weight: 900;
 }
 
-.teamBanners a {
-  width: 12.5%;
-}
-
 .teamsBanners img {
   opacity: .5;
   transition: 1s;
+  width: 100%;
 }
 
 .teamsBanners img:hover {
@@ -684,28 +687,32 @@ text-decoration: none;
     order: 5;
   }
 
-  #why {
+  .teamDescriptionContainer {
     order: 6;
-  }
+}
 
-  #whyCopy {
+  #why {
     order: 7;
   }
 
-  .homepageSlider{
+  #whyCopy {
     order: 8;
   }
 
-  #join {
+  .homepageSlider{
     order: 9;
   }
 
-  #joinCopy {
+  #join {
     order: 10;
   }
 
-  .supportUs {
+  #joinCopy {
     order: 11;
+  }
+
+  .supportUs {
+    order: 12;
   }
 }
 
