@@ -543,6 +543,11 @@ a:visited{
   z-index: 2;
 }
 
+.mobileGIF {
+  width: 100%;
+  display: none;
+}
+
 .teamsBanners > a {
   width: 100%;
 }
@@ -717,6 +722,18 @@ text-decoration: none;
 }
 
   @media (max-width: 768px){
+    .mobileGIF {
+      display: block;
+    }
+
+    .video-background {
+      display: none;
+    }
+
+    .slick-slider {
+      display: none!important;
+    }
+    
     .welcomeZIndex{
     font-size: .8em;
     font-weight: 900;
