@@ -2,6 +2,7 @@
 var shots = 0;
 var shotsPrice = 5.99
 document.getElementById('numberOfItemsShots').innerHTML = shots;
+document.getElementById('hideShipping').style.display = "none";
 
 document.getElementById('downShots').onclick = function numberDown() {
     document.getElementById('numberOfItemsShots').innerHTML = shots;
@@ -28,6 +29,7 @@ else {
     document.getElementById('addShotsToCart').innerHTML = "ADD TO CART";
 }
 showShots();
+showShipping();
 updateTotal();
 }
 
@@ -58,6 +60,7 @@ document.getElementById('removeShots').onclick = function removeShotsFromCart() 
     shots = 0;
     document.getElementById('numberOfItemsShots').innerHTML = shots;
     document.getElementById('hideShots').style.display = "none";
+    showShipping();
     updateTotal();
 }
 
@@ -68,6 +71,7 @@ document.getElementById('removeStickers').onclick = function removeStickersFromC
     stickers = 0;
     document.getElementById('numberOfItemsStickers').innerHTML = stickers;
     document.getElementById('hideStickers').style.display = "none";
+    showShipping();
     updateTotal();
 }
 // SHOW OR HIDE STICKERS IN CART
@@ -88,6 +92,16 @@ function showShots() {
 }
 }
 
+function showShipping() {
+    if (shots > 0 || stickers > 0){
+	    console.log('adding');
+    document.getElementById('hideShipping').style.display = "block";
+} else {
+	    console.log('removing');
+    document.getElementById('hideShipping').style.display = "none";
+}
+}
+
 // ADD STICKERS TO CART AND ROUND THEM TO 2 DECIMALS
 document.getElementById('addStickersToCart').onclick = function stickersToCart() {
 document.getElementById('stickersTotal').innerHTML = Number(Math.round(parseFloat((stickers * stickersPrice) + 'e' + 2)) + 'e-' + 2);
@@ -98,6 +112,7 @@ else {
     document.getElementById('addStickersToCart').innerHTML = "ADD TO CART";
 }
 showStickers();
+showShipping();
 updateTotal();
 }
 
@@ -106,9 +121,13 @@ total= 0.00
 // MATH TOTAL
 function updateTotal() {
 var total = (stickers * 1.99) + (shots * 5.99);
+if (stickers > 0 || shots > 0)
+{
+	total += 1.99;
+}
 document.getElementById('total').innerHTML = Number(Math.round(parseFloat(total + 'e' + 2)) + 'e-' + 2);
 }
-// IMPLEEMENT PAYPAL
+// IMPLEMENT PAYPAL
     paypal.Buttons({
 
     style: {
@@ -123,12 +142,16 @@ document.getElementById('total').innerHTML = Number(Math.round(parseFloat(total 
         purchase_units: [{
           amount: {
             currency_code: "USD",
-            value: (stickers * 1.99) + (shots * 5.99),
+            value: (stickers * 1.99) + (shots * 5.99) + 1.99,
             breakdown: {
               item_total: {
                 currency_code: "USD",
                 value: (stickers * 1.99) + (shots * 5.99)
-              }
+              },
+	      shipping: {
+		currency_code: "USD",
+		value: 1.99
+	      }
 	    }
           },
 	  items: [

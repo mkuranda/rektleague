@@ -45,7 +45,7 @@ $(document).ready(function(){
 
 <section class="teamsBanners">
 	{% for team in teams %}
-	<a href="/stats/season/{{ latest_season.id }}/team/{{ team.id }}/"><img src="{{ team.media.home_splash.url }}" id="team{{ team.id }}"></a>
+	<a href="/stats/season/{{ team.season.id }}/team/{{ team.id }}/"><img src="{{ team.media.home_splash.url }}" id="team{{ team.id }}"></a>
     	{% endfor %}
 </section>
 
@@ -53,7 +53,7 @@ $(document).ready(function(){
 {% for team in teams %}
 <div class="teamDescriptionContainer teamDescriptionContainer{{ team.id }}">
 	<p id="teamName">{{ team.media.name }}</p>
-    <p id="teamDescription">Offal marfa raclette, single-origin coffee cold-pressed blog letterpress literally XOXO truffaut. Knausgaard tattooed man bun next level slow-carb air plant cardigan. Knausgaard la croix leggings vinyl mustache.</p>
+	<p id="teamDescription">{{ team.media.blurb }}</p>
 </div>
 {% endfor %}
 <!-- END TEAM BANNER DESC -->
