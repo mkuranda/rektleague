@@ -279,8 +279,11 @@ def get_items(request):
 
 def index(request):
     seasons = Season.objects.all().order_by('-id')
+    latest_season = Season.objects.latest('id')
+    teams = Team.objects.filter(season=latest_season)
     context = {
-        'seasons': seasons
+        'seasons': seasons,
+        'teams': teams
     }
     return render(request, 'stats/index.html', context)
 

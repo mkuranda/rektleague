@@ -445,6 +445,7 @@ class TeamMedia(models.Model):
     banner = models.ImageField(upload_to='stats/team_banners')
     left_splash = models.ImageField(upload_to='stats/team_splashes')
     right_splash = models.ImageField(upload_to='stats/team_splashes')
+    home_splash = models.ImageField(upload_to='stats/homepageSplash', default='')
 
     def __str__(self):
         return self.name

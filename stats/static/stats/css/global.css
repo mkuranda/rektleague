@@ -533,63 +533,7 @@ a:visited{
 
 /* TEAM DESCRIPTIONS */
 
-.teamDescriptionContainerAir {
-  background: black;
-  width: 100%;
-  padding: 2%;
-  display: none;
-  transition: 1s;
-}
-
-.teamDescriptionContainerOcean {
-  background: black;
-  width: 100%;
-  padding: 2%;
-  display: none;
-  transition: 1s;
-}
-
-.teamDescriptionContainerMountain {
-  background: black;
-  width: 100%;
-  padding: 2%;
-  display: none;
-  transition: 1s;
-}
-
-.teamDescriptionContainerInfernal {
-  background: black;
-  width: 100%;
-  padding: 2%;
-  display: none;
-  transition: 1s;
-}
-
-.teamDescriptionContainerRaptors {
-  background: black;
-  width: 100%;
-  padding: 2%;
-  display: none;
-  transition: 1s;
-}
-
-.teamDescriptionContainerSC {
-  background: black;
-  width: 100%;
-  padding: 2%;
-  display: none;
-  transition: 1s;
-}
-
-.teamDescriptionContainerSentinels {
-  background: black;
-  width: 100%;
-  padding: 2%;
-  display: none;
-  transition: 1s;
-}
-
-.teamDescriptionContainerBramble {
+.teamDescriptionContainer {
   background: black;
   width: 100%;
   padding: 2%;
@@ -614,13 +558,16 @@ a:visited{
   font-weight: 900;
 }
 
-.teamsBanners > img {
+.teamBanners a {
   width: 12.5%;
+}
+
+.teamsBanners img {
   opacity: .5;
   transition: 1s;
 }
 
-.teamsBanners > img:hover {
+.teamsBanners img:hover {
   transition: 1s;
   opacity: 1;
 }

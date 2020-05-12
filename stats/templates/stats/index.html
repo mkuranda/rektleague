@@ -3,7 +3,24 @@
 
 {% block title %}Rekt League | Home{% endblock %}
 
-{% block head %}{% endblock %}
+{% block head %}
+<script type="text/javascript">
+$(document).ready(function(){
+	{% for team in teams %}
+  $( "#team{{ team.id }}" ).hover(
+    function() {
+      $(".teamDescriptionContainer{{ team.id }}").append( ".teamsBanners" );  
+      $(".teamDescriptionContainer{{ team.id }}").fadeIn( 0 );
+      $(".teamDescriptionContainer{{ team.id }}").addClass( "display" );
+    }, function() {
+      $(".teamDescriptionContainer{{ team.id }}").fadeOut( 0 );
+      $(".teamDescriptionContainer{{ team.id }}").removeClass( "display" );
+    }
+  );
+	{% endfor %}
+});
+</script>
+{% endblock %}
 
 {% block content %}
 <link rel="stylesheet" type="text/css" href="{% static 'stats/css/slick.css' %}"/>
@@ -26,57 +43,18 @@
 </div>
 
 <section class="teamsBanners">
-    <img src="/media/stats/homepageSplash/air-homepage.png" id="air">
-    <img src="/media/stats/homepageSplash/ocean-homepage.png" id="ocean">
-    <img src="/media/stats/homepageSplash/mountain-homepage.png" id="mountain">
-    <img src="/media/stats/homepageSplash/infernal-homepage.png" id="infernal">
-    <img src="/media/stats/homepageSplash/raptors-homepage.png" id="raptors">
-    <img src="/media/stats/homepageSplash/scuttle-homepage.png" id="scuttle">
-    <img src="/media/stats/homepageSplash/sentinels-homepage.png" id="sentinels">
-    <img src="/media/stats/homepageSplash/brambleback-homepage.png" id="brambleback">
+	{% for team in teams %}
+	<a href="/stats/season/{{ latest_season.id }}/team/{{ team.id }}/"><img src="{{ team.media.home_splash.url }}" id="team{{ team.id }}"></a>
+    	{% endfor %}
 </section>
 
 <!-- TEAM BANNER DESCRIPTIONS -->
-<div class="teamDescriptionContainerAir">
-    <p id="teamName">AIR</p>
+{% for team in teams %}
+<div class="teamDescriptionContainer teamDescriptionContainer{{ team.id }}">
+	<p id="teamName">{{ team.media.name }}</p>
     <p id="teamDescription">Offal marfa raclette, single-origin coffee cold-pressed blog letterpress literally XOXO truffaut. Knausgaard tattooed man bun next level slow-carb air plant cardigan. Knausgaard la croix leggings vinyl mustache.</p>
 </div>
-
-<div class="teamDescriptionContainerOcean">
-    <p id="teamName">OCEAN</p>
-    <p id="teamDescription">Offal marfa raclette, single-origin coffee cold-pressed blog letterpress literally XOXO truffaut. Knausgaard tattooed man bun next level slow-carb air plant cardigan. Knausgaard la croix leggings vinyl mustache.</p>
-</div>
-
-<div class="teamDescriptionContainerMountain">
-    <p id="teamName">MOUNTAIN</p>
-    <p id="teamDescription">Offal marfa raclette, single-origin coffee cold-pressed blog letterpress literally XOXO truffaut. Knausgaard tattooed man bun next level slow-carb air plant cardigan. Knausgaard la croix leggings vinyl mustache.</p>
-</div>
-
-<div class="teamDescriptionContainerInfernal">
-    <p id="teamName">INFERNAL</p>
-    <p id="teamDescription">Offal marfa raclette, single-origin coffee cold-pressed blog letterpress literally XOXO truffaut. Knausgaard tattooed man bun next level slow-carb air plant cardigan. Knausgaard la croix leggings vinyl mustache.</p>
-</div>
-
-<div class="teamDescriptionContainerRaptors">
-    <p id="teamName">RAPTORS</p>
-    <p id="teamDescription">Offal marfa raclette, single-origin coffee cold-pressed blog letterpress literally XOXO truffaut. Knausgaard tattooed man bun next level slow-carb air plant cardigan. Knausgaard la croix leggings vinyl mustache.</p>
-</div>
-
-<div class="teamDescriptionContainerSC">
-    <p id="teamName">SCUTTLE CRAB</p>
-    <p id="teamDescription">Offal marfa raclette, single-origin coffee cold-pressed blog letterpress literally XOXO truffaut. Knausgaard tattooed man bun next level slow-carb air plant cardigan. Knausgaard la croix leggings vinyl mustache.</p>
-</div>
-
-<div class="teamDescriptionContainerSentinels">
-    <p id="teamName">SENTINELS</p>
-    <p id="teamDescription">Offal marfa raclette, single-origin coffee cold-pressed blog letterpress literally XOXO truffaut. Knausgaard tattooed man bun next level slow-carb air plant cardigan. Knausgaard la croix leggings vinyl mustache.</p>
-</div>
-
-<div class="teamDescriptionContainerBramble">
-    <p id="teamName">BRAMBELBACK</p>
-    <p id="teamDescription">Offal marfa raclette, single-origin coffee cold-pressed blog letterpress literally XOXO truffaut. Knausgaard tattooed man bun next level slow-carb air plant cardigan. Knausgaard la croix leggings vinyl mustache.</p>
-</div>
-
+{% endfor %}
 <!-- END TEAM BANNER DESC -->
 
 <div class="bucket2" id="whyCopy">
@@ -137,7 +115,6 @@ WHY JOIN?
 <script type="text/javascript" src="{% static 'stats/js/jquery-3.4.1.min.js' %}"></script>
 <script type="text/javascript" src="{% static 'stats/js/slick.js' %}"></script>
 <script type="text/javascript" src="{% static 'stats/js/index.js' %}"></script>
-
 
 </body>
 {% endblock %}
