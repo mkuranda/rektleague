@@ -721,6 +721,12 @@ text-decoration: none;
   }
 }
 
+@media (width: 1024px){
+  .slick-slider {
+    display: none!important;
+  }
+}
+
   @media (max-width: 768px){
     .mobileGIF {
       display: block;
