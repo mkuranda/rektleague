@@ -14,6 +14,7 @@ class Season(models.Model):
     pick_type = models.CharField(max_length=30)
     map_type = models.CharField(max_length=30)
     spectator_type = models.CharField(max_length=30)
+    playoff_bracket = models.ImageField(upload_to='stats/', default='')
     splash = models.ImageField(upload_to='stats/season_splashes', default='')
 
     def __str__(self):
