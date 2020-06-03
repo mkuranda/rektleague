@@ -1,0 +1,152 @@
+.background
+{
+	background-color:black;
+	width:1920px;
+	height: 1080px;
+	margin: auto;
+}
+
+.teamSplashImage{
+	width: 960px;
+	height: 218px;
+	float: left;
+}
+
+.playerPhoto{
+	height: 250px;
+    width: 250px;
+    position: absolute;
+    border: 11px solid #0000007a;
+    border-radius: 50%;
+}
+
+h1{
+	font-weight: 800;
+    font-size: 39px;
+    text-align: center;
+    color: white;
+    width: 52%;
+    margin: 126px auto 0 auto;
+    padding: 6px;
+}
+
+
+.Right{
+	margin: 89px -603px;
+}
+
+.Left{
+	margin: 89px -603px;
+}
+
+.playerName{
+	float: left;
+	width: 50%;
+	margin-bottom: 23px;
+}
+
+
+
+.stat{
+	padding-bottom:7px;
+}
+
+.statTitle{
+	font-size: 24px;
+}
+
+
+.playerleft
+
+{
+
+	    width: 100%;
+	    height: auto;
+
+}
+
+.playernameleft
+
+{
+	    color: white;
+    font-weight: 800;
+    font-size: 28px;
+    font-family: sans-serif;
+
+}
+.teamname-left
+{
+	    color: white;
+    font-weight: 800;
+    font-size: 24px;
+    font-family: sans-serif; 
+	text-align:center;
+    color: #4a56b2;
+}
+
+.teamname-right
+{
+	    color: white;
+    font-weight: 800;
+    font-size: 24px;
+    font-family: sans-serif;
+	text-align:center;
+	color: #b24a58;
+}
+.laneicon
+{
+	width: 131px;
+    height: auto;
+    position: absolute;
+    margin: 254px 0 0px -62px;
+}
+
+.blue{
+	background:#4f81bc;
+}
+
+.red{
+	background: #bf1f2f;
+}
+
+.left-img{
+	padding-top:10px;
+	padding-left: 15px;
+}
+
+.right-img{
+	padding-top:10px;
+	padding-right: 15px;
+}
+
+.centercontent{
+	margin: 0 auto;
+	color: white;
+	width: 59%;
+	text-align: center;
+	font-weight: 800;
+	font-size: 24px;
+	font-family: sans-serif;
+}
+
+.centercontentGraph{
+	margin: 10px auto 0 auto;
+	color: white;
+	width: 60%;
+	text-align: center;
+	font-weight: 800;
+	font-size: 24px;
+	font-family: sans-serif;
+}
+
+tr.centercontent{
+	padding-top:20px;
+}
+
+.champ-icon{
+	height:60px;
+	padding-top:20px;
+	padding-left:10px;
+	padding-right:10px;
+}
+
