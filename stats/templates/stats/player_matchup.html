@@ -3,106 +3,8 @@
 <head>
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
 <link href="https://fonts.googleapis.com/css?family=Bowlby+One|Open+Sans" rel="stylesheet">
+<link rel="stylesheet" href="{% static 'stats/css/player-matchup.css' %}">
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
-
-<style>
-
-.background
-{
-	background-color:black;
-	width:100%;
-	height: 100%;
-}
-
-.rektlogo
-{
-	margin:auto;
-	padding-bottom: 15px;
-}
-
-.playerleft
-
-{
-
-	    width: 100%;
-	    height: auto;
-
-}
-
-.playernameleft
-
-{
-	    color: white;
-    font-weight: 800;
-    font-size: 28px;
-    font-family: sans-serif;
-
-}
-.teamname-left
-{
-	    color: white;
-    font-weight: 800;
-    font-size: 24px;
-    font-family: sans-serif; 
-	text-align:center;
-    color: #4a56b2;
-}
-
-.teamname-right
-{
-	    color: white;
-    font-weight: 800;
-    font-size: 24px;
-    font-family: sans-serif;
-	text-align:center;
-	color: #b24a58;
-}
-.laneicon
-{
-
-	    width: 80%;
-	    height: auto;
-}
-.left-img
-{
-	padding-top:10px;
-	padding-left: 15px;
-}
-.right-img
-{
-	padding-top:10px;
-	padding-right: 15px;
-}
-.centercontent
-{
-	margin-left: auto;
-	margin-right: auto;
-	color: white;
-	width: 65%;
-	text-align: center;
-	font-weight: 800;
-	font-size: 24px;
-	font-family: sans-serif;
-}
-tr.centercontent
-{
-	padding-top:20px;
-}
-.champ-icon
-{
-	height:60px;
-	padding-top:20px;
-	padding-left:10px;
-	padding-right:10px;
-}
-
-.player-photo
-{
-	height: 120px;
-	width: 120px;
-}
-
-</style>
 
 </head>
 
@@ -141,7 +43,7 @@ var chart = new CanvasJS.Chart("goldDiffVsLaneOpponent", {
 		type: "area",
 		dataPoints: [
 			{% for timeline in red_player.get_gold_timeline %}
-			{ x: {{ timeline.minute }}, y: {{ timeline.goldDiff|floatformat:"0" }}, label: "{{ timeline.minute }}:00", marketType: "none" },
+			{ x: {{ timeline.minute }}, y: {{ timeline.goldDiff|floatformat:"0" }}, label: "{{ timeline.minute }}:00", markerType: "none" },
                         {% endfor %}
 		]
 	},
@@ -154,177 +56,148 @@ chart.render();
 
 <div class="background">
 <!--Header-->
-<table width="100%" style="margin: auto;">
-	<tr>
-		<th width="10%" class="left-img">
-			{% if blue_player.player.photo %}
-			<img class="player-photo" src="{{ blue_player.player.photo.url }}">
-			{% else %}
-			<img class="player-photo" src="/static/stats/player-photos/missing.png">
-			{% endif %}
-		</th>
-		<th width="30%" class="teamname-left">
-			<table style="margin-left:auto; margin-right:auto;">
-				<tr>
-					<td class="teamname-left">
-						{{ blue_player.player.name }}
-					</td>
-				</tr>
-				<tr>
-					<td class="teamname-left" style="font-size:18px;">
-						{{ blue_player.team.name }}
-					</td>
-				</tr>
-			</table>
-		</th>
-		<th style="text-align: center" width="20%">
-			<img class="rektlogo" height="120" src="{{ role.icon.url }}">
-		</th>
-		<th width="30%" class="teamname-right">
-			<table style="margin-right:auto; margin-left:auto;">
-				<tr>
-					<td class="teamname-right">
-						{{ red_player.player.name }}
-					</td>
-				</tr>
-				<tr>
-					<td class="teamname-right" style="font-size:18px;">
-						{{ red_player.team.name }}
-					</td>
-				</tr>
-			</table>
-		</th>
-		<th width="10%" class="right-img">
-			{% if red_player.player.photo %}
-			<img class="player-photo" src="{{ red_player.player.photo.url }}">
-			{% else %}
-			<img class="player-photo" src="/static/stats/player-photos/missing.png">
-			{% endif %}
-		</th>
-	</tr>
-</table>
+<div>
+	<div>
+		<img class="teamSplashImage" src="/media/stats/team_banners/bramble-blank.png">
+		<img class="playerPhoto Right" src="/media/stats/player_photos/420blazeitnerd.png">
+	</div>
+	<img class="laneicon" src="/media/stats/icons for lanes/Jungle_icon.png">
+	<div>
+		<img class="teamSplashImage" src="/media/stats/team_banners/infernal-blank.png">
+		<img class="playerPhoto Left" src="/media/stats/player_photos/420blazeitnerd.png">
+	</div>
+</div>
+<div class="names">
+	<div class="playerName">
+		<h1 class="blue">420BLAZEITNERD</h1>
+	</div>
+	<div class="playerName">
+		<h1 class="red">420BLAZEITNERD</h1>
+	</div>
+</div>
+<div class="statsContainer">
+	<table class="centercontent">
+		<tr>
+			<td class="stat">
+				{{ blue_player.get_kda | floatformat:"1" }}
+			</td>
+			<td class="statTitle">
+				TOTAL KDA
+			</td>
+			<td class="stat">
+				{{ red_player.get_kda | floatformat:"1"  }}
+			</td>
+		</tr>
+		<tr>
+			<td class="stat">
+				{{ blue_player.get_kill_participation | floatformat:"1" }}%
+			</td>
+			<td class="statTitle">
+				KILL PARTICIPATION	
+			</td>
+			<td class="stat">
+				{{ red_player.get_kill_participation | floatformat:"1" }}%
+			</td>
+		</tr>
 
-<table class="centercontent" style="padding-top: 30px;">
-	<tr>
-		<td style="padding-bottom:7px;">
-			{{ blue_player.get_kda | floatformat:"1" }}
-		</td>
-		<td style="font-size: 18px;">
-			TOTAL KDA
-		</td>
-		<td style="padding-bottom:7px;">
-			{{ red_player.get_kda | floatformat:"1"  }}
-		</td>
-	</tr>
-	<tr>
-		<td style="padding-bottom:7px;">
-			{{ blue_player.get_kill_participation | floatformat:"1" }}%
-		</td>
-		<td style="font-size: 18;">
-			KILL PARTICIPATION	
-		</td>
-		<td style="padding-bottom:7px;">
-			{{ red_player.get_kill_participation | floatformat:"1" }}%
-		</td>
-	</tr>
+		<tr>
+			<td class="stat">
+				{{ blue_player.get_percent_team_damage | floatformat:"1" }}%
+			</td>
+			<td class="statTitle">
+				PERCENT OF TEAM DAMAGE	
+			</td>
+			<td class="stat">
+				{{ red_player.get_percent_team_damage | floatformat:"1" }}%
+			</td>
+		</tr>
+		<tr>
+			<td class="stat">
+				{% if blue_player.get_cs_diff_at_15 > 0 %}
+				+{% endif %}{{ blue_player.get_cs_diff_at_15 | floatformat:"1" }}
+			</td>
+			<td class="statTitle">
+				CS DIFF @ 15
+			</td>
+			<td class="stat">
+				{% if red_player.get_cs_diff_at_15 > 0 %}
+				+{% endif %}{{ red_player.get_cs_diff_at_15 | floatformat:"1"  }}
+			</td>
+		</tr>
+		<tr>
+			<td class="stat">
+				{{ blue_player.get_avg_vision | floatformat:"1" }}
+			</td>
+			<td class="statTitle">
+				VISION SCORE
+			</td>
+			<td class="stat">
+				{{ red_player.get_avg_vision | floatformat:"1"  }}
+			</td>
+		</tr>
 
-	<tr>
-		<td style="padding-bottom:7px;">
-			{{ blue_player.get_percent_team_damage | floatformat:"1" }}%
-		</td>
-		<td style="font-size: 18;">
-			PERCENT OF TEAM DAMAGE	
-		</td>
-		<td style="padding-bottom:7px;">
-			{{ red_player.get_percent_team_damage | floatformat:"1" }}%
-		</td>
-	</tr>
-	<tr>
-		<td style="padding-bottom:7px;">
-			{% if blue_player.get_cs_diff_at_15 > 0 %}
-			+{% endif %}{{ blue_player.get_cs_diff_at_15 | floatformat:"1" }}
-		</td>
-		<td style="font-size: 18;">
-			CS DIFF @ 15
-		</td>
-		<td style="padding-bottom:7px;">
-			{% if red_player.get_cs_diff_at_15 > 0 %}
-			+{% endif %}{{ red_player.get_cs_diff_at_15 | floatformat:"1"  }}
-		</td>
-	</tr>
-	<tr>
-		<td style="padding-bottom:7px;">
-			{{ blue_player.get_avg_vision | floatformat:"1" }}
-		</td>
-		<td style="font-size: 18;">
-			VISION SCORE
-		</td>
-		<td style="padding-bottom:7px;">
-			{{ red_player.get_avg_vision | floatformat:"1"  }}
-		</td>
-	</tr>
+	</table>
+</div>
+	<table class="centercontent" style="width: 100%">
+		<tr>
+			<td width="5%">
+			</td>
+			<td width="35%">
+				<table class="centercontent" style="width: auto;">
+					<tr>
+						{% for champion in blue_player.get_played_champion_list %}
+						{% if forloop.counter < 4 %}
+						<td>
+							<img class="champ-icon" src="{{ MEDIA_URL }}{{ champion.playermatch__champion__icon }}">
+						</td>
+						{% endif %}
+						{% endfor %}
+					</tr>
+					<tr>
+						{% for champion in blue_player.get_played_champion_list %}
+						{% if forloop.counter < 4 %}
+						<td style="font-size: 18px;">
+							{{ champion.wins | floatformat:"0" }}-{{ champion.losses | floatformat:"0" }}
+						</td>
+						{% endif %}
+						{% endfor %}
+					</tr>
 
-</table>
+				</table>
+			</td>
+			<td width="12%" class="statTitle">
+				TOP CHAMPIONS
+			</td>
+			<td width="35%">
+				<table class="centercontent" style="width: auto;">
+					<tr>
+						{% for champion in red_player.get_played_champion_list %}
+						{% if forloop.counter < 4 %}
+						<td>
+							<img class="champ-icon" src="{{ MEDIA_URL }}{{ champion.playermatch__champion__icon }}">
+						</td>
+						{% endif %}
+						{% endfor %}
+					</tr>
+					<tr>
+						{% for champion in red_player.get_played_champion_list %}
+						{% if forloop.counter < 4 %}
+						<td style="font-size: 18px;">
+							{{ champion.wins | floatformat:"0" }}-{{ champion.losses | floatformat:"0" }}
+						</td>
+						{% endif %}
+						{% endfor %}
+					</tr>
 
-<table class="centercontent" style="width: 100%">
-	<tr>
-		<td width="5%">
-		</td>
-		<td width="35%">
-			<table class="centercontent" style="width: auto;">
-				<tr>
-					{% for champion in blue_player.get_played_champion_list %}
-					{% if forloop.counter < 4 %}
-					<td>
-						<img class="champ-icon" src="{{ MEDIA_URL }}{{ champion.playermatch__champion__icon }}">
-					</td>
-					{% endif %}
-					{% endfor %}
-				</tr>
-				<tr>
-					{% for champion in blue_player.get_played_champion_list %}
-					{% if forloop.counter < 4 %}
-					<td style="font-size: 18px;">
-						{{ champion.wins | floatformat:"0" }}-{{ champion.losses | floatformat:"0" }}
-					</td>
-					{% endif %}
-					{% endfor %}
-				</tr>
+				</table>
+			</td>
+			<td width="5%">
+			</td>
+	</table>
 
-			</table>
-		</td>
-		<td width="20%" style="font-size:18px;">
-			TOP CHAMPIONS
-		</td>
-		<td width="35%">
-			<table class="centercontent" style="width: auto;">
-				<tr>
-					{% for champion in red_player.get_played_champion_list %}
-					{% if forloop.counter < 4 %}
-					<td>
-						<img class="champ-icon" src="{{ MEDIA_URL }}{{ champion.playermatch__champion__icon }}">
-					</td>
-					{% endif %}
-					{% endfor %}
-				</tr>
-				<tr>
-					{% for champion in red_player.get_played_champion_list %}
-					{% if forloop.counter < 4 %}
-					<td style="font-size: 18px;">
-						{{ champion.wins | floatformat:"0" }}-{{ champion.losses | floatformat:"0" }}
-					</td>
-					{% endif %}
-					{% endfor %}
-				</tr>
-
-			</table>
-		</td>
-		<td width="5%">
-		</td>
-</table>
-
-<div class="centercontent" style="font-size: 18px; padding-top:10px;">GOLD DIFF VS LANE OPPONENT</div>
-<div id="goldDiffVsLaneOpponent" style="height: 26%; width: 60%; margin: auto; margin-bottom:-180px;padding-top:0px;padding-bottom:20px;"></div>
+	<div class="centercontentGraph" style="font-size: 18px; padding-top:10px;">GOLD DIFF VS LANE OPPONENT</div>
+	<div id="goldDiffVsLaneOpponent" style="height: 26%; width: 60%; margin: auto; margin-bottom:-180px;padding-top:0px;padding-bottom:20px;"></div>
+</div>
 
 <script type="text/javascript" src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>
 
