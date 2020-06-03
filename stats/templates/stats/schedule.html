@@ -23,6 +23,11 @@
          
 	  {% if season.get_playoff_weeks_desc %}
           <h2>PLAY<span class="rekt-red">OFFS</span></h2>
+{% if season.playoff_bracket != '' %}
+<section>
+	<div class="playoffBracket"><img width="100%" src="{{ season.playoff_bracket.url }}"></div>
+</section>
+{% endif %}
 	    {% for week in season.get_playoff_weeks_desc %}
            <section>
 		   <button class="collapsible" id="week{{ week.number }}"><span class="week">{{ week.title }}</span><span class="date">{% if week.date %}{{ week.date|date:"n/j" }}{% endif %}</span></button>
