@@ -58,10 +58,129 @@ class Season(models.Model):
         if self.id > 2 and len(ret) > 0:
             return ret[0]
         return self.get_weeks()[0]
+
+    def get_most_first_bloods(self):
+        results = []
+        players = TeamPlayer.objects.filter(team__season=self, role__isFill=True)
+        for player in players:
+            first_bloods = 0
+            player_matches = PlayerMatch.objects.filter(player=player.player, match__series__week__season=self)
+            for player_match in player_matches:
+                kill = PlayerMatchKill.objects.filter(killer__match=player_match.match).order_by('timestamp')[0]
+                if kill.killer== player:
+                    first_bloods = first_bloods + 1
+            results.append({
+                'name': player.player.name,
+                'kills': first_bloods
+                })
+        return sorted(results, key = lambda t: -t['kills'])
+
+    def get_most_unique_kills(self):
+        results = []
+        players = TeamPlayer.objects.filter(team__season=self, role__isFill=True)
+        for player in players:
+            player_kills = PlayerMatchKill.objects.filter(killer__player=player.player, killer__team=player.team, timestamp__lt=910000).aggregate(num_victims=Count('victim__player', distinct=True))
+            results.append({
+                'name': player.player.name,
+                'kills': player_kills['num_victims']
+                })
+        return sorted(results, key = lambda t: -t['kills'])
+
+    def get_most_blue_wards(self):
+        results = []
+        teams = Team.objects.filter(season=self)
+        for team in teams:
+            wards_placed = PlayerMatchWardPlace.objects.filter(playermatch__team=team, ward_type__name="Blue Trinket").count()
+            results.append({
+                'name': team.name,
+                'blue_wards': wards_placed
+                })
+        return sorted(results, key = lambda t: -t['blue_wards'])
+
+    def get_pct_of_opp_wards_destroyed(self):
+        results = []
+        teams = Team.objects.filter(season=self)
+        for team in teams:
+            placed = 0
+            destroyed = 0
+            teammatches = TeamMatch.objects.filter(team=team)
+            for teammatch in teammatches:
+                wards_placed = PlayerMatchWardPlace.objects.filter(playermatch__match = teammatch.match).exclude(playermatch__team=team, ward_type__name="Teemo Mushroom").exclude(ward_type__name="Undefined").count()
+                wards_destroyed = PlayerMatchWardKill.objects.filter(playermatch__match = teammatch.match, playermatch__team=team).exclude(ward_type__name="Teemo Mushroom").exclude(ward_type__name="Undefined").count()
+            results.append({
+                'name': team.name,
+                'pct': 100.0 * wards_destroyed / wards_placed
+                })
+        return sorted(results, key = lambda t: -t['pct'])
+
+    def get_2_drag_win_pct(self):
+        wins = 0
+        losses = 0
+        matches = Match.objects.filter(series__week__season=self)
+        for match in matches:
+            monster_kills = PlayerMatchEliteMonsterKill.objects.filter(playermatch__match=match, monster_type__riot_name="DRAGON").order_by('timestamp')
+            if monster_kills.count() > 1:
+                if monster_kills[0].playermatch.team == monster_kills[1].playermatch.team:
+                    if match.get_winner().team == monster_kills[0].playermatch.team:
+                        wins = wins + 1
+                    else:
+                        losses = losses + 1
+        return 100.0 * wins / (wins + losses)
+
+    def get_2_rift_win_pct(self):
+        wins = 0
+        losses = 0
+        matches = Match.objects.filter(series__week__season=self)
+        for match in matches:
+            monster_kills = PlayerMatchEliteMonsterKill.objects.filter(playermatch__match=match, monster_type__name="Rift Herald").order_by('timestamp')
+            if monster_kills.count() > 1:
+                if monster_kills[0].playermatch.team == monster_kills[1].playermatch.team:
+                    if match.get_winner().team == monster_kills[0].playermatch.team:
+                        wins = wins + 1
+                    else:
+                        losses = losses + 1
+        return 100.0 * wins / (wins + losses)
+
+    def get_highest_first_tower_assists(self):
+        results = []
+        teams = Team.objects.filter(season=self)
+        for team in teams:
+            first_towers = 0
+            assists = 0
+            matches = TeamMatch.objects.filter(team=team)
+            for match in matches:
+                first_tower = PlayerMatchBuildingKill.objects.filter(playermatch__match=match.match).order_by('timestamp')[0]
+                if first_tower.playermatch.team == team:
+                    first_towers = first_towers + 1
+                    assists = assists + PlayerMatchBuildingAssist.objects.filter(kill=first_tower).count()
+            results.append({
+                'name': team.name,
+                'assists': 1 + (1.0 * assists / first_towers)
+                })
+        return sorted(results, key = lambda t: -t['assists'])
+
+
+    def get_best_kp_pre_15(self):
+        results = []
+        players = TeamPlayer.objects.filter(team__season=self, role__isFill=True)
+        for player in players:
+            if player.get_num_matches() > 0:
+                playermatches = PlayerMatch.objects.filter(player=player.player, team=player.team)
+                player_kills = 0
+                total_kills = 0
+                for playermatch in playermatches:
+                    player_kills = player_kills + PlayerMatchKill.objects.filter(killer__player=player.player, killer__match=playermatch.match, timestamp__lt=910000).count()
+                    player_kills = player_kills + PlayerMatchAssist.objects.filter(playermatch__player=player.player, playermatch__match=playermatch.match, kill__timestamp__lt=910000).count()
+                    total_kills = total_kills + PlayerMatchKill.objects.filter(killer__team=player.team, killer__match=playermatch.match, timestamp__lt=910000).count()
+                results.append({
+                    'name': player.player.name,
+                    'pct': 100.0 * player_kills / total_kills
+                    })
+        return sorted(results, key = lambda t: -t['pct'])
     
     def get_top_counterjunglers(self):
         results = []
-        players = TeamPlayer.objects.filter(team__season=self, role__name="Jungle")
+        players = TeamPlayer.objects.filter(team__season=self, role__name="JUNGLE")
         for teamplayer in players:
             playermatches = teamplayer.get_player_matches()
             if playermatches:
@@ -72,11 +191,215 @@ class Season(models.Model):
                     enemy_cs_total += playermatch.neutral_minions_killed_enemy_jungle
                 results.append({
                     'name': teamplayer.player.name,
-                    'counterjungle_percent': 1.0 * enemy_cs_total / (team_cs_total + enemy_cs_total),
+                    'counterjungle_percent': 100.0 * enemy_cs_total / (team_cs_total + enemy_cs_total),
                     'total_games': playermatches.count()
                     })
-        return sorted(results, key = lambda t: t['counterjungle_percent'])
-    
+        return sorted(results, key = lambda t: -t['counterjungle_percent'])
+
+    def get_most_solo_kills(self):
+        results = []
+        players = TeamPlayer.objects.filter(team__season=self, role__isFill=True)
+        for teamplayer in players:
+            solo_kills = 0
+            total_kills = 0
+            playermatches = teamplayer.get_player_matches()
+            for playermatch in playermatches:
+                kills = PlayerMatchKill.objects.filter(killer=playermatch)
+                for kill in kills:
+                    if not PlayerMatchAssist.objects.filter(kill=kill):
+                        solo_kills = solo_kills + 1
+                    total_kills = total_kills + 1
+            if total_kills > 0 and playermatches.count() > 2:
+                results.append({
+                    'name': teamplayer.player.name,
+                    'solo_kills': 100.0 * solo_kills / total_kills
+                    })
+        return sorted(results, key = lambda t: -t['solo_kills'])
+
+    def get_cs_diff_below_elo(self):
+        results = []
+        players = TeamPlayer.objects.filter(team__season=self, role__isFill=True)
+        for player in players:
+            total = 0
+            num_matches = 0
+            playermatches = PlayerMatch.objects.filter(player=player.player, team=player.team).exclude(role__name="SUPPORT").exclude(role__name="JUNGLE").exclude(role__name="BOT")
+            for playermatch in playermatches:
+                timeline = PlayerMatchTimeline.objects.filter(playermatch=playermatch, timestamp__lt=910000).values('timestamp', 'minions_killed', 'monsters_killed', 'playermatch').annotate(cs=F('minions_killed')+F('monsters_killed')).order_by('-timestamp')[0]
+                enemy_timeline = PlayerMatchTimeline.objects.filter(playermatch__match=playermatch.match, playermatch__role=playermatch.role, timestamp__lt=910000).exclude(playermatch__team=playermatch.team).values('timestamp', 'minions_killed', 'monsters_killed', 'playermatch').annotate(cs=F('minions_killed')+F('monsters_killed')).order_by('-timestamp')[0]
+                if player.player.elo_value + 4 < playermatch.get_opponent().player.elo_value:
+                    total = total + timeline['cs'] - enemy_timeline['cs']
+                    num_matches = num_matches + 1
+            if num_matches > 2:
+                results.append({
+                    'name': player.player.name,
+                    'total': 1.0 * total / num_matches
+                    })
+        return sorted(results, key = lambda t: -t['total'])
+      
+
+    def get_most_percent_control_ward_gold(self):
+        results = []
+        players = TeamPlayer.objects.filter(team__season=self, role__isFill=True)
+        for teamplayer in players:
+            if teamplayer.get_num_matches() > 0:
+                results.append({
+                    'name': teamplayer.player.name,
+                    'percent': teamplayer.get_percent_control_ward_gold()
+                    })
+        return sorted(results, key = lambda t: -t['percent'])
+
+    def lane_first_tower_pct(self):
+        results = []
+        matches = Match.objects.filter(series__week__season=self, duration__gt=5)
+        top = 0
+        mid = 0
+        bot = 0
+        total = 0
+        for match in matches:
+            first_tower = PlayerMatchBuildingKill.objects.filter(playermatch__match=match).order_by('timestamp')[0]
+            if first_tower.building_type.lane.name == "Top":
+                top = top + 1
+                total = total + 1
+            if first_tower.building_type.lane.name == "Mid":
+                mid = mid + 1
+                total = total + 1
+            if first_tower.building_type.lane.name == "Bot":
+                bot = bot + 1
+                total = total + 1
+        results = [{ 
+                'name': 'Top', 
+                'pct': 100.0 * top / total
+            },
+            {
+                'name': 'Mid',
+                'pct': 100.0 * mid / total
+            },
+            {   
+                'name': 'Bot',
+                'pct': 100.0 * bot / total
+            }]
+        return results
+
+
+    def lane_first_inhib_pct(self):
+        results = []
+        matches = Match.objects.filter(series__week__season=self, duration__gt=5)
+        top = 0
+        mid = 0
+        bot = 0
+        total = 0
+        for match in matches:
+            first_inhib = PlayerMatchBuildingKill.objects.filter(playermatch__match=match, building_type__name="Inhibitor").order_by('timestamp')
+            if first_inhib:
+                first_inhib = first_inhib[0]
+                if first_inhib.building_type.lane.name == "Top":
+                    top = top + 1
+                    total = total + 1
+                if first_inhib.building_type.lane.name == "Mid":
+                    mid = mid + 1
+                    total = total + 1
+                if first_inhib.building_type.lane.name == "Bot":
+                    bot = bot + 1
+                    total = total + 1
+        results = [{ 
+                'name': 'Top', 
+                'pct': 100.0 * top / total
+            },
+            {
+                'name': 'Mid',
+                'pct': 100.0 * mid / total
+            },
+            {   
+                'name': 'Bot',
+                'pct': 100.0 * bot / total
+            }]
+        return results
+
+    def dragon_map_pct(self):
+        results = []
+        matches = Match.objects.filter(series__week__season=self, duration__gt=5)
+        cloud = 0
+        infernal = 0
+        ocean = 0
+        mountain = 0
+        total = 0
+        for match in matches:
+            dragon = PlayerMatchEliteMonsterKill.objects.filter(playermatch__match=match, monster_type__riot_name="DRAGON").order_by('timestamp')
+            dragon = dragon[2]
+            if dragon.monster_type.name == "Air Drake":
+                cloud = cloud + 1
+                total = total + 1
+            if dragon.monster_type.name == "Infernal Drake":
+                infernal = infernal + 1
+                total = total + 1
+            if dragon.monster_type.name == "Ocean Drake":
+                ocean = ocean + 1
+                total = total + 1
+            if dragon.monster_type.name == "Mountain Drake":
+                mountain = mountain + 1
+                total = total + 1
+        results = [{ 
+                'name': 'Air', 
+                'pct': 100.0 * cloud / total
+            },
+            {
+                'name': 'Infernal',
+                'pct': 100.0 * infernal / total
+            },
+            {
+                'name': 'Ocean',
+                'pct': 100.0 * ocean / total
+            },
+            {   
+                'name': 'Mountain',
+                'pct': 100.0 * mountain / total
+            }]
+        return results
+          
+    def dragon_soul_pct(self):
+        results = []
+        matches = Match.objects.filter(series__week__season=self, duration__gt=5)
+        cloud = 0
+        infernal = 0
+        ocean = 0
+        mountain = 0
+        total = 0
+        for match in matches:
+            teammatches = TeamMatch.objects.filter(match=match)
+            for teammatch in teammatches:
+                dragon = PlayerMatchEliteMonsterKill.objects.filter(playermatch__match=teammatch.match, playermatch__team=teammatch.team, monster_type__riot_name="DRAGON").exclude(monster_type__name="Elder Dragon").order_by('timestamp')
+                if dragon.count() > 3:
+                    dragon = dragon[3]
+                    if dragon.monster_type.name == "Air Drake":
+                        cloud = cloud + 1
+                        total = total + 1
+                    if dragon.monster_type.name == "Infernal Drake":
+                        infernal = infernal + 1
+                        total = total + 1
+                    if dragon.monster_type.name == "Ocean Drake":
+                        ocean = ocean + 1
+                        total = total + 1
+                    if dragon.monster_type.name == "Mountain Drake":
+                        mountain = mountain + 1
+                        total = total + 1
+        results = [{ 
+                'name': 'Air', 
+                'pct': 100.0 * cloud / total
+            },
+            {
+                'name': 'Infernal',
+                'pct': 100.0 * infernal / total
+            },
+            {
+                'name': 'Ocean',
+                'pct': 100.0 * ocean / total
+            },
+            {   
+                'name': 'Mountain',
+                'pct': 100.0 * mountain / total
+            }]
+        return results
+   
     def get_earliest_avg_kill(self):
         results = []
         players = TeamPlayer.objects.filter(team__season=self, role__isFill=True)
@@ -885,6 +1208,8 @@ class TeamPlayer(models.Model):
         return result
 
     def get_num_matches(self):
+        if self.role.isFill == True:
+            return PlayerMatch.objects.filter(team=self.team, player=self.player).count()
         return PlayerMatch.objects.filter(team=self.team, player=self.player, role=self.role).count()
 
     def get_percent_teams_control_wards(self):

@@ -31,6 +31,45 @@ def email_signup(request):
     }
     return render(request, 'stats/email-signup.html', context)
 
+def fun_stats(request):
+    latest_season = Season.objects.latest('id')
+    top_counterjunglers = latest_season.get_top_counterjunglers()
+    most_solo_kills = latest_season.get_most_solo_kills()
+    control_ward_pct = latest_season.get_most_percent_control_ward_gold()
+    tower_lane_pct = latest_season.lane_first_tower_pct()
+    inhib_lane_pct = latest_season.lane_first_inhib_pct()
+    dragon_map_pct = latest_season.dragon_map_pct()
+    dragon_soul_pct = latest_season.dragon_soul_pct()
+    kp_pre_15 = latest_season.get_best_kp_pre_15()
+    most_unique_kills = latest_season.get_most_unique_kills()
+    most_blue_wards = latest_season.get_most_blue_wards()
+    pct_wards_destroyed = latest_season.get_pct_of_opp_wards_destroyed()
+    two_drags_pct = latest_season.get_2_drag_win_pct()
+    two_rifts_pct = latest_season.get_2_rift_win_pct()
+    first_tower_assists = latest_season.get_highest_first_tower_assists()
+    cs_diff_below_elo = latest_season.get_cs_diff_below_elo()
+    first_bloods = latest_season.get_most_first_bloods()
+    context = {
+        'season': latest_season,
+        'top_counterjunglers': top_counterjunglers,
+        'most_solo_kills': most_solo_kills,
+        'control_ward_pct': control_ward_pct,
+        'tower_lane_pct': tower_lane_pct,
+        'inhib_lane_pct': inhib_lane_pct,
+        'dragon_map_pct': dragon_map_pct,
+        'dragon_soul_pct': dragon_soul_pct,
+        'kp_pre_15': kp_pre_15,
+        'unique_kills': most_unique_kills,
+        'blue_wards': most_blue_wards,
+        'pct_wards_destroyed': pct_wards_destroyed,
+        'two_drags_pct': two_drags_pct,
+        'two_rifts_pct': two_rifts_pct,
+        'first_tower_assists': first_tower_assists,
+        'cs_diff_below_elo': cs_diff_below_elo,
+        'first_bloods': first_bloods
+    }
+    return render(request, 'stats/fun-stats.html', context)
+
 #def profile(request):
 #    latest_season = Season.objects.latest('id')
 #    player = get_object_or_404(Player, user=request.user)

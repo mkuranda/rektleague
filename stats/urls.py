@@ -20,6 +20,7 @@ urlpatterns = [
     url(r'^season/(?P<season_id>[0-9]+)/series/(?P<series_id>[0-9]+)/$', views.series_detail, name='series_detail'),
     url(r'^season/(?P<season_id>[0-9]+)/series/(?P<series_id>[0-9]+)/lockin/(?P<team_id>[0-9]+)/$', views.series_lockin_detail, name='series_lockin_detail'),
     url(r'^season/(?P<season_id>[0-9]+)/series/(?P<series_id>[0-9]+)/load/(?P<game_num>[0-9]+)/$', views.load_match, name='load_match'),
+    url(r'^fun_stats/$', views.fun_stats, name='fun_stats'),
     #url(r'^profile/$', views.profile, name='profile'),
 
     #url(r'^season/(?P<season_id>[0-9]+)/$', views.season_detail, name='season'),
