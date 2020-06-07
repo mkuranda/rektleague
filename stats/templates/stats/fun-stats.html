@@ -144,6 +144,44 @@
 	</p>
 	{% endif %}
 	{% endfor %}
+	
+	<h1>Total Kills</h1>
+	{% for player in total_kills %}
+	{% if forloop.counter < 10 %}
+	<p>
+	{{ player.name }} : {{ player.total_kills }}
+	</p>
+	{% endif %}
+	{% endfor %}
+
+
+	<h1>Total Deaths</h1>
+	{% for player in total_deaths %}
+	{% if forloop.counter < 10 %}
+	<p>
+	{{ player.name }} : {{ player.total_deaths }}
+	</p>
+	{% endif %}
+	{% endfor %}
+
+
+	<h1>Total Assists</h1>
+	{% for player in total_assists %}
+	{% if forloop.counter < 10 %}
+	<p>
+	{{ player.name }} : {{ player.total_assists }}
+	</p>
+	{% endif %}
+	{% endfor %}
+
+	<h1>Damage Per Minute</h1>
+	{% for player in damage_per_minute %}
+	{% if forloop.counter < 10 %}
+	<p>
+	{{ player.name }} : {{ player.dpm | floatformat:"2"}}
+	</p>
+	{% endif %}
+	{% endfor %}
 
 </div>  
 </body>

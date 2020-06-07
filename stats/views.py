@@ -49,6 +49,13 @@ def fun_stats(request):
     first_tower_assists = latest_season.get_highest_first_tower_assists()
     cs_diff_below_elo = latest_season.get_cs_diff_below_elo()
     first_bloods = latest_season.get_most_first_bloods()
+    damage_per_minute = latest_season.get_damage_per_minute()
+
+    players = Player.objects.all()
+    total_kills = sorted(players, key= lambda t: -1 * t.total_kills())
+    total_deaths = sorted(players, key= lambda t: -1 * t.total_deaths())
+    total_assists = sorted(players, key= lambda t: -1 * t.total_assists())
+
     context = {
         'season': latest_season,
         'top_counterjunglers': top_counterjunglers,
@@ -66,7 +73,11 @@ def fun_stats(request):
         'two_rifts_pct': two_rifts_pct,
         'first_tower_assists': first_tower_assists,
         'cs_diff_below_elo': cs_diff_below_elo,
-        'first_bloods': first_bloods
+        'first_bloods': first_bloods,
+        'total_kills': total_kills,
+        'total_deaths': total_deaths,
+        'total_assists': total_assists,
+        'damage_per_minute': damage_per_minute
     }
     return render(request, 'stats/fun-stats.html', context)
 

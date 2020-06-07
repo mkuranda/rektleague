@@ -59,6 +59,23 @@ class Season(models.Model):
             return ret[0]
         return self.get_weeks()[0]
 
+    def get_damage_per_minute(self):
+        results = []
+        players = TeamPlayer.objects.filter(team__season=self, role__isFill=True)
+        for player in players:
+            damage = 0
+            minutes = 0
+            player_matches = PlayerMatch.objects.filter(player=player.player, match__series__week__season=self)
+            for player_match in player_matches:
+                damage = damage + player_match.total_damage_dealt
+                minutes = minutes + player_match.match.duration
+            if minutes > 0:
+                results.append({
+                    'name': player.player.name,
+                    'dpm': 1.0 * damage / minutes
+                    })
+        return sorted(results, key = lambda t: -t['dpm'])
+
     def get_most_first_bloods(self):
         results = []
         players = TeamPlayer.objects.filter(team__season=self, role__isFill=True)
@@ -749,6 +766,24 @@ class Player(models.Model):
 
     def seasons(self):
         return Season.objects.filter(pk__in=self.teams())
+
+    def total_deaths(self):
+        player_matches = PlayerMatch.objects.filter(player=self).aggregate(sum_deaths=Sum('deaths'))
+        if player_matches['sum_deaths'] == None:
+            return 0
+        return player_matches['sum_deaths']
+
+    def total_assists(self):
+        player_matches = PlayerMatch.objects.filter(player=self).aggregate(sum_assists=Sum('assists'))
+        if player_matches['sum_assists'] == None:
+            return 0
+        return player_matches['sum_assists']
+
+    def total_kills(self):
+        player_matches = PlayerMatch.objects.filter(player=self).aggregate(sum_kills=Sum('kills'))
+        if player_matches['sum_kills'] == None:
+            return 0
+        return player_matches['sum_kills']
 
     def __str__(self):
         return self.name + " (" + str(self.elo_value) + ")"

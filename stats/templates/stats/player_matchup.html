@@ -58,21 +58,21 @@ chart.render();
 <!--Header-->
 <div>
 	<div>
-		<img class="teamSplashImage" src="/media/stats/team_banners/bramble-blank.png">
-		<img class="playerPhoto Right" src="/media/stats/player_photos/420blazeitnerd.png">
+		<img class="teamSplashImage" src="{{ blue_player.team.media.banner.url }}">
+		<img class="playerPhoto Right" src="{{ blue_player.player.photo.url }}">
 	</div>
 	<img class="laneicon" src="/media/stats/icons for lanes/Jungle_icon.png">
 	<div>
-		<img class="teamSplashImage" src="/media/stats/team_banners/infernal-blank.png">
-		<img class="playerPhoto Left" src="/media/stats/player_photos/420blazeitnerd.png">
+		<img class="teamSplashImage" src="{{ red_player.team.media.banner.url }}">
+		<img class="playerPhoto Left" src="{{ red_player.player.photo.url }}">
 	</div>
 </div>
 <div class="names">
 	<div class="playerName">
-		<h1 class="blue">420BLAZEITNERD</h1>
+		<h1 class="blue">{{ blue_player.player.name }}</h1>
 	</div>
 	<div class="playerName">
-		<h1 class="red">420BLAZEITNERD</h1>
+		<h1 class="red">{{ red_player.player.name }}</h1>
 	</div>
 </div>
 <div class="statsContainer">
