@@ -17,8 +17,10 @@ import random
 import json
 
 def merch(request):
+    seasons = Season.objects.all().order_by('-id')
     latest_season = Season.objects.latest('id')
     context = {
+        'seasons': seasons,
         'season': latest_season
     }
     return render(request, 'stats/merch.html', context)
