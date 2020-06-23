@@ -25,6 +25,14 @@ def merch(request):
     }
     return render(request, 'stats/merch.html', context)
 
+def team_manager(request):
+    seasons = Season.objects.all().order_by('-id')
+    latest_season = Season.objects.latest('id')
+    context = {
+        'seasons': seasons,
+        'season': latest_season
+    }
+    return render(request, 'stats/team-manager.html', context)
 
 def email_signup(request):
     latest_season = Season.objects.latest('id')
