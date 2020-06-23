@@ -435,20 +435,25 @@ a:visited{
 }
 
 .bucket2{
-  font-size: 1.9rem;
-  font-weight: 1000;
-  font-family: 'raleway', sans-serif;
-  color: white;
-  text-align: left;
   width: 50%;
   position: relative;
   padding: 15% 6%;
 }
 
-.bucket2 p {
+.bucket2 > h1{
+  font-size: 1.9rem;
+  font-weight: 1000;
+  font-family: 'raleway', sans-serif;
+  color: white;
+  text-align: left;
+}
+
+.bucket2 h3 {
   font-weight: 800;
   font-family: 'raleway', sans-serif;
   text-align: center;
+  color: white;
+  font-size: 1.9rem;
 }
 
 .supportUs {
