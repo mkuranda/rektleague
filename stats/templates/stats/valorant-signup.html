@@ -4,9 +4,112 @@
 {% block title %}Rekt League | Valorant Signup{% endblock %}
 
 {% block head %}
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+<link rel="stylesheet" href="{% static 'stats/css/valorant-signup.css' %}">
 
 {% endblock %}
 
 {% block content %}
+<h1>VALORANT LEAGUE<br>SIGN UP</h1>
 
+<form id="form">
+    <div class="form-group spacer">
+      <label for="email">Email address</label>
+      <input type="email" class="form-control" id="email" placeholder="name@example.com" name="email" required>
+    </div>
+
+    <div class="form-group spacer">
+      <label for="mainAccount">What is the name of your Valorant account?</label>
+      <input class="form-control" type="text" placeholder="Example: Brian the Broken" name="account" required>
+    </div>
+
+    <div class="spacer">
+        <label>Would it be okay if you did not play against every other team in the league?</label>
+        <div class="form-check form-check-inline">
+            <input class="form-check-input" type="radio" name="playWho" id="inlineRadio1" value="Yes" required>
+            <label class="form-check-label" for="inlineRadio1">Yes</label>
+        </div>
+        <div class="form-check form-check-inline">
+            <input class="form-check-input" type="radio" name="playWho" id="inlineRadio2" value="No" required>
+            <label class="form-check-label" for="inlineRadio2">No</label>
+        </div>
+    </div>
+
+    <div class="form-check spacer" id="offRole">
+        <label id="offRoleTitle" for="offRole">There are a number of ways teams can be formed, choose which formats you think are valid</label>
+        <br>
+        <input class="form-check-input" type="checkbox" value="Premade" id="defaultCheck1" name="teamForming">
+        <label class="form-check-label" for="defaultCheck1">
+            Premade
+        </label>
+        <input class="form-check-input" type="checkbox" value="Team Captains" id="defaultCheck2" name="teamForming">
+        <label class="form-check-label" for="defaultCheck2">
+            Team Captains
+        </label>
+        <input class="form-check-input" type="checkbox" name="teamForming" value="Random with friends" id="defaultCheck3">
+        <label class="form-check-label" for="defaultCheck3">
+            Randomized with a "queue" for 2-3 stacked players (with weighted stats)
+        </label>
+        <input class="form-check-input" type="checkbox" name="teamForming" value="All random" id="defaultCheck4">
+        <label class="form-check-label" for="defaultCheck4">
+            Randomized (with weighted stats)
+        </label>
+    </div>
+
+    <div class="spacer">
+        <label>What match format do you prefer for Valorant</label>
+        <div class="form-check form-check-inline">
+            <input class="form-check-input" type="radio" name="valFormat" id="bo1" value="Best of One (Bo1)" required>
+            <label class="form-check-label" for="bo1" checked>Best of One (Bo1)</label>
+        </div>
+        <div class="form-check form-check-inline">
+            <input class="form-check-input" type="radio" name="valFormat" id="bo3" value="Best of Three (Bo3)" required>
+            <label class="form-check-label" for="bo3">Best of Three (Bo3)</label>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label for="exampleFormControlSelect1">What rank are you?</label>
+        <select class="form-control" id="exampleFormControlSelect1" name="rank" required>
+            <option value="">--Please choose an option--</option>
+            <option value="Unranked">Unranked</option>
+            <option value="Iron 1">Iron 1</option>
+            <option value="Iron 2">Iron 2</option>
+            <option value="Iron 3">Iron 3</option>
+            <option value="Bronze 1">Bronze 1</option>
+            <option value="Bronze 2">Bronze 2</option>
+            <option value="Bronze 3">Bronze 3</option>
+            <option value="Silver 1">Silver 1</option>
+            <option value="Silver 2">Silver 2</option>
+            <option value="Silver 3">Silver 3</option>
+            <option value="Gold 1">Gold 1</option>
+            <option value="Gold 2">Gold 2</option>
+            <option value="Gold 3">Gold 3</option>
+            <option value="Platinum 1">Platinum 1</option>
+            <option value="Platinum 2">Platinum 2</option>
+            <option value="Platinum 3">Platinum 3</option>
+            <option value="Diamond 3">Diamond 3</option>
+            <option value="Diamond 2">Diamond 2</option>
+            <option value="Diamond 1">Diamond 1</option>
+            <option value="Higher">Higher</option>
+        </select>
+    </div>
+
+
+    <div class="form-group spacer">
+      <div class="form-check" id="tAndCSection">
+        <label id="tAndC">Read through the Rekt League rules <a class="rekt-red" href="https://docs.google.com/document/d/1CXoNUVz3K5vAqq_qPV36BGLRZEKzaxmvD79JkOJtq3g/edit#heading=h.mfjb9322hbzf" target=_blank>here</a>. By checking this box you agree to the code of conduct and rules of The Rekt League.</label>
+        <input class="form-check-input" type="checkbox" value="" id="TC" required>
+        <label class="form-check-label" id="agree" for="TC">
+          Agree to terms and conditions
+        </label>
+      </div>
+    </div>
+    <button class="btn btn-primary spacer" id="submit-form" type="submit">Submit</button>
+  </form>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js" integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI" crossorigin="anonymous"></script>
+<script type="text/javascript" src="{% static 'stats/js/valorant-signup.js' %}"></script>
 {% endblock %}
