@@ -17,6 +17,7 @@ var $form = $('form#form'),
         return o;
     };
     $('#submit-form').on('click', function(e) {
+	console.log($form.serializeObject());
         e.preventDefault();
         var jqxhr = $.ajax({
           url: url,

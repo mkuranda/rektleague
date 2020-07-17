@@ -35,6 +35,16 @@ def valorant_signup(request):
     }
     return render(request, 'stats/valorant-signup.html', context)
 
+def valorant_thanks(request):
+    seasons = Season.objects.all().order_by('-id')
+    latest_season = Season.objects.latest('id')
+    context = {
+        'seasons': seasons,
+        'season': latest_season
+    }
+    return render(request, 'stats/valorant-thanks.html', context)
+
+
 def email_signup(request):
     seasons = Season.objects.all().order_by('-id')
     latest_season = Season.objects.latest('id')
