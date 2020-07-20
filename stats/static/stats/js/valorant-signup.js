@@ -17,7 +17,6 @@ var $form = $('form#form'),
         return o;
     };
     $('#submit-form').on('click', function(e) {
-	console.log($form.serializeObject());
         e.preventDefault();
         var jqxhr = $.ajax({
           url: url,
@@ -26,7 +25,7 @@ var $form = $('form#form'),
           data: $form.serializeObject()
         }).success(function(e){
             console.log(e);
-            alert("You're all set!")}
+            window.location = "https://rektleague.com/valorant-thanks";}
           
         );
       })

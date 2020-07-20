@@ -213,7 +213,7 @@ a:visited{
     background-color: #800c17;
   }
 
-  .emailListButton a {
+  .emailListButton a, .button a {
     background: #bf1f2f;
     color: white;
     display: inline-block;
