@@ -49,6 +49,11 @@ section {
     width: 50%;
 }
 
+#disclaimer {
+    font-size: .9em;
+    padding: 3%;
+}
+
 .flexContainer > section > img {
     width: 100%;
     border-radius: 40px;
