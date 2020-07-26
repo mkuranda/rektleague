@@ -153,6 +153,10 @@
             font-size: 28px;
           }
           
+          .content > p {
+            font-size: 17px;
+            padding: 17px 20px;
+        }
 
           .quarters{
             margin: 0px 75px 0 0;
@@ -182,10 +186,15 @@
         .week {
             font-weight: 800;
             margin: 0px 20px 0 0;
+            font-size: 28px;
       }
 
       .collapsible:after {
         padding: 4px 25px 0 0;
+      }
+
+      .collapsible {
+        padding: 18px 0 18px 12px;
       }
 
       section{
@@ -202,7 +211,7 @@
     }
 
       .date{
-        font-size: 28px;
+        font-size: 20px;
       }
 
       .quarters{
@@ -238,3 +247,5 @@
   .playoffBracket {
     width: 100%;
   }
+      }
+
