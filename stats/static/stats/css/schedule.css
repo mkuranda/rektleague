@@ -37,9 +37,9 @@
       }
 
       .week{
-        font-size: 66px;
+        font-size: 45px;
         font-weight: 800;
-        margin: 0px 172px 0 0;
+        margin: 0px 100px 0 0;
     }
 
     section a{
@@ -79,7 +79,7 @@
         content: '\002B';
         color: #bf1e2d;
         float: right;
-        padding: 20px 25px 0 0;
+        padding: 5px 25px 0 0;
       }
 
       .collapsible:hover:after {
@@ -144,10 +144,10 @@
 
       @media all and (max-width : 768px) {
         .collapsible:after {
-            padding: 25px 25px 0 0;
+            padding: 4px 25px 0 0;
           }
           .week {
-            font-size: 57px;
+            font-size: 34px;
           }
           .date{
             font-size: 28px;
@@ -180,13 +180,12 @@
 
       @media all and (max-width : 700px) {
         .week {
-            font-size: 51px;
             font-weight: 800;
             margin: 0px 20px 0 0;
       }
 
       .collapsible:after {
-        padding: 13px 25px 0 0;
+        padding: 4px 25px 0 0;
       }
 
       section{
