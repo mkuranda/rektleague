@@ -100,12 +100,13 @@
 
   section a{
       text-decoration: none;
-      color: black;
+      color: white;
   }
 
   section a:hover{
       text-decoration: none;
-      color: black;
+      background-color: #7d141e;
+      color: white;
   }
   
     
