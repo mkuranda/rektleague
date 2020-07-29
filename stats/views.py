@@ -16,6 +16,25 @@ from django.views.decorators.http import require_POST
 import random
 import json
 
+def team_manager(request):
+    seasons = Season.objects.all().order_by('-id')
+    latest_season = Season.objects.latest('id')
+    context = {
+        'seasons': seasons,
+        'season': latest_season
+    }
+    return render(request, 'stats/team-manager.html', context)
+
+def season_signup(request, season_id):
+    season = get_object_or_404(Season, id=season_id)
+    seasons = Season.objects.all().order_by('-id')
+    latest_season = Season.objects.latest('id')
+    context = {
+        'season': season,
+        'seasons': seasons
+    }
+    return render(request, 'stats/season-signup.html', context)
+
 def merch(request):
     seasons = Season.objects.all().order_by('-id')
     latest_season = Season.objects.latest('id')
@@ -25,6 +44,14 @@ def merch(request):
     }
     return render(request, 'stats/merch.html', context)
 
+def profile(request):
+    seasons = Season.objects.all().order_by('-id')
+    latest_season = Season.objects.latest('id')
+    context = {
+        'seasons': seasons,
+        'season': latest_season
+    }
+    return render(request, 'stats/profile.html', context)
 
 def valorant_signup(request):
     seasons = Season.objects.all().order_by('-id')
