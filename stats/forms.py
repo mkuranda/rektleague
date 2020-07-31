@@ -50,11 +50,8 @@ class RegisterForm(UserCreationForm):
 
     def clean_termsAndConditions(self):
         accepted = self.cleaned_data.get('password1')
-
-        if !accepted:
-            raise ValidationError("YOU MUST AGREE")
-
         return accepted
+
 
     def clean_extraAccount1(self):
         extraAccount1 = self.cleaned_data.get('password1')
