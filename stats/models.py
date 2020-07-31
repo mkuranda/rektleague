@@ -8,6 +8,14 @@ from django.db.models import Count, Avg, Sum, Q, Case, When, F, Value, Expressio
 from django.utils import timezone
 from django.utils.encoding import python_2_unicode_compatible
 
+class MerchProduct(models.Model):
+    name = models.CharField(max_length=100)
+    blurb = models.CharField(max_length=1000)
+    warning = models.CharField(max_length=100)
+    price = models.FloatField(default=0)
+    photo = models.ImageField(upload_to='stats/merch_photos', default='')
+
+
 class Season(models.Model):
     tournament_id = models.IntegerField(default=0)
     team_size = models.IntegerField(default=5)
