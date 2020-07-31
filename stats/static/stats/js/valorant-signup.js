@@ -44,9 +44,6 @@ var $form = $('form#form'),
 function resetErrors(){
 	document.getElementById('email-error').innerHTML = "";
 	document.getElementById('account-error').innerHTML = "";
-	document.getElementById('playWho-error').innerHTML = "";
-	document.getElementById('teamForming-error').innerHTML = "";
-	document.getElementById('valFormat-error').innerHTML = "";
 	document.getElementById('rank-error').innerHTML = "";
 	document.getElementById('accept-error').innerHTML = "";
 }
@@ -56,12 +53,6 @@ function validateForm(){
 	resetErrors();
 	var email = document.forms["submitForm"]["email"].value;
 	var account = document.forms["submitForm"]["account"].value;
-	var playWho = document.forms["submitForm"]["playWho"];
-	var teamFormingPremade = document.forms["submitForm"]["teamFormingPremade"];
-	var teamFormingCaptains = document.forms["submitForm"]["teamFormingCaptains"];
-	var teamFormingRandomWithFriends = document.forms["submitForm"]["teamFormingRandomWithFriends"];
-	var teamFormingRandom = document.forms["submitForm"]["teamFormingRandom"];
-	var valFormat = document.forms["submitForm"]["valFormat"];
 	var rank = document.forms["submitForm"]["rank"];
 	var accept = document.forms["submitForm"]["TC"];
 	
@@ -77,19 +68,6 @@ function validateForm(){
 		document.getElementById('account-error').innerHTML = "Account name is required";
 		return false;
 	}
-	if (!playWho.value) {
-		document.getElementById('playWho-error').innerHTML = "Please select an option";
-		return false;
-	}
-	if (!teamFormingPremade.checked && !teamFormingCaptains.checked && !teamFormingRandomWithFriends.checked && !teamFormingRandom.checked)
-	{
-		document.getElementById('teamForming-error').innerHTML = "Please choose at least one";
-		return false;
-	}
-	if (!valFormat.value) {
-		document.getElementById('valFormat-error').innerHTML = "Please select an option";
-		return false;
-	}          
 	if (!rank.value) {
 		document.getElementById('rank-error').innerHTML = "Please select an option";
 		return false;
