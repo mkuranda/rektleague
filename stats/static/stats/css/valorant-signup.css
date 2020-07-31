@@ -13,6 +13,13 @@ h1, h2{
     font-weight: 800;
 }
 
+p {
+    color: white;
+    font-size: 2.0rem;
+    text-align: center;
+    padding: 0 10%;
+}
+
 .red{
     background: #bf1f2f;
 }
