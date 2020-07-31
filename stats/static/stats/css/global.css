@@ -667,6 +667,10 @@ text-decoration: none;
     flex-flow: column nowrap;
   }
 
+  .bucket2 > h1{
+    text-align: center;
+  }
+
   .bucket1{
     width: 100%;
     padding: 9% 5%;

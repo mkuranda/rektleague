@@ -35,7 +35,7 @@ section {
     padding: 3%;
     min-width: 450px;
     margin-bottom: 5%;
-    border-radius: 40px;
+    border-radius: 5px;
 }
 
 .priceTag {
@@ -47,6 +47,11 @@ section {
     font-weight: 800;
     margin: 2% auto;
     width: 50%;
+}
+
+#disclaimer {
+    font-size: .9em;
+    padding: 3%;
 }
 
 .flexContainer > section > img {

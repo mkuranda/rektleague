@@ -9,21 +9,22 @@
       height: 311px;
       width:100%;
       display: inline-grid;
-      grid-template-columns: 30% 47% 23%;
+      grid-template-columns: 75% 25%;
       grid-template-rows: 33% 33% 33%;
     }
 
     
 
     .playerPhoto {
-      grid-column-start: 3;
-      grid-column-end: 3;
+      grid-column-start: 2;
+      grid-column-end: 2;
       grid-row-start: 1;
       grid-row-end: 1;
-      width: 300px;
+      height: 311px;
+      justify-self: center;
       justify-self: end;
       border: 9px solid rgba(0, 0, 0, 0.2);
-      border-radius: 16px;
+      border-radius: 50%;
       margin: 1% 1% 0 0;
   }
 
@@ -33,41 +34,41 @@
 
 
   h1 {
-    grid-column-start: 2;
-    grid-column-end: 2;
+    grid-column-start: 1;
+    grid-column-end: 1;
     grid-row-start: 2;
     grid-row-end: 2;
     color: white;
-    text-align: right;
-    font-size: 7em;
+    font-size: 5em;
     filter: drop-shadow(2px 4px 6px black);
     font-weight: 900;
-    margin: 0% 0% 0% 0;
+    margin-left: 4%;
     align-self: center;
-    
+    text-align: left;
 }
 
 h3{
-  grid-column-start: 2;
-    grid-column-end: 2;
+  grid-column-start: 1;
+    grid-column-end: 1;
     grid-row-start: 1;
     grid-row-end: 1;
     color: white;
-    text-align: right;
-    font-size: 4em;
+    font-size: 5em;
     filter: drop-shadow(2px 4px 6px black);
     font-weight: 900;
-    margin: 0% 0% 0% 0;
+    margin-left: 4%;
     align-self: center;
+    text-align: left;
 }
 
     .laneIcons {
-      grid-column-start: 2;
-      grid-column-end: 2;
+      grid-column-start: 1;
+      grid-column-end: 1;
       grid-row-start: 3;
-      align-self: end;
       grid-row-end: 3;
-      text-align: right;
+      align-self: center;
+      text-align: left;
+      margin-left: 2.5%;
     }
 
     .laneIcons > img {
@@ -288,23 +289,14 @@ tr:nth-child(2n) {
   }
 
   .playerPhoto {
-    width: 259px;
+    height: 251px;
   }
-
   .slider iframe {
     height: 398px;
 }
 }
 
 @media (max-width: 1135px){
-
-  h3 {
-    margin: 9% 10% 0% 0;
-  }
-
-  .laneIcons{
-    margin: 0 8% 0% 0;
-  }
 
   .stats {
     width: 100%;}
@@ -313,73 +305,17 @@ tr:nth-child(2n) {
     margin: auto;
   }
 
-  .laneIcons {
-    grid-column-start: 1;
-    grid-column-end: 1;
-    grid-row-start: 1;
-    grid-row-end: 1;
-    justify-self: start;
-    margin: 0% 0% 0% 4%;
-  }
-  
-  h3 {
-    margin: 37% 0% 0 4%;
-    justify-self: start;
-    grid-column-start: 1;
-    grid-column-end: 1;
-    grid-row-start: 2;
-    grid-row-end: 2;
-    font-size: 2em;
-}
-  
-h1 {
-  margin: 9% 0% 0 4%;
-  justify-self: start;
-  grid-column-start: 1;
-  grid-column-end: 1;
-  grid-row-start: 3;
-  grid-row-end: 3;
-  font-size: 3em;
-}
 
 }
 
 @media (max-width: 946px){
   section {
     height: 211px;
+    font-size: 10px;
 }
 
 .playerPhoto {
-  width: 219px;
-}
-
-.laneIcons {
-  grid-column-start: 2;
-  grid-column-end: 2;
-  grid-row-start: 3;
-  grid-row-end: 3;
-  justify-self: start;
-  margin: 0% 0% 0% 4%;
-}
-
-h3 {
-  margin: 45% 0% 0 4%;
-  justify-self: start;
-  grid-column-start: 1;
-  grid-column-end: 1;
-  grid-row-start: 2;
-  grid-row-end: 2;
-  font-size: 1.4em;
-}
-
-h1 {
-  margin: 9% 0% 0 4%;
-  justify-self: start;
-  grid-column-start: 1;
-  grid-column-end: 1;
-  grid-row-start: 3;
-  grid-row-end: 3;
-  font-size: 2em;
+  height: 211px;
 }
 
 .laneIcons > img {
@@ -413,56 +349,25 @@ h1 {
 /* PHONE */
 @media (min-width: 375px) and (max-width: 414px){
   .laneIcons > img {
-    width: 30px;
+    width: 40px;
 }
 
-.playerPhoto {
-    width: 147px;
-    grid-column-start: 2;
-    grid-column-end: 2;
-    grid-row-start: 2;
-    grid-row-end: 2;
-    justify-self: center;
-    border: 5px solid rgba(0, 0, 0, 0.2);
-    border-radius: 11px;
-    margin: -18% 4% 0% 0;
-}
 
 section {
   height: 162px;
   width: 100%;
-  grid-template-columns: 60% 40%;
-  grid-template-rows: 25% 25% 25% 25%;
+  grid-template-columns: 75% 25%;
+  grid-template-rows: 33% 33% 33%;
+  font-size: 5px;
+  background-position: center;
 }
 
-.laneIcons {
-  grid-column-start: 1;
-  grid-column-end: 1;
-  grid-row-start: 4;
-  grid-row-end: 4;
-  justify-self: start;
-  margin: 0% 0% 0% 4%;
+.playerPhoto {
+  height: 159px;
 }
 
-h3 {
-  margin: 20% 0% 0 4%;
-  justify-self: start;
-  grid-column-start: 1;
-  grid-column-end: 1;
-  grid-row-start: 2;
-  grid-row-end: 2;
-  font-size: 1.4em;
-}
 
-h1 {
-  margin: 9% 0% 0 4%;
-  justify-self: start;
-  grid-column-start: 1;
-  grid-column-end: 1;
-  grid-row-start: 3;
-  grid-row-end: 3;
-  font-size: 2em;
-}
+
 
   th {
     font-size: .8em;
