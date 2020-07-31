@@ -1,0 +1,75 @@
+{% extends "stats/base.html" %}
+{% load staticfiles %}
+
+{% block title %}Rekt League | Valorant Signup{% endblock %}
+
+{% block head %}
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+<link rel="stylesheet" href="{% static 'stats/css/valorant-signup.css' %}">
+
+{% endblock %}
+
+{% block content %}
+<h1>VALORANT LEAGUE<br>SIGN UP</h1>
+<p><b>If you have already signed up and would like to add a duo partner, fill out the duo form here:</p>
+<p><a href="https://docs.google.com/forms/d/e/1FAIpQLSe-_Lro_58_lUPoeWpk3j5dkm2wpFM5YOx_5LxSpPGARCv9iA/viewform">Duo Sign Up</a></b></p>
+<form id="form" name="submitForm">
+
+    <div id="email-error" class="errorlist"></div>
+    <div class="form-group spacer">
+      <label for="email">Email address</label>
+      <input type="email" class="form-control" id="email" placeholder="name@example.com" name="email" required/>
+    </div>
+
+    <div id="account-error" class="errorlist"></div>
+    <div class="form-group spacer">
+      <label for="mainAccount">What is the name of your Valorant account?</label>
+      <input class="form-control" type="text" placeholder="Example: Brian the Broken" name="account" required>
+    </div>
+    <div id="rank-error" class="errorlist"></div>
+    <div class="form-group">
+        <label for="exampleFormControlSelect1">What rank are you?</label>
+        <select class="form-control" id="exampleFormControlSelect1" name="rank" required>
+            <option value="">--Please choose an option--</option>
+            <option value="Unranked">Unranked</option>
+            <option value="Iron 1">Iron 1</option>
+            <option value="Iron 2">Iron 2</option>
+            <option value="Iron 3">Iron 3</option>
+            <option value="Bronze 1">Bronze 1</option>
+            <option value="Bronze 2">Bronze 2</option>
+            <option value="Bronze 3">Bronze 3</option>
+            <option value="Silver 1">Silver 1</option>
+            <option value="Silver 2">Silver 2</option>
+            <option value="Silver 3">Silver 3</option>
+            <option value="Gold 1">Gold 1</option>
+            <option value="Gold 2">Gold 2</option>
+            <option value="Gold 3">Gold 3</option>
+            <option value="Platinum 1">Platinum 1</option>
+            <option value="Platinum 2">Platinum 2</option>
+            <option value="Platinum 3">Platinum 3</option>
+            <option value="Diamond 3">Diamond 3</option>
+            <option value="Diamond 2">Diamond 2</option>
+            <option value="Diamond 1">Diamond 1</option>
+            <option value="Higher">Higher</option>
+    </select>
+    </div>
+
+    <div id="accept-error" class="errorlist"></div>
+	<div class="form-group spacer">
+      <div class="form-check" id="tAndCSection">
+        <label id="tAndC">Read through the Rekt League rules <a class="rekt-red" href="https://docs.google.com/document/d/1CXoNUVz3K5vAqq_qPV36BGLRZEKzaxmvD79JkOJtq3g/edit#heading=h.mfjb9322hbzf" target=_blank>here</a>. By checking this box you agree to the code of conduct and rules of The Rekt League.</label>
+        <input class="form-check-input" type="checkbox" value="" id="TC" required>
+        <label class="form-check-label" id="agree" for="TC">
+          Agree to terms and conditions
+        </label>
+      </div>
+    </div>
+
+    <button type="submit" class="btn btn-primary" id="submit-form">Submit</button>
+    </form>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js" integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI" crossorigin="anonymous"></script>
+<script type="text/javascript" src="{% static 'stats/js/valorant-signup.js' %}"></script>
+{% endblock %}

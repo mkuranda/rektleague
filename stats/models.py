@@ -1190,6 +1190,7 @@ class TeamPlayer(models.Model):
     player = models.ForeignKey(Player)
     role = models.ForeignKey(Role)
     isLeader = models.BooleanField(default=False)
+    isActive = models.BooleanField(default=True)
     csDiffAt15 = models.FloatField(default=0)
     csPerMin = models.FloatField(default=0)
     killParticipation = models.FloatField(default=0)
@@ -1631,3 +1632,24 @@ class HypeVideo(models.Model):
     season = models.ForeignKey(Season)
     creator = models.ForeignKey(Player)
     youtube_link = models.CharField(max_length=100, default='')
+
+
+class TeamInvite(models.Model):
+    player = models.ForeignKey(Player)
+    team = models.ForeignKey(Team)
+
+class PlayerPhotoRequest(models.Model):
+    player = models.ForeignKey(Player)
+    photo = models.ImageField(upload_to='stats/player_photos')
+
+class SeasonPlayer(models.Model):
+    season = models.ForeignKey(Season)
+    player = models.ForeignKey(Player)
+    elo_value = models.IntegerField(default=100)
+
+class SeasonPlayerRole(models.Model):
+    season = models.ForeignKey(Season)
+    player = models.ForeignKey(Player)
+    role = models.ForeignKey(Role)
+    isMain = models.BooleanField(default=False)
+

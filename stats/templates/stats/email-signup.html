@@ -1,0 +1,95 @@
+{% extends "stats/base.html" %}
+{% load staticfiles %}
+
+{% block title %} Rekt League | Sign Up {% endblock %}
+
+{% block head %}
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+<link rel="stylesheet" href="{% static 'stats/css/signup.css' %}">
+
+
+{% endblock %}
+
+{% block content %}
+<script src="parsley.min.js"></script>
+
+<h1>SIGN UP</h1>
+
+<form id="form">
+    <div class="form-group spacer">
+      <label for="email">Email address</label>
+      <input type="email" class="form-control" id="email" placeholder="name@example.com">
+    </div>
+    <div class="form-group spacer">
+      <label for="mainAccount">What is the Summoner name of your main account?</label>
+      <input class="form-control" type="text" placeholder="Example: Brian the Broken">
+    </div>
+
+    <div class="form-group spacer" id="extraAccounts">
+        <label for="extraAccountsField" class="extraAccountLabel">If you have any other accounts please add them</label>
+        <img src="/media/stats/buttons/add-button.png" alt="add account button" id="addAccount">
+      </div>
+    
+    <div class="form-group spacer">
+      <label for="mainRole">What is your main role?</label>
+      <select class="form-control" id="exampleFormControlSelect1">
+        <option>Top</option>
+        <option>Jungle</option>
+        <option>Mid</option>
+        <option>ADC</option>
+        <option>Support</option>
+      </select>
+    </div>
+
+    <div class="form-check spacer" id="offRole">
+        <label id="offRoleTitle" for="offRole">What off roles do you play? Select all that apply</label>
+        <br>
+        <input class="form-check-input" type="checkbox" value="" id="defaultCheck1">
+        <label class="form-check-label" for="defaultCheck1">
+          Top
+        </label>
+        <input class="form-check-input" type="checkbox" value="" id="defaultCheck2">
+        <label class="form-check-label" for="defaultCheck2">
+          Jungle
+        </label>
+        <input class="form-check-input" type="checkbox" value="" id="defaultCheck3">
+        <label class="form-check-label" for="defaultCheck3">
+          Mid
+        </label>
+        <input class="form-check-input" type="checkbox" value="" id="defaultCheck4">
+        <label class="form-check-label" for="defaultCheck4">
+          ADC
+        </label>
+        <input class="form-check-input" type="checkbox" value="" id="defaultCheck5">
+        <label class="form-check-label" for="defaultCheck5">
+          Support
+        </label>
+    </div>
+
+    <div class="custom-file spacer">
+      <input type="file" class="custom-file-input" id="customFile">
+      <label class="custom-file-label" for="customFile">Submit a Player Photo</label>
+    </div>
+
+    <div class="form-group spacer">
+      <div class="form-check" id="tAndCSection">
+        <label id="tAndC">Read through the rules <a class="rekt-red" href="https://docs.google.com/document/d/1CXoNUVz3K5vAqq_qPV36BGLRZEKzaxmvD79JkOJtq3g/edit#heading=h.mfjb9322hbzf" target=_blank>here</a>. By checking this box you agree to the code of conduct and rules of The Rekt League.</label>
+        <input class="form-check-input" type="checkbox" value="" id="TC" required>
+        <label class="form-check-label" id="agree" for="TC">
+          Agree to terms and conditions
+        </label>
+      </div>
+    </div>
+    <button class="btn btn-primary spacer" type="submit">Submit</button>
+  </form>
+
+  <script>
+    $('#form').parsley();
+  </script>
+
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js" integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI" crossorigin="anonymous"></script>
+<script src="parsley.min.js"></script>
+<script type="text/javascript" src="{% static 'stats/js/signup.js' %}"></script>
+{% endblock %}

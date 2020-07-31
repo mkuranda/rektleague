@@ -4,45 +4,9 @@
 {% block title %} Rekt League | Profile {% endblock %}
 
 {% block head %}
-<link rel="stylesheet" href="{% static 'stats/css/profile.css' %}">
+
 {% endblock %}
 
 {% block content %}
-
-{% if player %}
-<form method="post" action="/profile/">
-{% csrf_token %}
-<div class="lockInError">{{ form.non_field_errors }}</div>
-<fieldset>        
-  <div>
-  	{{ form.name.errors }}
-  	{{ form.name }}
-  </div>
-  {% for summoner in summoners %}
-  <div>
-  	{{ form.summoner1.errors }}
-  	{{ form.summoner1 }}
-  </div>
-  {% endfor %}
-  <div>
-  	{{ form.new_summoner.errors }}
-  	{{ form.new_summoner }}
-  </div>
-</fieldset>
-<div class="button">
-<input type="submit" value="Edit"/>
-</div>
-</form>
-
-<p>{{ player.name }}</p>
-
-<img class="playerPhoto" href="{{ player.photo.url }}">
-{% for summoner in summoners %}
-<p>{{ summoner.name }}</p>
-{% endfor %}
-
-{% else %}
-You don't belong here!
-{% endif %}
 
 {% endblock %}

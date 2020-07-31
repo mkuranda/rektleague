@@ -32,8 +32,8 @@ $(document).ready(function(){
 
 <div class="welcome title" id="welcome">
     <p class="welcomeZIndex">WELCOME TO</p> 
-    <img class="inlineLogo" src="/media/stats/medium.png">
-    <!-- <div id="twitch-embed"></div> -->
+    <img class="inlineLogo" src="/media/stats/medium.png" alt="THE REKT LEAGUE">
+    <div id="twitch-embed"></div>
 </div>
 
 <div class="bucket1" id="who">
@@ -41,12 +41,12 @@ $(document).ready(function(){
     </div>
 
 <div class="bucket2" id="whoCopy">
-    We are an amateur competitive League of Legends tournament league.  Since 2017, we have been streaming and producing biannual tournaments.  What started off with humble beginnings as a group of friends has grown into an 8-10 team bracket, and a full stream production crew for every single game.  We are dedicated to producing high quality content and a competitive, but most importantly, fun tournament atmosphere and community.
+    <h1>We are an amateur competitive League of Legends tournament league.  Since 2017, we have been streaming and producing biannual tournaments.  What started off with humble beginnings as a group of friends has grown into an 8-10 team bracket, and a full stream production crew for every single game.  We are dedicated to producing high quality content and a competitive, but most importantly, fun tournament atmosphere and community.</h1>
 </div>
 
 <section class="teamsBanners">
 	{% for team in teams %}
-	<a href="/stats/season/{{ team.season.id }}/team/{{ team.id }}/"><img src="{{ team.media.home_splash.url }}" id="team{{ team.id }}"></a>
+	<a href="/stats/season/{{ team.season.id }}/team/{{ team.id }}/"><img src="{{ team.media.home_splash.url }}" id="team{{ team.id }}" alt="team{{ team.id }}"></a>
     	{% endfor %}
 </section>
 
@@ -60,7 +60,7 @@ $(document).ready(function(){
 <!-- END TEAM BANNER DESC -->
 
 <div class="bucket2" id="whyCopy">
-    Do you love competing? Are you tired of the lonely grind on the solo-queue ladder? Do you ever wish you could play in a tournament and show off your sick skills on stream? Ever had a hype video you wanted to edit but no one to watch? Problem solved! Join us, fulfill your wildest dreams, and make this community your home!
+    <h1>Do you love competing? Are you tired of the lonely grind on the solo-queue ladder? Do you ever wish you could play in a tournament and show off your sick skills on stream? Ever had a hype video you wanted to edit but no one to watch? Problem solved! Join us, fulfill your wildest dreams, and make this community your home!</h1>
 </div>
 
 <div class="bucket1" id="why">
@@ -82,11 +82,11 @@ WHY JOIN?
 </div>
 
 <div class="bucket2" id="joinCopy">
-<p><strong>JOIN OUR DISCORD</strong><br> This is where we communicate almost all updates about the league, and the best way to find friends to game and/or team with.</p>
+<h3><strong>JOIN OUR DISCORD</strong><br> This is where we communicate almost all updates about the league, and the best way to find friends to game and/or team with.</h3>
 
-<p><strong>TUNE IN SUNDAYS</strong><br>  Watching the stream on game day is a great sneak peak into the Rekt League, come see what all the hype is about!</p>
+<h3><strong>TUNE IN SUNDAYS</strong><br>  Watching the stream on game day is a great sneak peak into the Rekt League, come see what all the hype is about!</h3>
 
-<p><strong>JUST A FAN?</strong><br> Love the content but too busy to play? Support us by liking, following, and subscribing to us on social media or become a patron on Patreon!</p>
+<h3><strong>JUST A FAN?</strong><br> Love the content but too busy to play? Support us by liking, following, and subscribing to us on social media or become a patron on Patreon!</h3>
 
 </div>
 
