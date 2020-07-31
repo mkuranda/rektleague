@@ -1,0 +1,106 @@
+body {
+    font-size: 12px;
+    line-height: 1.4;
+    font-family: 'Lato', sans-serif;
+    background: black;
+}
+
+input {
+    color: black;
+}
+
+h1, h2{
+    color:white;
+    text-align: center;
+    font-size: 7em;
+    font-weight: 800;
+}
+
+.red{
+    background: #bf1f2f;
+}
+
+
+form {
+    color: white;
+    font-size: 1.8rem;
+    padding: 10%;
+    width: 60%;
+    margin: auto;
+}
+
+label{
+    width: 100%;
+}
+
+.extraAccountLabel input{
+    width: 100%;
+}
+
+#addAccount{
+    width: 38px;
+    padding: 7px;
+}
+
+#addAccount:hover{
+    opacity: .6;
+}
+
+#offRole label, #tAndC label{
+    padding: 0 17px;
+}
+
+input[type=checkbox], input[type=radio] {
+    margin: 5px 0 0 0;
+    line-height: normal;
+}
+
+#offRole > #offRoleTitle{
+    padding: 0;
+}
+
+#offRole, #tAndC {
+    padding-left: 0;
+}
+
+.btn-primary {
+    color: #fff;
+    background-color: #bf1f2f;
+    border-color: #bf1f2f;
+}
+
+.btn-primary:hover {
+    color: #fff;
+    background-color: #860310;
+    border-color: #860310;
+}
+
+.btn {
+    font-weight: 600;
+    font-size: 1.5em;
+    padding: 1rem 1.5rem;
+}
+
+.form-check-label {
+    margin-bottom: 0;
+}
+
+.form-check {
+    padding-left: 0;
+}
+
+#agree {
+    margin-left: 17px; 
+}
+
+#tAndC {
+    padding: 0;
+}
+
+.spacer {
+    margin-bottom: 2rem;
+}
+
+.extraAccountLabel {
+    width: auto;
+}

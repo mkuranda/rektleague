@@ -1,7 +1,76 @@
 from django import forms
 from django.contrib.auth import authenticate, login
 from django.db.models import Q
-from .models import Team, Series, SeriesTeam, Player, TeamPlayer, Role, Summoner
+from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.models import User
+from django.core.exceptions import ValidationError
+from .models import Team, Series, SeriesTeam, Player, TeamPlayer, Role, Summoner, User
+
+class RegisterForm(UserCreationForm):
+    username = forms.CharField(label='Username', min_length=4, max_length=150)
+    email = forms.EmailField(label='Email')
+    password1 = forms.CharField(label='Password', widget=forms.PasswordInput)
+    password2 = forms.CharField(label='Confirm password', widget=forms.PasswordInput)
+    email = forms.EmailField()
+    mainAccount = forms.CharField(label='Main Riot Account Name', max_length=50)
+    termsAndConditions = forms.BooleanField(label='Agree?')
+    extraAccount1 = forms.CharField(max_length=50)
+
+    class Meta:
+        model = User
+        fields = ["username", "email", "password1", "password2", "mainAccount", "extraAccount1", "termsAndConditions"]
+
+        def save(self, commit=True):
+            user = super(UserCreationForm, self).save(commit=False)
+            user.email = self.cleaned_data['email']
+            return user
+
+    def clean_username(self):
+        username = self.cleaned_data['username'].lower()
+        r = User.objects.filter(username=username)
+        if r.count():
+            raise  ValidationError("Username already exists")
+        return username
+
+    def clean_email(self):
+        email = self.cleaned_data['email'].lower()
+        r = User.objects.filter(email=email)
+        if r.count():
+            raise  ValidationError("Email already exists")
+        return email
+
+    def clean_password1(self):
+        password1 = self.cleaned_data.get('password1')
+        password2 = self.cleaned_data.get('password2')
+
+        if password1 and password2 and password1 != password2:
+            raise ValidationError("Password don't match")
+
+        return password1
+
+    def clean_termsAndConditions(self):
+        accepted = self.cleaned_data.get('password1')
+
+        if !accepted:
+            raise ValidationError("YOU MUST AGREE")
+
+        return accepted
+
+    def clean_extraAccount1(self):
+        extraAccount1 = self.cleaned_data.get('password1')
+
+        a = 5/0
+
+        return extraAccount
+
+    def save(self, commit=True):
+        user = User.objects.create_user(
+            self.cleaned_data['username'],
+            self.cleaned_data['email'],
+            self.cleaned_data['password1']
+        )
+        return user
+
 
 class CreateRosterForm(forms.Form):
 
