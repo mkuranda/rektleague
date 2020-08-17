@@ -1,13 +1,17 @@
 .playerCard{
     margin: auto;
     width: 304px;
+    border: #1c2242 solid 4px;
     background: linear-gradient(45deg, #1c2242, #175374);
 }
 
 .playerPhoto{
     margin: auto;
-    display: block;
-    padding: 4px 4px 0px 4px;
+    display: grid;
+    grid-template-rows: 25% 25% 25% 25%;
+    grid-template-columns: 33% 57% 20%;
+    height: 160px;
+    background-image: url(http://placekitten.com/296/160);
 }
 
 .playerInfo{
@@ -15,11 +19,39 @@
     grid-template-columns: 80% 10% 10%;
 }
 
+.playerRole{
+    width: 75px;
+    grid-column-start: 1;
+}
+
+.fa-plus-square{
+    grid-column-start: 3;
+    grid-row-start: 1;
+    font-size: 2em;
+    padding: .2em;
+    color: #1c2242;
+}
+
+.fa-plus-square:hover{
+    color: #1c224296
+}
+
+.role1{
+    
+    grid-row-start: 3;
+    place-self: center;
+}
+
+.role2{
+    grid-row-start: 4;
+    place-self: center;
+}
+
 .playerName{
     font-size: 1.4em;
     color: white;
     margin: 0;
-    padding: 10px 0 10px 10px;
+    padding: 10px 0 0px 10px;
     text-align: left;
     display: inline-block;
     order: 1;
@@ -27,13 +59,14 @@
 
 .playerName + img{
     order: 2;
-    padding: 15px 10px 0 10px;
+    padding: 10px 10px 0 10px;
 }
 
 .playerValue{
     order: 3;
     display: inline-block;
-    padding: 10px 9px 0px 5px;
+    padding: 5px 9px 0px 5px;
     font-size: 1.6em;
     color: white;
+    margin: 0;
 }
