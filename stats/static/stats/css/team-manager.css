@@ -1,0 +1,39 @@
+.playerCard{
+    margin: auto;
+    width: 304px;
+    background: linear-gradient(45deg, #1c2242, #175374);
+}
+
+.playerPhoto{
+    margin: auto;
+    display: block;
+    padding: 4px 4px 0px 4px;
+}
+
+.playerInfo{
+    display: grid;
+    grid-template-columns: 80% 10% 10%;
+}
+
+.playerName{
+    font-size: 1.4em;
+    color: white;
+    margin: 0;
+    padding: 10px 0 10px 10px;
+    text-align: left;
+    display: inline-block;
+    order: 1;
+}
+
+.playerName + img{
+    order: 2;
+    padding: 15px 10px 0 10px;
+}
+
+.playerValue{
+    order: 3;
+    display: inline-block;
+    padding: 10px 9px 0px 5px;
+    font-size: 1.6em;
+    color: white;
+}

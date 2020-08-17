@@ -4,9 +4,21 @@
 {% block title %} Rekt League | Team Manager {% endblock %}
 
 {% block head %}
-
+<link rel="stylesheet" href="{% static 'stats/css/team-manager.css' %}">
 {% endblock %}
 
 {% block content %}
+
+<div class="playerCard">
+    <div>
+        <img class="playerPhoto" src="http://placekitten.com/296/160">
+        <img src="/static/stats/role/icon/mid-player-card.png">
+    </div>
+    <div class="playerInfo">
+        <p class="playerName">CATMAN</p>
+        <img src="/static/stats/scoreboardicon_gold.png">
+        <p class="playerValue">-5</p>
+    </div>
+</div>
 
 {% endblock %}
