@@ -4,22 +4,70 @@
 {% block title %} Rekt League | Team Manager {% endblock %}
 
 {% block head %}
+<link rel="stylesheet" type="text/css" href="{% static 'stats/css/slick.css' %}"/>
+<link rel="stylesheet" type="text/css" href="{% static 'stats/css/slick-theme.css' %}"/>
 <link rel="stylesheet" href="{% static 'stats/css/team-manager.css' %}">
 {% endblock %}
 
 {% block content %}
-
-<div class="playerCard">
-    <div class="playerPhoto">
-        <i class="fas fa-plus-square"></i>
-        <img class="role1 playerRole" src="/media/stats/role/icon/mid-player-card.png">
-        <img class="role2 playerRole" src="/media/stats/role/icon/jungle-player-card.png">
+<div class="slider">
+    <!-- SLIDE 1 -->
+    <div class="playerCard">
+        <div class="playerPhoto">
+            <i id="addTop" class="fas fa-plus-square"></i>
+            <img class="role1 playerRole" src="/media/stats/role/icon/mid-player-card.png">
+            <img class="role2 playerRole" src="/media/stats/role/icon/jungle-player-card.png">
+        </div>
+        <div class="playerInfo">
+            <p class="playerName">CATMAN</p>
+            <img src="/static/stats/scoreboardicon_gold.png">
+            <p class="playerValue">-5</p>
+        </div>
     </div>
-    <div class="playerInfo">
-        <p class="playerName">CATMAN</p>
-        <img src="/static/stats/scoreboardicon_gold.png">
-        <p class="playerValue">-5</p>
+   <!-- SLIDE 2 -->
+   <div class="playerCard">
+        <div class="playerPhoto">
+            <i id="addTop" class="fas fa-plus-square"></i>
+            <img class="role1 playerRole" src="/media/stats/role/icon/mid-player-card.png">
+            <img class="role2 playerRole" src="/media/stats/role/icon/jungle-player-card.png">
+        </div>
+        <div class="playerInfo">
+            <p class="playerName">CATMAN2</p>
+            <img src="/static/stats/scoreboardicon_gold.png">
+            <p class="playerValue">-5</p>
+        </div>
+    </div>
+    <!-- SLIDE 3 -->
+   <div class="playerCard">
+        <div class="playerPhoto">
+            <i id="addTop" class="fas fa-plus-square"></i>
+            <img class="role1 playerRole" src="/media/stats/role/icon/mid-player-card.png">
+            <img class="role2 playerRole" src="/media/stats/role/icon/jungle-player-card.png">
+        </div>
+        <div class="playerInfo">
+            <p class="playerName">CATMAN3</p>
+            <img src="/static/stats/scoreboardicon_gold.png">
+            <p class="playerValue">-5</p>
+        </div>
+    </div>
+    <!-- SLIDE 4 -->
+   <div class="playerCard">
+        <div class="playerPhoto">
+            <i id="addTop" class="fas fa-plus-square"></i>
+            <img class="role1 playerRole" src="/media/stats/role/icon/mid-player-card.png">
+            <img class="role2 playerRole" src="/media/stats/role/icon/jungle-player-card.png">
+        </div>
+        <div class="playerInfo">
+            <p class="playerName">CATMAN4</p>
+            <img src="/static/stats/scoreboardicon_gold.png">
+            <p class="playerValue">-5</p>
+        </div>
     </div>
 </div>
 
+<div id="myTop"></div>
+
+<script type="text/javascript" src="{% static 'stats/js/jquery-3.4.1.min.js' %}"></script>
+<script type="text/javascript" src="{% static 'stats/js/slick.js' %}"></script>
+<script type="text/javascript" src="{% static 'stats/js/team-manager.js' %}"></script>
 {% endblock %}

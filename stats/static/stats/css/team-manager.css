@@ -1,6 +1,7 @@
 .playerCard{
     margin: auto;
-    width: 304px;
+    width: 304px !important;
+    display: block !important;
     border: #1c2242 solid 4px;
     background: linear-gradient(45deg, #1c2242, #175374);
 }
@@ -9,7 +10,7 @@
     margin: auto;
     display: grid;
     grid-template-rows: 25% 25% 25% 25%;
-    grid-template-columns: 33% 57% 20%;
+    grid-template-columns: 33% 57% 10%;
     height: 160px;
     background-image: url(http://placekitten.com/296/160);
 }
@@ -24,15 +25,15 @@
     grid-column-start: 1;
 }
 
-.fa-plus-square{
+.fa-plus-square, .fa-minus-square{
     grid-column-start: 3;
     grid-row-start: 1;
     font-size: 2em;
-    padding: .2em;
+    align-self: center;
     color: #1c2242;
 }
 
-.fa-plus-square:hover{
+.fa-plus-square:hover, .fa-minus-square:hover{
     color: #1c224296
 }
 
@@ -65,8 +66,18 @@
 .playerValue{
     order: 3;
     display: inline-block;
-    padding: 5px 9px 0px 5px;
+    padding: 6px 9px 0px 5px;
     font-size: 1.6em;
     color: white;
     margin: 0;
+}
+
+.slider{
+    width: 304px;
+    margin: auto;
+    display: block;
+}
+
+.slick-prev, .slick-next {
+    top: 14%;
 }
