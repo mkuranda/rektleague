@@ -12,8 +12,6 @@
 <h1>SIGN IN</h1>
 {% if form.errors %}
 <p>Your username and password didn't match. Please try again.</p>
-{% else %}
-<p><strong>Please Note:</strong> Sign in is currently only for Team Representatives to lock in rosters.</p>
 {% endif %}
 
 <form method="post" id="add_form" action="{% url 'loginpage' %}">

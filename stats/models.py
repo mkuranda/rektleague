@@ -1643,7 +1643,7 @@ class HypeVideo(models.Model):
 
 
 class TeamInvite(models.Model):
-    player = models.ForeignKey(Player)
+    user = models.ForeignKey(User)
     team = models.ForeignKey(Team)
 
 class PlayerPhotoRequest(models.Model):
@@ -1661,3 +1661,10 @@ class SeasonPlayerRole(models.Model):
     role = models.ForeignKey(Role)
     isMain = models.BooleanField(default=False)
 
+class UserAccount(models.Model):
+    user = models.ForeignKey(User)
+    name = models.CharField(max_length=100)
+    isMain = models.BooleanField(default=False)
+
+    def __str__(self):
+        return self.user.username + ": " + self.name

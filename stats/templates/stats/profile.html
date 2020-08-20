@@ -4,9 +4,147 @@
 {% block title %} Rekt League | Profile {% endblock %}
 
 {% block head %}
+<script type="text/javascript"><!--
+function unHideUsernameForm()
+{
+	document.getElementById("usernameForm").style.display = "block";
+	document.getElementById("unHideUsernameButton").style.display = "none";
+}
+function unHidePasswordForm()
+{
+	document.getElementById("passwordForm").style.display = "block";
+	document.getElementById("unHidePasswordButton").style.display = "none";
+}
+function unHideEmailForm()
+{
+	document.getElementById("emailForm").style.display = "block";
+	document.getElementById("unHideEmailButton").style.display = "none";
+}
+
+{% for account in accounts %}
+function unHideAccountForm{{ account.id }}()
+{
+	document.getElementById("accountForm{{ account.id }}").style.display = "block";
+	document.getElementById("editButton{{ account.id }}").style.display = "none";
+}
+{% endfor %}
+function unHideAddAccount()
+{
+	document.getElementById("addAccountForm").style.display = "block";
+	document.getElementById("unhideAddAccountButton").style.display = "none";
+}
+</script>
 
 {% endblock %}
 
 {% block content %}
+
+{% if user.is_authenticated %}
+
+{{ usernameForm.username.errors }}
+{{ passwordForm.password1.errors }}
+{{ emailForm.email.errors }}
+{{ addForm.account_name.errors }}
+{{ editForms.0.account_name.errors }}
+
+<h1 style="color: white">{{ user.username }}</h1>
+<button id="editUsername" onclick="unHideUsernameForm()">Edit</button>
+<div id="usernameForm" style="display: none">
+<form id="editUsernameForm" method="POST" class="form-group">
+	{% csrf_token %}
+    <div class="form-group spacer">
+      <label for="username">New Username</label>
+      {{ usernameForm.username }}
+    </div>
+    <button class="btn btn-primary spacer" name="submitUsername" type="submit">Save</button>
+</form>
+
+</div>
+
+<button id="editEmail" onclick="unHidePasswordForm()">Change Password</button>
+<div id="passwordForm" style="display: none">
+<form id="editPasswordForm" method="POST" class="form-group">
+	{% csrf_token %}
+    <div class="form-group spacer">
+      <label for="password">New Password</label>
+      {{ passwordForm.password1 }}
+    </div>
+    <div class="form-group spacer">
+      <label for="password2">Confirm Password</label>
+      {{ passwordForm.password2 }}
+    </div>
+
+    <button class="btn btn-primary spacer" name="submitPassword" type="submit">Save</button>
+</form>
+</div>
+
+<h1 style="color: white">{{ user.email }}</h1>
+<button id="editEmail" onclick="unHideEmailForm()">Edit</button>
+<div id="emailForm" style="display: none">
+<form id="editEmailForm" method="POST" class="form-group">
+	{% csrf_token %}
+    <div class="form-group spacer">
+      <label for="email">New Email</label>
+      {{ emailForm.email }}
+    </div>
+    <button class="btn btn-primary spacer" name="submitEmail" type="submit">Save</button>
+</form>
+</div>
+
+{% for account, removeForm, editForm, setMainForm in accountForms %}
+<h1 style="color: white">{{ account.name }}{% if account.isMain %} (Main) {% endif %}</h1>
+<button id="editButton{{ account.id }}" onclick="unHideAccountForm{{ account.id }}()">Edit</button>
+{% if not account.isMain %}
+<form id="removeAccountForm" method="POST" class="form-group">
+	{% csrf_token %}
+    <div style="display: none">
+	    {{ removeForm.account_id }}
+    </div>
+    <button class="btn btn-primary spacer" name="submitRemove{{ account.id }}" type="submit">Remove</button>
+</form>
+<form id="setMainForm" method="POST" class="form-group">
+	{% csrf_token %}
+    <div style="display: none">
+	    {{ setMainForm.account_id }}
+    </div>
+    <button class="btn btn-primary spacer" name="submitSetMain{{ account.id }}" type="submit">Set Main</button>
+</form>
+{% endif %}
+
+<div id="accountForm{{ account.id }}" style="display: none">
+<form id="editAccountForm" method="POST" class="form-group">
+	{% csrf_token %}
+    <div class="form-group spacer">
+      <label for="account_name">Account Name</label>
+      {{ editForm.account_name }}
+    </div>
+    <div style="display: none">
+	    {{ editForm.account_id }}
+    </div>
+    <button class="btn btn-primary spacer" name="submitEdit{{ account.id }}" type="submit">Save</button>
+</form>
+
+</div>
+{% endfor %}
+
+<div id="unhideAddAccountButton">
+<img src="/media/stats/buttons/add-button.png" onclick="unHideAddAccount()">
+</div>
+
+<form id="addAccountForm" method="POST" class="form-group" style="display: none">
+	{% csrf_token %}
+    <div class="form-group spacer">
+	    <label for="account_name">Account Name</label>
+      {{ addAccountForm.account_name.errors }}
+      {{ addAccountForm.account_name }}
+    </div>
+    <button class="btn btn-primary spacer" name="submitAdd" type="submit">Add Account</button>
+</form>
+
+{% else %}
+
+You don't have a profile when you aren't logged in, silly!
+
+{% endif %}
 
 {% endblock %}
