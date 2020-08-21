@@ -10,7 +10,20 @@
 {% endblock %}
 
 {% block content %}
-<div class="slider">
+
+<div class="tab">
+    <button class="tablinks" onclick="openCity(event, 'topTab')" id="defaultOpen">TOP</button>
+    <button class="tablinks" onclick="openCity(event, 'jungleTab')">JUNGLE</button>
+    <button class="tablinks" onclick="openCity(event, 'midTab')">MID</button>
+    <button class="tablinks" onclick="openCity(event, 'botTab')">BOT</button>
+    <button class="tablinks" onclick="openCity(event, 'supportTab')">SUPPORT</button>
+    <button class="tablinks" onclick="openCity(event, 'subTab')">SUBS</button>
+</div>
+
+<!-- Tab content -->
+<div id="topTab" class="tabcontent">
+    <!-- START TOPS -->
+    <div class="sliderTop">
     <!-- SLIDE 1 -->
     <div class="playerCard">
         <div class="playerPhoto">
@@ -19,7 +32,7 @@
             <img class="role2 playerRole" src="/media/stats/role/icon/jungle-player-card.png">
         </div>
         <div class="playerInfo">
-            <p class="playerName">CATMAN</p>
+            <p class="playerName">TOP CAT</p>
             <img src="/static/stats/scoreboardicon_gold.png">
             <p class="playerValue">-5</p>
         </div>
@@ -32,9 +45,9 @@
             <img class="role2 playerRole" src="/media/stats/role/icon/jungle-player-card.png">
         </div>
         <div class="playerInfo">
-            <p class="playerName">CATMAN2</p>
+            <p class="playerName">TOP CAT 2</p>
             <img src="/static/stats/scoreboardicon_gold.png">
-            <p class="playerValue">-5</p>
+            <p class="playerValue">-3</p>
         </div>
     </div>
     <!-- SLIDE 3 -->
@@ -45,9 +58,9 @@
             <img class="role2 playerRole" src="/media/stats/role/icon/jungle-player-card.png">
         </div>
         <div class="playerInfo">
-            <p class="playerName">CATMAN3</p>
+            <p class="playerName">TOP CAT 3</p>
             <img src="/static/stats/scoreboardicon_gold.png">
-            <p class="playerValue">-5</p>
+            <p class="playerValue">1</p>
         </div>
     </div>
     <!-- SLIDE 4 -->
@@ -58,14 +71,240 @@
             <img class="role2 playerRole" src="/media/stats/role/icon/jungle-player-card.png">
         </div>
         <div class="playerInfo">
-            <p class="playerName">CATMAN4</p>
+            <p class="playerName">TOP CAT 4</p>
             <img src="/static/stats/scoreboardicon_gold.png">
-            <p class="playerValue">-5</p>
+            <p class="playerValue">5</p>
         </div>
     </div>
 </div>
+<!-- END TOPS -->
+</div>
+      
+<div id="jungleTab" class="tabcontent">
+        <!-- START TOPS -->
+    <div class="sliderJungle">
+    <!-- SLIDE 1 -->
+    <div class="playerCard">
+        <div class="playerPhoto">
+            <i id="addJungle" class="fas fa-plus-square"></i>
+            <img class="role1 playerRole" src="/media/stats/role/icon/mid-player-card.png">
+            <img class="role2 playerRole" src="/media/stats/role/icon/jungle-player-card.png">
+        </div>
+        <div class="playerInfo">
+            <p class="playerName">JUNGLE CAT1</p>
+            <img src="/static/stats/scoreboardicon_gold.png">
+            <p class="playerValue">2</p>
+        </div>
+    </div>
+   <!-- SLIDE 2 -->
+   <div class="playerCard">
+        <div class="playerPhoto">
+            <i id="addJungle" class="fas fa-plus-square"></i>
+            <img class="role1 playerRole" src="/media/stats/role/icon/mid-player-card.png">
+            <img class="role2 playerRole" src="/media/stats/role/icon/jungle-player-card.png">
+        </div>
+        <div class="playerInfo">
+            <p class="playerName">JUNGLE CAT2</p>
+            <img src="/static/stats/scoreboardicon_gold.png">
+            <p class="playerValue">-3</p>
+        </div>
+    </div>
+</div>
+<!-- END JUNGLE -->
+</div>
+      
+<div id="midTab" class="tabcontent">
+        <!-- START MID -->
+    <div class="sliderMid">
+    <!-- SLIDE 1 -->
+    <div class="playerCard">
+        <div class="playerPhoto">
+            <i id="addMid" class="fas fa-plus-square"></i>
+            <img class="role1 playerRole" src="/media/stats/role/icon/mid-player-card.png">
+            <img class="role2 playerRole" src="/media/stats/role/icon/jungle-player-card.png">
+        </div>
+        <div class="playerInfo">
+            <p class="playerName">MID KITTEN 1</p>
+            <img src="/static/stats/scoreboardicon_gold.png">
+            <p class="playerValue">2</p>
+        </div>
+    </div>
+   <!-- SLIDE 2 -->
+   <div class="playerCard">
+        <div class="playerPhoto">
+            <i id="addMid" class="fas fa-plus-square"></i>
+            <img class="role1 playerRole" src="/media/stats/role/icon/mid-player-card.png">
+            <img class="role2 playerRole" src="/media/stats/role/icon/jungle-player-card.png">
+        </div>
+        <div class="playerInfo">
+            <p class="playerName">MID KITTEN 2</p>
+            <img src="/static/stats/scoreboardicon_gold.png">
+            <p class="playerValue">-3</p>
+        </div>
+    </div>
+</div>
+<!-- END MID -->
+</div>
 
-<div id="myTop"></div>
+<div id="botTab" class="tabcontent">
+        <!-- START BOT -->
+    <div class="sliderBot">
+    <!-- SLIDE 1 -->
+    <div class="playerCard">
+        <div class="playerPhoto">
+            <i id="addBot" class="fas fa-plus-square"></i>
+            <img class="role1 playerRole" src="/media/stats/role/icon/mid-player-card.png">
+            <img class="role2 playerRole" src="/media/stats/role/icon/jungle-player-card.png">
+        </div>
+        <div class="playerInfo">
+            <p class="playerName">BOT CAT</p>
+            <img src="/static/stats/scoreboardicon_gold.png">
+            <p class="playerValue">1</p>
+        </div>
+    </div>
+   <!-- SLIDE 2 -->
+   <div class="playerCard">
+        <div class="playerPhoto">
+            <i id="addBot" class="fas fa-plus-square"></i>
+            <img class="role1 playerRole" src="/media/stats/role/icon/mid-player-card.png">
+            <img class="role2 playerRole" src="/media/stats/role/icon/jungle-player-card.png">
+        </div>
+        <div class="playerInfo">
+            <p class="playerName">BOT CAT 2</p>
+            <img src="/static/stats/scoreboardicon_gold.png">
+            <p class="playerValue">-4</p>
+        </div>
+    </div>
+</div>
+<!-- END BOT -->
+</div>
+
+<div id="supportTab" class="tabcontent">
+       <!-- START SUPPORT-->
+    <div class="sliderSupport">
+    <!-- SLIDE 1 -->
+    <div class="playerCard">
+        <div class="playerPhoto">
+            <i id="addSupport" class="fas fa-plus-square"></i>
+            <img class="role1 playerRole" src="/media/stats/role/icon/mid-player-card.png">
+            <img class="role2 playerRole" src="/media/stats/role/icon/jungle-player-card.png">
+        </div>
+        <div class="playerInfo">
+            <p class="playerName">HELPING CAT</p>
+            <img src="/static/stats/scoreboardicon_gold.png">
+            <p class="playerValue">6</p>
+        </div>
+    </div>
+   <!-- SLIDE 2 -->
+   <div class="playerCard">
+        <div class="playerPhoto">
+            <i id="addSupport" class="fas fa-plus-square"></i>
+            <img class="role1 playerRole" src="/media/stats/role/icon/mid-player-card.png">
+            <img class="role2 playerRole" src="/media/stats/role/icon/jungle-player-card.png">
+        </div>
+        <div class="playerInfo">
+            <p class="playerName">HELPING CAT 2</p>
+            <img src="/static/stats/scoreboardicon_gold.png">
+            <p class="playerValue">-1</p>
+        </div>
+    </div>
+</div>
+<!-- END SUPPORT -->
+</div>
+
+<div id="subTab" class="tabcontent">
+       <!-- START SUPPORT-->
+    <div class="sliderSub">
+    <!-- SLIDE 1 -->
+    <div class="playerCard">
+        <div class="playerPhoto">
+            <i id="addSub" class="fas fa-plus-square"></i>
+            <img class="role1 playerRole" src="/media/stats/role/icon/mid-player-card.png">
+            <img class="role2 playerRole" src="/media/stats/role/icon/jungle-player-card.png">
+        </div>
+        <div class="playerInfo">
+            <p class="playerName">BENCH CAT</p>
+            <img src="/static/stats/scoreboardicon_gold.png">
+            <p class="playerValue">6</p>
+        </div>
+    </div>
+   <!-- SLIDE 2 -->
+   <div class="playerCard">
+        <div class="playerPhoto">
+            <i id="addSub" class="fas fa-plus-square"></i>
+            <img class="role1 playerRole" src="/media/stats/role/icon/mid-player-card.png">
+            <img class="role2 playerRole" src="/media/stats/role/icon/jungle-player-card.png">
+        </div>
+        <div class="playerInfo">
+            <p class="playerName">BENCH CAT 2</p>
+            <img src="/static/stats/scoreboardicon_gold.png">
+            <p class="playerValue">-1</p>
+        </div>
+    </div>
+
+       <!-- SLIDE 3 -->
+   <div class="playerCard">
+        <div class="playerPhoto">
+            <i id="addSub" class="fas fa-plus-square"></i>
+            <img class="role1 playerRole" src="/media/stats/role/icon/mid-player-card.png">
+            <img class="role2 playerRole" src="/media/stats/role/icon/jungle-player-card.png">
+        </div>
+        <div class="playerInfo">
+            <p class="playerName">BENCH CAT 3</p>
+            <img src="/static/stats/scoreboardicon_gold.png">
+            <p class="playerValue">-1</p>
+        </div>
+    </div>
+
+       <!-- SLIDE 4 -->
+   <div class="playerCard">
+        <div class="playerPhoto">
+            <i id="addSub" class="fas fa-plus-square"></i>
+            <img class="role1 playerRole" src="/media/stats/role/icon/mid-player-card.png">
+            <img class="role2 playerRole" src="/media/stats/role/icon/jungle-player-card.png">
+        </div>
+        <div class="playerInfo">
+            <p class="playerName">BENCH CAT 4</p>
+            <img src="/static/stats/scoreboardicon_gold.png">
+            <p class="playerValue">-1</p>
+        </div>
+    </div>
+
+    <!-- END SUPPORT -->
+</div>
+</div>
+
+
+<section class="myTeamSection">
+    <h3>ELO</h3>
+    <p id="teamElo"></p>
+    <div id="myTop"></div>
+    <div id="myJungle"></div>
+    <div id="myMid"></div>
+    <div id="myBot"></div>
+    <div id="mySupport"></div>
+    <div id="mySub"></div>
+</section>
+
+
+<script>
+function openCity(evt, cityName) {
+  var i, tabcontent, tablinks;
+  tabcontent = document.getElementsByClassName("tabcontent");
+  for (i = 0; i < tabcontent.length; i++) {
+    tabcontent[i].style.display = "none";
+  }
+  tablinks = document.getElementsByClassName("tablinks");
+  for (i = 0; i < tablinks.length; i++) {
+    tablinks[i].className = tablinks[i].className.replace(" active", "");
+  }
+  document.getElementById(cityName).style.display = "block";
+  evt.currentTarget.className += " active";
+}
+
+// Get the element with id="defaultOpen" and click on it
+document.getElementById("defaultOpen").click();
+</script>
 
 <script type="text/javascript" src="{% static 'stats/js/jquery-3.4.1.min.js' %}"></script>
 <script type="text/javascript" src="{% static 'stats/js/slick.js' %}"></script>

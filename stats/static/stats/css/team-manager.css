@@ -30,7 +30,7 @@
     grid-row-start: 1;
     font-size: 2em;
     align-self: center;
-    color: #1c2242;
+    color: #e2e3e6  ;
 }
 
 .fa-plus-square:hover, .fa-minus-square:hover{
@@ -63,6 +63,11 @@
     padding: 10px 10px 0 10px;
 }
 
+.slick-track{
+    width: 100%;
+    height: 200px;
+}
+
 .playerValue{
     order: 3;
     display: inline-block;
@@ -72,12 +77,67 @@
     margin: 0;
 }
 
-.slider{
+.sliderTop, .sliderJungle, .sliderMid, .sliderBot, .sliderSupport, .sliderSub{
     width: 304px;
     margin: auto;
     display: block;
 }
 
 .slick-prev, .slick-next {
-    top: 14%;
+    top: 50%;
 }
+
+.myTeamSection{
+    text-align: center;
+    margin: auto;
+
+}
+
+.myTeamSection > h3 {
+    font-size: 2em;
+    color: white;
+}
+
+
+#teamElo{
+    color: white;
+    font-size: 1.3em;
+}
+
+/* TABS */
+
+/* Style the tab */
+.tab {
+    overflow: hidden;
+    border: 1px solid #ccc;
+    background-color: #f1f1f1;
+  }
+  
+  /* Style the buttons that are used to open the tab content */
+  .tab button {
+    background-color: inherit;
+    float: left;
+    border: none;
+    outline: none;
+    cursor: pointer;
+    padding: 14px 16px;
+    transition: 0.3s;
+  }
+  
+  /* Change background color of buttons on hover */
+  .tab button:hover {
+    background-color: #ddd;
+  }
+  
+  /* Create an active/current tablink class */
+  .tab button.active {
+    background-color: #ccc;
+  }
+  
+  /* Style the tab content */
+  .tabcontent {
+    display: none;
+    padding: 6px 12px;
+    border: 1px solid #ccc;
+    border-top: none;
+  }
