@@ -4,7 +4,7 @@ from django.db.models import Q
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
-from .models import Team, Series, SeriesTeam, Player, TeamPlayer, Role, Summoner, User
+from .models import Team, Series, SeriesTeam, Player, TeamPlayer, Role, Summoner, User, UserAccount
 
 class RegisterForm(UserCreationForm):
     username = forms.CharField(label='Username', min_length=4, max_length=150)
@@ -13,12 +13,10 @@ class RegisterForm(UserCreationForm):
     password2 = forms.CharField(label='Confirm password', widget=forms.PasswordInput)
     email = forms.EmailField()
     mainAccount = forms.CharField(label='Main Riot Account Name', max_length=50)
-    termsAndConditions = forms.BooleanField(label='Agree?')
-    extraAccount1 = forms.CharField(max_length=50)
 
     class Meta:
         model = User
-        fields = ["username", "email", "password1", "password2", "mainAccount", "extraAccount1", "termsAndConditions"]
+        fields = ["username", "email", "password1", "password2", "mainAccount"]
 
         def save(self, commit=True):
             user = super(UserCreationForm, self).save(commit=False)
@@ -48,26 +46,87 @@ class RegisterForm(UserCreationForm):
 
         return password1
 
-    def clean_termsAndConditions(self):
-        accepted = self.cleaned_data.get('password1')
-        return accepted
-
-
-    def clean_extraAccount1(self):
-        extraAccount1 = self.cleaned_data.get('password1')
-
-        a = 5/0
-
-        return extraAccount
-
     def save(self, commit=True):
         user = User.objects.create_user(
             self.cleaned_data['username'],
             self.cleaned_data['email'],
             self.cleaned_data['password1']
         )
+        account = UserAccount.objects.create(user=user, name=self.cleaned_data['mainAccount'], isMain=True)
+        account.save()
         return user
 
+class AddAccountForm(forms.Form):
+    account_name = forms.CharField(max_length=50, required=False)
+
+    def clean_account_name(self):
+        account_name = self.cleaned_data['account_name']
+        accountsWithSameName = UserAccount.objects.filter(name__iexact=account_name)
+        if accountsWithSameName:
+            raise forms.ValidationError("Sorry, someone already has an account with that name")
+        return account_name
+
+class EditAccountForm(forms.Form):
+    account_id = forms.IntegerField()
+    account_name = forms.CharField(max_length=50, required=False)
+
+    def __init__(self, *args, **kwargs):
+        super(EditAccountForm, self).__init__(*args, **kwargs)
+        self.fields['account_name'].error_messages.update({
+            'required': 'Sorry, we don\'t accept empty account names'
+            })
+
+    def clean_account_name(self):
+        account_name = self.cleaned_data['account_name']
+        accountsWithSameName = UserAccount.objects.filter(name__iexact=account_name)
+        if accountsWithSameName:
+            raise forms.ValidationError("Sorry, someone already has an account with that name")
+        return account_name
+
+class RemoveAccountForm(forms.Form):
+    account_id = forms.IntegerField(required=False)
+
+class SetMainForm(forms.Form):
+    account_id = forms.IntegerField(required=False)
+
+class UpdateUsernameForm(forms.Form):
+    username = forms.CharField(label='Username', min_length=4, max_length=150, required=False)
+
+    def clean_username(self):
+        username = self.cleaned_data['username'].lower()
+        r = User.objects.filter(username=username)
+        if r.count():
+            raise  ValidationError("Username already exists")
+        return username
+
+
+class UpdatePasswordForm(forms.Form):
+    password1 = forms.CharField(label='Password', widget=forms.PasswordInput, required=False)
+    password2 = forms.CharField(label='Confirm password', widget=forms.PasswordInput, required=False)
+
+    def clean_password1(self):
+        password1 = self.cleaned_data.get('password1')
+        password2 = self.cleaned_data.get('password2')
+
+        if password1 and not password2:
+            raise ValidationError("You need to enter both passwords")
+        if password2 and not password1:
+            raise ValidationError("You need to enter both passwords")
+
+        if password1 and password2 and password1 != password2:
+            raise ValidationError("Password don't match")
+
+        return password1
+
+class UpdateEmailForm(forms.Form):
+    email = forms.EmailField(required=False)
+
+    def clean_email(self):
+        email = self.cleaned_data['email'].lower()
+        r = User.objects.filter(email=email)
+        if email and r.count():
+            raise ValidationError("Email already exists")
+        return email
 
 class CreateRosterForm(forms.Form):
 

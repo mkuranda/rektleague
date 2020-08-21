@@ -7,8 +7,8 @@ from django.db.models import Avg, Count, Sum, F, When, Q
 from django.utils.timezone import utc
 from django.conf import settings
 from riot_request import RiotRequester
-from .models import Player, TeamPlayer, Team, Season, Champion, Match, Week, Series, SeriesTeam, TeamMatch, SeasonChampion, PlayerMatch, Role, TeamRole, SeriesPlayer, Summoner
-from .forms import TournamentCodeForm, InitializeMatchForm, CreateRosterForm, LoginForm, EditProfileForm, RegisterForm
+from .models import Player, TeamPlayer, Team, Season, Champion, Match, Week, Series, SeriesTeam, TeamMatch, SeasonChampion, PlayerMatch, Role, TeamRole, SeriesPlayer, Summoner, UserAccount
+from .forms import TournamentCodeForm, InitializeMatchForm, CreateRosterForm, LoginForm, EditProfileForm, RegisterForm, AddAccountForm, EditAccountForm, RemoveAccountForm, SetMainForm, UpdateUsernameForm, UpdatePasswordForm, UpdateEmailForm
 from get_riot_object import ObjectNotFound, get_item, get_champions, get_champion, get_match, get_all_items, get_match_timeline, update_playermatchkills, update_team_timelines, update_season_timelines, update_team_player_timelines
 from datetime import datetime
 from django.views.decorators.csrf import csrf_exempt
@@ -73,9 +73,89 @@ def team_manager(request):
 def profile(request):
     seasons = Season.objects.all().order_by('-id')
     latest_season = Season.objects.latest('id')
+    user = request.user
+    accounts = UserAccount.objects.filter(user=request.user.id).order_by('-isMain')
+    editForms = []
+    removeForms = []
+    setMainForms = []
+    if request.method == 'POST':
+        usernameForm = UpdateUsernameForm(request.POST)
+        passwordForm = UpdatePasswordForm(request.POST)
+        emailForm = UpdateEmailForm(request.POST)
+        addForm = AddAccountForm(request.POST)
+        for account in accounts:
+            editForms.append(EditAccountForm(request.POST, initial={'account_id': account.id}))
+            removeForms.append(RemoveAccountForm(request.POST, initial={'account_id': account.id}))
+            setMainForms.append(SetMainForm(request.POST, initial={'account_id': account.id}))
+        if usernameForm.is_valid() and 'submitUsername' in request.POST:
+            if usernameForm.cleaned_data['username']:
+                user.username = usernameForm.cleaned_data['username']
+                user.save()
+            return redirect('/profile')
+        if passwordForm.is_valid() and 'submitPassword' in request.POST:
+            if passwordForm.cleaned_data['password1']:
+                user.set_password(passwordForm.cleaned_data['password1'])
+                user.save()
+            return redirect('/signin')
+        if emailForm.is_valid() and 'submitEmail' in request.POST:
+            if emailForm.cleaned_data['email']:
+                user.email = emailForm.cleaned_data['email']
+                user.save()
+            return redirect('/profile')
+        if addForm.is_valid() and 'submitAdd' in request.POST:
+            name = addForm.cleaned_data['account_name']
+            if name:
+                userAccount = UserAccount.objects.create(user=request.user, name=name, isMain=False) 
+                userAccount.save()
+            return redirect('/profile')
+        for editForm, account in zip(editForms, accounts):
+            expectedSubmit ='submitEdit' + str(account.id)
+            if editForm.is_valid() and expectedSubmit in request.POST:
+                if editForm.cleaned_data['account_name']:
+                    userAccount = UserAccount.objects.get(id=editForm.cleaned_data['account_id'])
+                    userAccount.name = editForm.cleaned_data['account_name']
+                    userAccount.save()
+                return redirect('/profile')
+        for setMainForm, account in zip(setMainForms, accounts):
+            expectedSubmit ='submitSetMain' + str(account.id)
+            if setMainForm.is_valid() and expectedSubmit in request.POST:
+                userAccount = UserAccount.objects.get(id=editForm.cleaned_data['account_id'])
+                otherAccounts = UserAccount.objects.filter(user__id=userAccount.user.id)
+                for otherAccount in otherAccounts:
+                    otherAccount.isMain = False;
+                    otherAccount.save()
+                userAccount.isMain = True
+                userAccount.save()
+                return redirect('/profile')
+        for removeForm, account in zip(removeForms, accounts):
+            expectedSubmit ='submitRemove' + str(account.id)
+            if removeForm.is_valid() and expectedSubmit in request.POST:
+                userAccount = UserAccount.objects.get(id=removeForm.cleaned_data['account_id'])
+                userAccount.delete()
+                return redirect('/profile')
+
+    else:
+        usernameForm = UpdateUsernameForm()
+        passwordForm = UpdatePasswordForm()
+        emailForm = UpdateEmailForm()
+        addForm = AddAccountForm()
+        for account in accounts:
+            editForms.append(EditAccountForm(initial={'account_id': account.id}))
+            removeForms.append(RemoveAccountForm(initial={'account_id': account.id}))
+            setMainForms.append(SetMainForm(initial={'account_id': account.id}))
+
+    accountForms = zip(accounts, removeForms, editForms, setMainForms)
     context = {
         'seasons': seasons,
-        'season': latest_season
+        'season': latest_season,
+        'user': user,
+        'accounts': accounts,
+        'usernameForm': usernameForm,
+        'passwordForm': passwordForm,
+        'emailForm': emailForm,
+        'addAccountForm': addForm,
+        'editForms': editForms,
+        'accountForms': accountForms 
     }
     return render(request, 'stats/profile.html', context)
 
@@ -759,7 +839,7 @@ def loginpage(request):
         if user is not None:
             if user.is_active:
                 login(request, user)
-                return HttpResponseRedirect('/stats/schedule/')
+                return HttpResponseRedirect('/profile/')
     context = {
         'form': form,
         'seasons': seasons
