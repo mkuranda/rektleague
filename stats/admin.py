@@ -9,7 +9,7 @@ from .models import TeamPlayer
 from .models import Role
 from .models import Item
 from .models import Champion
-from .models import TeamTimeline, SeasonTimeline, TeamPlayerTimeline, MerchProduct, UserAccount
+from .models import TeamTimeline, SeasonTimeline, TeamPlayerTimeline, MerchProduct, UserAccount, TeamInvite, SeasonPlayer, SeasonPlayerRole
 
 class PlayerMatchTimelineAdmin(admin.ModelAdmin):
     model = PlayerMatchTimeline
@@ -121,3 +121,6 @@ admin.site.register(TeamPlayerTimeline)
 admin.site.register(TeamMedia)
 admin.site.register(MerchProduct)
 admin.site.register(UserAccount)
+admin.site.register(TeamInvite)
+admin.site.register(SeasonPlayer)
+admin.site.register(SeasonPlayerRole)

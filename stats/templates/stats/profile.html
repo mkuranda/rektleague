@@ -44,8 +44,8 @@ function unHideAddAccount()
 {{ usernameForm.username.errors }}
 {{ passwordForm.password1.errors }}
 {{ emailForm.email.errors }}
-{{ addForm.account_name.errors }}
 {{ editForms.0.account_name.errors }}
+{{ addAccountForm.account_name.errors.0 }}
 
 <h1 style="color: white">{{ user.username }}</h1>
 <button id="editUsername" onclick="unHideUsernameForm()">Edit</button>
@@ -135,11 +135,38 @@ function unHideAddAccount()
 	{% csrf_token %}
     <div class="form-group spacer">
 	    <label for="account_name">Account Name</label>
-      {{ addAccountForm.account_name.errors }}
       {{ addAccountForm.account_name }}
     </div>
     <button class="btn btn-primary spacer" name="submitAdd" type="submit">Add Account</button>
 </form>
+<div style="color: white">
+{% for invite in invites %}
+<p>You are invited to join <a href="/stats/season/{{ invite.team.season.id }}/team/{{ invite.team.id }}/">SEASON {{ invite.team.season.id }} {{ invite.team.media.name }}</a> ({{ invite.role.name }}) <a href="/join-team/{{ invite.team.id }}/">Accept</a></p>
+{% endfor %}
+
+{% for team in teams %}
+{% if team.season.isActive %}
+<p>You are a member of <a href="/stats/season/{{ team.season.id }}/team/{{ team.id }}/">{{ team.media.name }} - {{ team.season }}</a> <a href="/leave-team/{{ team.id }}/">Leave Team</a></p>
+{% endif %}
+{% endfor %}
+</div>
+
+{% if seasonPlayer %}
+<h2 style="color: white">You are currently signed up for Season {{ seasonPlayer.season.id }} as</h2>
+{% if seasonPlayer.main_roster %}
+<h4 style="color: white">MAIN ROLE</h4>
+{% endif %}
+{% if seasonPlayer.substitute %}
+<h4 style="color: white">SUBSTITUTE</h4>
+{% endif %}
+{% for seasonPlayerRole in seasonPlayerRoles %} 
+<h3 style="color: white">{{ seasonPlayerRole.role.name }}{% if seasonPlayerRole.isMain %} (Main Role){% endif %}</h3>
+{% endfor %}
+<h2 style="color: white"><a href="/season/{{ season.id }}/sign-up">SIGN UP AGAIN</a></h2>
+<h2 style="color: white"><a href="/season/{{ season.id }}/remove-sign-up">DELETE SIGNUP</a></h2>
+{% else %}
+<h2 style="color: white">You are not signed up for Season {{ season.id }}! <a href="/season/{{ season.id }}/sign-up">SIGN UP</a></h2>
+{% endif %}
 
 {% else %}
 

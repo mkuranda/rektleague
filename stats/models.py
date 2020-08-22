@@ -24,6 +24,8 @@ class Season(models.Model):
     spectator_type = models.CharField(max_length=30)
     playoff_bracket = models.ImageField(upload_to='stats/', default='')
     splash = models.ImageField(upload_to='stats/season_splashes', default='')
+    isActive = models.BooleanField(default=False)
+    isPreseason = models.BooleanField(default=False)
 
     def __str__(self):
         return "SEASON " + str(self.pk)
@@ -178,9 +180,13 @@ class Season(models.Model):
                 if first_tower.playermatch.team == team:
                     first_towers = first_towers + 1
                     assists = assists + PlayerMatchBuildingAssist.objects.filter(kill=first_tower).count()
+            if first_towers == 0:
+                assists = 0
+            else:
+                assists = 1 + (1.0 * assists / first_towers)
             results.append({
                 'name': team.name,
-                'assists': 1 + (1.0 * assists / first_towers)
+                'assists': assists
                 })
         return sorted(results, key = lambda t: -t['assists'])
 
@@ -760,17 +766,31 @@ class Match(models.Model):
 @python_2_unicode_compatible
 class Player(models.Model):
     name = models.CharField(max_length=40)
-    user = models.ForeignKey(User, default=0)
+    user = models.ForeignKey(User, blank=True, null=True)
     riot_id = models.IntegerField(default=0)
     matches = models.ManyToManyField(Match, through='PlayerMatch')
     photo = models.ImageField(upload_to='stats/player_photos', blank=True, null=True)
     elo_value = models.IntegerField(default=100)
 
+    def get_name(self):
+        if self.user is None:
+            return self.name
+        mainAccount = UserAccount.objects.filter(user=self.user, isMain=True)
+        if not mainAccount:
+            return self.name
+        return mainAccount[0].name
+
+    def get_summoners(self):
+        if self.user is None:
+            return Summoner.objects.filter(player=self)
+        accounts = UserAccount.objects.filter(user=self.user).order_by('-isMain')
+        return accounts
+
     def team_players(self):
         return TeamPlayer.objects.filter(player=self)
 
     def teams(self):
-        return Team.objects.filter(pk__in=self.team_players())
+        return Team.objects.filter(id__in=self.team_players())
 
     def seasons(self):
         return Season.objects.filter(pk__in=self.teams())
@@ -825,8 +845,8 @@ class Team(models.Model):
     matches = models.ManyToManyField(Match, through='TeamMatch')
     season = models.ForeignKey(Season)
     media = models.ForeignKey(TeamMedia)
-    icon = models.ImageField(upload_to='stats')
-    splash = models.ImageField(upload_to='stats/team_splashes', default='')
+    icon = models.ImageField(upload_to='stats', blank=True, null=True)
+    splash = models.ImageField(upload_to='stats/team_splashes', blank=True, null=True)
     banner = models.ImageField(upload_to='stats/team_banners', blank=True, null=True)
     left_splash = models.ImageField(upload_to='stats/team_splashes', blank=True, null=True)
     right_splash = models.ImageField(upload_to='stats/team_splashes', blank=True, null=True)
@@ -1641,10 +1661,13 @@ class HypeVideo(models.Model):
     creator = models.ForeignKey(Player)
     youtube_link = models.CharField(max_length=100, default='')
 
-
 class TeamInvite(models.Model):
-    user = models.ForeignKey(User)
+    player = models.ForeignKey(Player)
     team = models.ForeignKey(Team)
+    role = models.ForeignKey(Role)
+    
+    def __str__(self):
+        return self.player.name + " - " + self.team.media.name + " (" + self.role.name + ")"
 
 class PlayerPhotoRequest(models.Model):
     player = models.ForeignKey(Player)
@@ -1653,6 +1676,8 @@ class PlayerPhotoRequest(models.Model):
 class SeasonPlayer(models.Model):
     season = models.ForeignKey(Season)
     player = models.ForeignKey(Player)
+    main_roster = models.BooleanField(default=False)
+    substitute = models.BooleanField(default=False)
     elo_value = models.IntegerField(default=100)
 
 class SeasonPlayerRole(models.Model):

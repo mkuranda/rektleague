@@ -128,6 +128,22 @@ class UpdateEmailForm(forms.Form):
             raise ValidationError("Email already exists")
         return email
 
+class SeasonSignupForm(forms.Form):
+    ROLES = ((1, "TOP"), (2, "JUNGLE"), (3, "MID"), (4, "BOT"), (5, "SUPPORT"))
+    ROSTER_CHOICES = ((1, "MAIN ROSTER"), (2, "SUBSTITUTE"))
+
+    mainRole = forms.ChoiceField(choices=ROLES, widget=forms.RadioSelect)
+    offRoles = forms.MultipleChoiceField(choices=ROLES, widget=forms.CheckboxSelectMultiple, required=False)
+    rosterPosition = forms.MultipleChoiceField(choices=ROSTER_CHOICES, widget=forms.CheckboxSelectMultiple)
+
+    def clean_offRoles(self):
+        main_role = self.cleaned_data['mainRole']
+        off_roles = self.cleaned_data['offRoles']
+        for role in off_roles:
+            if role == main_role:
+                raise forms.ValidationError("You can't choose a role as both your main role and off role")
+        return off_roles
+
 class CreateRosterForm(forms.Form):
 
     top = forms.ModelChoiceField(queryset=Team.objects.none())
