@@ -278,10 +278,15 @@
 <section class="myTeamSection">
     <h3>ELO</h3>
     <p id="teamElo"></p>
+    <h3>TOP</h3>
     <div id="myTop"></div>
+    <h3>JUNGLE</h3>
     <div id="myJungle"></div>
+    <h3>MID</h3>
     <div id="myMid"></div>
+    <h3>BOT</h3>
     <div id="myBot"></div>
+    <h3>SUPPORT</h3>
     <div id="mySupport"></div>
     <div id="mySub"></div>
 </section>
@@ -300,6 +305,13 @@ function openCity(evt, cityName) {
   }
   document.getElementById(cityName).style.display = "block";
   evt.currentTarget.className += " active";
+
+    $('.sliderTop').slick('slickGoTo','0', true);
+    $('.sliderJungle').slick('slickGoTo','0', true);
+    $('.sliderMid').slick('slickGoTo','0', true);
+    $('.sliderBot').slick('slickGoTo','0', true);
+    $('.sliderSupport').slick('slickGoTo','0', true);
+    $('.sliderSub').slick('slickGoTo','0' , true);
 }
 
 // Get the element with id="defaultOpen" and click on it

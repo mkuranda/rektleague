@@ -1,15 +1,10 @@
 $(document).ready(function(){
     $('.sliderTop').slick();
     $('.sliderJungle').slick();
-    $('.sliderJungle').slick('slickNext');
     $('.sliderMid').slick();
-    $('.sliderMid').slick('slickNext');
     $('.sliderBot').slick();
-    $('.sliderBot').slick('slickNext');
     $('.sliderSupport').slick();
-    $('.sliderSupport').slick('slickNext');
     $('.sliderSub').slick();
-    $('.sliderSub').slick('slickNext');
     var elo;
     var top = 0;
     var jungle = 0;
@@ -64,8 +59,8 @@ $(document).ready(function(){
     // REMOVE TOP
     $(document).on( "click", "#removeTop", function() {
         // Declare variables
-        elo = topValue + supportValue + midValue + botValue + jungleValue;
         topValue = 0;
+        elo = topValue + supportValue + midValue + botValue + jungleValue;
         // Update ELO counter
         $("#teamElo").text( elo );
         // Color indicator for ELO
@@ -130,8 +125,8 @@ $(document).ready(function(){
         // REMOVE JUNGLE
         $(document).on( "click", "#removeJungle", function() {
             // Declare variables
-            elo = topValue + supportValue + midValue + botValue + jungleValue;
             jungleValue = 0;
+            elo = topValue + supportValue + midValue + botValue + jungleValue;
             // Update ELO counter
             $("#teamElo").text( elo );
             // Color indicator for ELO
@@ -197,8 +192,8 @@ $(document).ready(function(){
     // REMOVE MID
     $(document).on( "click", "#removeMid", function() {
         // Declare variables
-        elo = topValue + supportValue + midValue + botValue + jungleValue;
         midValue = 0;
+        elo = topValue + supportValue + midValue + botValue + jungleValue;
         // Update ELO counter
         $("#teamElo").text( elo );
         // Color indicator for ELO
@@ -264,8 +259,8 @@ $(document).ready(function(){
 // REMOVE BOT
 $(document).on( "click", "#removeBot", function() {
     // Declare variables
-    elo = topValue + supportValue + midValue + botValue + jungleValue;
     botValue = 0;
+    elo = topValue + supportValue + midValue + botValue + jungleValue;
     // Update ELO counter
     $("#teamElo").text( elo );
     // Color indicator for ELO
@@ -330,8 +325,8 @@ $(document).on( "click", "#removeBot", function() {
 // REMOVE SUPPORT
 $(document).on( "click", "#removeSupport", function() {
     // Declare variables
-    elo = topValue + supportValue + midValue + botValue + jungleValue;
     supportValue = 0;
+    elo = topValue + supportValue + midValue + botValue + jungleValue;
     // Update ELO counter
     $("#teamElo").text( elo );
     // Color indicator for ELO
