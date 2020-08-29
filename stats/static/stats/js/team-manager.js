@@ -11,7 +11,9 @@ $(document).ready(function(){
     var mid = 0;
     var bot = 0;
     var support = 0;
-    var sub = 0;
+    var sub1 = 0;
+    var sub2 = 0;
+    var sub3 = 0;
     var supportValue = 0;
     var botValue = 0;
     var midValue = 0;
@@ -45,6 +47,8 @@ $(document).ready(function(){
         // Swap out add icon for minus icon
         $( "#myTop > .playerCard > .playerPhoto > #addTop" ).remove();
         $( "#myTop > .playerCard > .playerPhoto").append( "<i id='removeTop' class='fas fa-minus-square'></i>" );
+        // Add "Add to team" button
+        $( "#myTop > .playerCard > .playerPhoto").append( "<span id='inviteTop' class='addtoTeam'>INVITE <i class='fas fa-paper-plane'></i></span>" );
         // Increment top so that you can only add one top
         ++top;
         // Color indicator for ELO
@@ -76,6 +80,8 @@ $(document).ready(function(){
         // Switch - to +
         $("#myTop > .playerCard > .playerPhoto > #removeTop").remove();
         $("#myTop > .playerCard > .playerPhoto").append( "<i id='addTop' class='fas fa-plus-square'></i>" );
+        // remove "Add to team" button
+        $( "#myTop > .playerCard > .playerPhoto > #inviteTop").remove();
         // Add back into slider
         $('.sliderTop').slick('unslick');
         $("#myTop > .playerCard").prependTo( $(".sliderTop") );
@@ -111,6 +117,9 @@ $(document).ready(function(){
             // Swap out add icon for minus icon
             $( "#myJungle > .playerCard > .playerPhoto > #addJungle" ).remove();
             $( "#myJungle > .playerCard > .playerPhoto").append( "<i id='removeJungle' class='fas fa-minus-square'></i>" );
+            // Add "Add to team" button
+            // Add "Add to team" button
+            $( "#myJungle > .playerCard > .playerPhoto").append( "<span id='inviteJungle' class='addtoTeam'>INVITE <i class='fas fa-paper-plane'></i></span>" );
             // Increment top so that you can only add one top
             ++jungle;
             // Color indicator for ELO
@@ -142,6 +151,8 @@ $(document).ready(function(){
             // Switch - to +
             $("#myJungle > .playerCard > .playerPhoto > #removeJungle").remove();
             $("#myJungle > .playerCard > .playerPhoto").append( "<i id='addJungle' class='fas fa-plus-square'></i>" );
+            // remove "Add to team" button
+            $( "#myJungle > .playerCard > .playerPhoto > #inviteJungle").remove();
             // Add back into slider
             $('.sliderJungle').slick('unslick');
             $("#myJungle > .playerCard").prependTo( $(".sliderJungle") );
@@ -178,6 +189,8 @@ $(document).ready(function(){
         // Swap out add icon for minus icon
         $( "#myMid > .playerCard > .playerPhoto > #addMid" ).remove();
         $( "#myMid > .playerCard > .playerPhoto").append( "<i id='removeMid' class='fas fa-minus-square'></i>" );
+        // Add "Add to team" button
+        $( "#myMid > .playerCard > .playerPhoto").append( "<span id='inviteMid' class='addtoTeam'>INVITE <i class='fas fa-paper-plane'></i></span>" );
         // Increment top so that you can only add one top
         ++mid;
         // Color indicator for ELO
@@ -209,6 +222,8 @@ $(document).ready(function(){
         // Switch - to +
         $("#myMid > .playerCard > .playerPhoto > #removeMid").remove();
         $("#myMid > .playerCard > .playerPhoto").append( "<i id='addMid' class='fas fa-plus-square'></i>" );
+        // remove "Add to team" button
+        $( "#myMid > .playerCard > .playerPhoto > #inviteMid").remove();
         // Add back into slider
         $('.sliderMid').slick('unslick');
         $("#myMid > .playerCard").prependTo( $(".sliderMid") );
@@ -245,6 +260,8 @@ $(document).ready(function(){
     // Swap out add icon for minus icon
     $( "#myBot > .playerCard > .playerPhoto > #addBot" ).remove();
     $( "#myBot > .playerCard > .playerPhoto").append( "<i id='removeBot' class='fas fa-minus-square'></i>" );
+    // Add "Add to team" button
+    $( "#myBot > .playerCard > .playerPhoto").append( "<span id='inviteBot' class='addtoTeam'>INVITE <i class='fas fa-paper-plane'></i></span>" );
     // Increment top so that you can only add one top
     ++bot;
     // Color indicator for ELO
@@ -276,6 +293,8 @@ $(document).on( "click", "#removeBot", function() {
     // Switch - to +
     $("#myBot > .playerCard > .playerPhoto > #removeBot").remove();
     $("#myBot > .playerCard > .playerPhoto").append( "<i id='addBot' class='fas fa-plus-square'></i>" );
+    // remove "Add to team" button
+    $( "#myBot > .playerCard > .playerPhoto > #inviteBot").remove();
     // Add back into slider
     $('.sliderBot').slick('unslick');
     $("#myBot > .playerCard").prependTo( $(".sliderBot") );
@@ -311,6 +330,8 @@ $(document).on( "click", "#removeBot", function() {
     // Swap out add icon for minus icon
     $( "#mySupport > .playerCard > .playerPhoto > #addSupport" ).remove();
     $( "#mySupport > .playerCard > .playerPhoto").append( "<i id='removeSupport' class='fas fa-minus-square'></i>" );
+    // Add "Add to team" button
+    $( "#mySupport > .playerCard > .playerPhoto").append( "<span id='inviteSupport' class='addtoTeam'>INVITE <i class='fas fa-paper-plane'></i></span>" );
     // Increment top so that you can only add one top
     ++support;
     // Color indicator for ELO
@@ -342,6 +363,8 @@ $(document).on( "click", "#removeSupport", function() {
     // Switch - to +
     $("#mySupport > .playerCard > .playerPhoto > #removeSupport").remove();
     $("#mySupport > .playerCard > .playerPhoto").append( "<i id='addSupport' class='fas fa-plus-square'></i>" );
+    // remove "Add to team" button
+    $( "#mySupport> .playerCard > .playerPhoto > #inviteSupport").remove();
     // Add back into slider
     $('.sliderSupport').slick('unslick');
     $("#mySupport > .playerCard").prependTo( $(".sliderSupport") );
@@ -353,20 +376,53 @@ $(document).on( "click", "#removeSupport", function() {
  // ADD SUB
  $(document).on( "click","#addSub", function() {
     // If statement if team doesnt have a top
-    if(sub === 0){
+    if(sub1 === 0){
     // Move playercard
-    $(".sliderSub .slick-active > div > .playerCard").prependTo("#mySub");
+    $(".sliderSub .slick-active > div > .playerCard").prependTo("#mySub1");
     // Reset Slider now that cards missing
     $('.sliderSub').slick('slickNext');
     $('.sliderSub').slick('unslick');
     $('.sliderSub').slick();
     // Swap out add icon for minus icon
-    $( "#mySub > .playerCard > .playerPhoto > #addSub" ).remove();
-    $( "#mySub > .playerCard > .playerPhoto").append( "<i id='removeSub' class='fas fa-minus-square'></i>" );
+    $( "#mySub1 > .playerCard > .playerPhoto > #addSub" ).remove();
+    $( "#mySub1 > .playerCard > .playerPhoto").append( "<i id='removeSub1' class='fas fa-minus-square'></i>" );
+    // Add "Add to team" button
+    $( "#mySub1 > .playerCard > .playerPhoto").append( "<span id='inviteSub1' class='addtoTeam'>INVITE <i class='fas fa-paper-plane'></i></span>" );
     // Increment top so that you can only add one top
-    ++sub;
-    // Color indicator for ELO
+    ++sub1;
     }
+
+    else if(sub2 === 0){
+    // Move playercard
+    $(".sliderSub .slick-active > div > .playerCard").prependTo("#mySub2");
+    // Reset Slider now that cards missing
+    $('.sliderSub').slick('slickNext');
+    $('.sliderSub').slick('unslick');
+    $('.sliderSub').slick();
+    // Swap out add icon for minus icon
+    $( "#mySub2 > .playerCard > .playerPhoto > #addSub" ).remove();
+    $( "#mySub2 > .playerCard > .playerPhoto").append( "<i id='removeSub2' class='fas fa-minus-square'></i>" );
+    // Add "Add to team" button
+    $( "#mySub2 > .playerCard > .playerPhoto").append( "<span id='inviteSub2' class='addtoTeam'>INVITE <i class='fas fa-paper-plane'></i></span>" );
+    // Increment top so that you can only add one top
+    ++sub2;
+    }
+
+    else if(sub3 === 0){
+        // Move playercard
+        $(".sliderSub .slick-active > div > .playerCard").prependTo("#mySub3");
+        // Reset Slider now that cards missing
+        $('.sliderSub').slick('slickNext');
+        $('.sliderSub').slick('unslick');
+        $('.sliderSub').slick();
+        // Swap out add icon for minus icon
+        $( "#mySub3 > .playerCard > .playerPhoto > #addSub" ).remove();
+        $( "#mySub3 > .playerCard > .playerPhoto").append( "<i id='removeSub3' class='fas fa-minus-square'></i>" );
+        // Add "Add to team" button
+        $( "#mySub3 > .playerCard > .playerPhoto").append( "<span id='inviteSub3' class='addtoTeam'>INVITE <i class='fas fa-paper-plane'></i></span>" );
+        // Increment top so that you can only add one top
+        ++sub3;
+        }
 
     else{
         alert("You already have 3 Subs, silly!");
@@ -374,20 +430,49 @@ $(document).on( "click", "#removeSupport", function() {
 
 });
 
-// REMOVE SUB
-$(document).on( "click", "#removeSub", function() {
-    // Declare variables
-    elo = topValue + supportValue + midValue + botValue + jungleValue;
-    subValue = 0;
+// REMOVE SUB 1
+$(document).on( "click", "#removeSub1", function() {
     // Switch - to +
-    $("#mySub > .playerCard > .playerPhoto > #removeSub").remove();
-    $("#mySub > .playerCard > .playerPhoto").append( "<i id='addSub' class='fas fa-plus-square'></i>" );
+    $("#mySub1 > .playerCard > .playerPhoto > #removeSub1").remove();
+    $("#mySub1 > .playerCard > .playerPhoto").append( "<i id='addSub' class='fas fa-plus-square'></i>" );
+    // remove "Add to team" button
+    $( "#mySub1 > .playerCard > .playerPhoto > #inviteSub1").remove();
     // Add back into slider
     $('.sliderSub').slick('unslick');
-    $("#mySub > .playerCard").prependTo( $(".sliderSub") );
+    $("#mySub1 > .playerCard").prependTo( $(".sliderSub") );
     $('.sliderSub').slick();
     // Allow new top to be added
-    sub = 0;
+    sub1 = 0;
+});
+
+// REMOVE SUB 2
+$(document).on( "click", "#removeSub2", function() {
+    // Switch - to +
+    $("#mySub2 > .playerCard > .playerPhoto > #removeSub2").remove();
+    $("#mySub2 > .playerCard > .playerPhoto").append( "<i id='addSub' class='fas fa-plus-square'></i>" );
+    // remove "Add to team" button
+    $( "#mySub2 > .playerCard > .playerPhoto > #inviteSub2").remove();
+    // Add back into slider
+    $('.sliderSub').slick('unslick');
+    $("#mySub2 > .playerCard").prependTo( $(".sliderSub") );
+    $('.sliderSub').slick();
+    // Allow new top to be added
+    sub2 = 0;
+});
+
+// REMOVE SUB 3
+$(document).on( "click", "#removeSub3", function() {
+    // Switch - to +
+    $("#mySub3 > .playerCard > .playerPhoto > #removeSub3").remove();
+    $("#mySub3 > .playerCard > .playerPhoto").append( "<i id='addSub' class='fas fa-plus-square'></i>" );
+    // remove "Add to team" button
+    $( "#mySub3 > .playerCard > .playerPhoto > #inviteSub3").remove();
+    // Add back into slider
+    $('.sliderSub').slick('unslick');
+    $("#mySub3 > .playerCard").prependTo( $(".sliderSub") );
+    $('.sliderSub').slick();
+    // Allow new top to be added
+    sub3 = 0;
 });
 
 // CLOSING OF READY FUNCTION
