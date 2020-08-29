@@ -9,4 +9,24 @@
 
 {% block content %}
 
+<form id="seasonSignupForm" method="POST" class="form-group" style="color: white">
+	{% csrf_token %}
+    <div class="form-group spacer">
+      <label for="mainRole">MAIN ROLE</label>
+      {{ form.mainRole.errors }}
+      {{ form.mainRole }}
+    </div>
+    <div class="form-group spacer">
+      <label for="offRoles">OFF ROLE(S)</label>
+      {{ form.offRoles.errors }}
+      {{ form.offRoles }}
+    </div>
+    <div class="form-group spacer">
+      <label for="rosterPosition">ROSTER POSITION</label>
+      {{ form.rosterPosition.errors }}
+      {{ form.rosterPosition }}
+    </div>
+    <button class="btn btn-primary spacer" name="submitUsername" type="submit">Save</button>
+</form>
+
 {% endblock %}

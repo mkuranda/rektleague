@@ -49,8 +49,10 @@
                       <ul id="rome-menu">
                            <li class="tophelp"><a class="menu-trigger" id="team" href="#">PLAYERS</a>
                             <ul id="subrome">
-				    {% for player in players %}
-				    <a href="/season/{{ team.season.id }}/team/{{ team.id }}/player/{{ player.id }}/"><li>{{ player.name }}</li></a>
+				    {% for team_player in team_players %}
+				    {% if team_player.isActive or team_player.get_num_matches > 0 %}
+				    <a href="/season/{{ team.season.id }}/team/{{ team.id }}/player/{{ team_player.player.id }}/"><li>{{ team_player.player.name }}</li></a>
+				    {% endif %}
 				    {% endfor %}
                         </ul> 
                       </li>              

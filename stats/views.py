@@ -1,14 +1,16 @@
 from django.shortcuts import get_object_or_404, render, redirect
 from django import forms
 from django.contrib.auth import authenticate, login
+from django.contrib.auth.models import User
 from django.http import HttpResponse, HttpResponseRedirect, Http404
 from django.template import loader
 from django.db.models import Avg, Count, Sum, F, When, Q
 from django.utils.timezone import utc
 from django.conf import settings
 from riot_request import RiotRequester
-from .models import Player, TeamPlayer, Team, Season, Champion, Match, Week, Series, SeriesTeam, TeamMatch, SeasonChampion, PlayerMatch, Role, TeamRole, SeriesPlayer, Summoner, UserAccount
-from .forms import TournamentCodeForm, InitializeMatchForm, CreateRosterForm, LoginForm, EditProfileForm, RegisterForm, AddAccountForm, EditAccountForm, RemoveAccountForm, SetMainForm, UpdateUsernameForm, UpdatePasswordForm, UpdateEmailForm
+from .models import Player, TeamPlayer, Team, Season, Champion, Match, Week, Series, SeriesTeam, TeamMatch, SeasonChampion, PlayerMatch, Role, TeamRole, SeriesPlayer, Summoner, UserAccount, TeamInvite
+from .models import SeasonPlayer, SeasonPlayerRole
+from .forms import TournamentCodeForm, InitializeMatchForm, CreateRosterForm, LoginForm, EditProfileForm, RegisterForm, AddAccountForm, EditAccountForm, RemoveAccountForm, SetMainForm, UpdateUsernameForm, UpdatePasswordForm, UpdateEmailForm, SeasonSignupForm
 from get_riot_object import ObjectNotFound, get_item, get_champions, get_champion, get_match, get_all_items, get_match_timeline, update_playermatchkills, update_team_timelines, update_season_timelines, update_team_player_timelines
 from datetime import datetime
 from django.views.decorators.csrf import csrf_exempt
@@ -42,13 +44,53 @@ def team_manager(request):
     }
     return render(request, 'stats/team-manager.html', context)
 
+def remove_season_signup(request, season_id):
+    season = get_object_or_404(Season, id=season_id)
+    player = get_object_or_404(Player, user=request.user)
+    seasonPlayer = get_object_or_404(SeasonPlayer, player=player, season=season)
+    seasonPlayer.delete()
+    SeasonPlayerRole.objects.filter(player=player, season=season).delete()
+    return redirect("/profile/")
+
 def season_signup(request, season_id):
     season = get_object_or_404(Season, id=season_id)
     seasons = Season.objects.all().order_by('-id')
+    player = get_object_or_404(Player, user=request.user)
     latest_season = Season.objects.latest('id')
+    if request.method == 'POST':
+        form = SeasonSignupForm(request.POST)
+        if form.is_valid():
+            main_role = form.cleaned_data.get('mainRole')
+            off_roles = form.cleaned_data.get('offRoles')
+            roster_position = form.cleaned_data.get('rosterPosition')
+            try:
+                seasonPlayer = SeasonPlayer.objects.get(player=player)
+                seasonPlayer.main_roster = False
+                seasonPlayer.substitute = False
+            except SeasonPlayer.DoesNotExist:
+                seasonPlayer = SeasonPlayer.objects.create(player=player, season=season)
+            for position in roster_position:
+                if position == "1":
+                    seasonPlayer.main_roster = True
+                if position == "2":
+                    seasonPlayer.substitute = True
+            seasonPlayer.save()
+            SeasonPlayerRole.objects.filter(player=player, season=season).delete()
+            mainRole = Role.objects.get(id=main_role)
+            mainRolePlayer = SeasonPlayerRole.objects.create(player=player, season=season, role=mainRole, isMain=True)
+            mainRolePlayer.save()
+            for off_role in off_roles:
+                offRole = Role.objects.get(id=off_role)
+                offRolePlayer = SeasonPlayerRole.objects.create(player=player, season=season, role=offRole, isMain=False)
+                offRolePlayer.save()
+            return redirect("/profile/")
+    else:
+        form = SeasonSignupForm()
+
     context = {
         'season': season,
-        'seasons': seasons
+        'seasons': seasons,
+        'form': form
     }
     return render(request, 'stats/season-signup.html', context)
 
@@ -64,17 +106,76 @@ def merch(request):
 def team_manager(request):
     seasons = Season.objects.all().order_by('-id')
     latest_season = Season.objects.latest('id')
+    seasonPlayers = SeasonPlayer.objects.filter(season=latest_season)
+    playersOnTeams = TeamPlayer.objects.filter(team__season=latest_season, role__isFill=True, isActive=True)
+    topPlayers = SeasonPlayerRole.objects.filter(season=latest_season, role__name="TOP").exclude(id__in=playersOnTeams)
+    junPlayers = SeasonPlayerRole.objects.filter(season=latest_season, role__name="JUNGLE").exclude(id__in=playersOnTeams)
+    midPlayers = SeasonPlayerRole.objects.filter(season=latest_season, role__name="MID").exclude(id__in=playersOnTeams)
+    botPlayers = SeasonPlayerRole.objects.filter(season=latest_season, role__name="BOT").exclude(id__in=playersOnTeams)
+    supPlayers = SeasonPlayerRole.objects.filter(season=latest_season, role__name="SUPPORT").exclude(id__in=playersOnTeams)
+    subPlayers = SeasonPlayer.objects.filter(season=latest_season, substitute=True).exclude(id__in=playersOnTeams)
     context = {
         'seasons': seasons,
-        'season': latest_season
+        'season': latest_season,
+        'topPlayers': topPlayers,
+        'junPlayers': junPlayers,
+        'midPlayers': midPlayers,
+        'botPlayers': botPlayers,
+        'supPlayers': supPlayers,
+        'subPlayers': subPlayers
     }
     return render(request, 'stats/team-manager.html', context)
+
+def leave_team(request, team_id):
+    player = get_object_or_404(Player, user=request.user)
+    team = get_object_or_404(Team, id=team_id)
+    if not team.season.isActive:
+        return redirect("/profile/")
+    team_players = TeamPlayer.objects.filter(team=team, player=player)
+    for team_player in team_players:
+        team_player.isActive = False
+        team_player.save()
+    return redirect("/profile/")
+
+def join_team(request, team_id):
+    player = get_object_or_404(Player, user=request.user)
+    team = get_object_or_404(Team, id=team_id)
+    invite = get_object_or_404(TeamInvite, player=player, team=team_id)
+    if not team.season.isActive:
+        return redirect("/profile/")
+    roles = Role.objects.all()
+    team_players = TeamPlayer.objects.filter(team=team, player=player)
+    if not team_players:
+        for role in roles:
+            team_player = TeamPlayer.objects.create(team=team, player=player, role=role)
+            team_player.save()
+    else:
+        for team_player in team_players:
+            team_player.isActive = True
+            team_player.save()
+    invite.delete()
+    return redirect("/profile/")
 
 def profile(request):
     seasons = Season.objects.all().order_by('-id')
     latest_season = Season.objects.latest('id')
     user = request.user
     accounts = UserAccount.objects.filter(user=request.user.id).order_by('-isMain')
+    player = Player.objects.filter(user=user.id)
+    teamInvites = []
+    seasonPlayer = []
+    seasonPlayerRoles = []
+    if player:
+        player = player[0]
+        teamInvites = TeamInvite.objects.filter(player=player)
+        seasonPlayer = SeasonPlayer.objects.filter(season=latest_season, player=player)
+        if seasonPlayer:
+            seasonPlayer = seasonPlayer[0]
+        seasonPlayerRoles = SeasonPlayerRole.objects.filter(season=latest_season, player=player)
+    teams = []
+    team_players = TeamPlayer.objects.filter(player=player, role__isFill=True, isActive=True)
+    for team_player in team_players:
+        teams.append(team_player.team)
     editForms = []
     removeForms = []
     setMainForms = []
@@ -149,13 +250,18 @@ def profile(request):
         'seasons': seasons,
         'season': latest_season,
         'user': user,
+        'player': player,
+        'teams': teams,
         'accounts': accounts,
         'usernameForm': usernameForm,
         'passwordForm': passwordForm,
         'emailForm': emailForm,
         'addAccountForm': addForm,
         'editForms': editForms,
-        'accountForms': accountForms 
+        'accountForms': accountForms,
+        'invites': teamInvites,
+        'seasonPlayer': seasonPlayer,
+        'seasonPlayerRoles': seasonPlayerRoles
     }
     return render(request, 'stats/profile.html', context)
 
@@ -413,8 +519,7 @@ def team_recache(request, season_id, team_id):
 def team_detail(request, season_id, team_id):
     team = get_object_or_404(Team, id=team_id, season=season_id)
     seasons = Season.objects.all().order_by('-id')
-    team_players = TeamPlayer.objects.filter(team=team_id).annotate(avg_kills=Avg('player__playermatch__kills'), avg_deaths=Avg('player__playermatch__deaths'), avg_assists=Avg('player__playermatch__assists'), num_champs_played=Count('player__playermatch__champion')).order_by('role')
-    players = Player.objects.filter(teamplayer__team=team).values('id', 'name').distinct()
+    team_players = TeamPlayer.objects.filter(team=team, role__isFill=True)
     all_season_teams = Team.objects.filter(media=team.media).order_by('-id')
     series_list = Series.objects.filter(seriesteam__team = team).order_by('-week__number')
     team_roles = TeamRole.objects.filter(team=team).order_by('role')
@@ -425,7 +530,6 @@ def team_detail(request, season_id, team_id):
         'team': team,
         'all_season_teams': all_season_teams,
         'team_players': team_players,
-        'players': players,
         'roles': team_roles,
 	'series_list': series_list,
         'kill_timelines': kill_timelines,
@@ -439,6 +543,11 @@ def team_player_role_detail(request, season_id, team_id, player_id, role_id):
     season = get_object_or_404(Season, id=season_id)
     team = get_object_or_404(Team, id=team_id, season=season_id)
     player = get_object_or_404(Player, id=player_id)
+    summoners = player.get_summoners()
+    summoner_links = []
+    for summoner in summoners:
+        summoner_links.append(summoner.name.replace(" ", "+"))
+    summoner_data = zip(summoners, summoner_links)
     team_player_role = TeamPlayer.objects.filter(player=player_id, team=team_id, role=role_id)[0]
     team_players = TeamPlayer.objects.filter(player=player_id, team=team_id, role__isFill=False).annotate(avg_kills=Avg('player__playermatch__kills'), avg_deaths=Avg('player__playermatch__deaths'), avg_assists=Avg('player__playermatch__assists'), num_champs_played=Count('player__playermatch__champion'))
     team_set = TeamPlayer.objects.filter(player=player_id, role__isFill=True).order_by('-team__season')
@@ -452,6 +561,7 @@ def team_player_role_detail(request, season_id, team_id, player_id, role_id):
         'season': season,
         'team': team,
         'player': player,
+        'summoner_data': summoner_data,
         'team_player_role': team_player_role,
         'team_players': team_players,
         'team_set': team_set,

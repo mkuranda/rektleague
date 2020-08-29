@@ -1,7 +1,7 @@
 {% extends "stats/base.html" %}
 {% load staticfiles %}
 
-{% block title %}Rekt League | Team {{ team.media.name }} | {{ team_player_role.player.name }}{% endblock %}
+{% block title %}Rekt League | Team {{ team.media.name }} | {{ team_player_role.player.get_name }}{% endblock %}
 
 {% block head %}
 <link rel="stylesheet" href="{% static 'stats/css/player.css' %}">
@@ -24,7 +24,7 @@
 		    <img class="playerPhoto" src="/static/stats/player-photos/missing.png">
         {% endif %}
 	<h3>SEASON <span class="rekt-red">{{ team.season.id }}</span></h3>
-		    <h1>{{ player.name }}</h1>
+		    <h1>{{ player.get_name }}</h1>
               <div class="laneIcons">
 	      {% if team_player_role.role.isFill %}
 	      {% for team_player in team_players %}
@@ -68,7 +68,9 @@
                         <li class="tophelp"><a class="menu-trigger" id="team" href="#">TEAMMATES</a>
                             <ul id="subrome">
 				    {% for teammate in teammates %}
-				    <a href="/season/{{ season.id }}/team/{{ teammate.team.id }}/player/{{ teammate.player.id }}/"><li>{{ teammate.player.name }}</li></a>
+				    {% if teammate.isActive or team_player.get_num_matches > 0 %}
+				    <a href="/season/{{ season.id }}/team/{{ teammate.team.id }}/player/{{ teammate.player.id }}/"><li>{{ teammate.player.get_name }}</li></a>
+				    {% endif %}
 				    {% endfor %}
                         </ul> 
                       </li>              
@@ -111,9 +113,9 @@
               <div class="stats">
                 <div class="statSection">
                 <div class="statTitle">ACCOUNTS</div>
-		{% for summoner in player.summoner_set.all %}
-                <p><a href="https://na.op.gg/summoner/userName={{ summoner.link }}">{{ summoner.name }}</a></p>
-		{% endfor %}
+                {% for summoner, link in summoner_data %}
+                 <p><a href="https://na.op.gg/summoner/userName={{ link }}">{{ summoner.name }}</a></p>
+                {% endfor %}
                 </div>
 
                 <div class="statSection">

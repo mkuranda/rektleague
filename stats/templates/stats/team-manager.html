@@ -318,6 +318,38 @@ function openCity(evt, cityName) {
 document.getElementById("defaultOpen").click();
 </script>
 
+<div style="color: white">
+<h3>TOP LANERS</h3>
+{% for player in topPlayers %}
+<p>{{ player.player.get_name }}</p>
+{% endfor %}
+
+<h3>JUNGLERS</h3>
+{% for player in junPlayers %}
+<p>{{ player.player.get_name }}</p>
+{% endfor %}
+
+<h3>MID LANERS</h3>
+{% for player in midPlayers %}
+<p>{{ player.player.get_name }}</p>
+{% endfor %}
+
+<h3>BOT LANERS</h3>
+{% for player in botPlayers %}
+<p>{{ player.player.get_name }}</p>
+{% endfor %}
+
+<h3>SUPPORTS</h3>
+{% for player in supPlayers %}
+<p>{{ player.player.get_name }}</p>
+{% endfor %}
+
+<h3>SUBSTITUTES</h3>
+{% for player in subPlayers %}
+<p>{{ player.player.get_name }}</p>
+{% endfor %}
+</div>
+
 <script type="text/javascript" src="{% static 'stats/js/jquery-3.4.1.min.js' %}"></script>
 <script type="text/javascript" src="{% static 'stats/js/slick.js' %}"></script>
 <script type="text/javascript" src="{% static 'stats/js/team-manager.js' %}"></script>
