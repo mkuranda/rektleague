@@ -4,6 +4,7 @@
 {% block title %} Rekt League | Profile {% endblock %}
 
 {% block head %}
+<link rel="stylesheet" href="{% static 'stats/css/profile.css' %}">
 <script type="text/javascript"><!--
 function unHideUsernameForm()
 {
@@ -47,109 +48,160 @@ function unHideAddAccount()
 {{ editForms.0.account_name.errors }}
 {{ addAccountForm.account_name.errors.0 }}
 
-<h1 style="color: white">{{ user.username }}</h1>
-<button id="editUsername" onclick="unHideUsernameForm()">Edit</button>
-<div id="usernameForm" style="display: none">
-<form id="editUsernameForm" method="POST" class="form-group">
-	{% csrf_token %}
-    <div class="form-group spacer">
-      <label for="username">New Username</label>
-      {{ usernameForm.username }}
-    </div>
-    <button class="btn btn-primary spacer" name="submitUsername" type="submit">Save</button>
-</form>
+<section class="profileHeader">
+  <img class="playerPhoto" src="/media/stats/player_photos/audulma.png">
+  <h2>Audulma</h2>
+  <h3>SCUTTLE CRAB</h3>
+</section>
+
+<div class="tab">
+  <button class="tablinks" onclick="openCity(event, 'profileTab')" id="defaultOpen">PROFILE</button>
+  <button class="tablinks" onclick="openCity(event, 'seasonTab')">MY SEASON</button>
+  <button class="tablinks" onclick="openCity(event, 'accountTab')">ACCOUNT</button>
+</div>
+
+<div id="profileTab" class="tabcontent">
+  <div class="profileContainerAccount">
+  <h4>ACCOUNTS</h4>  
+  {% for account, removeForm, editForm, setMainForm in accountForms %}
+  <h1 style="color: white">{{ account.name }}{% if account.isMain %}<i class="fas fa-crown"></i>{% endif %}</h1>
+  <button id="editButton{{ account.id }}" onclick="unHideAccountForm{{ account.id }}()">Edit</button>
+  
+  {% if not account.isMain %} 
+  <form id="removeAccountForm" method="POST" class="form-group">
+    {% csrf_token %}
+      <div style="display: none">
+        {{ removeForm.account_id }}
+      </div>
+      <button class="btn btn-primary spacer" name="submitRemove{{ account.id }}" type="submit">Remove</button>
+  </form>
+  <form id="setMainForm" method="POST" class="form-group">
+    {% csrf_token %}
+      <div style="display: none">
+        {{ setMainForm.account_id }}
+      </div>
+      <button class="btn btn-primary spacer" name="submitSetMain{{ account.id }}" type="submit">Set Main</button>
+  </form>
+  {% endif %}
+  
+  <div id="accountForm{{ account.id }}" style="display: none">
+  <form id="editAccountForm" method="POST" class="form-group">
+    {% csrf_token %}
+      <div class="form-group spacer">
+        <label for="account_name">Account Name</label>
+        {{ editForm.account_name }}
+      </div>
+      <div style="display: none">
+        {{ editForm.account_id }}
+      </div>
+      <button class="btn btn-primary spacer" name="submitEdit{{ account.id }}" type="submit">Save</button>
+  </form>
+  
+  </div>
+  {% endfor %}
+  
+  <div id="unhideAddAccountButton">
+  <img src="/media/stats/buttons/add-button.png" onclick="unHideAddAccount()">
+  </div>
+  
+  <form id="addAccountForm" method="POST" class="form-group" style="display: none">
+    {% csrf_token %}
+      <div class="form-group spacer">
+        <label for="account_name">Account Name</label>
+        {{ addAccountForm.account_name }}
+      </div>
+      <button class="btn btn-primary spacer" name="submitAdd" type="submit">Add Account</button>
+  </form>
+  <div style="color: white">
+  {% for invite in invites %}
+  <p>You are invited to join <a href="/stats/season/{{ invite.team.season.id }}/team/{{ invite.team.id }}/">SEASON {{ invite.team.season.id }} {{ invite.team.media.name }}</a> ({{ invite.role.name }}) <a href="/join-team/{{ invite.team.id }}/">Accept</a></p>
+  {% endfor %}
+  
+  {% for team in teams %}
+  {% if team.season.isActive %}
+  <p>You are a member of <a href="/stats/season/{{ team.season.id }}/team/{{ team.id }}/">{{ team.media.name }} - {{ team.season }}</a> <a href="/leave-team/{{ team.id }}/">Leave Team</a></p>
+  {% endif %}
+  {% endfor %}
+  </div>
+<!-- END Profile account container  -->
+</div>
+<div class="profileContainerAlerts">
 
 </div>
 
-<button id="editEmail" onclick="unHidePasswordForm()">Change Password</button>
-<div id="passwordForm" style="display: none">
-<form id="editPasswordForm" method="POST" class="form-group">
-	{% csrf_token %}
-    <div class="form-group spacer">
-      <label for="password">New Password</label>
-      {{ passwordForm.password1 }}
-    </div>
-    <div class="form-group spacer">
-      <label for="password2">Confirm Password</label>
-      {{ passwordForm.password2 }}
-    </div>
+  <!-- END PROFILE TAB -->
+</div>
+<div id="seasonTab" class="tabcontent"></div>
+<div id="accountTab" class="tabcontent">
+  <h1 style="color: white">{{ user.username }}</h1>
+  <button id="editUsername" onclick="unHideUsernameForm()">Edit</button>
+  <div id="usernameForm" style="display: none">
+  <form id="editUsernameForm" method="POST" class="form-group">
+    {% csrf_token %}
+      <div class="form-group spacer">
+        <label for="username">New Username</label>
+        {{ usernameForm.username }}
+      </div>
+      <button class="btn btn-primary spacer" name="submitUsername" type="submit">Save</button>
+  </form>
 
-    <button class="btn btn-primary spacer" name="submitPassword" type="submit">Save</button>
-</form>
+  </div>
+
+  <button id="editEmail" onclick="unHidePasswordForm()">Change Password</button>
+  <div id="passwordForm" style="display: none">
+  <form id="editPasswordForm" method="POST" class="form-group">
+    {% csrf_token %}
+      <div class="form-group spacer">
+        <label for="password">New Password</label>
+        {{ passwordForm.password1 }}
+      </div>
+      <div class="form-group spacer">
+        <label for="password2">Confirm Password</label>
+        {{ passwordForm.password2 }}
+      </div>
+
+      <button class="btn btn-primary spacer" name="submitPassword" type="submit">Save</button>
+  </form>
+  </div>
+
+  <h1 style="color: white">{{ user.email }}</h1>
+  <button id="editEmail" onclick="unHideEmailForm()">Edit</button>
+  <div id="emailForm" style="display: none">
+  <form id="editEmailForm" method="POST" class="form-group">
+    {% csrf_token %}
+      <div class="form-group spacer">
+        <label for="email">New Email</label>
+        {{ emailForm.email }}
+      </div>
+      <button class="btn btn-primary spacer" name="submitEmail" type="submit">Save</button>
+  </form>
+  </div>
+
+  <!-- END ACCOUNT TAB -->
 </div>
 
-<h1 style="color: white">{{ user.email }}</h1>
-<button id="editEmail" onclick="unHideEmailForm()">Edit</button>
-<div id="emailForm" style="display: none">
-<form id="editEmailForm" method="POST" class="form-group">
-	{% csrf_token %}
-    <div class="form-group spacer">
-      <label for="email">New Email</label>
-      {{ emailForm.email }}
-    </div>
-    <button class="btn btn-primary spacer" name="submitEmail" type="submit">Save</button>
-</form>
-</div>
+<script>
+  function openCity(evt, cityName) {
+    var i, tabcontent, tablinks;
+    tabcontent = document.getElementsByClassName("tabcontent");
+    for (i = 0; i < tabcontent.length; i++) {
+      tabcontent[i].style.display = "none";
+    }
+    tablinks = document.getElementsByClassName("tablinks");
+    for (i = 0; i < tablinks.length; i++) {
+      tablinks[i].className = tablinks[i].className.replace(" active", "");
+    }
+    document.getElementById(cityName).style.display = "block";
+    evt.currentTarget.className += " active";
+  }
+  
+  // Get the element with id="defaultOpen" and click on it
+  document.getElementById("defaultOpen").click();
+  </script>
 
-{% for account, removeForm, editForm, setMainForm in accountForms %}
-<h1 style="color: white">{{ account.name }}{% if account.isMain %} (Main) {% endif %}</h1>
-<button id="editButton{{ account.id }}" onclick="unHideAccountForm{{ account.id }}()">Edit</button>
-{% if not account.isMain %}
-<form id="removeAccountForm" method="POST" class="form-group">
-	{% csrf_token %}
-    <div style="display: none">
-	    {{ removeForm.account_id }}
-    </div>
-    <button class="btn btn-primary spacer" name="submitRemove{{ account.id }}" type="submit">Remove</button>
-</form>
-<form id="setMainForm" method="POST" class="form-group">
-	{% csrf_token %}
-    <div style="display: none">
-	    {{ setMainForm.account_id }}
-    </div>
-    <button class="btn btn-primary spacer" name="submitSetMain{{ account.id }}" type="submit">Set Main</button>
-</form>
-{% endif %}
 
-<div id="accountForm{{ account.id }}" style="display: none">
-<form id="editAccountForm" method="POST" class="form-group">
-	{% csrf_token %}
-    <div class="form-group spacer">
-      <label for="account_name">Account Name</label>
-      {{ editForm.account_name }}
-    </div>
-    <div style="display: none">
-	    {{ editForm.account_id }}
-    </div>
-    <button class="btn btn-primary spacer" name="submitEdit{{ account.id }}" type="submit">Save</button>
-</form>
 
-</div>
-{% endfor %}
 
-<div id="unhideAddAccountButton">
-<img src="/media/stats/buttons/add-button.png" onclick="unHideAddAccount()">
-</div>
-
-<form id="addAccountForm" method="POST" class="form-group" style="display: none">
-	{% csrf_token %}
-    <div class="form-group spacer">
-	    <label for="account_name">Account Name</label>
-      {{ addAccountForm.account_name }}
-    </div>
-    <button class="btn btn-primary spacer" name="submitAdd" type="submit">Add Account</button>
-</form>
-<div style="color: white">
-{% for invite in invites %}
-<p>You are invited to join <a href="/stats/season/{{ invite.team.season.id }}/team/{{ invite.team.id }}/">SEASON {{ invite.team.season.id }} {{ invite.team.media.name }}</a> ({{ invite.role.name }}) <a href="/join-team/{{ invite.team.id }}/">Accept</a></p>
-{% endfor %}
-
-{% for team in teams %}
-{% if team.season.isActive %}
-<p>You are a member of <a href="/stats/season/{{ team.season.id }}/team/{{ team.id }}/">{{ team.media.name }} - {{ team.season }}</a> <a href="/leave-team/{{ team.id }}/">Leave Team</a></p>
-{% endif %}
-{% endfor %}
-</div>
 
 {% if seasonPlayer %}
 <h2 style="color: white">You are currently signed up for Season {{ seasonPlayer.season.id }} as</h2>
