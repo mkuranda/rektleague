@@ -63,14 +63,59 @@ h4 {
 .profileContainerAccount{
   width: 60%;
   padding: 5%;
+  float: left;
 }
 
 .profileContainerAlerts{
   width: 40%;
-  padding: 5%;
+  padding: 2% 5%;
+  float: left;
 }
 
+.alertContainer {
+  width: 100%;
+  height: 60px;
+  background: #905e5e8a;
+  box-shadow: 2px 8px 6px 1px rgba(0, 0, 0, 0.3);
+  margin: 1% 0;
+}
 
+.redAccent {
+  background: #bf1f2f;
+  width: 10px;
+  height: 100%;
+  float: left;
+}
+
+.alertContainer > p {
+  font-size: 1.1em;
+  color: white;
+  padding: 10px 20px;
+  display: inline-block;
+  font-weight: 500;
+  width: 70%;
+}
+
+.alertConfirm {
+  height: 60px;
+  background: green;
+}
+
+.alertDeny {
+  background: green;
+  background: #bf1f2f;
+  height: 60px;
+}
+
+.fa-check {
+  font-size: 2em;
+  color: white;
+}
+
+.fa-times{
+  font-size: 2em;
+  color: white;
+}
 
 /* Style the buttons that are used to open the tab content */
 .tab button {
@@ -99,4 +144,30 @@ h4 {
   display: none;
   padding: 6px 12px;
   /* animation: fadeEffect 1s; */
+}
+
+/* Icon Styles */
+
+.fa-user-plus{
+  font-size: 2em;
+  color: #4dd212;
+  display: block;
+}
+
+.fa-user-edit{
+  font-size: 2em;
+  color: white;
+  display: block;
+} 
+
+.fa-user-minus{
+  font-size: 2em;
+  display: block;
+  color: #bf1f2f;;
+}
+
+/* Modal styling */
+
+.modal-body > p{
+  font-size: 1.5em;
 }

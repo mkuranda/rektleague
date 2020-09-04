@@ -65,7 +65,8 @@ function unHideAddAccount()
   <h4>ACCOUNTS</h4>  
   {% for account, removeForm, editForm, setMainForm in accountForms %}
   <h1 style="color: white">{{ account.name }}{% if account.isMain %}<i class="fas fa-crown"></i>{% endif %}</h1>
-  <button id="editButton{{ account.id }}" onclick="unHideAccountForm{{ account.id }}()">Edit</button>
+  <i id="editButton{{ account.id }}" onclick="unHideAccountForm{{ account.id }}()" class="fas fa-user-edit"></i>
+  <i id="myBtn" class="fas fa-user-minus"></i>
   
   {% if not account.isMain %} 
   <form id="removeAccountForm" method="POST" class="form-group">
@@ -73,7 +74,7 @@ function unHideAddAccount()
       <div style="display: none">
         {{ removeForm.account_id }}
       </div>
-      <button class="btn btn-primary spacer" name="submitRemove{{ account.id }}" type="submit">Remove</button>
+  <!-- <i id="myBtn" class="fas fa-user-minus"></i> -->
   </form>
   <form id="setMainForm" method="POST" class="form-group">
     {% csrf_token %}
@@ -101,7 +102,7 @@ function unHideAddAccount()
   {% endfor %}
   
   <div id="unhideAddAccountButton">
-  <img src="/media/stats/buttons/add-button.png" onclick="unHideAddAccount()">
+    <i class="fas fa-user-plus" onclick="unHideAddAccount()"></i>
   </div>
   
   <form id="addAccountForm" method="POST" class="form-group" style="display: none">
@@ -126,7 +127,12 @@ function unHideAddAccount()
 <!-- END Profile account container  -->
 </div>
 <div class="profileContainerAlerts">
-
+  <div class="alertContainer">
+    <div class="redAccent"></div>
+    <p>You have been invited to play for Infernal as a Top laner. <strong>Accept this offer?</strong></p>
+    <div class="alertConfirm"><i class="fas fa-check"></i></div>
+    <div class="alertDeny"><i class="fas fa-times"></i></div>
+  </div>
 </div>
 
   <!-- END PROFILE TAB -->
@@ -180,6 +186,43 @@ function unHideAddAccount()
   <!-- END ACCOUNT TAB -->
 </div>
 
+<!-- START MODALS -->
+
+<!-- REMOVE PLAYER MODAL -->
+<div class="modal fade" id="myModal" role="dialog">
+    <div class="modal-dialog">
+    
+      <!-- Modal content-->
+      <div class="modal-content">
+        <div class="modal-header" style="padding:10px 50px;">
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+          
+        </div>
+        <div class="modal-body" style="padding:15px 50px;">
+          <p>Are you sure you want to remove this account?</p>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-primary spacer" data-dismiss="modal">Nevermind</button>
+
+            <button class="btn btn-primary spacer" name="submitRemove{{ account.id }}" type="submit" data-dismiss="modal">Remove
+              </button>
+              
+        </div>
+      </div>
+      
+    </div>
+  </div> 
+</div>
+ 
+<script>
+$(document).ready(function(){
+  $("#myBtn").click(function(){
+    $("#myModal").modal();
+  });
+});
+</script>
+<!-- END REMOVE PLAYER MODAL -->
+
 <script>
   function openCity(evt, cityName) {
     var i, tabcontent, tablinks;
@@ -225,5 +268,7 @@ function unHideAddAccount()
 You don't have a profile when you aren't logged in, silly!
 
 {% endif %}
-
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="{% static 'stats/js/profile.js' %}"></script>
 {% endblock %}
