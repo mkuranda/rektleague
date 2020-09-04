@@ -85,7 +85,7 @@
     margin: 0;
 }
 
-.sliderTop, .sliderJungle, .sliderMid, .sliderBot, .sliderSupport, .sliderSub{
+.sliderTOP, .sliderJUNGLE, .sliderMID, .sliderBOT, .sliderSUPPORT, .sliderSUBSTITUTE{
     width: 304px;
     margin: auto;
     display: block;
@@ -119,6 +119,10 @@
     color: white;
     font-size: 1.5em;
     font-weight: 800;
+}
+
+.playerId {
+	display: none;
 }
 
 .myTeamSection .playerCard > .playerPhoto {
@@ -164,7 +168,7 @@
     background: #a71b29;
 }
 
-#myTop, #myJungle, #myMid, #myBot, #mySupport, #mySub1, #mySub2, #mySub3 {
+.emptyPlayer {
     width: 304px;
     height: 141px;
     margin: 2% auto;

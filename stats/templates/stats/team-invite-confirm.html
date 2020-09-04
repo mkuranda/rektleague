@@ -1,0 +1,37 @@
+{% extends "stats/base.html" %}
+{% load staticfiles %}
+
+{% block title %} Rekt League | Team Manager {% endblock %}
+
+{% block head %}
+<link rel="stylesheet" type="text/css" href="{% static 'stats/css/slick.css' %}"/>
+<link rel="stylesheet" type="text/css" href="{% static 'stats/css/slick-theme.css' %}"/>
+
+{% endblock %}
+
+{% block content %}
+
+{% if team %}
+
+<div style="color: white">
+	<h2>The following are the actions that will be performed:</h2>
+	{% for invite in invites %}
+	<h4>Invite {{ invite.name }} as a {{ invite.role }}</h4>
+	{% endfor %}
+	{% for inviteRemove in inviteRemoves %}
+	<h4>Retract your invite to {{ inviteRemove.name }} as a {{ inviteRemove.role }}</h4>
+	{% endfor %}
+	{% for remove in removes %}
+	<h4>Remove {{ remove.name }} from your team as a {{ remove.role }}</h4>
+	{% endfor %}
+</div>
+
+<a href="send/"><button class="invitePlayers">CONFIRM</button></a>
+
+{% else %}
+<!-- Doesn't have permissions for this -->
+{% endif %}
+
+<script type="text/javascript" src="{% static 'stats/js/jquery-3.4.1.min.js' %}"></script>
+<script type="text/javascript" src="{% static 'stats/js/slick.js' %}"></script>
+{% endblock %}

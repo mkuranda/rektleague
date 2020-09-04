@@ -22,10 +22,11 @@ class Season(models.Model):
     pick_type = models.CharField(max_length=30)
     map_type = models.CharField(max_length=30)
     spectator_type = models.CharField(max_length=30)
-    playoff_bracket = models.ImageField(upload_to='stats/', default='')
-    splash = models.ImageField(upload_to='stats/season_splashes', default='')
+    playoff_bracket = models.ImageField(upload_to='stats/', default='', null=True, blank=True)
+    splash = models.ImageField(upload_to='stats/season_splashes', default='', null=True, blank=True)
     isActive = models.BooleanField(default=False)
     isPreseason = models.BooleanField(default=False)
+    numSubs = models.IntegerField(default=3)
 
     def __str__(self):
         return "SEASON " + str(self.pk)
@@ -1229,6 +1230,9 @@ class TeamPlayer(models.Model):
 
     def get_team(self):
         return Team.objects.filter(pk=self.team)
+
+    def get_elo_value(self):
+        return SeasonPlayer.objects.get(user=self.player.user, season=self.team.season).elo_value
     
     def get_proximity_timeline(self):
         all_timelines = PlayerMatchTimeline.objects.filter(playermatch__player=self.player, playermatch__role=self.role, playermatch__team=self.team).annotate(minute=F('timestamp') / 1000 / 60).order_by('minute')
@@ -1662,29 +1666,73 @@ class HypeVideo(models.Model):
     youtube_link = models.CharField(max_length=100, default='')
 
 class TeamInvite(models.Model):
-    player = models.ForeignKey(Player)
+    user = models.ForeignKey(User)
     team = models.ForeignKey(Team)
     role = models.ForeignKey(Role)
+
+    def get_name(self):
+        return SeasonPlayer.objects.get(user=self.user, season=self.team.season).get_name()
+
+    def get_elo_value(self):
+        return SeasonPlayer.objects.get(user=self.user, season=self.team.season).get_elo_value()
+
+    def get_season_player(self):
+        return SeasonPlayer.objects.get(user=self.user, season=self.team.season)
     
     def __str__(self):
-        return self.player.name + " - " + self.team.media.name + " (" + self.role.name + ")"
+        return self.user.username + " - " + self.team.media.name + " (" + self.role.name + ")"
 
-class PlayerPhotoRequest(models.Model):
-    player = models.ForeignKey(Player)
+class UserPhotoRequest(models.Model):
+    user = models.ForeignKey(User)
     photo = models.ImageField(upload_to='stats/player_photos')
 
 class SeasonPlayer(models.Model):
     season = models.ForeignKey(Season)
-    player = models.ForeignKey(Player)
+    user = models.ForeignKey(User)
     main_roster = models.BooleanField(default=False)
     substitute = models.BooleanField(default=False)
     elo_value = models.IntegerField(default=100)
 
+    def is_confirmed(self):
+        return self.elo_value != 100
+
+    def get_name(self):
+        return UserAccount.objects.get(user=self.user, isMain=True).name
+
+    def get_elo_value(self):
+        return self.elo_value
+
 class SeasonPlayerRole(models.Model):
     season = models.ForeignKey(Season)
-    player = models.ForeignKey(Player)
+    user = models.ForeignKey(User)
     role = models.ForeignKey(Role)
     isMain = models.BooleanField(default=False)
+
+    def get_elo_value(self):
+        return SeasonPlayer.objects.get(season=self.season, user=self.user).elo_value
+
+    def get_name(self):
+        return UserAccount.objects.get(user=self.user, isMain=True).name
+
+    def get_season_player(self):
+        return SeasonPlayer.objects.get(season=self.season, user=self.user)
+
+class PreseasonTeamPlayer(models.Model):
+    team = models.ForeignKey(Team)
+    user = models.ForeignKey(User)
+    role = models.ForeignKey(Role)
+
+    def get_name(self):
+        return UserAccount.objects.get(user=self.user, isMain=True).name
+
+    def get_elo_value(self):
+        return SeasonPlayer.objects.get(user=self.user, season=self.team.season).elo_value
+
+    def get_season_player(self):
+        return SeasonPlayer.objects.get(user=self.user, season=self.team.season)
+
+    def __str__(self):
+        return self.get_name + " - " + self.team + " (" + self.role.name + ")"
 
 class UserAccount(models.Model):
     user = models.ForeignKey(User)
