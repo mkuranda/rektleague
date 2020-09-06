@@ -65,9 +65,11 @@ function unHideAddAccount()
   <h4>ACCOUNTS</h4>  
   {% for account, removeForm, editForm, setMainForm in accountForms %}
   <h1 style="color: white">{{ account.name }}{% if account.isMain %}<i class="fas fa-crown"></i>{% endif %}</h1>
-  <i id="editButton{{ account.id }}" onclick="unHideAccountForm{{ account.id }}()" class="fas fa-user-edit"></i>
-  <i id="myBtn" class="fas fa-user-minus"></i>
-  
+  <div class="playerActionsBar">
+    <i id="editButton{{ account.id }}" onclick="unHideAccountForm{{ account.id }}()" class="fas fa-user-edit editButton"></i>
+    <i id="removeButton" class="fas fa-user-minus"></i>
+    <i id="setMainButton" class="fas fa-chevron-up"></i>
+  </div>
   {% if not account.isMain %} 
   <form id="removeAccountForm" method="POST" class="form-group">
     {% csrf_token %}
@@ -102,7 +104,7 @@ function unHideAddAccount()
   {% endfor %}
   
   <div id="unhideAddAccountButton">
-    <i class="fas fa-user-plus" onclick="unHideAddAccount()"></i>
+    <i id="addButton" class="fas fa-user-plus" onclick="unHideAddAccount()"></i>
   </div>
   
   <form id="addAccountForm" method="POST" class="form-group" style="display: none">
@@ -126,7 +128,9 @@ function unHideAddAccount()
   </div>
 <!-- END Profile account container  -->
 </div>
+
 <div class="profileContainerAlerts">
+  <h4>ALERTS</h4>  
   <div class="alertContainer">
     <div class="redAccent"></div>
     <p>You have been invited to play for Infernal as a Top laner. <strong>Accept this offer?</strong></p>
@@ -135,12 +139,60 @@ function unHideAddAccount()
   </div>
 </div>
 
+<div class="profileContainerAlerts">
+  <div class="alertContainer">
+    <div class="redAccent"></div>
+    <p class="alertMessage">You haven't signed up for Season 7!</p>
+    <div class="alertClose"><i class="fas fa-times"></i></div>
+  </div>
+</div>
+
   <!-- END PROFILE TAB -->
 </div>
-<div id="seasonTab" class="tabcontent"></div>
+<div id="seasonTab" class="tabcontent">
+  <div class="seasonContainerAlerts">
+    <h4>SEASON 7 NOTIFICATIONS</h4>  
+    <div class="alertContainer">
+      <div class="redAccent"></div>
+      <p>You have been invited to play for Infernal as a Top laner. <strong>Accept this offer?</strong></p>
+      <div class="alertConfirm"><i class="fas fa-check"></i></div>
+      <div class="alertDeny"><i class="fas fa-times"></i></div>
+    </div>
+
+    <div class="alertContainer">
+      <div class="redAccent"></div>
+      <p class="alertMessage">You haven't signed up for Season 7!</p>
+      <div class="alertClose"><i class="fas fa-times"></i></div>
+    </div>
+  </div>
+  
+
+  <div class="seasonContainerInfo">
+    <h4>MY TEAM</h4> 
+    <p>You are currently the Top laner for Scuttle Crab! For more information click here.</p>
+    <button class="btn btn-primary spacer">SCUTTLE</button>
+    <h4>MY SIGN UP</h4>
+    <p>You are currently signed up as a BAD JUNGLER. Need to do a role swap? Resubmit your sign up here.</p>
+    <button class="btn btn-primary spacer">RESUBMIT</button>
+
+    <p>Don't want to play in Season 7? Delete your sign up here.</p>
+    <button class="btn btn-primary spacer">DELETE SIGN UP</button>
+  </div>
+  <!-- MATT TOGGLE BETWEEN THESE TWO SECTIONS -->
+  <div class="seasonContainerInfo">
+    <h4>SIGN UP</h4> 
+    <p>You are not signed up for Season 7. Don't be a square, get in there!</p>
+    <button class="btn btn-primary spacer">SIGN UP</button>
+  </div>
+
+</div>
+
+<!-- END Season TAB -->
+
 <div id="accountTab" class="tabcontent">
+  <h4>ACCOUNT NAME</h4> 
   <h1 style="color: white">{{ user.username }}</h1>
-  <button id="editUsername" onclick="unHideUsernameForm()">Edit</button>
+  <button id="editAccountNameButton" class="btn btn-primary spacer" id="editUsername" onclick="unHideUsernameForm()">Edit</button>
   <div id="usernameForm" style="display: none">
   <form id="editUsernameForm" method="POST" class="form-group">
     {% csrf_token %}
@@ -152,8 +204,8 @@ function unHideAddAccount()
   </form>
 
   </div>
-
-  <button id="editEmail" onclick="unHidePasswordForm()">Change Password</button>
+  <h4>PASSWORD</h4> 
+  <button id="editPasswordButton" class="btn btn-primary spacer" id="editEmail" onclick="unHidePasswordForm()">Change Password</button>
   <div id="passwordForm" style="display: none">
   <form id="editPasswordForm" method="POST" class="form-group">
     {% csrf_token %}
@@ -169,9 +221,9 @@ function unHideAddAccount()
       <button class="btn btn-primary spacer" name="submitPassword" type="submit">Save</button>
   </form>
   </div>
-
+  <h4>EMAIL</h4> 
   <h1 style="color: white">{{ user.email }}</h1>
-  <button id="editEmail" onclick="unHideEmailForm()">Edit</button>
+  <button id="editEmailButton" class="btn btn-primary spacer" id="editEmail" onclick="unHideEmailForm()">Edit</button>
   <div id="emailForm" style="display: none">
   <form id="editEmailForm" method="POST" class="form-group">
     {% csrf_token %}
@@ -189,7 +241,7 @@ function unHideAddAccount()
 <!-- START MODALS -->
 
 <!-- REMOVE PLAYER MODAL -->
-<div class="modal fade" id="myModal" role="dialog">
+<div class="modal fade" id="removeModal" role="dialog">
     <div class="modal-dialog">
     
       <!-- Modal content-->
@@ -213,14 +265,238 @@ function unHideAddAccount()
     </div>
   </div> 
 </div>
+
+<!-- EDIT PLAYER MODAL -->
+<div class="modal fade" id="editModal" role="dialog">
+  <div class="modal-dialog">
+  
+    <!-- Modal content-->
+    <div class="modal-content">
+      <div class="modal-header" style="padding:10px 50px;">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        
+      </div>
+      <div class="modal-body" style="padding:15px 50px;">
+        <form id="editAccountForm" method="POST" class="form-group">
+          {% csrf_token %}
+            <div class="form-group spacer">
+              <label for="account_name">Account Name</label>
+              {{ editForm.account_name }}
+            </div>
+            <div style="display: none">
+              {{ editForm.account_id }}
+            </div>
+            
+        </form>
+      </div>
+      <div class="modal-footer">
+          <button type="button" class="btn btn-primary spacer" data-dismiss="modal">Nevermind</button>
+
+          <button class="btn btn-primary spacer" name="submitEdit{{ account.id }}" type="submit">Save</button>
+            
+      </div>
+    </div>
+    
+  </div>
+</div> 
+</div>
+
+<!-- SET MAIN PLAYER MODAL -->
+<div class="modal fade" id="setMainModal" role="dialog">
+  <div class="modal-dialog">
+  
+    <!-- Modal content-->
+    <div class="modal-content">
+      <div class="modal-header" style="padding:10px 50px;">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        
+      </div>
+      <div class="modal-body" style="padding:15px 50px;">
+        <p>Set this account as your main account?</p>
+      </div>
+      <div class="modal-footer">
+        <div class="editModalButtonSection">
+          <button type="button" class="btn btn-primary spacer" data-dismiss="modal">Nevermind</button>
+
+          <form id="setMainForm" method="POST" class="form-group">
+            {% csrf_token %}
+              <div style="display: none">
+                {{ setMainForm.account_id }}
+              </div>
+              <button class="btn btn-primary spacer" name="submitSetMain{{ account.id }}" type="submit">Set Main</button>
+          </form>
+        </div>
+      </div>
+    </div>
+    
+  </div>
+</div> 
+</div>
+
+<!-- ADD PLAYER MODAL -->
+<div class="modal fade" id="addModal" role="dialog">
+  <div class="modal-dialog">
+  
+    <!-- Modal content-->
+    <div class="modal-content">
+      <div class="modal-header" style="padding:10px 50px;">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        
+      </div>
+      <div class="modal-body" style="padding:15px 50px;">
+        Add Account filler
+        <form id="addAccountForm" method="POST" class="form-group" style="display: none">
+          {% csrf_token %}
+            <div class="form-group spacer">
+              <label for="account_name">Account Name</label>
+              {{ addAccountForm.account_name }}
+            </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+          <button type="button" class="btn btn-primary spacer" data-dismiss="modal">Nevermind</button>
+
+          <button class="btn btn-primary spacer" name="submitAdd" type="submit">Add Account</button>
+            
+      </div>
+    </div>
+    
+  </div>
+</div> 
+</div>
+
+<!-- EDIT ACCOUNT NAME MODAL -->
+<div class="modal fade" id="editAccountNameModal" role="dialog">
+  <div class="modal-dialog">
+  
+    <!-- Modal content-->
+    <div class="modal-content">
+      <div class="modal-header" style="padding:10px 50px;">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        
+      </div>
+      <div class="modal-body" style="padding:15px 50px;">
+        <p>Update your account name:</p>
+        
+      </div>
+      <div class="modal-footer">
+          <button type="button" class="btn btn-primary spacer" data-dismiss="modal">Nevermind</button>
+
+          <button class="btn btn-primary spacer" name="submitAdd" type="submit">Update</button>
+            
+      </div>
+    </div>
+    
+  </div>
+</div> 
+</div>
+
+
+<!-- EDIT PASSWORD MODAL -->
+<div class="modal fade" id="editPasswordModal" role="dialog">
+  <div class="modal-dialog">
+  
+    <!-- Modal content-->
+    <div class="modal-content">
+      <div class="modal-header" style="padding:10px 50px;">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        
+      </div>
+      <div class="modal-body" style="padding:15px 50px;">
+        <p>Update your password:</p>
+      </div>
+      <div class="modal-footer">
+          <button type="button" class="btn btn-primary spacer" data-dismiss="modal">Nevermind</button>
+
+          <button class="btn btn-primary spacer" name="submitAdd" type="submit">Update</button>
+            
+      </div>
+    </div>
+    
+  </div>
+</div> 
+</div>
+
+<!-- EDIT EMAIL MODAL -->
+<div class="modal fade" id="editEmailModal" role="dialog">
+  <div class="modal-dialog">
+  
+    <!-- Modal content-->
+    <div class="modal-content">
+      <div class="modal-header" style="padding:10px 50px;">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        
+      </div>
+      <div class="modal-body" style="padding:15px 50px;">
+        <p>Update youremail:</p>
+      </div>
+      <div class="modal-footer">
+          <button type="button" class="btn btn-primary spacer" data-dismiss="modal">Nevermind</button>
+
+          <button class="btn btn-primary spacer" name="submitAdd" type="submit">Update</button>
+            
+      </div>
+    </div>
+    
+  </div>
+</div> 
+</div>
  
 <script>
 $(document).ready(function(){
-  $("#myBtn").click(function(){
-    $("#myModal").modal();
+  $("#removeButton").click(function(){
+    $("#removeModal").modal();
   });
 });
 </script>
+
+<script>
+  $(document).ready(function(){
+    $(".editButton").click(function(){
+      $("#editModal").modal();
+    });
+  });
+  </script>
+
+<script>
+  $(document).ready(function(){
+    $("#setMainButton").click(function(){
+      $("#setMainModal").modal();
+    });
+  });
+  </script>
+
+<script>
+  $(document).ready(function(){
+    $("#addButton").click(function(){
+      $("#addModal").modal();
+    });
+  });
+  </script>
+
+<script>
+  $(document).ready(function(){
+    $("#editAccountNameButton").click(function(){
+      $("#editAccountNameModal").modal();
+    });
+  });
+  </script>
+
+<script>
+  $(document).ready(function(){
+    $("#editPasswordButton").click(function(){
+      $("#editPasswordModal").modal();
+    });
+  });
+  </script>
+
+<script>
+  $(document).ready(function(){
+    $("#editEmailButton").click(function(){
+      $("#editEmailModal").modal();
+    });
+  });
+  </script>
 <!-- END REMOVE PLAYER MODAL -->
 
 <script>

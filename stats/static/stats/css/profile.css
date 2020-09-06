@@ -42,11 +42,16 @@ h4 {
   box-shadow: 3px 8px 14px 1px rgba(0, 0, 0, 0.2);
 }
 
-.fa-crown{
-  padding-left: 15px;
-  color: #ffbc00;
+.playerActionsBar {
+  display: flex;
+  justify-content: flex-start;
+  width: 26%;
 }
 
+.editModalButtonSection{
+  display: flex;
+  justify-content: flex-end;
+}
 /* TABS */
 
 /* Style the tab */
@@ -62,14 +67,61 @@ h4 {
 
 .profileContainerAccount{
   width: 60%;
-  padding: 5%;
+  padding: 0 5%;
   float: left;
+  background: #152028;
+}
+
+.seasonContainerInfo{
+  width: 60%;
+  padding: 0 5%;
+  background: #152028;
+  float: left;
+}
+.seasonContainerInfo h4 {
+  margin: 0 auto 1% auto;
+  
+} 
+.seasonContainerInfo p {
+  font-size: 2em;
+  color: white;
+  text-align: center;
+}
+
+.seasonContainerInfo button {
+  margin: auto;
+  display: block;
+  font-weight: 700;
+  font-size: 2em;
+  margin-bottom: 2%;
 }
 
 .profileContainerAlerts{
   width: 40%;
-  padding: 2% 5%;
+  padding: 0% 2%;
   float: left;
+  background: #152028;
+}
+
+.alertContainerAlerts{
+  width: 40%;
+  padding: 0% 2%;
+  background: #152028;
+}
+
+.seasonContainerAlerts{
+  width: 40%;
+  padding: 0% 2%;
+  background: #152028;
+  float: left;
+}
+
+#accountTab{
+  text-align: center;
+}
+
+#accountTab h4{
+  margin: 2% auto 1% auto;
 }
 
 .alertContainer {
@@ -78,43 +130,90 @@ h4 {
   background: #905e5e8a;
   box-shadow: 2px 8px 6px 1px rgba(0, 0, 0, 0.3);
   margin: 1% 0;
+  display: flex;
 }
 
 .redAccent {
   background: #bf1f2f;
   width: 10px;
   height: 100%;
-  float: left;
+  order: 1;
 }
 
 .alertContainer > p {
   font-size: 1.1em;
   color: white;
-  padding: 10px 20px;
-  display: inline-block;
+  padding: 0 4%;
+  display: block;
   font-weight: 500;
-  width: 70%;
+  width: 80%;
+  order: 2;
+  margin: 0;
+  align-self: center;
 }
 
 .alertConfirm {
   height: 60px;
-  background: green;
+  background: #1dc51db8;
+  width: 10%;
+  order:4;
+  align-self: end;
+}
+
+.alertConfirm:hover {
+  background: #189218b8;
 }
 
 .alertDeny {
-  background: green;
-  background: #bf1f2f;
+  background: #bf1f2f9e;
   height: 60px;
+  width: 10%;
+  order: 3;
+  align-self: end;
+}
+
+.alertDeny:hover {
+  background: #840f1b9e;
+}
+
+.alertContainer > .alertMessage {
+  font-size: 1.1em;
+  color: white;
+  padding: 0 4%;
+  display: block;
+  font-weight: 500;
+  width: 90%;
+  order: 2;
+  margin: 0;
+  align-self: center;
+}
+
+.alertClose{
+  background: #bf1f2f9e;
+  height: 60px;
+  width: 10%;
+  order: 3;
+  align-self: end;
+}
+
+.alertClose:hover {
+  background: #840f1b9e;
 }
 
 .fa-check {
   font-size: 2em;
   color: white;
+  text-align: center;
+  display: block;
+  padding: 17px 0;
 }
 
 .fa-times{
   font-size: 2em;
   color: white;
+  text-align: center;
+  display: block;
+  padding: 17px 0;
 }
 
 /* Style the buttons that are used to open the tab content */
@@ -155,15 +254,29 @@ h4 {
 }
 
 .fa-user-edit{
-  font-size: 2em;
+  font-size: 1.9em;
   color: white;
-  display: block;
+  order: 1;
+  padding: 0 3%;
 } 
 
 .fa-user-minus{
-  font-size: 2em;
-  display: block;
-  color: #bf1f2f;;
+  font-size: 1.9em;
+  color: #bf1f2f;
+  order: 2;
+  padding: 0 3%;
+}
+
+.fa-crown{
+  padding-left: 15px;
+  color: #ffbc00;
+}
+
+.fa-chevron-up{
+  font-size: 1.9em;
+  order: 3;
+  padding: 0 3%;
+  color: #ffbc00;
 }
 
 /* Modal styling */

@@ -1,4 +1,4 @@
-$(document).ready(function(){
+/*$(document).ready(function(){
     $('.sliderTop').slick();
     $('.sliderJungle').slick();
     $('.sliderMid').slick();
@@ -471,9 +471,9 @@ $(document).on( "click", "#removeSub3", function() {
     $('.sliderSub').slick('unslick');
     $("#mySub3 > .playerCard").prependTo( $(".sliderSub") );
     $('.sliderSub').slick();
-    // Allow new top to be added
+    // Allow new top to be adde{{ role.name }}d
     sub3 = 0;
 });
 
 // CLOSING OF READY FUNCTION
-});
+});*/
