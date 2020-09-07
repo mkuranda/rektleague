@@ -97,9 +97,11 @@ def merch(request):
 def team_manager(request):
     seasons = Season.objects.all().order_by('-id')
     latest_season = Season.objects.latest('id')
-    user = request.user
+    user = request.user.id
     seasonPlayers = SeasonPlayer.objects.filter(season=latest_season)
-    teams = user.team_set.filter(season=latest_season)
+    teams = Team.objects.filter(season=latest_season, user=user)
+    if not teams:
+        return redirect('/preseason/' + str(latest_season.id))
     teamReps = []
     for team in teams:
         if team.user != user:
@@ -186,7 +188,7 @@ def getTeamChanges(role, team, invites, inviteRemoves, removes, player_id):
     current_invite = TeamInvite.objects.filter(team=team, role=role)
     if current:
         current = current[0]
-        if player_id != current.user.id:
+        if player_id != current.get_season_player().id:
             removes.append({
                 'name': current.get_name(),
                 'role': role.name,
@@ -200,7 +202,7 @@ def getTeamChanges(role, team, invites, inviteRemoves, removes, player_id):
                     })
     elif current_invite:
         current_invite = current_invite[0]
-        if player_id != current_invite.user.id:
+        if player_id != current_invite.get_season_player().id:
             inviteRemoves.append({
                 'name': current_invite.get_name(),
                 'role': role.name,
@@ -218,8 +220,6 @@ def getTeamChanges(role, team, invites, inviteRemoves, removes, player_id):
             'role': role.name,
             'id': player_id
             })
-
-    return
 
 def getSubTeamChanges(team, invites, inviteRemoves, removes, sub1_id, sub2_id, sub3_id):
     current_subs = PreseasonTeamPlayer.objects.filter(team=team, role__isFill=True)
@@ -262,8 +262,8 @@ def send_team_invites(request, top_id, jun_id, mid_id, bot_id, sup_id, sub1_id, 
     removes = []
 
     getTeamChanges(Role.objects.get(name="TOP"), team, invites, inviteRemoves, removes, int(top_id))
-    getTeamChanges(Role.objects.get(name="JUNGLE"), team, invites, inviteRemoves, removes, int(mid_id))
-    getTeamChanges(Role.objects.get(name="MID"), team, invites, inviteRemoves, removes, int(jun_id))
+    getTeamChanges(Role.objects.get(name="JUNGLE"), team, invites, inviteRemoves, removes, int(jun_id))
+    getTeamChanges(Role.objects.get(name="MID"), team, invites, inviteRemoves, removes, int(mid_id))
     getTeamChanges(Role.objects.get(name="BOT"), team, invites, inviteRemoves, removes, int(bot_id))
     getTeamChanges(Role.objects.get(name="SUPPORT"), team, invites, inviteRemoves, removes, int(sup_id))
     getSubTeamChanges(team, invites, inviteRemoves, removes, int(sub1_id), int(sub2_id), int(sub3_id))
@@ -298,8 +298,8 @@ def team_invite(request, top_id, jun_id, mid_id, bot_id, sup_id, sub1_id, sub2_i
     removes = []
 
     getTeamChanges(Role.objects.get(name="TOP"), team, invites, inviteRemoves, removes, int(top_id))
-    getTeamChanges(Role.objects.get(name="JUNGLE"), team, invites, inviteRemoves, removes, int(mid_id))
-    getTeamChanges(Role.objects.get(name="MID"), team, invites, inviteRemoves, removes, int(jun_id))
+    getTeamChanges(Role.objects.get(name="JUNGLE"), team, invites, inviteRemoves, removes, int(jun_id))
+    getTeamChanges(Role.objects.get(name="MID"), team, invites, inviteRemoves, removes, int(mid_id))
     getTeamChanges(Role.objects.get(name="BOT"), team, invites, inviteRemoves, removes, int(bot_id))
     getTeamChanges(Role.objects.get(name="SUPPORT"), team, invites, inviteRemoves, removes, int(sup_id))
     getSubTeamChanges(team, invites, inviteRemoves, removes, int(sub1_id), int(sub2_id), int(sub3_id))
