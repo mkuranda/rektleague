@@ -42,6 +42,7 @@
   {% endif %}
 </div>
 
+
 <div id="profileTab" class="tabcontent">
   <div class="profileContainerAccount">
   <h4>SUMMONER NAMES</h4>  
@@ -56,7 +57,7 @@
 	{% endif %}
   </div>
   {% endfor %}
-  <i id="addButton" onclick="$('#addModal').modal();" class="fas fa-user-plus"></i>
+  <div><i id="addButton" onclick="$('#addModal').modal();" class="fas fa-user-plus"></i><span onclick="$('#addModal').modal();" class="addAccountLabel">ADD ACCOUNT</span></div>
   <div style="color: white">
   {% for invite in invites %}
   <p>You are invited to join <a href="/stats/season/{{ invite.team.season.id }}/team/{{ invite.team.id }}/">SEASON {{ invite.team.season.id }} {{ invite.team.media.name }}</a> ({{ invite.role.name }}) <a href="/join-team/{{ invite.team.id }}/{{ invite.role.id }}/">Accept</a></p>
@@ -90,7 +91,6 @@
     <div class="alertClose"><i class="fas fa-times"></i></div>
   </div>
 </div> -->
-
   <!-- END PROFILE TAB -->
 </div>
 <div id="seasonTab" class="tabcontent">
@@ -104,6 +104,7 @@
     <div class="alertDeny"><i class="fas fa-times"></i></div>
   </div>
 </div>
+
 {% endfor %}
 
 <!--    <div class="alertContainer">

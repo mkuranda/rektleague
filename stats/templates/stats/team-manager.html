@@ -273,6 +273,7 @@ $(document).on( "click",".invitePlayers", function() {
 </section>
 
 <section class="myTeamSection">
+	<button class="invitePlayers btn btn-primary spacer">INVITE</button>
     <h3>ELO</h3>
     <p id="teamElo">0</p>
 	{% for role in roles %}
@@ -349,7 +350,7 @@ $(document).on( "click",".invitePlayers", function() {
 <!-- END TEAM MANAGER CONTAINER -->
 </div>
 
-<button class="invitePlayers">INVITE</button>
+
 {% else %}
 <!-- Doesn't have permissions for this -->
 {% endif %}
