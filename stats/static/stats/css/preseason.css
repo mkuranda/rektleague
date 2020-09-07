@@ -1,0 +1,62 @@
+
+    /* PRESEASON */
+
+    h1, h2{
+        color:white;
+        text-align: center;
+        font-size: 95px;
+        font-weight: 800;
+    }
+
+    .subhead{
+        font-size: 40px;
+        margin: -45px 0 38px 0;
+    }
+
+    table {
+      width: 30%; 
+      color: white;
+      margin: 15px auto 15px auto;
+    }
+    
+    th {
+        font-size: 2.2em;
+        font-weight: 800;
+        text-align: center;
+        background: #bf1f2f;
+        padding: 1% 2%;
+        border: 8px solid black;
+    }
+    
+    td > img{
+      width: 35px;
+    }
+    
+    td > a> img:hover{
+      opacity: .8;
+    }
+    
+    td{
+      text-align: left;
+      font-size: 2em;
+      font-weight: 400;
+      padding: 1% 2%;
+    }
+
+    tr:nth-child(2n - 1) {
+      background: #152028;
+    }
+   
+    h4 {
+      background: #bf1f2f;
+      padding: 1% 2%;
+      padding-bottom: 10px;
+      color: white;
+      font-size: 2em;
+      width: 304px;
+      text-align: center;
+      margin: auto;
+      font-weight: 800;
+      box-shadow: 3px 8px 14px 1px rgba(0, 0, 0, 0.2);
+    }
+

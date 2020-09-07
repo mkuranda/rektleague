@@ -21,10 +21,12 @@ $(document).ready(function(){
 	var {{ role.name }}value = 0;
 	{% if role.myPlayer %}
 	{{ role.name }}value += {{ role.myPlayer.get_elo_value }};
+	{{ role.name }}count = 1
 	elo += {{ role.name }}value;
 	{% elif role.myInvite %}
 	{{ role.name }}value += {{ role.myInvite.get_elo_value }};
 	elo += {{ role.name }}value;
+	{{ role.name }}count = 1
 	{% endif %}
 	{% else %}
 	{% for subNum in subNums %}
@@ -148,9 +150,8 @@ $(document).on( "click","#add{{ role.name }}", function() {
     {% if forloop.counter == 1 %}
 	if({{ role.name }}{{ subNum }}count == 0 && !(name in currentPlayers)){
 	{% else %}
-	else if({{ role.name }}{{ subNum }}count == 0){
+	else if({{ role.name }}{{ subNum }}count == 0 && !(name in currentPlayers)){
 	{% endif %}
-	console.log("{{ role.name }}{{ subNum }}");
     // Move playercard
 	$(".slider{{ role.name }} .slick-active > div > .playerCard").prependTo("#my{{ role.name }}{{ subNum }}");
     // Reset Slider now that cards missing
@@ -250,6 +251,12 @@ $(document).on( "click",".invitePlayers", function() {
         <div class="playerCard">
             <div class="playerPhoto">
 				<i id="add{{ role.name }}" class="fas fa-plus-square"></i>
+				{% if role.isFill %}
+				<img class="playerRole" src="{{ player.get_main_role.role.icon.url }}">
+				{% for offRole in player.get_off_roles %}
+				<img class="playerRole" src="{{ offRole.role.icon.url }}">
+				{% endfor %}
+				{% endif %}
             </div>
             <div class="playerInfo">
 				<p class="playerName">{{ player.get_name }}</p>
@@ -305,6 +312,10 @@ $(document).on( "click",".invitePlayers", function() {
 	    <div class="playerCard">
             <div class="playerPhoto">
 				<i id='remove{{ role.name }}{{ forloop.counter0 }}' class='fas fa-minus-square'></i>
+				<img class="playerRole" src="{{ sub.invite.get_season_player.get_main_role.role.icon.url }}">
+				{% for mainRole in sub.invite.get_season_player.get_off_roles %}
+				<img class="playerRole" src="{{ mainRole.role.icon.url }}">
+				{% endfor %}
             </div>
             <div class="playerInfo">
         		<p class="playerName">{{ sub.invite.get_name }}</p>
@@ -317,6 +328,10 @@ $(document).on( "click",".invitePlayers", function() {
 	    <div class="playerCard">
             <div class="playerPhoto">
 				<i id='remove{{ role.name }}{{ forloop.counter0 }}' class='fas fa-minus-square'></i>
+				<img class="playerRole" src="{{ sub.player.get_season_player.get_main_role.role.icon.url }}">
+				{% for mainRole in sub.player.get_season_player.get_off_roles %}
+				<img class="playerRole" src="{{ mainRole.role.icon.url }}">
+				{% endfor %}
             </div>
             <div class="playerInfo">
         		<p class="playerName">{{ sub.player.get_name }}</p>

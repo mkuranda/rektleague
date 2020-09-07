@@ -5,37 +5,6 @@
 
 {% block head %}
 <link rel="stylesheet" href="{% static 'stats/css/profile.css' %}">
-<script type="text/javascript"><!--
-function unHideUsernameForm()
-{
-	document.getElementById("usernameForm").style.display = "block";
-	document.getElementById("unHideUsernameButton").style.display = "none";
-}
-function unHidePasswordForm()
-{
-	document.getElementById("passwordForm").style.display = "block";
-	document.getElementById("unHidePasswordButton").style.display = "none";
-}
-function unHideEmailForm()
-{
-	document.getElementById("emailForm").style.display = "block";
-	document.getElementById("unHideEmailButton").style.display = "none";
-}
-
-{% for account in accounts %}
-function unHideAccountForm{{ account.id }}()
-{
-	document.getElementById("accountForm{{ account.id }}").style.display = "block";
-	document.getElementById("editButton{{ account.id }}").style.display = "none";
-}
-{% endfor %}
-function unHideAddAccount()
-{
-	document.getElementById("addAccountForm").style.display = "block";
-	document.getElementById("unhideAddAccountButton").style.display = "none";
-}
-</script>
-
 {% endblock %}
 
 {% block content %}
@@ -48,76 +17,49 @@ function unHideAddAccount()
 {{ editForms.0.account_name.errors }}
 {{ addAccountForm.account_name.errors.0 }}
 
+{% if preseasonPlayer %}
+<section class="profileHeader" style="background-image: url('{{ preseasonPlayer.team.media.banner.url }}'); background-size: cover;">
+{% else %}
 <section class="profileHeader">
-  <img class="playerPhoto" src="/media/stats/player_photos/audulma.png">
-  <h2>Audulma</h2>
-  <h3>SCUTTLE CRAB</h3>
+{% endif %}
+{% if player and player.photo %}
+  <img class="playerPhoto" src="{{ player.photo.url }}">
+{% else %}
+  <img class="playerPhoto" src="/static/stats/player-photos/missing.png">
+{% endif %}
+  <h2>{{ accounts.first.name }}</h2>
+  {% if preseasonPlayer %}
+  <h3>{{ preseasonPlayer.team.media.name }}</h3>
+  {% endif %}
 </section>
 
 <div class="tab">
   <button class="tablinks" onclick="openCity(event, 'profileTab')" id="defaultOpen">PROFILE</button>
   <button class="tablinks" onclick="openCity(event, 'seasonTab')">MY SEASON</button>
   <button class="tablinks" onclick="openCity(event, 'accountTab')">ACCOUNT</button>
+  {% if user.is_staff %}
+  <button class="tablinks" onclick="openCity(event, 'adminTab')">ADMIN</button>
+  {% endif %}
 </div>
 
 <div id="profileTab" class="tabcontent">
   <div class="profileContainerAccount">
-  <h4>ACCOUNTS</h4>  
+  <h4>SUMMONER NAMES</h4>  
   {% for account, removeForm, editForm, setMainForm in accountForms %}
   <h1 style="color: white">{{ account.name }}{% if account.isMain %}<i class="fas fa-crown"></i>{% endif %}</h1>
   <div class="playerActionsBar">
-    <i id="editButton{{ account.id }}" onclick="unHideAccountForm{{ account.id }}()" class="fas fa-user-edit editButton"></i>
-    <i id="removeButton" class="fas fa-user-minus"></i>
-    <i id="setMainButton" class="fas fa-chevron-up"></i>
-  </div>
-  {% if not account.isMain %} 
-  <form id="removeAccountForm" method="POST" class="form-group">
-    {% csrf_token %}
-      <div style="display: none">
-        {{ removeForm.account_id }}
-      </div>
-  <!-- <i id="myBtn" class="fas fa-user-minus"></i> -->
-  </form>
-  <form id="setMainForm" method="POST" class="form-group">
-    {% csrf_token %}
-      <div style="display: none">
-        {{ setMainForm.account_id }}
-      </div>
-      <button class="btn btn-primary spacer" name="submitSetMain{{ account.id }}" type="submit">Set Main</button>
-  </form>
-  {% endif %}
-  
-  <div id="accountForm{{ account.id }}" style="display: none">
-  <form id="editAccountForm" method="POST" class="form-group">
-    {% csrf_token %}
-      <div class="form-group spacer">
-        <label for="account_name">Account Name</label>
-        {{ editForm.account_name }}
-      </div>
-      <div style="display: none">
-        {{ editForm.account_id }}
-      </div>
-      <button class="btn btn-primary spacer" name="submitEdit{{ account.id }}" type="submit">Save</button>
-  </form>
-  
+    <i id="editButton{{ account.id }}" onclick="$('#editModal{{ account.id }}').modal();" class="fas fa-user-edit editButton"></i>
+		  
+	{% if not account.isMain %}
+	<i id="removeButton{{ account.id }}" onclick="$('#removeModal{{ account.id }}').modal();" class="fas fa-user-minus"></i>
+	<i id="setMainButton{{ account.id }}" onclick="$('#setMainModal{{ account.id }}').modal();" class="fas fa-chevron-up"></i>
+	{% endif %}
   </div>
   {% endfor %}
-  
-  <div id="unhideAddAccountButton">
-    <i id="addButton" class="fas fa-user-plus" onclick="unHideAddAccount()"></i>
-  </div>
-  
-  <form id="addAccountForm" method="POST" class="form-group" style="display: none">
-    {% csrf_token %}
-      <div class="form-group spacer">
-        <label for="account_name">Account Name</label>
-        {{ addAccountForm.account_name }}
-      </div>
-      <button class="btn btn-primary spacer" name="submitAdd" type="submit">Add Account</button>
-  </form>
+  <i id="addButton" onclick="$('#addModal').modal();" class="fas fa-user-plus"></i>
   <div style="color: white">
   {% for invite in invites %}
-  <p>You are invited to join <a href="/stats/season/{{ invite.team.season.id }}/team/{{ invite.team.id }}/">SEASON {{ invite.team.season.id }} {{ invite.team.media.name }}</a> ({{ invite.role.name }}) <a href="/join-team/{{ invite.team.id }}/">Accept</a></p>
+  <p>You are invited to join <a href="/stats/season/{{ invite.team.season.id }}/team/{{ invite.team.id }}/">SEASON {{ invite.team.season.id }} {{ invite.team.media.name }}</a> ({{ invite.role.name }}) <a href="/join-team/{{ invite.team.id }}/{{ invite.role.id }}/">Accept</a></p>
   {% endfor %}
   
   {% for team in teams %}
@@ -129,119 +71,139 @@ function unHideAddAccount()
 <!-- END Profile account container  -->
 </div>
 
+{% for invite in invites %}
 <div class="profileContainerAlerts">
   <h4>ALERTS</h4>  
   <div class="alertContainer">
     <div class="redAccent"></div>
-    <p>You have been invited to play for Infernal as a Top laner. <strong>Accept this offer?</strong></p>
-    <div class="alertConfirm"><i class="fas fa-check"></i></div>
+	<p>You have been invited to {{ invite.team.media.name }} as a {{ invite.role.name }}. <strong>Accept this offer?</strong></p>
+	<div class="alertConfirm"><a href="/join-team/{{ invite.team.id }}/{{ invite.role.id }}/"><i class="fas fa-check"></i></a></div>
     <div class="alertDeny"><i class="fas fa-times"></i></div>
   </div>
 </div>
+{% endfor %}
 
-<div class="profileContainerAlerts">
+<!-- <div class="profileContainerAlerts">
   <div class="alertContainer">
     <div class="redAccent"></div>
     <p class="alertMessage">You haven't signed up for Season 7!</p>
     <div class="alertClose"><i class="fas fa-times"></i></div>
   </div>
-</div>
+</div> -->
 
   <!-- END PROFILE TAB -->
 </div>
 <div id="seasonTab" class="tabcontent">
-  <div class="seasonContainerAlerts">
-    <h4>SEASON 7 NOTIFICATIONS</h4>  
-    <div class="alertContainer">
-      <div class="redAccent"></div>
-      <p>You have been invited to play for Infernal as a Top laner. <strong>Accept this offer?</strong></p>
-      <div class="alertConfirm"><i class="fas fa-check"></i></div>
-      <div class="alertDeny"><i class="fas fa-times"></i></div>
-    </div>
+{% for invite in invites %}
+<div class="profileContainerAlerts">
+  <h4>ALERTS</h4>  
+  <div class="alertContainer">
+    <div class="redAccent"></div>
+	<p>You have been invited to {{ invite.team.media.name }} as a {{ invite.role.name }}. <strong>Accept this offer?</strong></p>
+	<div class="alertConfirm"><a href="/join-team/{{ invite.team.id }}/{{ invite.role.id }}/"><i class="fas fa-check"></i></a></div>
+    <div class="alertDeny"><i class="fas fa-times"></i></div>
+  </div>
+</div>
+{% endfor %}
 
-    <div class="alertContainer">
+<!--    <div class="alertContainer">
       <div class="redAccent"></div>
       <p class="alertMessage">You haven't signed up for Season 7!</p>
       <div class="alertClose"><i class="fas fa-times"></i></div>
     </div>
-  </div>
+</div> -->
   
 
-  <div class="seasonContainerInfo">
+<div class="seasonContainerInfo">
+{% if preseasonPlayer %}
     <h4>MY TEAM</h4> 
-    <p>You are currently the Top laner for Scuttle Crab! For more information click here.</p>
-    <button class="btn btn-primary spacer">SCUTTLE</button>
+	<p>You are currently the {{ preseasonPlayer.role.name }} for {{ preseasonPlayer.team.media.name }}! For more information click here.</p>
+	<a href="/season/{{ season.id }}/team/{{ preseasonPlayer.team.id }}/"><button class="btn btn-primary spacer">{{ preseasonPlayer.team.media.name }}</button></a>
+	<button class="btn btn-primary spacer" onclick="$('#leaveTeamModal').modal();">LEAVE TEAM</button>
+	{% endif %}
+	{% if seasonPlayer %}
     <h4>MY SIGN UP</h4>
-    <p>You are currently signed up as a BAD JUNGLER. Need to do a role swap? Resubmit your sign up here.</p>
-    <button class="btn btn-primary spacer">RESUBMIT</button>
+	<p>Your main role is {{ seasonPlayer.get_main_role.role.name }}.</p>
+	{% if seasonPlayer.get_off_roles.count == 1 %}
+	<p>Your off role is {{ seasonPlayer.get_off_roles.first.role.name }}.</p>
+	{% else %}
+	<p>Your off roles are {% for role in seasonPlayer.get_off_roles %}{% if forloop.counter < seasonPlayer.get_off_roles.count %}{{ role.role.name }}, {% else %} and {{ role.role.name }}{% endif %}{% endfor %}.</p>
+	{% endif %}
+	{% if seasonPlayer.main_roster and seasonPlayer.substitute %}
+	<p>You are willing to play either on a Main Roster or as a Substitute.</p>
+	{% elif seasonPlayer.main_roster %}
+	<p>You are only willing to play on a Main Roster.</p>
+	{% elif seasonPlayer.substitute %}
+	<p>You are only willing to play as a Substitute.</p>
+	{% endif %}
+    <p>Does this look wrong? Resubmit your sign up here.</p>
+	<a href="/season/{{ season.id }}/sign-up"><button class="btn btn-primary spacer">RESUBMIT</button></a>
 
     <p>Don't want to play in Season 7? Delete your sign up here.</p>
-    <button class="btn btn-primary spacer">DELETE SIGN UP</button>
-  </div>
-  <!-- MATT TOGGLE BETWEEN THESE TWO SECTIONS -->
+	<a href="/season/{{ season.id }}/remove-sign-up"><button class="btn btn-primary spacer">DELETE SIGN UP</button></a>
+	<h4>ELO</h4>
+	{% if seasonPlayer.get_elo_value == 100 %}
+	<p>Your elo has not yet been confirmed. Check back later.</p>
+	{% else %}
+	<p>{{ seasonPlayer.get_elo_value }}</p>
+	{% endif %}
+{% else %}
   <div class="seasonContainerInfo">
     <h4>SIGN UP</h4> 
     <p>You are not signed up for Season 7. Don't be a square, get in there!</p>
-    <button class="btn btn-primary spacer">SIGN UP</button>
+	<a href="/season/{{ season.id }}/sign-up/"><button class="btn btn-primary spacer">SIGN UP</button></a>
   </div>
-
+{% endif %}
+</div>
 </div>
 
 <!-- END Season TAB -->
 
 <div id="accountTab" class="tabcontent">
-  <h4>ACCOUNT NAME</h4> 
+  <h4>USERNAME</h4> 
   <h1 style="color: white">{{ user.username }}</h1>
-  <button id="editAccountNameButton" class="btn btn-primary spacer" id="editUsername" onclick="unHideUsernameForm()">Edit</button>
-  <div id="usernameForm" style="display: none">
-  <form id="editUsernameForm" method="POST" class="form-group">
-    {% csrf_token %}
-      <div class="form-group spacer">
-        <label for="username">New Username</label>
-        {{ usernameForm.username }}
-      </div>
-      <button class="btn btn-primary spacer" name="submitUsername" type="submit">Save</button>
-  </form>
-
-  </div>
+  <button id="editAccountNameButton" class="btn btn-primary spacer" onclick="$('#editUsernameModal').modal();"  id="editUsername">Edit</button>
   <h4>PASSWORD</h4> 
-  <button id="editPasswordButton" class="btn btn-primary spacer" id="editEmail" onclick="unHidePasswordForm()">Change Password</button>
-  <div id="passwordForm" style="display: none">
-  <form id="editPasswordForm" method="POST" class="form-group">
-    {% csrf_token %}
-      <div class="form-group spacer">
-        <label for="password">New Password</label>
-        {{ passwordForm.password1 }}
-      </div>
-      <div class="form-group spacer">
-        <label for="password2">Confirm Password</label>
-        {{ passwordForm.password2 }}
-      </div>
-
-      <button class="btn btn-primary spacer" name="submitPassword" type="submit">Save</button>
-  </form>
-  </div>
+  <button id="editPasswordButton" class="btn btn-primary spacer" onclick="$('#editPasswordModal').modal();" id="editEmail">Change Password</button>
   <h4>EMAIL</h4> 
   <h1 style="color: white">{{ user.email }}</h1>
-  <button id="editEmailButton" class="btn btn-primary spacer" id="editEmail" onclick="unHideEmailForm()">Edit</button>
-  <div id="emailForm" style="display: none">
-  <form id="editEmailForm" method="POST" class="form-group">
+  <button id="editEmailButton" class="btn btn-primary spacer" onclick="$('#editEmailModal').modal();" id="editEmail">Edit</button>
+  <!-- END ACCOUNT TAB -->
+</div>
+
+<div id="adminTab" class="tabcontent">
+{% for player, form in confirmEloForms %}
+<div style="color: white">
+<h3>{{ player.name }}</h3>
+<p>
+ACCOUNTS : 
+{% for account in player.accounts %}
+<a href="{{ account.link }}">{{ account.name }}</a>
+{% endfor %}
+</p>
+</div>
+<div id="confirmEloForm{{ player.id }}">
+  <form id="confirmEloForm" method="POST" class="form-group">
     {% csrf_token %}
       <div class="form-group spacer">
-        <label for="email">New Email</label>
-        {{ emailForm.email }}
+        <label for="elo">Elo</label>
+        {{ form.elo }}
       </div>
-      <button class="btn btn-primary spacer" name="submitEmail" type="submit">Save</button>
+      <div style="display: none">
+        {{ form.seasonPlayerId }}
+      </div>
+      <button class="btn btn-primary spacer" name="submitElo{{ player.id }}" type="submit">Save</button>
   </form>
-  </div>
+</div>
 
-  <!-- END ACCOUNT TAB -->
+{% endfor %}
 </div>
 
 <!-- START MODALS -->
 
+{% for account, removeForm, editForm, setMainForm in accountForms %}
 <!-- REMOVE PLAYER MODAL -->
-<div class="modal fade" id="removeModal" role="dialog">
+<div class="modal fade" id="removeModal{{ account.id }}" role="dialog">
     <div class="modal-dialog">
     
       <!-- Modal content-->
@@ -255,9 +217,13 @@ function unHideAddAccount()
         </div>
         <div class="modal-footer">
             <button type="button" class="btn btn-primary spacer" data-dismiss="modal">Nevermind</button>
-
-            <button class="btn btn-primary spacer" name="submitRemove{{ account.id }}" type="submit" data-dismiss="modal">Remove
-              </button>
+			<form id="removeButton{{ account.id }}" method="POST" class="form-group">
+			    {% csrf_token %}
+			      <div style="display: none">
+			        {{ removeForm.account_id }}
+			      </div>
+            <button class="btn btn-primary spacer" name="submitRemove{{ account.id }}" type="submit">Remove</button>
+  			</form>
               
         </div>
       </div>
@@ -267,7 +233,7 @@ function unHideAddAccount()
 </div>
 
 <!-- EDIT PLAYER MODAL -->
-<div class="modal fade" id="editModal" role="dialog">
+<div class="modal fade" id="editModal{{ account.id }}" role="dialog">
   <div class="modal-dialog">
   
     <!-- Modal content-->
@@ -275,19 +241,17 @@ function unHideAddAccount()
       <div class="modal-header" style="padding:10px 50px;">
         <button type="button" class="close" data-dismiss="modal">&times;</button>
         
+        <form id="editAccountForm" method="POST" class="form-group">
       </div>
       <div class="modal-body" style="padding:15px 50px;">
-        <form id="editAccountForm" method="POST" class="form-group">
           {% csrf_token %}
             <div class="form-group spacer">
-              <label for="account_name">Account Name</label>
+              <label for="account_name">New Summoner Name</label>
               {{ editForm.account_name }}
             </div>
             <div style="display: none">
               {{ editForm.account_id }}
             </div>
-            
-        </form>
       </div>
       <div class="modal-footer">
           <button type="button" class="btn btn-primary spacer" data-dismiss="modal">Nevermind</button>
@@ -295,6 +259,7 @@ function unHideAddAccount()
           <button class="btn btn-primary spacer" name="submitEdit{{ account.id }}" type="submit">Save</button>
             
       </div>
+        </form>
     </div>
     
   </div>
@@ -302,7 +267,7 @@ function unHideAddAccount()
 </div>
 
 <!-- SET MAIN PLAYER MODAL -->
-<div class="modal fade" id="setMainModal" role="dialog">
+<div class="modal fade" id="setMainModal{{ account.id }}" role="dialog">
   <div class="modal-dialog">
   
     <!-- Modal content-->
@@ -332,6 +297,7 @@ function unHideAddAccount()
   </div>
 </div> 
 </div>
+{% endfor %}
 
 <!-- ADD PLAYER MODAL -->
 <div class="modal fade" id="addModal" role="dialog">
@@ -343,15 +309,13 @@ function unHideAddAccount()
         <button type="button" class="close" data-dismiss="modal">&times;</button>
         
       </div>
+        <form id="addAccountForm" method="POST" class="form-group">
       <div class="modal-body" style="padding:15px 50px;">
-        Add Account filler
-        <form id="addAccountForm" method="POST" class="form-group" style="display: none">
           {% csrf_token %}
             <div class="form-group spacer">
               <label for="account_name">Account Name</label>
               {{ addAccountForm.account_name }}
             </div>
-        </form>
       </div>
       <div class="modal-footer">
           <button type="button" class="btn btn-primary spacer" data-dismiss="modal">Nevermind</button>
@@ -359,6 +323,7 @@ function unHideAddAccount()
           <button class="btn btn-primary spacer" name="submitAdd" type="submit">Add Account</button>
             
       </div>
+        </form>
     </div>
     
   </div>
@@ -366,7 +331,7 @@ function unHideAddAccount()
 </div>
 
 <!-- EDIT ACCOUNT NAME MODAL -->
-<div class="modal fade" id="editAccountNameModal" role="dialog">
+<div class="modal fade" id="editUsernameModal" role="dialog">
   <div class="modal-dialog">
   
     <!-- Modal content-->
@@ -374,19 +339,20 @@ function unHideAddAccount()
       <div class="modal-header" style="padding:10px 50px;">
         <button type="button" class="close" data-dismiss="modal">&times;</button>
         
+      <form id="editUsernameForm" method="POST" class="form-group">
+        {% csrf_token %}
       </div>
       <div class="modal-body" style="padding:15px 50px;">
-        <p>Update your account name:</p>
+        <label for="username">New Username</label>
+        {{ usernameForm.username }}
         
       </div>
       <div class="modal-footer">
           <button type="button" class="btn btn-primary spacer" data-dismiss="modal">Nevermind</button>
-
-          <button class="btn btn-primary spacer" name="submitAdd" type="submit">Update</button>
-            
+      <button class="btn btn-primary spacer" name="submitUsername" type="submit">Save</button>
+      </form>
       </div>
     </div>
-    
   </div>
 </div> 
 </div>
@@ -400,22 +366,51 @@ function unHideAddAccount()
     <div class="modal-content">
       <div class="modal-header" style="padding:10px 50px;">
         <button type="button" class="close" data-dismiss="modal">&times;</button>
-        
       </div>
+      <form id="editPasswordForm" method="POST" class="form-group">
+        {% csrf_token %}
       <div class="modal-body" style="padding:15px 50px;">
-        <p>Update your password:</p>
+		  <div class="form-group spacer">
+            <label for="password1">New Password</label>
+            {{ passwordForm.password1 }}
+          </div>
+          <div class="form-group spacer">
+            <label for="password2">Confirm Password</label>
+            {{ passwordForm.password2 }}
+          </div>
       </div>
       <div class="modal-footer">
           <button type="button" class="btn btn-primary spacer" data-dismiss="modal">Nevermind</button>
-
-          <button class="btn btn-primary spacer" name="submitAdd" type="submit">Update</button>
-            
+          <button class="btn btn-primary spacer" name="submitPassword" type="submit">Save</button>
       </div>
+	  </form>
     </div>
     
   </div>
 </div> 
 </div>
+
+{% if preseasonPlayer %}
+<!-- LEAVE TEAM MODAL -->
+<div class="modal fade" id="leaveTeamModal" role="dialog">
+  <div class="modal-dialog">
+  
+    <!-- Modal content-->
+    <div class="modal-content">
+      <div class="modal-header" style="padding:10px 50px;">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+      </div>
+      <div class="modal-body" style="padding:15px 50px;">
+		  <p>Are you sure you want to leave {{ preseasonPlayer.team.media.name }}?</p>
+      </div>
+          <button type="button" class="btn btn-primary spacer" data-dismiss="modal">Nevermind</button>
+		  <a href="/leave-team/{{ preseasonPlayer.team.id }}/"><button class="btn btn-primary spacer" type="submit">Leave {{ preseasonPlayer.team.media.name }}</button></a>
+    </div>
+    
+  </div>
+</div> 
+</div>
+{% endif %}
 
 <!-- EDIT EMAIL MODAL -->
 <div class="modal fade" id="editEmailModal" role="dialog">
@@ -427,13 +422,15 @@ function unHideAddAccount()
         <button type="button" class="close" data-dismiss="modal">&times;</button>
         
       </div>
+      <form id="editEmailForm" method="POST" class="form-group">
+        {% csrf_token %}
       <div class="modal-body" style="padding:15px 50px;">
-        <p>Update youremail:</p>
+        <label for="email">New Email</label>
+        {{ emailForm.email }}
       </div>
       <div class="modal-footer">
           <button type="button" class="btn btn-primary spacer" data-dismiss="modal">Nevermind</button>
-
-          <button class="btn btn-primary spacer" name="submitAdd" type="submit">Update</button>
+          <button class="btn btn-primary spacer" name="submitEmail" type="submit">Save</button>
             
       </div>
     </div>
@@ -442,63 +439,6 @@ function unHideAddAccount()
 </div> 
 </div>
  
-<script>
-$(document).ready(function(){
-  $("#removeButton").click(function(){
-    $("#removeModal").modal();
-  });
-});
-</script>
-
-<script>
-  $(document).ready(function(){
-    $(".editButton").click(function(){
-      $("#editModal").modal();
-    });
-  });
-  </script>
-
-<script>
-  $(document).ready(function(){
-    $("#setMainButton").click(function(){
-      $("#setMainModal").modal();
-    });
-  });
-  </script>
-
-<script>
-  $(document).ready(function(){
-    $("#addButton").click(function(){
-      $("#addModal").modal();
-    });
-  });
-  </script>
-
-<script>
-  $(document).ready(function(){
-    $("#editAccountNameButton").click(function(){
-      $("#editAccountNameModal").modal();
-    });
-  });
-  </script>
-
-<script>
-  $(document).ready(function(){
-    $("#editPasswordButton").click(function(){
-      $("#editPasswordModal").modal();
-    });
-  });
-  </script>
-
-<script>
-  $(document).ready(function(){
-    $("#editEmailButton").click(function(){
-      $("#editEmailModal").modal();
-    });
-  });
-  </script>
-<!-- END REMOVE PLAYER MODAL -->
-
 <script>
   function openCity(evt, cityName) {
     var i, tabcontent, tablinks;
@@ -521,7 +461,7 @@ $(document).ready(function(){
 
 
 
-
+<!--
 {% if seasonPlayer %}
 <h2 style="color: white">You are currently signed up for Season {{ seasonPlayer.season.id }} as</h2>
 {% if seasonPlayer.main_roster %}
@@ -538,6 +478,7 @@ $(document).ready(function(){
 {% else %}
 <h2 style="color: white">You are not signed up for Season {{ season.id }}! <a href="/season/{{ season.id }}/sign-up">SIGN UP</a></h2>
 {% endif %}
+-->
 
 {% else %}
 
