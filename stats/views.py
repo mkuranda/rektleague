@@ -10,7 +10,7 @@ from django.conf import settings
 from riot_request import RiotRequester
 from .models import Player, TeamPlayer, Team, Season, Champion, Match, Week, Series, SeriesTeam, TeamMatch, SeasonChampion, PlayerMatch, Role, TeamRole, SeriesPlayer, Summoner, UserAccount, TeamInvite
 from .models import SeasonPlayer, SeasonPlayerRole, PreseasonTeamPlayer
-from .forms import TournamentCodeForm, InitializeMatchForm, CreateRosterForm, LoginForm, EditProfileForm, RegisterForm, AddAccountForm, EditAccountForm, RemoveAccountForm, SetMainForm, UpdateUsernameForm, UpdatePasswordForm, UpdateEmailForm, SeasonSignupForm
+from .forms import TournamentCodeForm, InitializeMatchForm, CreateRosterForm, LoginForm, EditProfileForm, RegisterForm, AddAccountForm, EditAccountForm, RemoveAccountForm, SetMainForm, UpdateUsernameForm, UpdatePasswordForm, UpdateEmailForm, SeasonSignupForm, ConfirmEloForm
 from get_riot_object import ObjectNotFound, get_item, get_champions, get_champion, get_match, get_all_items, get_match_timeline, update_playermatchkills, update_team_timelines, update_season_timelines, update_team_player_timelines
 from datetime import datetime
 from django.views.decorators.csrf import csrf_exempt
@@ -39,7 +39,6 @@ def register(request):
 
 def remove_season_signup(request, season_id):
     season = get_object_or_404(Season, id=season_id)
-    player = get_object_or_404(Player, user=request.user)
     seasonPlayer = get_object_or_404(SeasonPlayer, user=request.user, season=season)
     seasonPlayer.delete()
     SeasonPlayerRole.objects.filter(user=request.user, season=season).delete()
@@ -101,6 +100,14 @@ def team_manager(request):
     user = request.user
     seasonPlayers = SeasonPlayer.objects.filter(season=latest_season)
     teams = user.team_set.filter(season=latest_season)
+    teamReps = []
+    for team in teams:
+        if team.user != user:
+            teamReps.append(team.user)
+    unconfirmedPlayers = []
+    for seasonPlayer in seasonPlayers:
+        if seasonPlayer.elo_value == 100:
+            unconfirmedPlayers.append(seasonPlayer.user)
     myPlayers = []
     myInvites = []
     team = None
@@ -114,9 +121,15 @@ def team_manager(request):
     for role in roles:
         players = []
         if role.isFill:
-            players = SeasonPlayer.objects.filter(season=latest_season, substitute=True).exclude(id__in=playersOnTeams)
+            players = SeasonPlayer.objects.filter(season=latest_season, substitute=True).exclude(id__in=playersOnTeams).exclude(user__in=teamReps).exclude(user__in=unconfirmedPlayers)
         else:
-            playerRoles = SeasonPlayerRole.objects.filter(season=latest_season, role=role).exclude(id__in=playersOnTeams)
+            playerRoles = SeasonPlayerRole.objects.filter(season=latest_season, role=role).exclude(id__in=playersOnTeams).exclude(user__in=teamReps).exclude(user__in=unconfirmedPlayers)
+            myCurrentPlayer = myPlayers.filter(role=role)
+            if myCurrentPlayer:
+                playerRoles = playerRoles.exclude(Q(user=myCurrentPlayer[0].user) & Q(role=myCurrentPlayer[0].role)).exclude(user__in=teamReps).exclude(user__in=unconfirmedPlayers)
+            myCurrentInvite = myInvites.filter(role=role)
+            if myCurrentInvite:
+                playerRoles = playerRoles.exclude(Q(user=myCurrentInvite[0].user) & Q(role=myCurrentInvite[0].role)).exclude(user__in=teamReps).exclude(user__in=unconfirmedPlayers)
             for playerRole in playerRoles:
                 players.append(playerRole.get_season_player())
         myPlayer = PreseasonTeamPlayer.objects.filter(team=team, role=role)
@@ -187,7 +200,7 @@ def getTeamChanges(role, team, invites, inviteRemoves, removes, player_id):
                     })
     elif current_invite:
         current_invite = current_invite[0]
-        if player_id == current_invite.user.id:
+        if player_id != current_invite.user.id:
             inviteRemoves.append({
                 'name': current_invite.get_name(),
                 'role': role.name,
@@ -205,6 +218,7 @@ def getTeamChanges(role, team, invites, inviteRemoves, removes, player_id):
             'role': role.name,
             'id': player_id
             })
+
     return
 
 def getSubTeamChanges(team, invites, inviteRemoves, removes, sub1_id, sub2_id, sub3_id):
@@ -263,8 +277,12 @@ def send_team_invites(request, top_id, jun_id, mid_id, bot_id, sup_id, sub1_id, 
     for invite in invites:
         player = SeasonPlayer.objects.get(id=invite['id'])
         role = Role.objects.get(name=invite['role'])
-        newInvite = TeamInvite.objects.create(user=player.user, team=team, role=role)
-        newInvite.save()
+        if player.user == request.user:
+            newPlayer = PreseasonTeamPlayer.objects.create(user=player.user, team=team, role=role)
+            newPlayer.save()
+        else:
+            newInvite = TeamInvite.objects.create(user=player.user, team=team, role=role)
+            newInvite.save()
 
     return redirect('/team-manager/')
 
@@ -296,16 +314,13 @@ def team_invite(request, top_id, jun_id, mid_id, bot_id, sup_id, sub1_id, sub2_i
     }
     return render(request, 'stats/team-invite-confirm.html', context)
 
-def leave_preseason_team(request, team_id):
-    team = get_object_or_404(Team, id=team_id)
-    if not team.season.isActive:
-        return redirect("/profile/")
-    PreseasonTeamPlayer.objects.get(team=team, user=request.user)
-    return redirect("/profile/")
-
 def leave_team(request, team_id):
-    player = get_object_or_404(Player, user=request.user)
     team = get_object_or_404(Team, id=team_id)
+    if team.season.isPreseason:
+        preseasonTeamPlayer = get_object_or_404(PreseasonTeamPlayer, user=request.user, team=team)
+        preseasonTeamPlayer.delete()
+        return redirect("/profile/")
+    player = get_object_or_404(Player, user=request.user)
     if not team.season.isActive:
         return redirect("/profile/")
     team_players = TeamPlayer.objects.filter(team=team, player=player)
@@ -322,8 +337,57 @@ def join_team(request, team_id, role_id):
         return redirect("/profile/")
     preseasonPlayer = PreseasonTeamPlayer.objects.create(user=request.user, team=team, role=role)
     preseasonPlayer.save()
-    invite.delete()
+    invites = TeamInvite.objects.filter(user=request.user).delete()
     return redirect("/profile/")
+
+def preseason_detail(request, season_id):
+    seasons = Season.objects.all().order_by('-id')
+    season = get_object_or_404(Season, id=season_id)
+    teams = Team.objects.filter(season=season)
+    roles = Role.objects.all()
+    teamData = []
+    for team in teams:
+        teamData.append({
+            'team': team,
+            'roles': []
+            })
+        for role in roles:
+            if not role.isFill:
+               player = PreseasonTeamPlayer.objects.filter(team=team, role=role)
+               if player:
+                   player = player[0]
+                   teamData[-1]['roles'].append({
+                       'role': role,
+                       'player': player
+                       })
+               else:
+                   teamData[-1]['roles'].append({
+                       'role': role,
+                       'player': None
+                       })
+            else:
+                subs = PreseasonTeamPlayer.objects.filter(team=team, role__isFill=True)
+                for i in range(0, season.numSubs):
+                    if subs.count() > i:
+                        teamData[-1]['roles'].append({
+                            'role': role,
+                            'player': subs[i]
+                            })
+                    else:
+                        teamData[-1]['roles'].append({
+                            'role': role,
+                            'player': None
+                            })
+    context = {
+        'seasons': seasons,
+        'season': season,
+        'teams': teams,
+        'teamData': teamData,
+        'roles': roles,
+        'subNums': range(0,season.numSubs),
+    }        
+    return render(request, "stats/preseason.html", context)
+
 
 def profile(request):
     seasons = Season.objects.all().order_by('-id')
@@ -331,9 +395,21 @@ def profile(request):
     user = request.user
     accounts = UserAccount.objects.filter(user=request.user.id).order_by('-isMain')
     player = Player.objects.filter(user=user.id)
+    if player:
+        player = player[0]
+    preseasonPlayer = PreseasonTeamPlayer.objects.filter(user=request.user, team__season=latest_season)
+    if preseasonPlayer:
+        preseasonPlayer = preseasonPlayer[0]
     unconfirmedPlayers = []
     if user.is_staff:
-        unconfirmedPlayers = SeasonPlayer.objects.filter(season=latest_season, elo_value=100)
+        unconfirmedSeasonPlayers = SeasonPlayer.objects.filter(season=latest_season, elo_value=100)
+        for unconfirmedSeasonPlayer in unconfirmedSeasonPlayers:
+            accounts = UserAccount.objects.filter(user=unconfirmedSeasonPlayer.user).order_by('-isMain')
+            unconfirmedPlayers.append({
+                'name': unconfirmedSeasonPlayer.get_name(),
+                'id': unconfirmedSeasonPlayer.id,
+                'accounts': accounts,
+                })
     teamInvites = []
     seasonPlayer = []
     seasonPlayerRoles = []
@@ -351,15 +427,19 @@ def profile(request):
     editForms = []
     removeForms = []
     setMainForms = []
+    confirmEloForms = []
     if request.method == 'POST':
         usernameForm = UpdateUsernameForm(request.POST)
         passwordForm = UpdatePasswordForm(request.POST)
         emailForm = UpdateEmailForm(request.POST)
         addForm = AddAccountForm(request.POST)
+        out = passwordForm.is_valid()
         for account in accounts:
             editForms.append(EditAccountForm(request.POST, initial={'account_id': account.id}))
             removeForms.append(RemoveAccountForm(request.POST, initial={'account_id': account.id}))
             setMainForms.append(SetMainForm(request.POST, initial={'account_id': account.id}))
+        for unconfirmedPlayer in unconfirmedPlayers:
+            confirmEloForms.append(ConfirmEloForm(request.POST, initial={'seasonPlayerId': unconfirmedPlayer['id']}))
         if usernameForm.is_valid() and 'submitUsername' in request.POST:
             if usernameForm.cleaned_data['username']:
                 user.username = usernameForm.cleaned_data['username']
@@ -406,6 +486,17 @@ def profile(request):
                 userAccount = UserAccount.objects.get(id=removeForm.cleaned_data['account_id'])
                 userAccount.delete()
                 return redirect('/profile')
+        for confirmEloForm, unconfirmedPlayer in zip(confirmEloForms, unconfirmedPlayers):
+            confirmEloForm.is_valid()
+            expectedSubmit ='submitElo' + str(unconfirmedPlayer['id'])
+            elo = confirmEloForm.cleaned_data['elo']
+            if confirmEloForm.is_valid() and expectedSubmit in request.POST:
+                if confirmEloForm.cleaned_data['elo']:
+                    elo = confirmEloForm.cleaned_data['elo']
+                    seasonPlayer = SeasonPlayer.objects.get(id=confirmEloForm.cleaned_data['seasonPlayerId'])
+                    seasonPlayer.elo_value = elo
+                    seasonPlayer.save()
+                return redirect('/profile')
 
     else:
         usernameForm = UpdateUsernameForm()
@@ -416,13 +507,17 @@ def profile(request):
             editForms.append(EditAccountForm(initial={'account_id': account.id}))
             removeForms.append(RemoveAccountForm(initial={'account_id': account.id}))
             setMainForms.append(SetMainForm(initial={'account_id': account.id}))
+        for unconfirmedPlayer in unconfirmedPlayers:
+            confirmEloForms.append(ConfirmEloForm(initial={'seasonPlayerId': unconfirmedPlayer['id']}))
 
+    confirmEloForms = zip(unconfirmedPlayers, confirmEloForms)
     accountForms = zip(accounts, removeForms, editForms, setMainForms)
     context = {
         'seasons': seasons,
         'season': latest_season,
         'user': user,
         'player': player,
+        'preseasonPlayer': preseasonPlayer,
         'teams': teams,
         'accounts': accounts,
         'usernameForm': usernameForm,
@@ -431,6 +526,7 @@ def profile(request):
         'addAccountForm': addForm,
         'editForms': editForms,
         'accountForms': accountForms,
+        'confirmEloForms': confirmEloForms,
         'invites': teamInvites,
         'seasonPlayer': seasonPlayer,
         'seasonPlayerRoles': seasonPlayerRoles,

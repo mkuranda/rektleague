@@ -856,6 +856,9 @@ class Team(models.Model):
     def get_players(self):
         return TeamPlayer.objects.filter(team=self, role__isFill=True)
 
+    def get_preseason_players(self):
+        return PreseasonTeamPlayer.objects.filter(team=self).order_by('role')
+
     def get_average_match_duration(self):
         return TeamMatch.objects.filter(team=self).aggregate(Avg('match__duration'))['match__duration__avg']
 
@@ -1699,6 +1702,12 @@ class SeasonPlayer(models.Model):
     def get_name(self):
         return UserAccount.objects.get(user=self.user, isMain=True).name
 
+    def get_main_role(self):
+        return SeasonPlayerRole.objects.get(season=self.season, user=self.user, isMain=True)
+
+    def get_off_roles(self):
+        return SeasonPlayerRole.objects.filter(season=self.season, user=self.user, isMain=False)
+
     def get_elo_value(self):
         return self.elo_value
 
@@ -1731,6 +1740,9 @@ class PreseasonTeamPlayer(models.Model):
     def get_season_player(self):
         return SeasonPlayer.objects.get(user=self.user, season=self.team.season)
 
+    def is_rep(self):
+        return self.team.user == self.user
+
     def __str__(self):
         return self.get_name + " - " + self.team + " (" + self.role.name + ")"
 
@@ -1739,5 +1751,9 @@ class UserAccount(models.Model):
     name = models.CharField(max_length=100)
     isMain = models.BooleanField(default=False)
 
+    def link(self):
+        return "https://na.op.gg/summoner/userName=" + self.name.replace(" ", "+")
+
     def __str__(self):
         return self.user.username + ": " + self.name
+
