@@ -116,13 +116,17 @@
   
 
 <div class="seasonContainerInfo">
-{% if preseasonPlayer %}
+    {% if preseasonPlayer %}
     <h4>MY TEAM</h4> 
+	{% if preseasonPlayer.is_rep %}
+	<p>You are the Team Representative for {{ preseasonPlayer.team.media.name }}! Check out the Team Manager here.</p>
+	<a href="/team-manager/"><button class="btn btn-primary spacer">TEAM MANAGER</button></a>
+	{% endif %}
 	<p>You are currently the {{ preseasonPlayer.role.name }} for {{ preseasonPlayer.team.media.name }}! For more information click here.</p>
 	<a href="/season/{{ season.id }}/team/{{ preseasonPlayer.team.id }}/"><button class="btn btn-primary spacer">{{ preseasonPlayer.team.media.name }}</button></a>
 	<button class="btn btn-primary spacer" onclick="$('#leaveTeamModal').modal();">LEAVE TEAM</button>
 	{% endif %}
-	{% if seasonPlayer %}
+	{% if seasonPlayer and not preseasonPlayer %}
     <h4>MY SIGN UP</h4>
 	<p>Your main role is {{ seasonPlayer.get_main_role.role.name }}.</p>
 	{% if seasonPlayer.get_off_roles.count == 1 %}
@@ -148,12 +152,11 @@
 	{% else %}
 	<p>{{ seasonPlayer.get_elo_value }}</p>
 	{% endif %}
-{% else %}
-  <div class="seasonContainerInfo">
+	{% endif %}
+{% if not seasonPlayer %}
     <h4>SIGN UP</h4> 
     <p>You are not signed up for Season 7. Don't be a square, get in there!</p>
 	<a href="/season/{{ season.id }}/sign-up/"><button class="btn btn-primary spacer">SIGN UP</button></a>
-  </div>
 {% endif %}
 </div>
 </div>
@@ -163,7 +166,7 @@
 <div id="accountTab" class="tabcontent">
   <h4>USERNAME</h4> 
   <h1 style="color: white">{{ user.username }}</h1>
-  <button id="editAccountNameButton" class="btn btn-primary spacer" onclick="$('#editUsernameModal').modal();"  id="editUsername">Edit</button>
+  <button id="editAccountNameButton" class="btn btn-primary spacer" onclick="$('#editUsernameModal').modal();" id="editUsername">Edit</button>
   <h4>PASSWORD</h4> 
   <button id="editPasswordButton" class="btn btn-primary spacer" onclick="$('#editPasswordModal').modal();" id="editEmail">Change Password</button>
   <h4>EMAIL</h4> 
@@ -458,28 +461,6 @@ ACCOUNTS :
   // Get the element with id="defaultOpen" and click on it
   document.getElementById("defaultOpen").click();
   </script>
-
-
-
-
-<!--
-{% if seasonPlayer %}
-<h2 style="color: white">You are currently signed up for Season {{ seasonPlayer.season.id }} as</h2>
-{% if seasonPlayer.main_roster %}
-<h4 style="color: white">MAIN ROLE</h4>
-{% endif %}
-{% if seasonPlayer.substitute %}
-<h4 style="color: white">SUBSTITUTE</h4>
-{% endif %}
-{% for seasonPlayerRole in seasonPlayerRoles %} 
-<h3 style="color: white">{{ seasonPlayerRole.role.name }}{% if seasonPlayerRole.isMain %} (Main Role){% endif %}</h3>
-{% endfor %}
-<h2 style="color: white"><a href="/season/{{ season.id }}/sign-up">SIGN UP AGAIN</a></h2>
-<h2 style="color: white"><a href="/season/{{ season.id }}/remove-sign-up">DELETE SIGNUP</a></h2>
-{% else %}
-<h2 style="color: white">You are not signed up for Season {{ season.id }}! <a href="/season/{{ season.id }}/sign-up">SIGN UP</a></h2>
-{% endif %}
--->
 
 {% else %}
 
