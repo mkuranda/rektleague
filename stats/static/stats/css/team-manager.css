@@ -1,9 +1,24 @@
+h1 {
+    color: white;
+    font-size: 4em;
+    text-align: center;
+    font-weight: 900;
+}
+
+h1 + p {
+    color: white;
+    font-size: 1.3em;
+    text-align: center;
+    padding: 2% 22%;
+    margin-top: -21px;
+}
 .teamManagerContainer{
     padding: 0 5%;
     display: flex;
     flex-wrap: wrap;
     flex-direction: row;
     justify-content: space-evenly;
+    width: 100%;
 }
 
 .freeAgentSection{
@@ -232,6 +247,15 @@
     from {opacity: 0;}
     to {opacity: 1;}
   } */
+
+  @media (max-width: 950px){
+  h1 + p {
+    color: white;
+    font-size: 1.3em;
+    text-align: center;
+    padding: 2% 17%;
+}
+}
 
 
   @media (max-width: 450px){
