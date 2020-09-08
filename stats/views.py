@@ -9,7 +9,7 @@ from django.utils.timezone import utc
 from django.conf import settings
 from riot_request import RiotRequester
 from .models import Player, TeamPlayer, Team, Season, Champion, Match, Week, Series, SeriesTeam, TeamMatch, SeasonChampion, PlayerMatch, Role, TeamRole, SeriesPlayer, Summoner, UserAccount, TeamInvite
-from .models import SeasonPlayer, SeasonPlayerRole, PreseasonTeamPlayer
+from .models import SeasonPlayer, SeasonPlayerRole, PreseasonTeamPlayer, InviteResponse
 from .forms import TournamentCodeForm, InitializeMatchForm, CreateRosterForm, LoginForm, EditProfileForm, RegisterForm, AddAccountForm, EditAccountForm, RemoveAccountForm, SetMainForm, UpdateUsernameForm, UpdatePasswordForm, UpdateEmailForm, SeasonSignupForm, ConfirmEloForm
 from get_riot_object import ObjectNotFound, get_item, get_champions, get_champion, get_match, get_all_items, get_match_timeline, update_playermatchkills, update_team_timelines, update_season_timelines, update_team_player_timelines
 from datetime import datetime
@@ -329,6 +329,15 @@ def leave_team(request, team_id):
         team_player.save()
     return redirect("/profile/")
 
+def decline_invite(request, team_id, role_id):
+    team = get_object_or_404(Team, id=team_id)
+    role = get_object_or_404(Role, id=role_id)
+    invite = get_object_or_404(TeamInvite, user=request.user, team=team, role=role)
+    invite.delete()
+    response = InviteResponse.objects.create(user=request.user, team=team, role=role, accepted=False)
+    response.save()
+    return redirect("/profile/")
+
 def join_team(request, team_id, role_id):
     team = get_object_or_404(Team, id=team_id)
     role = get_object_or_404(Role, id=role_id)
@@ -338,6 +347,8 @@ def join_team(request, team_id, role_id):
     preseasonPlayer = PreseasonTeamPlayer.objects.create(user=request.user, team=team, role=role)
     preseasonPlayer.save()
     invites = TeamInvite.objects.filter(user=request.user).delete()
+    response = InviteResponse.objects.create(user=request.user, team=team, role=role, accepted=True)
+    response.save()
     return redirect("/profile/")
 
 def preseason_detail(request, season_id):
@@ -393,13 +404,19 @@ def profile(request):
     seasons = Season.objects.all().order_by('-id')
     latest_season = Season.objects.latest('id')
     user = request.user
+    if not user:
+        return redirect('/register')
+    teamInviteResponses = []
     accounts = UserAccount.objects.filter(user=request.user.id).order_by('-isMain')
     player = Player.objects.filter(user=user.id)
     if player:
         player = player[0]
-    preseasonPlayer = PreseasonTeamPlayer.objects.filter(user=request.user, team__season=latest_season)
+    preseasonPlayer = PreseasonTeamPlayer.objects.filter(user=request.user.id, team__season=latest_season)
     if preseasonPlayer:
         preseasonPlayer = preseasonPlayer[0]
+        if preseasonPlayer.is_rep():
+            repTeam = Team.objects.get(user=request.user.id)
+            teamInviteResponses = InviteResponse.objects.filter(team=repTeam)
     unconfirmedPlayers = []
     if user.is_staff:
         unconfirmedSeasonPlayers = SeasonPlayer.objects.filter(season=latest_season, elo_value=100)
@@ -413,11 +430,11 @@ def profile(request):
     teamInvites = []
     seasonPlayer = []
     seasonPlayerRoles = []
-    teamInvites = TeamInvite.objects.filter(user=user)
-    seasonPlayer = SeasonPlayer.objects.filter(season=latest_season, user=user)
+    teamInvites = TeamInvite.objects.filter(user=user.id)
+    seasonPlayer = SeasonPlayer.objects.filter(season=latest_season, user=user.id)
     if seasonPlayer:
         seasonPlayer = seasonPlayer[0]
-    seasonPlayerRoles = SeasonPlayerRole.objects.filter(season=latest_season, user=user)
+    seasonPlayerRoles = SeasonPlayerRole.objects.filter(season=latest_season, user=user.id)
     teams = []
     team_players = []
     if player:
@@ -531,8 +548,15 @@ def profile(request):
         'seasonPlayer': seasonPlayer,
         'seasonPlayerRoles': seasonPlayerRoles,
         'unconfirmedPlayers': unconfirmedPlayers,
+        'teamInviteResponses': teamInviteResponses,
     }
     return render(request, 'stats/profile.html', context)
+
+def read_response(request, response_id):
+    response = get_object_or_404(InviteResponse, id=response_id)
+    if response.team.user == request.user:
+        response.delete()
+    return redirect("/profile/")
 
 def valorant_signup(request):
     seasons = Season.objects.all().order_by('-id')
@@ -664,16 +688,13 @@ def faq(request):
     return render(request, 'stats/faq.html', context)
 
 def season_detail(request, season_id):
+    seasons = Season.objects.all().order_by('-id')
     latest_season = Season.objects.latest('id')
     season = get_object_or_404(Season, id=season_id)
-    teams = Team.objects.filter(season=season_id)
-    sorted_teams = sorted(teams, key= lambda t: t.get_sort_record())
-    next_week = season.next_week()
     context = {
+        'seasons': seasons,
         'latest_season': latest_season,
         'season': season,
-        'sorted_teams': sorted_teams,
-        'next_week': next_week
     }
     return render(request, 'stats/season.html', context)
 

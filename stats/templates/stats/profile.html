@@ -58,31 +58,42 @@
   </div>
   {% endfor %}
   <div><i id="addButton" onclick="$('#addModal').modal();" class="fas fa-user-plus"></i><span onclick="$('#addModal').modal();" class="addAccountLabel">ADD ACCOUNT</span></div>
-  <div style="color: white">
-  {% for invite in invites %}
-  <p>You are invited to join <a href="/stats/season/{{ invite.team.season.id }}/team/{{ invite.team.id }}/">SEASON {{ invite.team.season.id }} {{ invite.team.media.name }}</a> ({{ invite.role.name }}) <a href="/join-team/{{ invite.team.id }}/{{ invite.role.id }}/">Accept</a></p>
-  {% endfor %}
-  
-  {% for team in teams %}
-  {% if team.season.isActive %}
-  <p>You are a member of <a href="/stats/season/{{ team.season.id }}/team/{{ team.id }}/">{{ team.media.name }} - {{ team.season }}</a> <a href="/leave-team/{{ team.id }}/">Leave Team</a></p>
-  {% endif %}
-  {% endfor %}
-  </div>
 <!-- END Profile account container  -->
 </div>
 
-{% for invite in invites %}
+{% if teamInviteResponses or invites %}
 <div class="profileContainerAlerts">
   <h4>ALERTS</h4>  
+{% endif %}
+
+{% for response in teamInviteResponses %}
+{% if response.accepted %}
+  <div class="alertContainer">
+      <div class="redAccent"></div>
+      <p class="alertMessage">{{ response.get_season_player.get_name }} has joined {{ response.team.media.name }} as a {{ response.role.name }}!</p>
+      <div class="alertClose"><a href="/read-response/{{ response.id }}/"><i class="fas fa-times"></i></a></div>
+  </div>
+{% else %}
+  <div class="alertContainer">
+      <div class="redAccent"></div>
+      <p class="alertMessage">{{ response.get_season_player.get_name }} has declined your offer to play as a {{ response.role.name }} for {{ response.team.media.name }}.</p>
+      <div class="alertClose"><a href="/read-response/{{ response.id }}/"><i class="fas fa-times"></i></a></div>
+  </div>
+{% endif %}
+{% endfor %}
+
+{% for invite in invites %}
   <div class="alertContainer">
     <div class="redAccent"></div>
-	<p>You have been invited to {{ invite.team.media.name }} as a {{ invite.role.name }}. <strong>Accept this offer?</strong></p>
-	<div class="alertConfirm"><a href="/join-team/{{ invite.team.id }}/{{ invite.role.id }}/"><i class="fas fa-check"></i></a></div>
-    <div class="alertDeny"><i class="fas fa-times"></i></div>
+        <p>You have been invited to {{ invite.team.media.name }} as a {{ invite.role.name }}. <strong>Accept this offer?</strong></p>
+        <div class="alertConfirm"><a href="/join-team/{{ invite.team.id }}/{{ invite.role.id }}/"><i class="fas fa-check"></i></a></div>
+        <div class="alertDeny"><a href="/decline-invite/{{ invite.team.id }}/{{ invite.role.id }}/"><i class="fas fa-times"></i></a></div>
   </div>
-</div>
 {% endfor %}
+
+{% if teamInviteResponses or invites %}
+</div>
+{% endif %}
 
 <!-- <div class="profileContainerAlerts">
   <div class="alertContainer">

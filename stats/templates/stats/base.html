@@ -77,19 +77,11 @@
                               </li>          
                               <li><a target="_blank" href="https://docs.google.com/document/d/1CXoNUVz3K5vAqq_qPV36BGLRZEKzaxmvD79JkOJtq3g/edit#heading=h.mfjb9322hbzf">RULES</a></li>
                               <li><a href="/merch/">MERCH</a></li>
-			      <li> 
-                                <!-- First Tier Drop Down -->
-                                <label for="drop-3" class="toggle">SIGN UP</label>
-				<a href="/valorant-signup/">SIGN UP</span></a>
-                                <input type="checkbox" id="drop-3"/>
-                                <ul>
-				<li><a href="/valorant-signup/">VALORANT</a></li>
-                                </ul>
-                              </li>          
 
 			      {% if request.user.is_authenticated %}
                               <li class="signinFloat"><a href="/logout/">SIGN OUT</a></li>
 			      {% else %}
+                              <li><a href="/register/">SIGN UP</a></li>
                               <li class="signinFloat"><a href="/signin/">SIGN IN</a></li>
 			      {% endif %}
                             </ul>
