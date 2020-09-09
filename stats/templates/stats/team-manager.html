@@ -226,6 +226,7 @@ $(document).on( "click",".invitePlayers", function() {
 </script>
 
 
+
 {% endblock %}
 
 {% block content %}
@@ -292,13 +293,13 @@ $(document).on( "click",".invitePlayers", function() {
 	<div id="my{{ role.name }}" class="emptyPlayer">
 	{% if role.myPlayer %}
 	{% if role.myPlayer.get_elo_value < -3 %}
-        <div class="playerCard silverCard">
+        <div class="playerCard silverCard" data-toggle="popover" data-trigger="hover" data-content="Accepted team invite!">
 	{% elif role.myPlayer.get_elo_value < 1 %}
-        <div class="playerCard goldCard">
+        <div class="playerCard goldCard" data-toggle="popover" data-trigger="hover" data-content="Accepted team invite!">
 	{% elif role.myPlayer.get_elo_value < 5 %}
-        <div class="playerCard platCard">
+        <div class="playerCard platCard" data-toggle="popover" data-trigger="hover" data-content="Accepted team invite!">
 	{% else %}
-        <div class="playerCard diamondCard">
+        <div class="playerCard diamondCard" data-toggle="popover" data-trigger="hover" data-content="Accepted team invite!">
 	{% endif %}
             <div class="playerPhoto">
 				<i id='remove{{ role.name }}' class='fas fa-minus-square'></i>
@@ -312,13 +313,13 @@ $(document).on( "click",".invitePlayers", function() {
         </div>
 	{% elif role.myInvite %}
 	{% if role.myInvite.get_elo_value < -3 %}
-        <div class="playerCard silverCard">
+        <div class="playerCard silverCard" data-toggle="popover" data-trigger="hover" data-content="Response pending">
 	{% elif role.myInvite.get_elo_value < 1 %}
-        <div class="playerCard goldCard">
+        <div class="playerCard goldCard" data-toggle="popover" data-trigger="hover" data-content="Response pending">
 	{% elif role.myInvite.get_elo_value < 5 %}
-        <div class="playerCard platCard">
+        <div class="playerCard platCard" data-toggle="popover" data-trigger="hover" data-content="Response pending">
 	{% else %}
-        <div class="playerCard diamondCard">
+        <div class="playerCard diamondCard" data-toggle="popover" data-trigger="hover" data-content="Response pending">
 	{% endif %}
             <div class="playerPhoto">
 				<i id='remove{{ role.name }}' class='fas fa-minus-square'></i>
@@ -337,13 +338,13 @@ $(document).on( "click",".invitePlayers", function() {
 	<div id="my{{ role.name }}{{ forloop.counter0 }}" class="emptyPlayer">
 	{% if sub.invite %}
 	{% if sub.invite.get_elo_value < -3 %}
-        <div class="playerCard silverCard">
+        <div class="playerCard silverCard" data-toggle="popover" data-trigger="hover" data-content="Response pending">
 	{% elif sub.invite.get_elo_value < 1 %}
-        <div class="playerCard goldCard">
+        <div class="playerCard goldCard" data-toggle="popover" data-trigger="hover" data-content="Response pending">
 	{% elif sub.invite.get_elo_value < 5 %}
-        <div class="playerCard platCard">
+        <div class="playerCard platCard" data-toggle="popover" data-trigger="hover" data-content="Response pending">
 	{% else %}
-        <div class="playerCard diamondCard">
+        <div class="playerCard diamondCard" data-toggle="popover" data-trigger="hover" data-content="Response pending">
 	{% endif %}
             <div class="playerPhoto">
 				<i id='remove{{ role.name }}{{ forloop.counter0 }}' class='fas fa-minus-square'></i>
@@ -361,13 +362,13 @@ $(document).on( "click",".invitePlayers", function() {
         </div>
 	{% elif sub.player %}
 	{% if sub.player.get_elo_value < -3 %}
-        <div class="playerCard silverCard">
+        <div class="playerCard silverCard" data-toggle="popover" data-trigger="hover" data-content="Accepted team invite!">
 	{% elif sub.player.get_elo_value < 1 %}
-        <div class="playerCard goldCard">
+        <div class="playerCard goldCard" data-toggle="popover" data-trigger="hover" data-content="Accepted team invite!">
 	{% elif sub.player.get_elo_value < 5 %}
-        <div class="playerCard platCard">
+        <div class="playerCard platCard" data-toggle="popover" data-trigger="hover" data-content="Accepted team invite!">
 	{% else %}
-        <div class="playerCard diamondCard">
+        <div class="playerCard diamondCard" data-toggle="popover" data-trigger="hover" data-content="Accepted team invite!">
 	{% endif %}
             <div class="playerPhoto">
 				<i id='remove{{ role.name }}{{ forloop.counter0 }}' class='fas fa-minus-square'></i>
@@ -396,6 +397,7 @@ $(document).on( "click",".invitePlayers", function() {
 {% else %}
 <!-- Doesn't have permissions for this -->
 {% endif %}
+
 <script>
 function openCity(evt, cityName) {
   var i, tabcontent, tablinks;
@@ -421,14 +423,16 @@ function openCity(evt, cityName) {
 // Get the element with id="defaultOpen" and click on it
 document.getElementById("defaultOpen").click();
 </script>
+
 <script>
     $(document).ready(function(){
         $('[data-toggle="popover"]').popover();   
     });
 	</script>
-	
-<script type="text/javascript" src="{% static 'stats/js/jquery-3.4.1.min.js' %}"></script>
-<script type="text/javascript" src="{% static 'stats/js/slick.js' %}"></script>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
 <script type="text/javascript" src="{% static 'stats/js/popper.min.js' %}"></script>
+<script type="text/javascript" src="{% static 'stats/js/slick.js' %}"></script>
 <script type="text/javascript" src="{% static 'stats/js/team-manager.js' %}"></script>
 {% endblock %}
