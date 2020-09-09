@@ -4,3 +4,4 @@
 *.sw[a-z]
 *.DS_STORE
 db.sqlite3
+db.sqlite3
