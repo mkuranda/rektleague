@@ -18,6 +18,7 @@ urlpatterns = [
     url(r'^schedule/$', views.latest_schedule, name='latest_schedule'),
     url(r'^standings/$', views.latest_standings, name='latest_standings'),
     url(r'^players/$', views.latest_season_players, name='latest_season_players'),
+    url(r'^season/(?P<season_id>[0-9]+)/$', views.season_detail, name='season_detail'),
     url(r'^season/(?P<season_id>[0-9]+)/sign-up/$', views.season_signup, name='season_signup'),
     url(r'^season/(?P<season_id>[0-9]+)/remove-sign-up/$', views.remove_season_signup, name='remove_season_signup'),
     url(r'^season/(?P<season_id>[0-9]+)/schedule/$', views.schedule, name='schedule'),
