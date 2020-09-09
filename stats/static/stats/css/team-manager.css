@@ -63,15 +63,30 @@ h1 + p {
     color: #c1020269;
 }
 
-.role1{
-    
-    grid-row-start: 3;
-    place-self: center;
+.main{
+    grid-column-start: 1;
+    grid-row-start: 4;
+    width: 60px;
 }
 
-.role2{
+.offrole1 {
+    grid-column-start: 1;
     grid-row-start: 4;
-    place-self: center;
+    width: 37px;
+}
+
+.offrole2 {
+    grid-column-start: 1;
+    grid-row-start: 4;
+    width: 37px;
+    margin-left: 40px;
+}
+
+.offrole3 {
+    grid-column-start: 1;
+    grid-row-start: 4;
+    width: 37px;
+    margin-left: 80px;
 }
 
 .playerName{
