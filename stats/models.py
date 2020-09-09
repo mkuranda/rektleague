@@ -614,6 +614,7 @@ class Week(models.Model):
 class Role(models.Model):
     name = models.CharField(max_length=15)
     icon = models.ImageField(upload_to='stats/role/icon', default='')
+    icon_w_name = models.ImageField(upload_to='stats/role/icon', default='')
     isFill = models.BooleanField(default=False)
 
     def __str__(self):
@@ -1757,3 +1758,11 @@ class UserAccount(models.Model):
     def __str__(self):
         return self.user.username + ": " + self.name
 
+class TeamInviteResponse(models.Model):
+    user = models.ForeignKey(User)
+    team = models.ForeignKey(Team)
+    role = models.ForeignKey(Role)
+    accepted = models.BooleanField()
+
+    def get_season_player(self):
+        return SeasonPlayer.objects.get(user=self.user, season=self.team.season)
