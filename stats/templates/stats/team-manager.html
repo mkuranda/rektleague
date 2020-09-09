@@ -263,14 +263,10 @@ $(document).on( "click",".invitePlayers", function() {
             <div class="playerPhoto">
 				<i id="add{{ role.name }}" class="fas fa-plus-square"></i>
 				{% if role.isFill %}
-				{% if offRole.count == 4 %}
-				<img class="main" src="{{ subIcon.url }}">
-				{% else %}
-				<img class="main" src="{{ player.get_main_role.role.icon_w_name.url }}">
+				<img class="playerRole" src="{{ player.get_main_role.role.icon.url }}">
 				{% for offRole in player.get_off_roles %}
-				<img class="offrole{{ forloop.counter }}" src="{{ offRole.role.icon.url }}">
+				<img class="playerRole" src="{{ offRole.role.icon.url }}">
 				{% endfor %}
-				{% endif %}
 				{% endif %}
             </div>
             <div class="playerInfo">
@@ -352,14 +348,10 @@ $(document).on( "click",".invitePlayers", function() {
 	{% endif %}
             <div class="playerPhoto">
 				<i id='remove{{ role.name }}{{ forloop.counter0 }}' class='fas fa-minus-square'></i>
-				{% if sub.invite.get_season_player.get_off_roles.count == 4 %}
-				<img class="main" src="{{ subIcon.url }}">
-				{% else %}
-				<img class="main" src="{{ sub.invite.get_season_player.get_main_role.role.icon_w_name.url }}">
+				<img class="playerRole" src="{{ sub.invite.get_season_player.get_main_role.role.icon.url }}">
 				{% for mainRole in sub.invite.get_season_player.get_off_roles %}
-				<img class="offrole{{ forloop.counter }}" src="{{ mainRole.role.icon.url }}">
+				<img class="playerRole" src="{{ mainRole.role.icon.url }}">
 				{% endfor %}
-				{% endif %}
             </div>
             <div class="playerInfo">
         		<p class="playerName invitedName">{{ sub.invite.get_name }}</p>
@@ -380,14 +372,10 @@ $(document).on( "click",".invitePlayers", function() {
 	{% endif %}
             <div class="playerPhoto">
 				<i id='remove{{ role.name }}{{ forloop.counter0 }}' class='fas fa-minus-square'></i>
-				{% if sub.player.get_season_player.get_off_roles.count == 4 %}
-				<img class="main" src="{{ subIcon.url }}">
-				{% else %}
-				<img class="main" src="{{ sub.player.get_season_player.get_main_role.role.icon_w_name.url }}">
+				<img class="playerRole" src="{{ sub.player.get_season_player.get_main_role.role.icon.url }}">
 				{% for mainRole in sub.player.get_season_player.get_off_roles %}
-				<img class="offrole{{ forloop.counter }}" src="{{ mainRole.role.icon.url }}">
+				<img class="playerRole" src="{{ mainRole.role.icon.url }}">
 				{% endfor %}
-				{% endif %}
             </div>
             <div class="playerInfo">
         		<p class="playerName acceptedInvite">{{ sub.player.get_name }}</p>
