@@ -28,8 +28,27 @@ h1 + p {
     margin: auto;
     width: 304px;
     display: block !important;
-    border: #1c2242 solid 4px;
-    background: linear-gradient(45deg, #1c2242, #175374);
+}
+
+.silverCard {
+    border: #7e7f71 solid 4px;
+    background: linear-gradient(45deg, #5f7276, #3a4849);
+}
+
+.goldCard {
+    border: #a25608 solid 4px;
+    background: linear-gradient(45deg, #563205, #c9872b);
+}
+
+.platCard {
+    border: #578c86 solid 4px;
+    background: linear-gradient(45deg, #578c86, #143634);
+
+}
+
+.diamondCard {
+    border: #3c1ca5 solid 4px;
+    background: linear-gradient(45deg, #5657a9, #3c1ca5);
 }
 
 .playerPhoto{
