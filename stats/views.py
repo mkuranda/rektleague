@@ -153,6 +153,7 @@ def team_manager(request):
                   'name': role.name,
                   'isFill': role.isFill,
                   'icon': role.icon.url,
+                  'icon_w_name': role.icon_w_name.url,
                   'players': players,
                   'myPlayer': myPlayer,
                   'myInvite': myInvite
@@ -176,6 +177,9 @@ def team_manager(request):
                 }
             count = count + 1
 
+    sub = Role.objects.get(isFill=True)
+    subIcon = sub.icon_w_name
+
     context = {
         'seasons': seasons,
         'season': latest_season,
@@ -184,7 +188,8 @@ def team_manager(request):
         'myPlayers': myPlayers,
         'myInvites': myInvites,
         'mySubs': mySubs,
-        'team': team
+        'team': team,
+        'subIcon': 
     }
     return render(request, 'stats/team-manager.html', context)
 

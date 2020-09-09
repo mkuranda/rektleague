@@ -65,8 +65,10 @@ h1 + p {
 
 .main{
     grid-column-start: 1;
-    grid-row-start: 4;
-    width: 60px;
+    grid-row-start: 2;
+    width: 140px;
+    margin-top: 20px;
+    margin-left: 5px;
 }
 
 .offrole1 {
