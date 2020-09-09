@@ -4,29 +4,32 @@
 {% block title %} Rekt League | Season {{ season.id }} Sign Up {% endblock %}
 
 {% block head %}
-
+<link rel="stylesheet" type="text/css" href="{% static 'stats/css/season-signup.css' %}"/>
 {% endblock %}
 
 {% block content %}
+<h1>SEASON {{ season.id }} SIGN UP</h1>
+<p>Welcome to Season {{ season.id }} of The Rekt League! Here all you need to do is select your main role you wish to play, select any other roles you don't mind playing competitively, and whether you are looking for a main role on a team versus a substitute positon. After submitting this you will be added to the free agent database for Team Representatives to view, research, and invite you to their team. Good luck!<br><br><span class="rekt-red">*Note: If you decide you want to change your positions or roster position go to the "My Season" tab in my profile <a href="http://rektleague/profile/" target="_blank">here</a> and click "Resubmit".</span></p>
 
+<div class="teamManagerContainer"></p>
 <form id="seasonSignupForm" method="POST" class="form-group" style="color: white">
 	{% csrf_token %}
     <div class="form-group spacer">
-      <label for="mainRole">MAIN ROLE</label>
+      <label for="mainRole" class="choiceHead">MAIN ROLE</label>
       {{ form.mainRole.errors }}
       {{ form.mainRole }}
     </div>
     <div class="form-group spacer">
-      <label for="offRoles">OFF ROLE(S)</label>
+      <label for="offRoles" class="choiceHead">OFF ROLE(S)</label>
       {{ form.offRoles.errors }}
       {{ form.offRoles }}
     </div>
     <div class="form-group spacer">
-      <label for="rosterPosition">ROSTER POSITION</label>
+      <label for="rosterPosition" class="choiceHead roster">ROSTER POSITION</label>
       {{ form.rosterPosition.errors }}
       {{ form.rosterPosition }}
     </div>
-    <button class="btn btn-primary spacer" name="submitUsername" type="submit">Save</button>
+    <button class="btn btn-primary spacer" name="submitUsername" type="submit">SUBMIT</button>
 </form>
-
+</div>
 {% endblock %}
