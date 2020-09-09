@@ -1745,7 +1745,7 @@ class PreseasonTeamPlayer(models.Model):
         return self.team.user == self.user
 
     def __str__(self):
-        return self.get_name + " - " + self.team + " (" + self.role.name + ")"
+        return self.get_name() + " - " + self.team.media.name + " (" + self.role.name + ")"
 
 class UserAccount(models.Model):
     user = models.ForeignKey(User)

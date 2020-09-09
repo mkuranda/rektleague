@@ -63,28 +63,28 @@ h1 + p {
     color: #c1020269;
 }
 
-.main{
+.freeAgentSection .main{
     grid-column-start: 1;
     grid-row-start: 2;
-    width: 140px;
+    height: 53px;
     margin-top: 20px;
     margin-left: 5px;
 }
 
-.offrole1 {
+.freeAgentSection .offrole1 {
     grid-column-start: 1;
     grid-row-start: 4;
     width: 37px;
 }
 
-.offrole2 {
+.freeAgentSection .offrole2 {
     grid-column-start: 1;
     grid-row-start: 4;
     width: 37px;
     margin-left: 40px;
 }
 
-.offrole3 {
+.freeAgentSection .offrole3 {
     grid-column-start: 1;
     grid-row-start: 4;
     width: 37px;

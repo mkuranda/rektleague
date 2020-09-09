@@ -13,6 +13,7 @@ urlpatterns = [
     url(r'^email-signup/$', views.email_signup, name='email_signup'),
     url(r'^valorant-signup/$', views.valorant_signup, name='valorant_signup'),
     url(r'^valorant-thanks/$', views.valorant_thanks, name='valorant_thanks'),
+    url(r'^rules/$', views.rules, name='rules'),
     url(r'^merch/$', views.merch, name='merch'),
     url(r'^signin/$', views.loginpage, name='loginpage'),
     url(r'^schedule/$', views.latest_schedule, name='latest_schedule'),

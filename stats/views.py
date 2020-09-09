@@ -94,6 +94,16 @@ def season_signup(request, season_id):
     }
     return render(request, 'stats/season-signup.html', context)
 
+def rules(request):
+    seasons = Season.objects.all().order_by('-id')
+    latest_season = Season.objects.latest('id')
+    context = {
+        'seasons': seasons,
+        'season': latest_season
+    }
+    return render(request, 'stats/rules.html', context)
+
+
 def merch(request):
     seasons = Season.objects.all().order_by('-id')
     latest_season = Season.objects.latest('id')
@@ -153,10 +163,10 @@ def team_manager(request):
                   'name': role.name,
                   'isFill': role.isFill,
                   'icon': role.icon.url,
-                  'icon_w_name': role.icon_w_name.url,
                   'players': players,
                   'myPlayer': myPlayer,
-                  'myInvite': myInvite
+                  'myInvite': myInvite,
+                  'icon_w_name': role.icon_w_name.url,
                   })
     mySubInvites = TeamInvite.objects.filter(team=team, role__isFill=True)
     mySubPlayers = PreseasonTeamPlayer.objects.filter(team=team, role__isFill=True)
@@ -177,8 +187,7 @@ def team_manager(request):
                 }
             count = count + 1
 
-    sub = Role.objects.get(isFill=True)
-    subIcon = sub.icon_w_name
+    subRole = Role.objects.get(isFill=True)
 
     context = {
         'seasons': seasons,
@@ -189,7 +198,7 @@ def team_manager(request):
         'myInvites': myInvites,
         'mySubs': mySubs,
         'team': team,
-        'subIcon': subIcon
+        'subRole': subRole
     }
     return render(request, 'stats/team-manager.html', context)
 

@@ -263,10 +263,10 @@ $(document).on( "click",".invitePlayers", function() {
             <div class="playerPhoto">
 				<i id="add{{ role.name }}" class="fas fa-plus-square"></i>
 				{% if role.isFill %}
-				{% if offRole.count == 4 %}
-				<img class="main" src="{{ subIcon.url }}">
-				{% else %}
 				<img class="main" src="{{ player.get_main_role.role.icon_w_name.url }}">
+				{% if player.get_off_roles.count > 3 %}
+				<img class="offrole1" src="{{ subRole.icon.url }}">
+				{% else %}
 				{% for offRole in player.get_off_roles %}
 				<img class="offrole{{ forloop.counter }}" src="{{ offRole.role.icon.url }}">
 				{% endfor %}
@@ -352,10 +352,10 @@ $(document).on( "click",".invitePlayers", function() {
 	{% endif %}
             <div class="playerPhoto">
 				<i id='remove{{ role.name }}{{ forloop.counter0 }}' class='fas fa-minus-square'></i>
-				{% if sub.invite.get_season_player.get_off_roles.count == 4 %}
-				<img class="main" src="{{ subIcon.url }}">
-				{% else %}
 				<img class="main" src="{{ sub.invite.get_season_player.get_main_role.role.icon_w_name.url }}">
+				{% if sub.invite.get_season_player.get_off_roles.count > 3 %}
+				<img class="offrole1" src="{{ subRole.icon.url }}">
+				{% else %}
 				{% for mainRole in sub.invite.get_season_player.get_off_roles %}
 				<img class="offrole{{ forloop.counter }}" src="{{ mainRole.role.icon.url }}">
 				{% endfor %}
@@ -380,10 +380,10 @@ $(document).on( "click",".invitePlayers", function() {
 	{% endif %}
             <div class="playerPhoto">
 				<i id='remove{{ role.name }}{{ forloop.counter0 }}' class='fas fa-minus-square'></i>
-				{% if sub.player.get_season_player.get_off_roles.count == 4 %}
-				<img class="main" src="{{ subIcon.url }}">
-				{% else %}
 				<img class="main" src="{{ sub.player.get_season_player.get_main_role.role.icon_w_name.url }}">
+				{% if sub.player.get_season_player.get_off_roles.count > 3 %}
+				<img class="offrole1" src="{{ subRole.icon.url }}">
+				{% else %}
 				{% for mainRole in sub.player.get_season_player.get_off_roles %}
 				<img class="offrole{{ forloop.counter }}" src="{{ mainRole.role.icon.url }}">
 				{% endfor %}
@@ -442,9 +442,9 @@ document.getElementById("defaultOpen").click();
     });
 	</script>
 
+<script type="text/javascript" src="{% static 'stats/js/jquery-3.4.1.min.js' %}"></script>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
-<script type="text/javascript" src="{% static 'stats/js/popper.min.js' %}"></script>
 <script type="text/javascript" src="{% static 'stats/js/slick.js' %}"></script>
 <script type="text/javascript" src="{% static 'stats/js/team-manager.js' %}"></script>
 {% endblock %}
