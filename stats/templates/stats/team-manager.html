@@ -250,7 +250,15 @@ $(document).on( "click",".invitePlayers", function() {
 		<div class="slider{{ role.name }}">
 		{% for player in role.players %}
         <!-- SLIDE 1 -->
-        <div class="playerCard">
+	{% if player.get_elo_value < -3 %}
+        <div class="playerCard silverCard">
+	{% elif player.get_elo_value < 1 %}
+        <div class="playerCard goldCard">
+	{% elif player.get_elo_value < 5 %}
+        <div class="playerCard platCard">
+	{% else %}
+        <div class="playerCard diamondCard">
+	{% endif %}
             <div class="playerPhoto">
 				<i id="add{{ role.name }}" class="fas fa-plus-square"></i>
 				{% if role.isFill %}
@@ -275,7 +283,7 @@ $(document).on( "click",".invitePlayers", function() {
 </section>
 
 <section class="myTeamSection">
-	<button class="invitePlayers btn btn-primary spacer">INVITE</button>
+	<button class="invitePlayers btn btn-primary spacer">SEND INVITES</button>
     <h3>ELO</h3>
     <p id="teamElo">0</p>
 	{% for role in roles %}
@@ -283,24 +291,40 @@ $(document).on( "click",".invitePlayers", function() {
 	{% if not role.isFill %}
 	<div id="my{{ role.name }}" class="emptyPlayer">
 	{% if role.myPlayer %}
-	    <div class="playerCard">
+	{% if role.myPlayer.get_elo_value < -3 %}
+        <div class="playerCard silverCard">
+	{% elif role.myPlayer.get_elo_value < 1 %}
+        <div class="playerCard goldCard">
+	{% elif role.myPlayer.get_elo_value < 5 %}
+        <div class="playerCard platCard">
+	{% else %}
+        <div class="playerCard diamondCard">
+	{% endif %}
             <div class="playerPhoto">
 				<i id='remove{{ role.name }}' class='fas fa-minus-square'></i>
             </div>
             <div class="playerInfo">
-        		<p class="playerName">{{ role.myPlayer.get_name }}</p>
+        		<p class="playerName acceptedName">{{ role.myPlayer.get_name }}</p>
                 <img src="/static/stats/scoreboardicon_gold.png">
         		<p class="playerValue">{{ role.myPlayer.get_elo_value }}</p>
         		<div class="playerId">{{ role.myPlayer.get_season_player.id }}</div>
             </div>
         </div>
 	{% elif role.myInvite %}
-	    <div class="playerCard">
+	{% if role.myInvite.get_elo_value < -3 %}
+        <div class="playerCard silverCard">
+	{% elif role.myInvite.get_elo_value < 1 %}
+        <div class="playerCard goldCard">
+	{% elif role.myInvite.get_elo_value < 5 %}
+        <div class="playerCard platCard">
+	{% else %}
+        <div class="playerCard diamondCard">
+	{% endif %}
             <div class="playerPhoto">
 				<i id='remove{{ role.name }}' class='fas fa-minus-square'></i>
             </div>
             <div class="playerInfo">
-        		<p class="playerName">{{ role.myInvite.get_name }}</p>
+        		<p class="playerName invitedName">{{ role.myInvite.get_name }}</p>
                 <img src="/static/stats/scoreboardicon_gold.png">
         		<p class="playerValue">{{ role.myInvite.get_elo_value }}</p>
         		<div class="playerId">{{ role.myInvite.get_season_player.id }}</div>
@@ -312,7 +336,15 @@ $(document).on( "click",".invitePlayers", function() {
 	{% for sub in mySubs %}
 	<div id="my{{ role.name }}{{ forloop.counter0 }}" class="emptyPlayer">
 	{% if sub.invite %}
-	    <div class="playerCard">
+	{% if sub.invite.get_elo_value < -3 %}
+        <div class="playerCard silverCard">
+	{% elif sub.invite.get_elo_value < 1 %}
+        <div class="playerCard goldCard">
+	{% elif sub.invite.get_elo_value < 5 %}
+        <div class="playerCard platCard">
+	{% else %}
+        <div class="playerCard diamondCard">
+	{% endif %}
             <div class="playerPhoto">
 				<i id='remove{{ role.name }}{{ forloop.counter0 }}' class='fas fa-minus-square'></i>
 				<img class="playerRole" src="{{ sub.invite.get_season_player.get_main_role.role.icon.url }}">
@@ -321,14 +353,22 @@ $(document).on( "click",".invitePlayers", function() {
 				{% endfor %}
             </div>
             <div class="playerInfo">
-        		<p class="playerName">{{ sub.invite.get_name }}</p>
+        		<p class="playerName invitedName">{{ sub.invite.get_name }}</p>
                 <img src="/static/stats/scoreboardicon_gold.png">
         		<p class="playerValue">{{ sub.invite.get_season_player.elo_value }}</p>
         		<div class="playerId">{{ sub.invite.get_season_player.id }}</div>
             </div>
         </div>
 	{% elif sub.player %}
-	    <div class="playerCard">
+	{% if sub.player.get_elo_value < -3 %}
+        <div class="playerCard silverCard">
+	{% elif sub.player.get_elo_value < 1 %}
+        <div class="playerCard goldCard">
+	{% elif sub.player.get_elo_value < 5 %}
+        <div class="playerCard platCard">
+	{% else %}
+        <div class="playerCard diamondCard">
+	{% endif %}
             <div class="playerPhoto">
 				<i id='remove{{ role.name }}{{ forloop.counter0 }}' class='fas fa-minus-square'></i>
 				<img class="playerRole" src="{{ sub.player.get_season_player.get_main_role.role.icon.url }}">
@@ -337,7 +377,7 @@ $(document).on( "click",".invitePlayers", function() {
 				{% endfor %}
             </div>
             <div class="playerInfo">
-        		<p class="playerName">{{ sub.player.get_name }}</p>
+        		<p class="playerName acceptedInvite">{{ sub.player.get_name }}</p>
                 <img src="/static/stats/scoreboardicon_gold.png">
         		<p class="playerValue">{{ sub.player.get_elo_value }}</p>
         		<div class="playerId">{{ sub.player.get_season_player.id }}</div>

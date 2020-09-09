@@ -144,7 +144,6 @@ h1 + p {
     margin: 3% auto 10px auto;
 }
 
-
 #teamElo{
     color: white;
     font-size: 1.5em;
@@ -208,6 +207,34 @@ h1 + p {
     background: #a71b29;
 }
 
+.myTeamSection .playerCard .invitedName {
+    color: #ffe000;
+}
+
+.myTeamSection .playerCard .acceptedName {
+    color: #00ff08;
+}
+
+.silverCard {
+    border: #7e7f71 solid 4px;
+    background: linear-gradient(45deg, #5f7276, #3a4849);
+}
+
+.goldCard {
+    border: #a25608 solid 4px;
+    background: linear-gradient(45deg, #563205, #c9872b);
+}
+
+.platCard {
+    border: #578c86 solid 4px;
+    background: linear-gradient(45deg, #578c86, #143634);
+
+}
+
+.diamondCard {
+    border: #3c1ca5 solid 4px;
+    background: linear-gradient(45deg, #5657a9, #3c1ca5);
+}
 .emptyPlayer {
     width: 304px;
     height: 46px;
