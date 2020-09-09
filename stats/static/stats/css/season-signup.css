@@ -1,0 +1,65 @@
+h1 {
+    color: white;
+    font-size: 4em;
+    text-align: center;
+    font-weight: 900;
+}
+
+h1 + p {
+    color: white;
+    font-size: 1.3em;
+    text-align: center;
+    padding: 2% 20%;
+    margin-top: -21px;
+}
+
+.teamManagerContainer{
+    text-align: center;
+}
+
+ol, ul {
+    margin-top: 0;
+    margin-bottom: 10px;
+    list-style: none;
+}
+
+.choiceHead{
+    font-size: 2em;
+}
+
+.form-group li {
+    text-align: center;
+    font-size: 1.6em;
+    margin-left: -43px;
+    padding: 5px 0;
+}
+
+form {
+    text-align: center;
+}
+
+.roster {
+    font-size: 1.7em;
+}
+
+.btn {
+    font-size: 1.6em;
+    background: #bf1f2f;
+    margin-top: 20px;
+    border: none;
+    font-weight: 900;
+}
+
+.btn:hover {
+    background: #9a1522;
+}
+
+@media(max-width: 414px){
+    h1{
+        font-size: 3em;
+    }
+
+    h1 + p {
+        padding: 2% 15%;
+    }
+}
