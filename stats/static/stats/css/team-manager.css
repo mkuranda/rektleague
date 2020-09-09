@@ -63,6 +63,23 @@ h1 + p {
     color: #c1020269;
 }
 
+.myTeamSection .main{
+    display: none;
+}
+
+.myTeamSection .offrole1 {
+    display: none;
+}
+
+.myTeamSection .offrole2 {
+    display: none;
+}
+
+.myTeamSection .offrole3 {
+    display: none;
+}
+
+
 .freeAgentSection .main{
     grid-column-start: 1;
     grid-row-start: 2;
