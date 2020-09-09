@@ -189,7 +189,7 @@ def team_manager(request):
         'myInvites': myInvites,
         'mySubs': mySubs,
         'team': team,
-        'subIcon': 
+        'subIcon': subIcon
     }
     return render(request, 'stats/team-manager.html', context)
 
