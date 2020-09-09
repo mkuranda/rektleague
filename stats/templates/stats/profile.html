@@ -49,11 +49,11 @@
   {% for account, removeForm, editForm, setMainForm in accountForms %}
   <h1 style="color: white">{{ account.name }}{% if account.isMain %}<i class="fas fa-crown"></i>{% endif %}</h1>
   <div class="playerActionsBar">
-    <i id="editButton{{ account.id }}" onclick="$('#editModal{{ account.id }}').modal();" class="fas fa-user-edit editButton"></i>
+    <i id="editButton{{ account.id }}" onclick="$('#editModal{{ account.id }}').modal();" class="fas fa-user-edit editButton" data-toggle="popover" data-trigger="hover" data-content="Edit account name"></i>
 		  
 	{% if not account.isMain %}
-	<i id="removeButton{{ account.id }}" onclick="$('#removeModal{{ account.id }}').modal();" class="fas fa-user-minus"></i>
-	<i id="setMainButton{{ account.id }}" onclick="$('#setMainModal{{ account.id }}').modal();" class="fas fa-chevron-up"></i>
+	<i id="removeButton{{ account.id }}" onclick="$('#removeModal{{ account.id }}').modal();" class="fas fa-user-minus" data-toggle="popover" data-trigger="hover" data-content="Remove account"></i>
+	<i id="setMainButton{{ account.id }}" onclick="$('#setMainModal{{ account.id }}').modal();" class="fas fa-chevron-up" data-toggle="popover" data-trigger="hover" data-content="Set as main summoner account"></i>
 	{% endif %}
   </div>
   {% endfor %}
@@ -462,6 +462,13 @@ ACCOUNTS :
   document.getElementById("defaultOpen").click();
   </script>
 
+  <!-- Popup hovers -->
+  <script>
+    $(document).ready(function(){
+        $('[data-toggle="popover"]').popover();   
+    });
+    </script>
+
 {% else %}
 
 You don't have a profile when you aren't logged in, silly!
@@ -469,5 +476,6 @@ You don't have a profile when you aren't logged in, silly!
 {% endif %}
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+  <script type="text/javascript" src="{% static 'stats/js/popper.min.js' %}"></script>
 <script type="text/javascript" src="{% static 'stats/js/profile.js' %}"></script>
 {% endblock %}

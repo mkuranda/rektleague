@@ -295,7 +295,7 @@ $(document).on( "click",".invitePlayers", function() {
             </div>
         </div>
 	{% elif role.myInvite %}
-	    <div class="playerCard">
+	    <div class="playerCard" data-toggle="popover" data-trigger="hover" data-content="Response pending">
             <div class="playerPhoto">
 				<i id='remove{{ role.name }}' class='fas fa-minus-square'></i>
             </div>
@@ -312,7 +312,7 @@ $(document).on( "click",".invitePlayers", function() {
 	{% for sub in mySubs %}
 	<div id="my{{ role.name }}{{ forloop.counter0 }}" class="emptyPlayer">
 	{% if sub.invite %}
-	    <div class="playerCard">
+	    <div class="playerCard" data-toggle="popover" data-trigger="hover" data-content="Response pending">
             <div class="playerPhoto">
 				<i id='remove{{ role.name }}{{ forloop.counter0 }}' class='fas fa-minus-square'></i>
 				<img class="playerRole" src="{{ sub.invite.get_season_player.get_main_role.role.icon.url }}">
@@ -381,8 +381,14 @@ function openCity(evt, cityName) {
 // Get the element with id="defaultOpen" and click on it
 document.getElementById("defaultOpen").click();
 </script>
-
+<script>
+    $(document).ready(function(){
+        $('[data-toggle="popover"]').popover();   
+    });
+	</script>
+	
 <script type="text/javascript" src="{% static 'stats/js/jquery-3.4.1.min.js' %}"></script>
 <script type="text/javascript" src="{% static 'stats/js/slick.js' %}"></script>
+<script type="text/javascript" src="{% static 'stats/js/popper.min.js' %}"></script>
 <script type="text/javascript" src="{% static 'stats/js/team-manager.js' %}"></script>
 {% endblock %}
