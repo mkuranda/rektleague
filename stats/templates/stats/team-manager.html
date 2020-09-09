@@ -271,7 +271,6 @@ $(document).on( "click",".invitePlayers", function() {
 				<img class="offrole{{ forloop.counter }}" src="{{ offRole.role.icon.url }}">
 				{% endfor %}
 				{% endif %}
-				{% endif %}
             </div>
             <div class="playerInfo">
 				<p class="playerName">{{ player.get_name }}</p>
@@ -356,10 +355,9 @@ $(document).on( "click",".invitePlayers", function() {
 				{% if sub.invite.get_season_player.get_off_roles.count > 3 %}
 				<img class="offrole1" src="{{ subRole.icon.url }}">
 				{% else %}
-				{% for mainRole in sub.invite.get_season_player.get_off_roles %}
-				<img class="offrole{{ forloop.counter }}" src="{{ mainRole.role.icon.url }}">
+				{% for offRole in sub.invite.get_season_player.get_off_roles %}
+				<img class="offrole{{ forloop.counter }}" src="{{ offRole.role.icon.url }}">
 				{% endfor %}
-				{% endif %}
             </div>
             <div class="playerInfo">
         		<p class="playerName invitedName">{{ sub.invite.get_name }}</p>
@@ -384,10 +382,9 @@ $(document).on( "click",".invitePlayers", function() {
 				{% if sub.player.get_season_player.get_off_roles.count > 3 %}
 				<img class="offrole1" src="{{ subRole.icon.url }}">
 				{% else %}
-				{% for mainRole in sub.player.get_season_player.get_off_roles %}
-				<img class="offrole{{ forloop.counter }}" src="{{ mainRole.role.icon.url }}">
+				{% for offRole in sub.player.get_season_player.get_off_roles %}
+				<img class="offrole{{ forloop.counter }}" src="{{ offRole.role.icon.url }}">
 				{% endfor %}
-				{% endif %}
             </div>
             <div class="playerInfo">
         		<p class="playerName acceptedInvite">{{ sub.player.get_name }}</p>

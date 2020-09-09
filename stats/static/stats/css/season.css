@@ -18,3 +18,21 @@ h1 + p {
     flex-flow: row nowrap;
     justify-content: space-evenly;
 }
+
+h3 {
+    color: white;
+    font-weight: 700;
+    margin-top: -4px;
+    margin-bottom: 40px;
+}
+
+h3:hover {
+    color: #bf1f2f;
+    transition: 1s ease;
+}
+
+@media (max-width: 500px){
+    h3{
+        font-size: 18px;
+    }
+}
