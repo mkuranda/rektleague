@@ -17,7 +17,9 @@
 {{ editForms.0.account_name.errors }}
 {{ addAccountForm.account_name.errors.0 }}
 
-{% if preseasonPlayer %}
+{% if myRepTeam %}
+<section class="profileHeader" style="background-image: url('{{ myRepTeam.media.banner.url }}'); background-size: cover;">
+{% elif preseasonPlayer %}
 <section class="profileHeader" style="background-image: url('{{ preseasonPlayer.team.media.banner.url }}'); background-size: cover;">
 {% else %}
 <section class="profileHeader">
@@ -61,7 +63,7 @@
 <!-- END Profile account container  -->
 </div>
 
-{% if teamInviteResponses or invites %}
+{% if teamInviteResponses or leaveTeamNotifications or invites %}
 <div class="profileContainerAlerts">
   <h4>ALERTS</h4>  
 {% endif %}
@@ -85,11 +87,19 @@
 {% for invite in invites %}
   <div class="alertContainer">
     <div class="redAccent"></div>
-	<p>You have been invited to {{ invite.team.media.name }} as a {{ invite.role.name }}. <strong>Accept this offer?</strong></p>
+    <p>You have been invited to {{ invite.team.media.name }} as a <strong>{{ invite.role.title }}</strong>. <strong>Accept this offer?</strong></p>
 	<div class="alertConfirm"><a href="/join-team/{{ invite.team.id }}/{{ invite.role.id }}/"><i class="fas fa-check"></i></a></div>
-	<div class="alertDeny"><a href="decline-invite/{{ invite.team.id }}/{{ invite.role.id }}/"><i class="fas fa-times"></i></a></div>
+	<div class="alertDeny"><a href="/decline-invite/{{ invite.team.id }}/{{ invite.role.id }}/"><i class="fas fa-times"></i></a></div>
   </div>
 </div>
+{% endfor %}
+
+{% for notification in leaveTeamNotifications %}
+  <div class="alertContainer">
+      <div class="redAccent"></div>
+      <p class="alertMessage">{{ notification.get_season_player.get_name }} has left {{ notification.team.media.name }}.</p>
+      <div class="alertClose"><a href="/read-leave-team-notification/{{ notification.id }}/"><i class="fas fa-times"></i></a></div>
+  </div>
 {% endfor %}
 
 <!-- <div class="profileContainerAlerts">
@@ -111,13 +121,13 @@
 {% if response.accepted %}
   <div class="alertContainer">
       <div class="redAccent"></div>
-      <p class="alertMessage">{{ response.get_season_player.get_name }} has joined {{ response.team.media.name }} as a {{ response.role.name }}!</p>
+      <p class="alertMessage">{{ response.get_season_player.get_name }} has joined {{ response.team.media.name }} as a <strong>{{ response.role.title }}</strong>!</p>
       <div class="alertClose"><a href="/read-response/{{ response.id }}/"><i class="fas fa-times"></i></a></div>
   </div>
 {% else %}
   <div class="alertContainer">
       <div class="redAccent"></div>
-      <p class="alertMessage">{{ response.get_season_player.get_name }} has declined your offer to play as a {{ response.role.name }} for {{ response.team.media.name }}.</p>
+      <p class="alertMessage">{{ response.get_season_player.get_name }} has declined your offer to play as a <strong>{{ response.role.title }}</strong> for {{ response.team.media.name }}.</p>
       <div class="alertClose"><a href="/read-response/{{ response.id }}/"><i class="fas fa-times"></i></a></div>
   </div>
 {% endif %}
@@ -126,7 +136,7 @@
 {% for invite in invites %}
   <div class="alertContainer">
     <div class="redAccent"></div>
-	<p>You have been invited to {{ invite.team.media.name }} as a {{ invite.role.name }}. <strong>Accept this offer?</strong></p>
+    <p>You have been invited to {{ invite.team.media.name }} as a <strong>{{ invite.role.title }}</strong>. <strong>Accept this offer?</strong></p>
 	<div class="alertConfirm"><a href="/join-team/{{ invite.team.id }}/{{ invite.role.id }}/"><i class="fas fa-check"></i></a></div>
 	<div class="alertDeny"><a href="/decline-invite/{{ invite.team.id }}/{{ invite.role.id }}/"><i class="fas fa-times"></i></a></div>
   </div>
@@ -143,15 +153,22 @@
   
 
 <div class="seasonContainerInfo">
+	{% if not preseasonPlayer and myRepTeam %}
+	<h4>MY TEAM</h4> 
+	<p>You are the Team Representative for {{ myRepTeam.media.name }}! Check out the Team Manager here.</p>
+	<a href="/team-manager/"><button class="btn btn-primary spacer">TEAM MANAGER</button></a>
+	{% endif %}
     {% if preseasonPlayer %}
     <h4>MY TEAM</h4> 
-	{% if preseasonPlayer.is_rep %}
+	{% if myRepTeam %}
 	<p>You are the Team Representative for {{ preseasonPlayer.team.media.name }}! Check out the Team Manager here.</p>
 	<a href="/team-manager/"><button class="btn btn-primary spacer">TEAM MANAGER</button></a>
 	{% endif %}
 	<p>You are currently the {{ preseasonPlayer.role.name }} for {{ preseasonPlayer.team.media.name }}! For more information click here.</p>
 	<a href="/season/{{ season.id }}/team/{{ preseasonPlayer.team.id }}/"><button class="btn btn-primary spacer">{{ preseasonPlayer.team.media.name }}</button></a>
+	{% if not preseasonPlayer.is_rep %}
 	<button class="btn btn-primary spacer" onclick="$('#leaveTeamModal').modal();">LEAVE TEAM</button>
+	{% endif %}
 	{% endif %}
 	{% if seasonPlayer and not preseasonPlayer %}
     <h4>MY SIGN UP</h4>
@@ -171,8 +188,10 @@
     <p>Does this look wrong? Resubmit your sign up here.</p>
 	<a href="/season/{{ season.id }}/sign-up"><button class="btn btn-primary spacer">RESUBMIT</button></a>
 
+	{% if not myRepTeam %}
     <p>Don't want to play in Season 7? Delete your sign up here.</p>
 	<a href="/season/{{ season.id }}/remove-sign-up"><button class="btn btn-primary spacer">DELETE SIGN UP</button></a>
+	{% endif %}
 	<h4>ELO</h4>
 	{% if seasonPlayer.get_elo_value == 100 %}
 	<p>Your elo has not yet been confirmed. Check back later.</p>
@@ -402,13 +421,18 @@ ACCOUNTS :
         {% csrf_token %}
       <div class="modal-body" style="padding:15px 50px;">
 		  <div class="form-group spacer">
-            <label for="password1">New Password</label>
-            {{ passwordForm.password1 }}
+            <label for="old_password">Old Password</label>
+            {{ passwordForm.old_password }}
           </div>
           <div class="form-group spacer">
-            <label for="password2">Confirm Password</label>
-            {{ passwordForm.password2 }}
+            <label for="new_password1">New Password</label>
+            {{ passwordForm.new_password1 }}
           </div>
+	  <div class="form-group spacer">
+            <label for="new_password2">Confirm New Password</label>
+            {{ passwordForm.new_password2 }}
+          </div>
+
       </div>
       <div class="modal-footer">
           <button type="button" class="btn btn-primary spacer" data-dismiss="modal">Nevermind</button>

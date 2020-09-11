@@ -1,7 +1,8 @@
 from django.shortcuts import get_object_or_404, render, redirect
 from django import forms
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate, login, update_session_auth_hash
 from django.contrib.auth.models import User
+from django.contrib.auth.forms import PasswordChangeForm
 from django.http import HttpResponse, HttpResponseRedirect, Http404
 from django.template import loader
 from django.db.models import Avg, Count, Sum, F, When, Q
@@ -9,8 +10,8 @@ from django.utils.timezone import utc
 from django.conf import settings
 from riot_request import RiotRequester
 from .models import Player, TeamPlayer, Team, Season, Champion, Match, Week, Series, SeriesTeam, TeamMatch, SeasonChampion, PlayerMatch, Role, TeamRole, SeriesPlayer, Summoner, UserAccount, TeamInvite
-from .models import SeasonPlayer, SeasonPlayerRole, PreseasonTeamPlayer, TeamInviteResponse
-from .forms import TournamentCodeForm, InitializeMatchForm, CreateRosterForm, LoginForm, EditProfileForm, RegisterForm, AddAccountForm, EditAccountForm, RemoveAccountForm, SetMainForm, UpdateUsernameForm, UpdatePasswordForm, UpdateEmailForm, SeasonSignupForm, ConfirmEloForm
+from .models import SeasonPlayer, SeasonPlayerRole, PreseasonTeamPlayer, TeamInviteResponse, LeaveTeamNotification
+from .forms import TournamentCodeForm, InitializeMatchForm, CreateRosterForm, LoginForm, EditProfileForm, RegisterForm, AddAccountForm, EditAccountForm, RemoveAccountForm, SetMainForm, UpdateUsernameForm, UpdateEmailForm, SeasonSignupForm, ConfirmEloForm
 from get_riot_object import ObjectNotFound, get_item, get_champions, get_champion, get_match, get_all_items, get_match_timeline, update_playermatchkills, update_team_timelines, update_season_timelines, update_team_player_timelines
 from datetime import datetime
 from django.views.decorators.csrf import csrf_exempt
@@ -42,6 +43,7 @@ def remove_season_signup(request, season_id):
     seasonPlayer = get_object_or_404(SeasonPlayer, user=request.user, season=season)
     seasonPlayer.delete()
     SeasonPlayerRole.objects.filter(user=request.user, season=season).delete()
+    TeamInvite.objects.filter(user=request.user).delete()
     return redirect("/profile/")
 
 def decline_invite(request, team_id, role_id):
@@ -339,6 +341,8 @@ def team_invite(request, top_id, jun_id, mid_id, bot_id, sup_id, sub1_id, sub2_i
 
 def leave_team(request, team_id):
     team = get_object_or_404(Team, id=team_id)
+    notification = LeaveTeamNotification(team=team, user=request.user)
+    notification.save()
     if team.season.isPreseason:
         preseasonTeamPlayer = get_object_or_404(PreseasonTeamPlayer, user=request.user, team=team)
         preseasonTeamPlayer.delete()
@@ -424,24 +428,29 @@ def profile(request):
         player = player[0]
     preseasonPlayer = PreseasonTeamPlayer.objects.filter(user=request.user.id, team__season=latest_season)
     teamInviteResponses = []
+    leaveTeamNotifications = []
     if preseasonPlayer:
         preseasonPlayer = preseasonPlayer[0]
         if preseasonPlayer.is_rep():
             repTeam = Team.objects.get(user=request.user.id)
             teamInviteResponses = TeamInviteResponse.objects.filter(team=repTeam)
+            leaveTeamNotifications = LeaveTeamNotification.objects.filter(team=repTeam)
     unconfirmedPlayers = []
     if user.is_staff:
         unconfirmedSeasonPlayers = SeasonPlayer.objects.filter(season=latest_season, elo_value=100)
         for unconfirmedSeasonPlayer in unconfirmedSeasonPlayers:
-            accounts = UserAccount.objects.filter(user=unconfirmedSeasonPlayer.user).order_by('-isMain')
+            unconfirmedAccounts = UserAccount.objects.filter(user=unconfirmedSeasonPlayer.user).order_by('-isMain')
             unconfirmedPlayers.append({
                 'name': unconfirmedSeasonPlayer.get_name(),
                 'id': unconfirmedSeasonPlayer.id,
-                'accounts': accounts,
+                'accounts': unconfirmedAccounts,
                 })
     teamInvites = []
     seasonPlayer = []
     seasonPlayerRoles = []
+    myRepTeam = Team.objects.filter(user=user.id, season=latest_season)
+    if myRepTeam:
+        myRepTeam = myRepTeam[0]
     teamInvites = TeamInvite.objects.filter(user=user.id)
     seasonPlayer = SeasonPlayer.objects.filter(season=latest_season, user=user.id)
     if seasonPlayer:
@@ -459,7 +468,7 @@ def profile(request):
     confirmEloForms = []
     if request.method == 'POST':
         usernameForm = UpdateUsernameForm(request.POST)
-        passwordForm = UpdatePasswordForm(request.POST)
+        passwordForm = PasswordChangeForm(request.user, request.POST)
         emailForm = UpdateEmailForm(request.POST)
         addForm = AddAccountForm(request.POST)
         out = passwordForm.is_valid()
@@ -475,9 +484,8 @@ def profile(request):
                 user.save()
             return redirect('/profile')
         if passwordForm.is_valid() and 'submitPassword' in request.POST:
-            if passwordForm.cleaned_data['password1']:
-                user.set_password(passwordForm.cleaned_data['password1'])
-                user.save()
+            user = passwordForm.save()
+            update_session_auth_hash(request, user)
             return redirect('/signin')
         if emailForm.is_valid() and 'submitEmail' in request.POST:
             if emailForm.cleaned_data['email']:
@@ -529,7 +537,7 @@ def profile(request):
 
     else:
         usernameForm = UpdateUsernameForm()
-        passwordForm = UpdatePasswordForm()
+        passwordForm = PasswordChangeForm(request.user)
         emailForm = UpdateEmailForm()
         addForm = AddAccountForm()
         for account in accounts:
@@ -560,7 +568,9 @@ def profile(request):
         'seasonPlayer': seasonPlayer,
         'seasonPlayerRoles': seasonPlayerRoles,
         'unconfirmedPlayers': unconfirmedPlayers,
-        'teamInviteResponses': teamInviteResponses
+        'teamInviteResponses': teamInviteResponses,
+        'leaveTeamNotifications': leaveTeamNotifications,
+        'myRepTeam': myRepTeam
     }
     return render(request, 'stats/profile.html', context)
 
@@ -568,6 +578,12 @@ def read_response(request, response_id):
     response = get_object_or_404(TeamInviteResponse, id=response_id)
     if response.team.user == request.user:
         response.delete()
+    return redirect("/profile/")
+
+def read_leave_team_notification(request, notification_id):
+    notification = get_object_or_404(LeaveTeamNotification, id=notification_id)
+    if notification.team.user == request.user:
+        notification.delete()
     return redirect("/profile/")
 
 def valorant_signup(request):

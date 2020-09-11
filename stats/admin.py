@@ -8,7 +8,7 @@ from .models import Player
 from .models import TeamPlayer
 from .models import Role
 from .models import Item
-from .models import Champion
+from .models import Champion, LeaveTeamNotification
 from .models import TeamTimeline, SeasonTimeline, TeamPlayerTimeline, MerchProduct, UserAccount, TeamInvite, SeasonPlayer, SeasonPlayerRole, PreseasonTeamPlayer, TeamInviteResponse
 
 class PlayerMatchTimelineAdmin(admin.ModelAdmin):
@@ -126,3 +126,4 @@ admin.site.register(PreseasonTeamPlayer)
 admin.site.register(SeasonPlayer)
 admin.site.register(SeasonPlayerRole)
 admin.site.register(TeamInviteResponse)
+admin.site.register(LeaveTeamNotification)

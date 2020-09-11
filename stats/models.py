@@ -613,6 +613,8 @@ class Week(models.Model):
 
 class Role(models.Model):
     name = models.CharField(max_length=15)
+    name_lc = models.CharField(max_length=15)
+    title = models.CharField(max_length=15)
     icon = models.ImageField(upload_to='stats/role/icon', default='')
     icon_w_name = models.ImageField(upload_to='stats/role/icon', default='')
     isFill = models.BooleanField(default=False)
@@ -1757,6 +1759,13 @@ class UserAccount(models.Model):
 
     def __str__(self):
         return self.user.username + ": " + self.name
+
+class LeaveTeamNotification(models.Model):
+    user = models.ForeignKey(User)
+    team = models.ForeignKey(Team)
+
+    def get_season_player(self):
+        return SeasonPlayer.objects.get(user=self.user, season=self.team.season)
 
 class TeamInviteResponse(models.Model):
     user = models.ForeignKey(User)

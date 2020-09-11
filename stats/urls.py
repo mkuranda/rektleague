@@ -27,6 +27,7 @@ urlpatterns = [
     url(r'^season/(?P<season_id>[0-9]+)/players/$', views.season_players, name='season_players'),
     url(r'^preseason/(?P<season_id>[0-9]+)/$', views.preseason_detail, name='preseason_detail'),
     url(r'^read-response/(?P<response_id>[0-9]+)/$', views.read_response, name='read_response'),
+    url(r'^read-leave-team-notification/(?P<notification_id>[0-9]+)/$', views.read_leave_team_notification, name='read_leave_team_notification'),
     url(r'^season/(?P<season_id>[0-9]+)/team/(?P<team_id>[0-9]+)/$', views.team_detail, name='team_detail'),
     url(r'^season/(?P<season_id>[0-9]+)/team/(?P<team_id>[0-9]+)/player/(?P<player_id>[0-9]+)/$', views.team_player_detail, name='team_player_detail'),
     url(r'^season/(?P<season_id>[0-9]+)/team/(?P<team_id>[0-9]+)/player/(?P<player_id>[0-9]+)/role/(?P<role_id>[0-9]+)/$', views.team_player_role_detail, name='team_player_role_detail'),

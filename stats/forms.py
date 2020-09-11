@@ -99,24 +99,6 @@ class UpdateUsernameForm(forms.Form):
             raise  ValidationError("Username already exists")
         return username
 
-class UpdatePasswordForm(forms.Form):
-    password1 = forms.CharField(label='Password', widget=forms.PasswordInput, required=False)
-    password2 = forms.CharField(label='Confirm Password', widget=forms.PasswordInput, required=False)
-
-    def clean_password1(self):
-        password1 = self.cleaned_data.get('password1')
-        #password2 = self.cleaned_data.get('password2')
-
-        #if password1 and not password2:
-        #    raise ValidationError("You need to enter both passwords")
-        #if password2 and not password1:
-        #    raise ValidationError("You need to enter both passwords")
-
-        #if password1 and password2 and password1 != password2:
-        #    raise ValidationError("Password don't match")
-
-        return password1
-
 class UpdateEmailForm(forms.Form):
     email = forms.EmailField(required=False)
 
@@ -131,13 +113,15 @@ class SeasonSignupForm(forms.Form):
     ROLES = ((1, "TOP"), (2, "JUNGLE"), (3, "MID"), (4, "BOT"), (5, "SUPPORT"))
     ROSTER_CHOICES = ((1, "MAIN ROSTER"), (2, "SUBSTITUTE"))
 
-    mainRole = forms.ChoiceField(choices=ROLES, widget=forms.RadioSelect)
+    mainRole = forms.ChoiceField(choices=ROLES, widget=forms.RadioSelect, required=True)
     offRoles = forms.MultipleChoiceField(choices=ROLES, widget=forms.CheckboxSelectMultiple, required=False)
     rosterPosition = forms.MultipleChoiceField(choices=ROSTER_CHOICES, widget=forms.CheckboxSelectMultiple)
 
     def clean_offRoles(self):
-        main_role = self.cleaned_data['mainRole']
         off_roles = self.cleaned_data['offRoles']
+        if not 'mainRole' in self.cleaned_data:
+            return off_roles
+        main_role = self.cleaned_data['mainRole']
         for role in off_roles:
             if role == main_role:
                 raise forms.ValidationError("You can't choose a role as both your main role and off role")

@@ -55,16 +55,7 @@
                               </li>
                               <li><a target="_blank" href="/rules/">RULES</a></li>
                               <li><a href="/merch/">MERCH</a></li>
-			      <li> 
-                                <!-- First Tier Drop Down -->
-                                <label for="drop-3" class="toggle">SIGN UP</label>
-				<a href="/register/">SIGN UP</span></a>
-                                <input type="checkbox" id="drop-3"/>
-                                <ul>
-				<li><a href="/valorant-signup/">VALORANT</a></li>
-                                </ul>
-                              </li>          
-
+                              <li><a href="/register/">SIGN UP</a></li>
 			      {% if request.user.is_authenticated %}
                               <li class="signinFloat"><a href="/logout/">SIGN OUT</a></li>
 			      {% else %}
