@@ -84,8 +84,64 @@ nav {
   }
 
   .signinFloat {
-      float: right;
+    float: right;
+    display: inline-grid;
+    grid-template-columns: 20% 50% 30%;
+    grid-template-rows: 50% 50%;
+    width: 232px;
   }
+
+  .proPic {
+    border-radius: 50%;
+    grid-column-start: 3;
+    margin-top: 15px;
+    margin-bottom: -9px;
+    margin-left: 11px;
+    width: 35px;
+}
+
+#signOutBtn {
+  grid-column-start: 2;
+    grid-row-start: 2;
+    color: #bf1f2f;
+    font-weight: 800;
+    font-size: 1em;
+    margin: 0;
+    justify-self: end;
+    background-color: none;
+    text-decoration: none;
+    padding: 0;
+    display: inline;
+    line-height: 12px;
+
+}
+
+nav #signOutBtn:hover{
+  background-color: black !important;
+  background: black;
+}
+
+  .accountName {
+    grid-column-start: 2;
+    grid-row-start: 1;
+    color: white;
+    font-weight: 800;
+    font-size: 1em;
+    margin-top: 17px;
+    justify-self: end;
+}
+
+.notificationBell{
+  color: #bf1f2f;
+    grid-column-start: 1;
+    grid-row-start: 1;
+    font-size: 2em;
+    margin: 19px 0px 0 36px;
+}
+
+.notificationBell:hover, .proPic:hover, #signOutBtn:hover{
+  opacity: .8;
+}
   
   nav:after {
     content: "";
@@ -352,6 +408,53 @@ a:visited{
     nav ul ul ul li { position: static;
     
     }
+
+    .signinFloat {
+      float: left;
+      display: inline-grid;
+      grid-template-columns: 20% 50% 30%;
+      grid-template-rows: 50% 50%;
+      width: 232px;
+      margin-left: 15px;
+    }
+  
+    .proPic {
+      border-radius: 50%;
+      grid-column-start: 1;
+      margin-top: 15px;
+      margin-bottom: -9px;
+      margin-right: 11px;
+      margin-left: 0;
+      width: 35px;
+  }
+  
+  #signOutBtn {
+    grid-column-start: 2;
+      grid-row-start: 2;
+      color: #bf1f2f;
+      font-weight: 800;
+      font-size: 1.1em;
+      margin: 0;
+      justify-self: start;
+  }
+  
+    .accountName {
+      grid-column-start: 2;
+      grid-row-start: 1;
+      color: white;
+      font-weight: 800;
+      font-size: 1.2em;
+      margin-top: 17px;
+      justify-self: start;
+  }
+  
+  .notificationBell{
+    color: #bf1f2f;
+      grid-column-start: 3;
+      grid-row-start: 1;
+      font-size: 2em;
+      margin: 22px 0px 0 0;
+  }
     }
     
     @media all and (max-width : 330px) {
