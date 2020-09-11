@@ -318,6 +318,10 @@ button:hover {
   color: #41a016;
 }
 
+a:hover{
+  text-decoration: none!important;
+}
+
 .fa-user-edit{
   font-size: 1.9em;
   color: white;
