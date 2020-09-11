@@ -18,10 +18,16 @@ h2, h4{
     font-weight: 900;
 }
 
+
 .btn {
     background: #bf1f2f;
+    border: #bf1f2f;
     margin-top: 20px;
-    border: none;
+}
+
+.btn:hover{
+    background: #961c29;
+    border: #961c29;
 }
 
 @media (max-width: 411px){

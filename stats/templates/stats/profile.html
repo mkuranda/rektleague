@@ -186,12 +186,16 @@
 	<p>You are only willing to play as a Substitute.</p>
 	{% endif %}
     <p>Does this look wrong? Resubmit your sign up here.</p>
-	<a href="/season/{{ season.id }}/sign-up"><button class="btn btn-primary spacer">RESUBMIT</button></a>
+	<button class="btn btn-primary spacer"><a href="/season/{{ season.id }}/sign-up">RESUBMIT</a></button>
 
 	{% if not myRepTeam %}
     <p>Don't want to play in Season 7? Delete your sign up here.</p>
+<<<<<<< HEAD
 	<a href="/season/{{ season.id }}/remove-sign-up"><button class="btn btn-primary spacer">DELETE SIGN UP</button></a>
 	{% endif %}
+=======
+<button class="btn btn-primary spacer">	<a href="/season/{{ season.id }}/remove-sign-up">DELETE SIGN UP</a></button>
+>>>>>>> e9db0e73c3c3218d9acf509883d1ef009dd2210f
 	<h4>ELO</h4>
 	{% if seasonPlayer.get_elo_value == 100 %}
 	<p>Your elo has not yet been confirmed. Check back later.</p>
@@ -266,13 +270,13 @@ ACCOUNTS :
           <p>Are you sure you want to remove this account?</p>
         </div>
         <div class="modal-footer">
-            <button type="button" class="btn btn-primary spacer" data-dismiss="modal">Nevermind</button>
+            <button type="button" class="btn btn-primary spacer nvm" data-dismiss="modal">Nevermind</button>
 			<form id="removeButton{{ account.id }}" method="POST" class="form-group">
 			    {% csrf_token %}
 			      <div style="display: none">
 			        {{ removeForm.account_id }}
 			      </div>
-            <button class="btn btn-primary spacer" name="submitRemove{{ account.id }}" type="submit">Remove</button>
+            <button class="btn btn-primary spacer removeBtn" name="submitRemove{{ account.id }}" type="submit">Remove</button>
   			</form>
               
         </div>
@@ -331,7 +335,7 @@ ACCOUNTS :
       </div>
       <div class="modal-footer">
         <div class="editModalButtonSection">
-          <button type="button" class="btn btn-primary spacer" data-dismiss="modal">Nevermind</button>
+          <button type="button" class="btn btn-primary spacer" id="setMain" data-dismiss="modal">Nevermind</button>
 
           <form id="setMainForm" method="POST" class="form-group">
             {% csrf_token %}
@@ -458,8 +462,8 @@ ACCOUNTS :
       <div class="modal-body" style="padding:15px 50px;">
 		  <p>Are you sure you want to leave {{ preseasonPlayer.team.media.name }}?</p>
       </div>
-          <button type="button" class="btn btn-primary spacer" data-dismiss="modal">Nevermind</button>
-		  <a href="/leave-team/{{ preseasonPlayer.team.id }}/"><button class="btn btn-primary spacer" type="submit">Leave {{ preseasonPlayer.team.media.name }}</button></a>
+          <button type="button" class="btn btn-primary spacer removeNvm" data-dismiss="modal">Nevermind</button>
+		  <a href="/leave-team/{{ preseasonPlayer.team.id }}/"><button class="leaveBtn btn btn-primary spacer" type="submit">Leave {{ preseasonPlayer.team.media.name }}</button></a>
     </div>
     
   </div>

@@ -21,9 +21,16 @@ h1 + p {
     width: 100%;
 }
 
-.freeAgentSection{
-
+.btn {
+    background: #bf1f2f;
+    border: #bf1f2f;
 }
+
+.btn:hover{
+    background: #961c29;
+    border: #961c29;
+}
+
 .playerCard{
     margin: auto;
     width: 304px;
@@ -92,20 +99,21 @@ h1 + p {
     grid-column-start: 1;
     grid-row-start: 4;
     width: 37px;
+    margin-left: 10px;
 }
 
 .freeAgentSection .offrole2 {
     grid-column-start: 1;
     grid-row-start: 4;
     width: 37px;
-    margin-left: 40px;
+    margin-left: 50px;
 }
 
 .freeAgentSection .offrole3 {
     grid-column-start: 1;
     grid-row-start: 4;
     width: 37px;
-    margin-left: 80px;
+    margin-left: 90px;
 }
 
 .playerName{
@@ -319,6 +327,11 @@ h1 + p {
 }
 
 
+@media (max-width: 650px){
+    .popover{
+        display: none !important;
+    }
+}
   @media (max-width: 450px){
     .tab {
         width: 369px;
