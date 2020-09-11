@@ -57,8 +57,10 @@
                               <li><a href="/merch/">MERCH</a></li>
                               <li><a href="/register/">SIGN UP</a></li>
 			      {% if request.user.is_authenticated %}
-                              <li class="signinFloat"><img class="proPic" src="https://placekitten.com/40/40"><p class="accountName">Brian the Broken</p><a id="signOutBtn" href=""><p>Sign out</p></a>
-                                <i class="fas fa-bell notificationBell"></i>
+			      <li class="profileFloat"><img class="proPic" src="https://placekitten.com/40/40"><p class="accountName">{{ notifications.name }}</p><a id="signOutBtn" href="/logout/"><p>Sign out</p></a>
+			        {% if notifications and notifications.count > 0 %}
+				<i class="fas fa-bell notificationBell"></i>
+				{% endif %}
                                 </li>
 			      {% else %}
                               <li class="signinFloat"><a href="/signin/">SIGN IN</a></li>

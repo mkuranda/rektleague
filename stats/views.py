@@ -19,6 +19,30 @@ from django.views.decorators.http import require_POST
 import random
 import json
 
+def get_notifications(user):
+    if not user.is_authenticated():
+        return []
+    userAccount = UserAccount.objects.get(user=user.id, isMain=True)
+    invites = TeamInvite.objects.filter(user=user.id)
+    count = invites.count()
+    teamInviteResponses = []
+    leaveTeamNotifications = []
+    team = Team.objects.filter(user=user.id)
+    if team:
+        team = team[0]
+        teamInviteResponses = TeamInviteResponse.objects.filter(team=team)
+        count += teamInviteResponses.count()
+        leaveTeamNotifications = LeaveTeamNotification.objects.filter(team=team)
+        count += teamInviteResponses.count()
+    notifications = {
+        'name': userAccount.name,
+        'invites': invites,
+        'teamInviteResponses': teamInviteResponses,
+        'leaveTeamNotifications': leaveTeamNotifications,
+        'count': count
+    }
+    return notifications
+
 def register(request):
     seasons = Season.objects.all().order_by('-id')
     latest_season = Season.objects.latest('id')
@@ -34,7 +58,8 @@ def register(request):
     context = {
         'seasons': seasons,
         'season': latest_season,
-        'form': form
+        'form': form,
+        'notifications': get_notifications(request.user)
     }        
     return render(request, "stats/register.html", context)
 
@@ -92,7 +117,8 @@ def season_signup(request, season_id):
     context = {
         'season': season,
         'seasons': seasons,
-        'form': form
+        'form': form,
+        'notifications': get_notifications(request.user)
     }
     return render(request, 'stats/season-signup.html', context)
 
@@ -101,7 +127,8 @@ def rules(request):
     latest_season = Season.objects.latest('id')
     context = {
         'seasons': seasons,
-        'season': latest_season
+        'season': latest_season,
+        'notifications': get_notifications(request.user)
     }
     return render(request, 'stats/rules.html', context)
 
@@ -111,7 +138,8 @@ def merch(request):
     latest_season = Season.objects.latest('id')
     context = {
         'seasons': seasons,
-        'season': latest_season
+        'season': latest_season,
+        'notifications': get_notifications(request.user)
     }
     return render(request, 'stats/merch.html', context)
 
@@ -200,7 +228,8 @@ def team_manager(request):
         'myInvites': myInvites,
         'mySubs': mySubs,
         'team': team,
-        'subRole': subRole
+        'subRole': subRole,
+        'notifications': get_notifications(request.user)
     }
     return render(request, 'stats/team-manager.html', context)
 
@@ -336,6 +365,7 @@ def team_invite(request, top_id, jun_id, mid_id, bot_id, sup_id, sub1_id, sub2_i
         'invites': invites,
         'inviteRemoves': inviteRemoves,
         'removes': removes,
+        'notifications': get_notifications(request.user)
     }
     return render(request, 'stats/team-invite-confirm.html', context)
 
@@ -414,6 +444,7 @@ def preseason_detail(request, season_id):
         'teamData': teamData,
         'roles': roles,
         'subNums': range(0,season.numSubs),
+        'notifications': get_notifications(request.user)
     }        
     return render(request, "stats/preseason.html", context)
 
@@ -570,7 +601,8 @@ def profile(request):
         'unconfirmedPlayers': unconfirmedPlayers,
         'teamInviteResponses': teamInviteResponses,
         'leaveTeamNotifications': leaveTeamNotifications,
-        'myRepTeam': myRepTeam
+        'myRepTeam': myRepTeam,
+        'notifications': get_notifications(request.user)
     }
     return render(request, 'stats/profile.html', context)
 
@@ -591,7 +623,8 @@ def valorant_signup(request):
     latest_season = Season.objects.latest('id')
     context = {
         'seasons': seasons,
-        'season': latest_season
+        'season': latest_season,
+        'notifications': get_notifications(request.user)
     }
     return render(request, 'stats/valorant-signup.html', context)
 
@@ -600,7 +633,8 @@ def valorant_thanks(request):
     latest_season = Season.objects.latest('id')
     context = {
         'seasons': seasons,
-        'season': latest_season
+        'season': latest_season,
+        'notifications': get_notifications(request.user)
     }
     return render(request, 'stats/valorant-thanks.html', context)
 
@@ -609,7 +643,8 @@ def email_signup(request):
     latest_season = Season.objects.latest('id')
     context = {
         'seasons': seasons,
-        'season': latest_season
+        'season': latest_season,
+        'notifications': get_notifications(request.user)
     }
     return render(request, 'stats/email-signup.html', context)
 
@@ -659,7 +694,8 @@ def fun_stats(request):
         'total_kills': total_kills,
         'total_deaths': total_deaths,
         'total_assists': total_assists,
-        'damage_per_minute': damage_per_minute
+        'damage_per_minute': damage_per_minute,
+        'notifications': get_notifications(request.user)
     }
     return render(request, 'stats/fun-stats.html', context)
 
@@ -689,7 +725,8 @@ def create_roster_error(request, series_id):
     series = get_object_or_404(Series, id=series_id)
     context = {
         'season': latest_season,
-        'series': series
+        'series': series,
+        'notifications': get_notifications(request.user)
     }
     return render(request, 'stats/create_roster_error.html', context)
 
@@ -697,21 +734,24 @@ def create_roster_error(request, series_id):
 def about(request):
     latest_season = Season.objects.latest('id')
     context = {
-        'latest_season': latest_season
+        'latest_season': latest_season,
+        'notifications': get_notifications(request.user)
     }
     return render(request, 'stats/about.html', context)
 
 def head_to_head(request):
     latest_season = Season.objects.latest('id')
     context = {
-        'latest_season': latest_season
+        'latest_season': latest_season,
+        'notifications': get_notifications(request.user)
     }
     return render(request, 'stats/head_to_head.html', context)
 
 def faq(request):
     latest_season = Season.objects.latest('id')
     context = {
-        'latest_season': latest_season
+        'latest_season': latest_season,
+        'notifications': get_notifications(request.user)
     }
     return render(request, 'stats/faq.html', context)
 
@@ -727,7 +767,8 @@ def season_detail(request, season_id):
         'season': season,
         'seasons': seasons,
         'sorted_teams': sorted_teams,
-        'next_week': next_week
+        'next_week': next_week,
+        'notifications': get_notifications(request.user)
     }
     return render(request, 'stats/season.html', context)
 
@@ -738,7 +779,8 @@ def season_players(request, season_id):
     context = {
         'season': season,
         'seasons': seasons,
-        'team_players': team_players
+        'team_players': team_players,
+        'notifications': get_notifications(request.user)
     }
     return render(request, 'stats/season_players.html', context)
 
@@ -790,7 +832,8 @@ def season_graphs_detail(request, season_id, graph_type, selected_player_id_str)
         'roles': roles_set,
         'selected_players': selected_players,
         'max_duration': max_duration,
-        'graph_type': graph_type
+        'graph_type': graph_type,
+        'notifications': get_notifications(request.user)
     }
     return render(request, 'stats/season_graphs.html', context)
 
@@ -805,7 +848,8 @@ def season_teams_detail(request, season_id):
     context = {
         'latest_season': latest_season,
         'season': season,
-        'teams': teams
+        'teams': teams,
+        'notifications': get_notifications(request.user)
     }
     return render(request, 'stats/season_teams.html', context)
 
@@ -819,7 +863,8 @@ def season_champions_detail(request, season_id):
     context = {
         'latest_season': latest_season,
         'season': season,
-        'champions': champions
+        'champions': champions,
+        'notifications': get_notifications(request.user)
     }
     return render(request, 'stats/season_champions.html', context)
 
@@ -828,7 +873,8 @@ def player_detail(request, player_id):
     team_players = TeamPlayer.objects.filter(player=player_id)
     context = {
         'player': player,
-        'team_players': team_players
+        'team_players': team_players,
+        'notifications': get_notifications(request.user)
     }
     return render(request, 'stats/player.html', context)
 
@@ -856,7 +902,8 @@ def team_detail(request, season_id, team_id):
         'roles': team_roles,
 	'series_list': series_list,
         'kill_timelines': kill_timelines,
-        'overall_timelines': overall_timelines
+        'overall_timelines': overall_timelines,
+        'notifications': get_notifications(request.user)
     }
     return render(request, 'stats/team.html', context)
 
@@ -888,7 +935,8 @@ def team_player_role_detail(request, season_id, team_id, player_id, role_id):
         'team_player_role': team_player_role,
         'team_players': team_players,
         'team_set': team_set,
-        'teammates': teammates
+        'teammates': teammates,
+        'notifications': get_notifications(request.user),
         #'timelines': timelines,
         #'max_duration': max_duration
     }
@@ -904,7 +952,8 @@ def champion_detail(request, champion_id):
     except ObjectNotFound:
         raise Http404("Champion does not exist")
     context = {
-        'champion': champion
+        'champion': champion,
+        'notifications': get_notifications(request.user)
     }
     return render(request, 'stats/champion.html', context)
 
@@ -921,7 +970,8 @@ def index(request):
     teams = Team.objects.filter(season=latest_season)
     context = {
         'seasons': seasons,
-        'teams': teams
+        'teams': teams,
+        'notifications': get_notifications(request.user),
     }
     return render(request, 'stats/index.html', context)
 
@@ -935,7 +985,8 @@ def schedule(request, season_id):
         'season': season,
         'seasons': seasons,
         'teams': teams,
-        'sorted_teams': sorted_teams
+        'sorted_teams': sorted_teams,
+        'notifications': get_notifications(request.user),
     }
     return render(request, 'stats/schedule.html', context)
 
@@ -953,7 +1004,8 @@ def standings(request, season_id):
         'season': season,
         'seasons': seasons,
         'teams': teams,
-        'sorted_teams': sorted_teams
+        'sorted_teams': sorted_teams,
+        'notifications': get_notifications(request.user),
     }
     return render(request, 'stats/standings.html', context)
 
@@ -970,7 +1022,8 @@ def series_caster_tools(request, season_id, series_id):
     context = {
         'season': season,
         'series': series,
-        'roles': roles
+        'roles': roles,
+        'notifications': get_notifications(request.user),
     }
     return render(request, 'stats/caster_tools.html', context)
 
@@ -985,7 +1038,8 @@ def player_matchup(request, blue_player_id, red_player_id, blue_team_id, red_tea
         'blue_player': blue_player,
         'red_player': red_player,
         'max_duration': max_duration,
-        'role': role
+        'role': role,
+        'notifications': get_notifications(request.user),
     }
     return render(request, 'stats/player_matchup.html', context)
 
@@ -994,7 +1048,8 @@ def questions(request, season_id):
     season = get_object_or_404(Season, id=season_id)
 
     context = {
-        'season': season
+        'season': season,
+        'notifications': get_notifications(request.user),
     }
     return render(request, 'stats/questions.html', context)
 
@@ -1008,7 +1063,7 @@ def series_head_to_head(request, season_id, series_id):
     context = {
         'series': series,
         'team1': team1,
-        'team2': team2
+        'team2': team2,
     }
     return render(request, 'stats/head_to_head.html', context)
 
@@ -1081,7 +1136,8 @@ def series_lockin_detail(request, season_id, series_id, team_id):
             'mid': mid,
             'bot': bot,
             'sup': sup,
-            'sub': sub
+            'sub': sub,
+            'notifications': get_notifications(request.user),
     }
     return render(request, 'stats/lock-in.html', context)
 
@@ -1108,7 +1164,8 @@ def series_detail(request, season_id, series_id):
         'team1': team1,
         'team2': team2,
         'now': datetime.utcnow().replace(tzinfo=utc),
-        'user': user
+        'user': user,
+        'notifications': get_notifications(request.user),
     }
     return render(request, 'stats/series.html', context)
 
@@ -1171,7 +1228,8 @@ def create_roster(request, season_id, series_id, team_id):
         'season': season,
         'series': series,
         'team': team,
-        'form': form
+        'form': form,
+        'notifications': get_notifications(request.user),
     }
     return render(request, 'stats/create_roster.html', context)
 
@@ -1183,7 +1241,9 @@ def create_code(request, match_id):
         'metadata': "",
         'pickType': match.series.week.season.pick_type,
         'spectatorType': match.series.week.season.spectator_type,
-        'teamSize': match.series.week.season.team_size
+        'teamSize': match.series.week.season.team_size,
+        'notifications': get_notifications(request.user),
+
     }
 
     result = {}
@@ -1244,7 +1304,8 @@ def match_data_results(request, season_id, series_id, team_1_id, team_2_id, matc
 #    result = match_result_requester.request(str(match_id))
     match = get_match(team_1_id, team_2_id, match_id, series_id)
     context = {
-        'result': match
+        'result': match,
+        'notifications': get_notifications(request.user),
     }
 #    try:
 #        match = get_match(team_1_id, team_2_id, match_id)
@@ -1275,6 +1336,7 @@ def loginpage(request):
                 return HttpResponseRedirect('/profile/')
     context = {
         'form': form,
-        'seasons': seasons
+        'seasons': seasons,
+        'notifications': get_notifications(request.user),
     }
     return render(request, 'stats/login.html', context)

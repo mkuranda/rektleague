@@ -85,6 +85,10 @@ nav {
 
   .signinFloat {
     float: right;
+  }
+
+  .profileFloat {
+    float: right;
     display: inline-grid;
     grid-template-columns: 20% 50% 30%;
     grid-template-rows: 50% 50%;
