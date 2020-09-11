@@ -44,43 +44,21 @@
                             <ul class="menu">
 			      <li> 
                                 <!-- First Tier Drop Down -->
-                                <label for="drop-1" class="toggle">SCHEDULE</label>
-				<a href="/schedule/">SCHEDULE</span></a>
+                                <label for="drop-1" class="toggle">SEASONS</label>
+				<a href="/schedule/">SEASONS</span></a>
                                 <input type="checkbox" id="drop-1"/>
                                 <ul>
 				{% for season in seasons %}
-				<li><a href="/season/{{ season.id }}/schedule/">SEASON {{ season.id }}</a></li>
+				<li><a href="/season/{{ season.id }}/">SEASON {{ season.id }}</a></li>
 				{% endfor %}
                                 </ul>
                               </li>
-			      <li> 
-                                <!-- First Tier Drop Down -->
-                                <label for="drop-2" class="toggle">STANDINGS</label>
-				<a href="/standings/">STANDINGS</span></a>
-                                <input type="checkbox" id="drop-2"/>
-                                <ul>
-				{% for season in seasons %}
-				<li><a href="/season/{{ season.id }}/standings/">SEASON {{ season.id }}</a></li>
-				{% endfor %}
-                                </ul>
-                              </li>
-		              <li> 
-                                <!-- First Tier Drop Down -->
-                                <label for="drop-3" class="toggle">STATS</label>
-				<a href="/players/">STATS</span></a>
-                                <input type="checkbox" id="drop-3"/>
-                                <ul>
-				{% for season in seasons %}
-				<li><a href="/season/{{ season.id }}/players/">SEASON {{ season.id }}</a></li>
-				{% endfor %}
-                                </ul>
-                              </li>          
-                              <li><a target="_blank" href="https://docs.google.com/document/d/1CXoNUVz3K5vAqq_qPV36BGLRZEKzaxmvD79JkOJtq3g/edit#heading=h.mfjb9322hbzf">RULES</a></li>
+                              <li><a target="_blank" href="/rules/">RULES</a></li>
                               <li><a href="/merch/">MERCH</a></li>
 			      <li> 
                                 <!-- First Tier Drop Down -->
                                 <label for="drop-3" class="toggle">SIGN UP</label>
-				<a href="/valorant-signup/">SIGN UP</span></a>
+				<a href="/register/">SIGN UP</span></a>
                                 <input type="checkbox" id="drop-3"/>
                                 <ul>
 				<li><a href="/valorant-signup/">VALORANT</a></li>

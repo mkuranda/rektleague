@@ -1,11 +1,12 @@
-h1 {
-    color: white;
-    font-size: 4em;
+
+h1, h2{
+    color:white;
     text-align: center;
-    font-weight: 900;
+    font-size: 95px;
+    font-weight: 800;
 }
 
-h1 + p {
+p {
     color: white;
     font-size: 1.3em;
     text-align: center;

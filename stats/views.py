@@ -700,6 +700,7 @@ def faq(request):
     return render(request, 'stats/faq.html', context)
 
 def season_detail(request, season_id):
+    seasons = Season.objects.all().order_by('-id')
     latest_season = Season.objects.latest('id')
     season = get_object_or_404(Season, id=season_id)
     teams = Team.objects.filter(season=season_id)
@@ -708,6 +709,7 @@ def season_detail(request, season_id):
     context = {
         'latest_season': latest_season,
         'season': season,
+        'seasons': seasons,
         'sorted_teams': sorted_teams,
         'next_week': next_week
     }
