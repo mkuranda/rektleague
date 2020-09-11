@@ -190,12 +190,8 @@
 
 	{% if not myRepTeam %}
     <p>Don't want to play in Season 7? Delete your sign up here.</p>
-<<<<<<< HEAD
-	<a href="/season/{{ season.id }}/remove-sign-up"><button class="btn btn-primary spacer">DELETE SIGN UP</button></a>
+        <button class="btn btn-primary spacer"><a href="/season/{{ season.id }}/remove-sign-up">DELETE SIGN UP</a></button>
 	{% endif %}
-=======
-<button class="btn btn-primary spacer">	<a href="/season/{{ season.id }}/remove-sign-up">DELETE SIGN UP</a></button>
->>>>>>> e9db0e73c3c3218d9acf509883d1ef009dd2210f
 	<h4>ELO</h4>
 	{% if seasonPlayer.get_elo_value == 100 %}
 	<p>Your elo has not yet been confirmed. Check back later.</p>
