@@ -9,22 +9,22 @@
 {% endblock %}
 
 {% block content %}
-<h1>SEASON {{ season.id }}</h1>
+<h1>SEASON <span class="rekt-red">{{ season.id }}</span></h1>
 <p>Ladies and gentlemen welcome to Season {{ season.id }}! Here you can find schedules, stats, and standings for the current season.</p>
 
 <div class="iconContainer">
 	<div class="icon">
-		<a href=""><img src="/media/stats/icons/calendar.png" alt="calendar icon">
+		<a href="schedule/"><img src="/media/stats/icons/calendar.png" alt="calendar icon">
 		<h3>SCHEDULE</h3></a>
 	</div>
 
 	<div class="icon">
-		<a href=""><img src="/media/stats/icons/standings.png" alt="podium icon">
+		<a href="standings/"><img src="/media/stats/icons/standings.png" alt="podium icon">
 		<h3>STANDINGS</h3></a>
 	</div>
 
 	<div class="icon">
-		<a href=""><img src="/media/stats/icons/stats.png" alt="graph icon">
+		<a href="players/"><img src="/media/stats/icons/stats.png" alt="graph icon">
 		<h3>STATS</h3></a>
 	</div>
 </div>
