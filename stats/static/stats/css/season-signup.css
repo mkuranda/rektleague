@@ -54,6 +54,10 @@ form {
     background: #9a1522;
 }
 
+.errorlist {
+    font-size: 1.5em;
+}
+
 @media(max-width: 414px){
     h1{
         font-size: 3em;

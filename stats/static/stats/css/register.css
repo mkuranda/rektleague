@@ -6,7 +6,13 @@ body {
 }
 
 input {
+    width: 100%;
     color: black;
+}
+
+input:hover{
+    border: #bf1f2f 1px solid;
+    transition: .5s ease;
 }
 
 h1, h2{
@@ -63,6 +69,11 @@ input[type=checkbox], input[type=radio] {
     padding-left: 0;
 }
 
+#TC {
+    width: 574px;
+    margin-top: -18px;
+}
+
 .btn-primary {
     color: #fff;
     background-color: #bf1f2f;
@@ -103,4 +114,21 @@ input[type=checkbox], input[type=radio] {
 
 .extraAccountLabel {
     width: auto;
+}
+
+
+@media(max-width: 620px){
+    #TC {
+        width: 236px;
+    }
+}
+
+@media(max-width: 385px){
+    #TC {
+        margin-top: 29px;
+    }
+
+    #agree {
+        margin-left: 0px;
+    }
 }
