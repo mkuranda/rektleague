@@ -29,7 +29,20 @@
       {{ form.rosterPosition.errors }}
       {{ form.rosterPosition }}
     </div>
-    <button class="btn btn-primary spacer" name="submitUsername" type="submit">SUBMIT</button>
+    
+    <div class="form-group spacer">
+      <div class="form-check" id="tAndCSection">
+	      <label id="accountCheck"><p>By checking this box, you agree that the following are your <strong>only</strong> League of Legends accounts and that all of the links work correctly.</p></label>
+	      {% for account in accounts %}
+	      <p>- <a href="{{ account.link }}">{{ account.name }}</a></p>
+	      {% endfor %}
+        <label id="agree" for="accountCheck">
+		<p>I Agree</p>
+        </label>
+        <input class="form-check-input" type="checkbox" value="" required>
+      </div>
+    </div>
+    <button class="btn btn-primary spacer" name="submit" type="submit">SUBMIT</button>
 </form>
 </div>
 {% endblock %}

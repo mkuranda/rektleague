@@ -84,6 +84,7 @@ def season_signup(request, season_id):
     season = get_object_or_404(Season, id=season_id)
     seasons = Season.objects.all().order_by('-id')
     latest_season = Season.objects.latest('id')
+    accounts = UserAccount.objects.filter(user=request.user.id)
     if request.method == 'POST':
         form = SeasonSignupForm(request.POST)
         if form.is_valid():
@@ -118,6 +119,7 @@ def season_signup(request, season_id):
         'season': season,
         'seasons': seasons,
         'form': form,
+        'accounts': accounts,
         'notifications': get_notifications(request.user)
     }
     return render(request, 'stats/season-signup.html', context)
