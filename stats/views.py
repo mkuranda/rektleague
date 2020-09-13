@@ -750,6 +750,8 @@ def season_detail(request, season_id):
     seasons = Season.objects.all().order_by('-id')
     latest_season = Season.objects.latest('id')
     season = get_object_or_404(Season, id=season_id)
+    if season.isPreseason:
+        return redirect('/preseason/' + str(season.id))
     teams = Team.objects.filter(season=season_id)
     sorted_teams = sorted(teams, key= lambda t: t.get_sort_record())
     next_week = season.next_week()
@@ -961,6 +963,7 @@ def index(request):
     teams = Team.objects.filter(season=latest_season)
     context = {
         'seasons': seasons,
+        'season': latest_season,
         'teams': teams,
         'notifications': get_notifications(request.user),
     }
