@@ -1,0 +1,43 @@
+h1 {
+    color: white;
+    font-size: 4em;
+    text-align: center;
+    font-weight: 900;
+}
+
+h2, h4{
+    text-align: center;
+}
+
+.invitePlayers {
+    margin: auto;
+    display: block;
+}
+
+.thicc {
+    font-weight: 900;
+}
+
+
+.btn {
+    background: #bf1f2f;
+    border: #bf1f2f;
+    margin-top: 20px;
+}
+
+.btn:hover{
+    background: #961c29;
+    border: #961c29;
+}
+
+@media (max-width: 411px){
+    h1 {
+        font-size: 3em;
+        padding: 0 20px;
+    }
+
+    h4{
+        font-size: 15px;
+        padding: 0 10px;
+    }
+}

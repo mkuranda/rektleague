@@ -1,0 +1,36 @@
+{% extends "stats/base.html" %}
+{% load staticfiles %}
+
+{% block title %} Rekt League | Team Manager {% endblock %}
+
+{% block head %}
+<link rel="stylesheet" type="text/css" href="{% static 'stats/css/team-invite-confirm.css' %}"/>
+
+{% endblock %}
+
+{% block content %}
+
+{% if team %}
+<h1>INVITE CONFIRMATION</h1>
+<div style="color: white">
+	<h2><span class="rekt-red thicc">WARNING:</span> The following actions are about to be performed:</h2>
+	{% for inviteRemove in inviteRemoves %}
+	<h4>Retract your invite to {{ inviteRemove.name }} as a {{ inviteRemove.role }}</h4>
+	{% endfor %}
+	{% for remove in removes %}
+	<h4>Remove {{ remove.name }} from your team as a {{ remove.role }}</h4>
+	{% endfor %}
+	{% for invite in invites %}
+	<h4>Invite {{ invite.name }} to your team as a {{ invite.role }}</h4>
+	{% endfor %}
+</div>
+
+<a href="send/"><button class="invitePlayers btn btn-primary spacer">CONFIRM</button></a>
+
+{% else %}
+<!-- Doesn't have permissions for this -->
+{% endif %}
+
+<script type="text/javascript" src="{% static 'stats/js/jquery-3.4.1.min.js' %}"></script>
+{% endblock %}
+

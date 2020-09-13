@@ -1,0 +1,39 @@
+
+h1, h2{
+    color:white;
+    text-align: center;
+    font-size: 95px;
+    font-weight: 800;
+}
+
+p {
+    color: white;
+    font-size: 1.3em;
+    text-align: center;
+    padding: 2% 20%;
+    margin-top: -21px;
+}
+
+.iconContainer {
+    display: flex;
+    flex-flow: row nowrap;
+    justify-content: space-evenly;
+}
+
+h3 {
+    color: white;
+    font-weight: 700;
+    margin-top: -4px;
+    margin-bottom: 40px;
+}
+
+h3:hover {
+    color: #bf1f2f;
+    transition: 1s ease;
+}
+
+@media (max-width: 500px){
+    h3{
+        font-size: 18px;
+    }
+}

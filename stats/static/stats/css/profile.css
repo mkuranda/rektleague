@@ -1,11 +1,422 @@
-    .playerPhoto {
-      grid-column-start: 3;
-      grid-column-end: 3;
-      grid-row-start: 1;
-      grid-row-end: 1;
-      width: 300px;
-      justify-self: end;
-      border: 9px solid rgba(0, 0, 0, 0.2);
-      border-radius: 16px;
-      margin: 1% 1% 0 0;
-  }
+body{
+  background: #152028;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    margin: 0;
+}
+
+footer{
+  width: 100%;
+  margin-top: auto;
+}
+
+
+.profileHeader {
+  background-image: repeating-linear-gradient(0deg, rgba(0, 0, 0, 0.11) 0px, rgba(0, 0, 0, 0.11) 12px, rgba(1, 1, 1, 0.16) 12px, rgba(1, 1, 1, 0.16) 24px, rgba(0, 0, 0, 0.14) 24px, rgba(0, 0, 0, 0.14) 36px, rgba(0, 0, 0, 0.23) 36px, rgba(0, 0, 0, 0.23) 48px, rgba(0, 0, 0, 0.12) 48px, rgba(0, 0, 0, 0.12) 60px, rgba(1, 1, 1, 0.07) 60px, rgba(1, 1, 1, 0.07) 72px, rgba(0, 0, 0, 0.21) 72px, rgba(0, 0, 0, 0.21) 84px, rgba(0, 0, 0, 0.24) 84px, rgba(0, 0, 0, 0.24) 96px, rgba(1, 1, 1, 0.23) 96px, rgba(1, 1, 1, 0.23) 108px, rgba(1, 1, 1, 0.07) 108px, rgba(1, 1, 1, 0.07) 120px, rgba(0, 0, 0, 0.01) 120px, rgba(0, 0, 0, 0.01) 132px, rgba(1, 1, 1, 0.22) 132px, rgba(1, 1, 1, 0.22) 144px, rgba(1, 1, 1, 0.24) 144px, rgba(1, 1, 1, 0.24) 156px, rgba(0, 0, 0, 0) 156px, rgba(0, 0, 0, 0) 168px, rgba(0, 0, 0, 0.12) 168px, rgba(0, 0, 0, 0.12) 180px), repeating-linear-gradient(90deg, rgba(1, 1, 1, 0.01) 0px, rgba(1, 1, 1, 0.01) 12px, rgba(1, 1, 1, 0.15) 12px, rgba(1, 1, 1, 0.15) 24px, rgba(0, 0, 0, 0.09) 24px, rgba(0, 0, 0, 0.09) 36px, rgba(0, 0, 0, 0.02) 36px, rgba(0, 0, 0, 0.02) 48px, rgba(0, 0, 0, 0.1) 48px, rgba(0, 0, 0, 0.1) 60px, rgba(1, 1, 1, 0.07) 60px, rgba(1, 1, 1, 0.07) 72px, rgba(1, 1, 1, 0.15) 72px, rgba(1, 1, 1, 0.15) 84px, rgba(0, 0, 0, 0.18) 84px, rgba(0, 0, 0, 0.18) 96px, rgba(1, 1, 1, 0.15) 96px, rgba(1, 1, 1, 0.15) 108px, rgba(1, 1, 1, 0.09) 108px, rgba(1, 1, 1, 0.09) 120px, rgba(1, 1, 1, 0.07) 120px, rgba(1, 1, 1, 0.07) 132px, rgba(1, 1, 1, 0.05) 132px, rgba(1, 1, 1, 0.05) 144px, rgba(0, 0, 0, 0.1) 144px, rgba(0, 0, 0, 0.1) 156px, rgba(1, 1, 1, 0.18) 156px, rgba(1, 1, 1, 0.18) 168px), repeating-linear-gradient(45deg, rgba(0, 0, 0, 0.24) 0px, rgba(0, 0, 0, 0.24) 16px, rgba(1, 1, 1, 0.06) 16px, rgba(1, 1, 1, 0.06) 32px, rgba(0, 0, 0, 0.16) 32px, rgba(0, 0, 0, 0.16) 48px, rgba(1, 1, 1, 0) 48px, rgba(1, 1, 1, 0) 64px, rgba(1, 1, 1, 0.12) 64px, rgba(1, 1, 1, 0.12) 80px, rgba(1, 1, 1, 0.22) 80px, rgba(1, 1, 1, 0.22) 96px, rgba(0, 0, 0, 0.24) 96px, rgba(0, 0, 0, 0.24) 112px, rgba(0, 0, 0, 0.25) 112px, rgba(0, 0, 0, 0.25) 128px, rgba(1, 1, 1, 0.12) 128px, rgba(1, 1, 1, 0.12) 144px, rgba(0, 0, 0, 0.18) 144px, rgba(0, 0, 0, 0.18) 160px, rgba(1, 1, 1, 0.03) 160px, rgba(1, 1, 1, 0.03) 176px, rgba(1, 1, 1, 0.1) 176px, rgba(1, 1, 1, 0.1) 192px), repeating-linear-gradient(135deg, rgba(1, 1, 1, 0.18) 0px, rgba(1, 1, 1, 0.18) 3px, rgba(0, 0, 0, 0.09) 3px, rgba(0, 0, 0, 0.09) 6px, rgba(0, 0, 0, 0.08) 6px, rgba(0, 0, 0, 0.08) 9px, rgba(1, 1, 1, 0.05) 9px, rgba(1, 1, 1, 0.05) 12px, rgba(0, 0, 0, 0.01) 12px, rgba(0, 0, 0, 0.01) 15px, rgba(1, 1, 1, 0.12) 15px, rgba(1, 1, 1, 0.12) 18px, rgba(0, 0, 0, 0.05) 18px, rgba(0, 0, 0, 0.05) 21px, rgba(1, 1, 1, 0.16) 21px, rgba(1, 1, 1, 0.16) 24px, rgba(1, 1, 1, 0.07) 24px, rgba(1, 1, 1, 0.07) 27px, rgba(1, 1, 1, 0.23) 27px, rgba(1, 1, 1, 0.23) 30px, rgba(0, 0, 0, 0.2) 30px, rgba(0, 0, 0, 0.2) 33px, rgba(0, 0, 0, 0.18) 33px, rgba(0, 0, 0, 0.18) 36px, rgba(1, 1, 1, 0.12) 36px, rgba(1, 1, 1, 0.12) 39px, rgba(1, 1, 1, 0.13) 39px, rgba(1, 1, 1, 0.13) 42px, rgba(1, 1, 1, 0.2) 42px, rgba(1, 1, 1, 0.2) 45px, rgba(1, 1, 1, 0.18) 45px, rgba(1, 1, 1, 0.18) 48px, rgba(0, 0, 0, 0.2) 48px, rgba(0, 0, 0, 0.2) 51px, rgba(1, 1, 1, 0) 51px, rgba(1, 1, 1, 0) 54px, rgba(0, 0, 0, 0.03) 54px, rgba(0, 0, 0, 0.03) 57px, rgba(1, 1, 1, 0.06) 57px, rgba(1, 1, 1, 0.06) 60px, rgba(1, 1, 1, 0) 60px, rgba(1, 1, 1, 0) 63px, rgba(0, 0, 0, 0.1) 63px, rgba(0, 0, 0, 0.1) 66px, rgba(1, 1, 1, 0.19) 66px, rgba(1, 1, 1, 0.19) 69px), linear-gradient(90deg, rgba(0,0,0, 0.68), rgb(191,31,47));
+  padding: 20px;
+  box-shadow: 2px 8px 6px 1px rgba(0, 0, 0, 0.3);
+}
+
+.profileHeader > h2 {
+  color: white;
+  text-align: center;
+  font-size: 4em;
+  font-weight: 700;
+}
+
+.profileHeader > h3 {
+  color: white;
+  text-align: center;
+  font-size: 2em;
+  font-weight: 500;
+}
+
+.playerPhoto{
+  width: 250px;
+  height: 250px;
+  border-radius: 50%;
+  margin: 0 auto;
+  box-shadow: 2px 8px 6px 1px rgba(0, 0, 0, 0.3);
+  display: block;
+}
+
+h4 {
+  background: #bf1f2f;
+  padding: 1% 2%;
+  color: white;
+  font-size: 2em;
+  width: 304px;
+  text-align: center;
+  font-weight: 800;
+  margin: 3% 0 10px 0;
+  box-shadow: 3px 8px 14px 1px rgba(0, 0, 0, 0.2);
+}
+
+.playerActionsBar {
+  display: flex;
+  justify-content: flex-start;
+  width: 26%;
+}
+
+.editModalButtonSection{
+  display: flex;
+  justify-content: flex-end;
+}
+/* TABS */
+
+/* Style the tab */
+.tab {
+  /* overflow: hidden; */
+  border: 1px solid #000;
+  background-color: #000000;
+  margin: 0 auto 2% auto;
+  text-align: center;
+  width: 273px;
+  box-shadow: 2px 8px 6px 1px rgba(0, 0, 0, 0.3);
+}
+
+/* .tablinks{
+  overflow: auto;
+} */
+
+.profileContainerAccount{
+  width: 60%;
+  padding: 0 5%;
+  float: left;
+  background: #152028;
+}
+
+.seasonContainerInfo{
+  width: 60%;
+  padding: 0 5%;
+  background: #152028;
+  float: left;
+}
+.seasonContainerInfo h4 {
+  margin: 0 auto 1% auto;
+  
+} 
+.seasonContainerInfo p {
+  font-size: 2em;
+  color: white;
+  text-align: center;
+}
+
+.seasonContainerInfo button {
+  margin: auto;
+  display: block;
+  font-weight: 700;
+  font-size: 2em;
+  margin-bottom: 2%;
+}
+
+.profileContainerAlerts{
+  width: 40%;
+  padding: 0% 2%;
+  float: left;
+  background: #152028;
+}
+
+.alertContainerAlerts{
+  width: 40%;
+  padding: 0% 2%;
+  background: #152028;
+}
+
+.seasonContainerAlerts{
+  width: 40%;
+  padding: 0% 2%;
+  background: #152028;
+  float: left;
+}
+
+#accountTab{
+  text-align: center;
+}
+
+#accountTab h4{
+  margin: 2% auto 1% auto;
+}
+
+button {
+  text-decoration: none !important;
+}
+
+button:hover {
+  text-decoration: none !important;
+}
+
+.nvm {
+  margin: 0px 90px -34px 0;
+}
+
+#setMain{
+  margin-right: 11px;
+    height: 35px;
+}
+
+.alertContainer {
+  width: 100%;
+  height: 60px;
+  background: #905e5e8a;
+  box-shadow: 2px 8px 6px 1px rgba(0, 0, 0, 0.3);
+  margin: 1% 0;
+  display: flex;
+}
+
+.redAccent {
+  background: #bf1f2f;
+  width: 10px;
+  height: 100%;
+  order: 1;
+}
+
+.btn-primary:hover{
+  background-color: #840f1b9e;
+}
+
+.alertContainer > p {
+  font-size: 1.1em;
+  color: white;
+  padding: 0 4%;
+  display: block;
+  font-weight: 500;
+  width: 80%;
+  order: 2;
+  margin: 0;
+  align-self: center;
+}
+
+.alertConfirm {
+  height: 60px;
+  background: #1dc51db8;
+  width: 10%;
+  order:4;
+  align-self: end;
+}
+
+.alertConfirm:hover {
+  background: #189218b8;
+}
+
+.alertDeny {
+  background: #bf1f2f9e;
+  height: 60px;
+  width: 10%;
+  order: 3;
+  align-self: end;
+}
+
+.alertDeny:hover {
+  background: #840f1b9e;
+}
+
+.modal-header .close {
+  margin-right: -33px;
+}
+
+.leaveBtn{
+  margin-bottom: 16px;
+}
+
+.removeNvm{
+  display: inline-block;
+  margin-left: 321px;
+  margin-bottom: 16px;
+}
+
+.alertContainer > .alertMessage {
+  font-size: 1.1em;
+  color: white;
+  padding: 0 4%;
+  display: block;
+  font-weight: 500;
+  width: 90%;
+  order: 2;
+  margin: 0;
+  align-self: center;
+}
+
+.alertClose{
+  background: #bf1f2f9e;
+  height: 60px;
+  width: 10%;
+  order: 3;
+  align-self: end;
+}
+
+.alertClose:hover {
+  background: #840f1b9e;
+}
+
+.fa-check {
+  font-size: 2em;
+  color: white;
+  text-align: center;
+  display: block;
+  padding: 17px 0;
+}
+
+.fa-times{
+  font-size: 2em;
+  color: white;
+  text-align: center;
+  display: block;
+  padding: 17px 0;
+}
+
+/* Style the buttons that are used to open the tab content */
+.tab button {
+  background-color: inherit;
+  float: left;
+  border: none;
+  outline: none;
+  cursor: pointer;
+  padding: 14px 16px;
+  transition: 0.3s;
+  color: white;
+}
+
+/* Change background color of buttons on hover */
+.tab button:hover {
+  background-color: #bf1f2f;
+}
+
+/* Create an active/current tablink class */
+.tab button.active {
+  background-color: bf1f2f;
+}
+
+/* Style the tab content */
+.tabcontent {
+  display: none;
+  /* animation: fadeEffect 1s; */
+}
+
+/* Icon Styles */
+
+.fa-user-plus{
+  font-size: 2em;
+  color: #4dd212;
+  margin: 2% 0;
+}
+
+.addAccountLabel {
+  padding-left: 10px;
+  font-size: 1.4em;
+  color: #4dd212;
+  font-weight: 900;
+}
+
+.addAccountLabel:hover, .fa-user-plus:hover{
+  color: #41a016;
+}
+
+a:hover{
+  text-decoration: none!important;
+}
+
+.fa-user-edit{
+  font-size: 1.9em;
+  color: white;
+  order: 1;
+  padding: 0 3%;
+} 
+
+.fa-user-edit:hover{
+  color: #d0d0d0;
+}
+
+.fa-user-minus{
+  font-size: 1.9em;
+  color: #bf1f2f;
+  order: 2;
+  padding: 0 3%;
+}
+
+.fa-user-minus:hover{
+  color: #901c28;
+}
+
+.fa-crown{
+  padding-left: 15px;
+  color: #ffbc00;
+}
+
+.fa-chevron-up{
+  font-size: 1.9em;
+  order: 3;
+  padding: 0 3%;
+  color: #ffbc00;
+}
+
+.fa-chevron-up:hover{
+  color: #c39208;
+}
+/* Modal styling */
+
+.modal-body > p{
+  font-size: 1.5em;
+}
+
+
+@media(max-width: 975px){
+  .profileContainerAlerts {
+    width: 100%;
+    text-align: center;
+    
+}
+.profileContainerAccount {
+  width: 100%;
+  text-align: center;
+}
+
+h4{
+  margin: 3% auto 10px auto;
+}
+
+
+.playerActionsBar {
+  margin: 0 auto;
+}
+
+.seasonContainerInfo {
+  width: 100%;
+}
+
+.seasonContainerInfo h4 {
+  margin: 3% auto 10px auto;
+}
+
+.seasonContainerInfo p {
+  font-size: 1.2em;
+}
+
+.alertDeny,.alertConfirm{
+  width: 15%;
+}
+.alertContainer > p {
+  width: 70%;
+}
+
+.seasonContainerInfo button {
+  font-size: 1.3em;
+}
+
+#accountTab .btn{
+  margin-bottom: 4%;
+}
+
+#accountTab h4 {
+  margin: 2% auto 4% auto;
+}
+
+
+}
+
+@media(max-width: 600px){
+  .removeNvm {
+    margin-left: 40px;
+}
+}

@@ -41,12 +41,15 @@ p {
     width: 100px;
     display: block;
 }
-  }
 
   .Button:hover{
     background: #7d0c18;
     text-decoration: none;
     color: white;
+  }
+
+  a {
+      color: #bf1e2d;
   }
 
   a:visited {

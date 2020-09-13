@@ -1,14 +1,17 @@
 from django.shortcuts import get_object_or_404, render, redirect
 from django import forms
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate, login, update_session_auth_hash
+from django.contrib.auth.models import User
+from django.contrib.auth.forms import PasswordChangeForm
 from django.http import HttpResponse, HttpResponseRedirect, Http404
 from django.template import loader
 from django.db.models import Avg, Count, Sum, F, When, Q
 from django.utils.timezone import utc
 from django.conf import settings
 from riot_request import RiotRequester
-from .models import Player, TeamPlayer, Team, Season, Champion, Match, Week, Series, SeriesTeam, TeamMatch, SeasonChampion, PlayerMatch, Role, TeamRole, SeriesPlayer, Summoner
-from .forms import TournamentCodeForm, InitializeMatchForm, CreateRosterForm, LoginForm, EditProfileForm
+from .models import Player, TeamPlayer, Team, Season, Champion, Match, Week, Series, SeriesTeam, TeamMatch, SeasonChampion, PlayerMatch, Role, TeamRole, SeriesPlayer, Summoner, UserAccount, TeamInvite
+from .models import SeasonPlayer, SeasonPlayerRole, PreseasonTeamPlayer, TeamInviteResponse, LeaveTeamNotification
+from .forms import TournamentCodeForm, InitializeMatchForm, CreateRosterForm, LoginForm, EditProfileForm, RegisterForm, AddAccountForm, EditAccountForm, RemoveAccountForm, SetMainForm, UpdateUsernameForm, UpdateEmailForm, SeasonSignupForm, ConfirmEloForm
 from get_riot_object import ObjectNotFound, get_item, get_champions, get_champion, get_match, get_all_items, get_match_timeline, update_playermatchkills, update_team_timelines, update_season_timelines, update_team_player_timelines
 from datetime import datetime
 from django.views.decorators.csrf import csrf_exempt
@@ -16,49 +19,603 @@ from django.views.decorators.http import require_POST
 import random
 import json
 
-def team_manager(request):
+def get_notifications(user):
+    if not user.is_authenticated():
+        return []
+    userAccount = UserAccount.objects.get(user=user.id, isMain=True)
+    invites = TeamInvite.objects.filter(user=user.id)
+    count = invites.count()
+    teamInviteResponses = []
+    leaveTeamNotifications = []
+    team = Team.objects.filter(user=user.id)
+    if team:
+        team = team[0]
+        teamInviteResponses = TeamInviteResponse.objects.filter(team=team)
+        count += teamInviteResponses.count()
+        leaveTeamNotifications = LeaveTeamNotification.objects.filter(team=team)
+        count += teamInviteResponses.count()
+    notifications = {
+        'name': userAccount.name,
+        'invites': invites,
+        'teamInviteResponses': teamInviteResponses,
+        'leaveTeamNotifications': leaveTeamNotifications,
+        'count': count
+    }
+    return notifications
+
+def register(request):
     seasons = Season.objects.all().order_by('-id')
     latest_season = Season.objects.latest('id')
+    if request.method == "POST":
+        form = RegisterForm(request.POST)
+        if form.is_valid():
+            form.save()
+            new_user = authenticate(username=form.cleaned_data['username'], password=form.cleaned_data['password1'])
+            login(request, new_user)
+            return redirect("/profile")
+    else:
+        form = RegisterForm()
     context = {
         'seasons': seasons,
-        'season': latest_season
-    }
-    return render(request, 'stats/team-manager.html', context)
+        'season': latest_season,
+        'form': form,
+        'notifications': get_notifications(request.user)
+    }        
+    return render(request, "stats/register.html", context)
+
+def remove_season_signup(request, season_id):
+    season = get_object_or_404(Season, id=season_id)
+    seasonPlayer = get_object_or_404(SeasonPlayer, user=request.user, season=season)
+    seasonPlayer.delete()
+    SeasonPlayerRole.objects.filter(user=request.user, season=season).delete()
+    TeamInvite.objects.filter(user=request.user).delete()
+    return redirect("/profile/")
+
+def decline_invite(request, team_id, role_id):
+    team = get_object_or_404(Team, id=team_id)
+    role = get_object_or_404(Role, id=role_id)
+    invite = get_object_or_404(TeamInvite, user=request.user, team=team, role=role)
+    invite.delete()
+    response = TeamInviteResponse.objects.create(user=request.user, team=team, role=role, accepted=False)
+    response.save()
+    return redirect("/profile/")
 
 def season_signup(request, season_id):
     season = get_object_or_404(Season, id=season_id)
     seasons = Season.objects.all().order_by('-id')
     latest_season = Season.objects.latest('id')
+    accounts = UserAccount.objects.filter(user=request.user.id)
+    if request.method == 'POST':
+        form = SeasonSignupForm(request.POST)
+        if form.is_valid():
+            main_role = form.cleaned_data.get('mainRole')
+            off_roles = form.cleaned_data.get('offRoles')
+            roster_position = form.cleaned_data.get('rosterPosition')
+            try:
+                seasonPlayer = SeasonPlayer.objects.get(user=request.user)
+                seasonPlayer.main_roster = False
+                seasonPlayer.substitute = False
+            except SeasonPlayer.DoesNotExist:
+                seasonPlayer = SeasonPlayer.objects.create(user=request.user, season=season)
+            for position in roster_position:
+                if position == "1":
+                    seasonPlayer.main_roster = True
+                if position == "2":
+                    seasonPlayer.substitute = True
+            seasonPlayer.save()
+            SeasonPlayerRole.objects.filter(user=request.user, season=season).delete()
+            mainRole = Role.objects.get(id=main_role)
+            mainRolePlayer = SeasonPlayerRole.objects.create(user=request.user, season=season, role=mainRole, isMain=True)
+            mainRolePlayer.save()
+            for off_role in off_roles:
+                offRole = Role.objects.get(id=off_role)
+                offRolePlayer = SeasonPlayerRole.objects.create(user=request.user, season=season, role=offRole, isMain=False)
+                offRolePlayer.save()
+            return redirect("/profile/")
+    else:
+        form = SeasonSignupForm()
+
     context = {
         'season': season,
-        'seasons': seasons
+        'seasons': seasons,
+        'form': form,
+        'accounts': accounts,
+        'notifications': get_notifications(request.user)
     }
     return render(request, 'stats/season-signup.html', context)
+
+def rules(request):
+    seasons = Season.objects.all().order_by('-id')
+    latest_season = Season.objects.latest('id')
+    context = {
+        'seasons': seasons,
+        'season': latest_season,
+        'notifications': get_notifications(request.user)
+    }
+    return render(request, 'stats/rules.html', context)
+
 
 def merch(request):
     seasons = Season.objects.all().order_by('-id')
     latest_season = Season.objects.latest('id')
     context = {
         'seasons': seasons,
-        'season': latest_season
+        'season': latest_season,
+        'notifications': get_notifications(request.user)
     }
     return render(request, 'stats/merch.html', context)
+
+def team_manager(request):
+    seasons = Season.objects.all().order_by('-id')
+    latest_season = Season.objects.latest('id')
+    user = request.user.id
+    seasonPlayers = SeasonPlayer.objects.filter(season=latest_season)
+    teams = Team.objects.filter(season=latest_season, user=user)
+    if not teams:
+        return redirect('/preseason/' + str(latest_season.id))
+    teamReps = []
+    for team in teams:
+        if team.user != user:
+            teamReps.append(team.user)
+    unconfirmedPlayers = []
+    for seasonPlayer in seasonPlayers:
+        if seasonPlayer.elo_value == 100:
+            unconfirmedPlayers.append(seasonPlayer.user)
+    myPlayers = []
+    myInvites = []
+    team = None
+    if teams:
+        team = teams[0]
+        myPlayers = PreseasonTeamPlayer.objects.filter(team=team)
+        myInvites = TeamInvite.objects.filter(team=team)
+    playersOnTeams = TeamPlayer.objects.filter(team__season=latest_season, role__isFill=True, isActive=True)
+    roles = Role.objects.all()
+    rolePlayers = []
+    for role in roles:
+        players = []
+        if role.isFill:
+            players = SeasonPlayer.objects.filter(season=latest_season, substitute=True).exclude(id__in=playersOnTeams).exclude(user__in=teamReps).exclude(user__in=unconfirmedPlayers)
+        else:
+            playerRoles = SeasonPlayerRole.objects.filter(season=latest_season, role=role).exclude(id__in=playersOnTeams).exclude(user__in=teamReps).exclude(user__in=unconfirmedPlayers)
+            myCurrentPlayer = myPlayers.filter(role=role)
+            if myCurrentPlayer:
+                playerRoles = playerRoles.exclude(Q(user=myCurrentPlayer[0].user) & Q(role=myCurrentPlayer[0].role)).exclude(user__in=teamReps).exclude(user__in=unconfirmedPlayers)
+            myCurrentInvite = myInvites.filter(role=role)
+            if myCurrentInvite:
+                playerRoles = playerRoles.exclude(Q(user=myCurrentInvite[0].user) & Q(role=myCurrentInvite[0].role)).exclude(user__in=teamReps).exclude(user__in=unconfirmedPlayers)
+            for playerRole in playerRoles:
+                players.append(playerRole.get_season_player())
+        myPlayer = PreseasonTeamPlayer.objects.filter(team=team, role=role)
+        myInvite = TeamInvite.objects.filter(team=team, role=role)
+        if myPlayer:
+            myPlayer = myPlayer[0]
+        if myInvite:
+            myInvite = myInvite[0]
+        rolePlayers.append({
+                  'name': role.name,
+                  'isFill': role.isFill,
+                  'icon': role.icon.url,
+                  'players': players,
+                  'myPlayer': myPlayer,
+                  'myInvite': myInvite,
+                  'icon_w_name': role.icon_w_name.url,
+                  })
+    mySubInvites = TeamInvite.objects.filter(team=team, role__isFill=True)
+    mySubPlayers = PreseasonTeamPlayer.objects.filter(team=team, role__isFill=True)
+    mySubs = [{'invite': None, 'player': None},{'invite': None, 'player': None},{'invite': None, 'player': None}]
+    count = 0
+    for invite in mySubInvites:
+        if count < latest_season.numSubs:
+            mySubs[count] = {
+                'invite': invite,
+                'player': None
+                }
+            count = count + 1
+    for player in mySubPlayers:
+        if count < latest_season.numSubs:
+            mySubs[count] = {
+                'invite': None,
+                'player': player
+                }
+            count = count + 1
+
+    subRole = Role.objects.get(isFill=True)
+
+    context = {
+        'seasons': seasons,
+        'season': latest_season,
+        'roles': rolePlayers,
+        'subNums': range(0,latest_season.numSubs),
+        'myPlayers': myPlayers,
+        'myInvites': myInvites,
+        'mySubs': mySubs,
+        'team': team,
+        'subRole': subRole,
+        'notifications': get_notifications(request.user)
+    }
+    return render(request, 'stats/team-manager.html', context)
+
+def getTeamChanges(role, team, invites, inviteRemoves, removes, player_id):
+    player = None
+    if player_id != 0:
+        player = SeasonPlayer.objects.get(id=player_id)
+
+    current = PreseasonTeamPlayer.objects.filter(team=team, role=role)
+    current_invite = TeamInvite.objects.filter(team=team, role=role)
+    if current:
+        current = current[0]
+        if player_id != current.get_season_player().id:
+            removes.append({
+                'name': current.get_name(),
+                'role': role.name,
+                'id': current.id
+                })
+            if player_id != 0:
+                invites.append({
+                    'name': player.get_name(),
+                    'role': role.name,
+                    'id': player_id
+                    })
+    elif current_invite:
+        current_invite = current_invite[0]
+        if player_id != current_invite.get_season_player().id:
+            inviteRemoves.append({
+                'name': current_invite.get_name(),
+                'role': role.name,
+                'id': current_invite.id
+                })
+            if player_id != 0:
+                invites.append({
+                    'name': player.get_name(),
+                    'role': role.name,
+                    'id': player_id
+                    })
+    elif player_id != 0:
+        invites.append({
+            'name': player.get_name(),
+            'role': role.name,
+            'id': player_id
+            })
+
+def getSubTeamChanges(team, invites, inviteRemoves, removes, sub1_id, sub2_id, sub3_id):
+    current_subs = PreseasonTeamPlayer.objects.filter(team=team, role__isFill=True)
+    new_subs = SeasonPlayer.objects.filter(Q(id=sub1_id) | Q(id=sub2_id) | Q(id=sub3_id))
+    sub_invites = TeamInvite.objects.filter(team=team, role__isFill=True)
+
+    for sub in new_subs:
+        if not current_subs.filter(user=sub.user) and not sub_invites.filter(user=sub.user):
+            invites.append({
+                'name': sub.get_name(),
+                'role': 'SUBSTITUTE',
+                'id': sub.id
+                })
+    for sub in sub_invites:
+        if not new_subs.filter(user=sub.user):
+            inviteRemoves.append({
+                'name': sub.get_name(),
+                'role': 'SUBSTITUTE',
+                'id': sub.id
+                })
+    for sub in current_subs:
+        if not new_subs.filter(user=sub.user):
+            removes.append({
+                'name': sub.get_name(),
+                'role': 'SUBSTITUTE',
+                'id': sub.id
+                })
+
+    return
+
+def send_team_invites(request, top_id, jun_id, mid_id, bot_id, sup_id, sub1_id, sub2_id, sub3_id):
+    seasons = Season.objects.all().order_by('-id')
+    latest_season = Season.objects.latest('id')
+    team = Team.objects.filter(user=request.user, season=latest_season)
+    if team:
+        team = team[0]
+    
+    invites = []
+    inviteRemoves = []
+    removes = []
+
+    getTeamChanges(Role.objects.get(name="TOP"), team, invites, inviteRemoves, removes, int(top_id))
+    getTeamChanges(Role.objects.get(name="JUNGLE"), team, invites, inviteRemoves, removes, int(jun_id))
+    getTeamChanges(Role.objects.get(name="MID"), team, invites, inviteRemoves, removes, int(mid_id))
+    getTeamChanges(Role.objects.get(name="BOT"), team, invites, inviteRemoves, removes, int(bot_id))
+    getTeamChanges(Role.objects.get(name="SUPPORT"), team, invites, inviteRemoves, removes, int(sup_id))
+    getSubTeamChanges(team, invites, inviteRemoves, removes, int(sub1_id), int(sub2_id), int(sub3_id))
+
+    for remove in removes:
+        PreseasonTeamPlayer.objects.get(id=remove['id']).delete()
+
+    for inviteRemove in inviteRemoves:
+        TeamInvite.objects.get(id=inviteRemove['id']).delete()
+
+    for invite in invites:
+        player = SeasonPlayer.objects.get(id=invite['id'])
+        role = Role.objects.get(name=invite['role'])
+        if player.user == request.user:
+            newPlayer = PreseasonTeamPlayer.objects.create(user=player.user, team=team, role=role)
+            newPlayer.save()
+        else:
+            newInvite = TeamInvite.objects.create(user=player.user, team=team, role=role)
+            newInvite.save()
+
+    return redirect('/team-manager/')
+
+def team_invite(request, top_id, jun_id, mid_id, bot_id, sup_id, sub1_id, sub2_id, sub3_id):
+    seasons = Season.objects.all().order_by('-id')
+    latest_season = Season.objects.latest('id')
+    team = Team.objects.filter(user=request.user, season=latest_season)
+    if team:
+        team = team[0]
+
+    invites = []
+    inviteRemoves = []
+    removes = []
+
+    getTeamChanges(Role.objects.get(name="TOP"), team, invites, inviteRemoves, removes, int(top_id))
+    getTeamChanges(Role.objects.get(name="JUNGLE"), team, invites, inviteRemoves, removes, int(jun_id))
+    getTeamChanges(Role.objects.get(name="MID"), team, invites, inviteRemoves, removes, int(mid_id))
+    getTeamChanges(Role.objects.get(name="BOT"), team, invites, inviteRemoves, removes, int(bot_id))
+    getTeamChanges(Role.objects.get(name="SUPPORT"), team, invites, inviteRemoves, removes, int(sup_id))
+    getSubTeamChanges(team, invites, inviteRemoves, removes, int(sub1_id), int(sub2_id), int(sub3_id))
+
+    context = {
+        'seasons': seasons,
+        'season': latest_season,
+        'team': team,
+        'invites': invites,
+        'inviteRemoves': inviteRemoves,
+        'removes': removes,
+        'notifications': get_notifications(request.user)
+    }
+    return render(request, 'stats/team-invite-confirm.html', context)
+
+def leave_team(request, team_id):
+    team = get_object_or_404(Team, id=team_id)
+    notification = LeaveTeamNotification(team=team, user=request.user)
+    notification.save()
+    if team.season.isPreseason:
+        preseasonTeamPlayer = get_object_or_404(PreseasonTeamPlayer, user=request.user, team=team)
+        preseasonTeamPlayer.delete()
+        return redirect("/profile/")
+    player = get_object_or_404(Player, user=request.user)
+    if not team.season.isActive:
+        return redirect("/profile/")
+    team_players = TeamPlayer.objects.filter(team=team, player=player)
+    for team_player in team_players:
+        team_player.isActive = False
+        team_player.save()
+    return redirect("/profile/")
+
+def join_team(request, team_id, role_id):
+    team = get_object_or_404(Team, id=team_id)
+    role = get_object_or_404(Role, id=role_id)
+    invite = get_object_or_404(TeamInvite, user=request.user.id, team=team, role=role)
+    if not team.season.isActive:
+        return redirect("/profile/")
+    preseasonPlayer = PreseasonTeamPlayer.objects.create(user=request.user, team=team, role=role)
+    preseasonPlayer.save()
+    invites = TeamInvite.objects.filter(user=request.user.id).delete()
+    response = TeamInviteResponse.objects.create(user=request.user, team=team, role=role, accepted=True)
+    response.save()
+    return redirect("/profile/")
+
+def preseason_detail(request, season_id):
+    seasons = Season.objects.all().order_by('-id')
+    season = get_object_or_404(Season, id=season_id)
+    teams = Team.objects.filter(season=season)
+    roles = Role.objects.all()
+    teamData = []
+    for team in teams:
+        teamData.append({
+            'team': team,
+            'roles': []
+            })
+        for role in roles:
+            if not role.isFill:
+               player = PreseasonTeamPlayer.objects.filter(team=team, role=role)
+               if player:
+                   player = player[0]
+                   teamData[-1]['roles'].append({
+                       'role': role,
+                       'player': player
+                       })
+               else:
+                   teamData[-1]['roles'].append({
+                       'role': role,
+                       'player': None
+                       })
+            else:
+                subs = PreseasonTeamPlayer.objects.filter(team=team, role__isFill=True)
+                for i in range(0, season.numSubs):
+                    if subs.count() > i:
+                        teamData[-1]['roles'].append({
+                            'role': role,
+                            'player': subs[i]
+                            })
+                    else:
+                        teamData[-1]['roles'].append({
+                            'role': role,
+                            'player': None
+                            })
+    context = {
+        'seasons': seasons,
+        'season': season,
+        'teams': teams,
+        'teamData': teamData,
+        'roles': roles,
+        'subNums': range(0,season.numSubs),
+        'notifications': get_notifications(request.user)
+    }        
+    return render(request, "stats/preseason.html", context)
+
 
 def profile(request):
     seasons = Season.objects.all().order_by('-id')
     latest_season = Season.objects.latest('id')
+    user = request.user
+    accounts = UserAccount.objects.filter(user=request.user.id).order_by('-isMain')
+    player = Player.objects.filter(user=user.id)
+    if player:
+        player = player[0]
+    preseasonPlayer = PreseasonTeamPlayer.objects.filter(user=request.user.id, team__season=latest_season)
+    if preseasonPlayer:
+        preseasonPlayer = preseasonPlayer[0]
+    unconfirmedPlayers = []
+    if user.is_staff:
+        unconfirmedSeasonPlayers = SeasonPlayer.objects.filter(season=latest_season, elo_value=100)
+        for unconfirmedSeasonPlayer in unconfirmedSeasonPlayers:
+            unconfirmedAccounts = UserAccount.objects.filter(user=unconfirmedSeasonPlayer.user).order_by('-isMain')
+            unconfirmedPlayers.append({
+                'name': unconfirmedSeasonPlayer.get_name(),
+                'id': unconfirmedSeasonPlayer.id,
+                'accounts': unconfirmedAccounts,
+                })
+    seasonPlayer = []
+    seasonPlayerRoles = []
+    myRepTeam = Team.objects.filter(user=user.id, season=latest_season)
+    if myRepTeam:
+        myRepTeam = myRepTeam[0]
+    seasonPlayer = SeasonPlayer.objects.filter(season=latest_season, user=user.id)
+    if seasonPlayer:
+        seasonPlayer = seasonPlayer[0]
+    seasonPlayerRoles = SeasonPlayerRole.objects.filter(season=latest_season, user=user.id)
+    teams = []
+    team_players = []
+    if player:
+        team_players = TeamPlayer.objects.filter(player=player, role__isFill=True, isActive=True)
+    for team_player in team_players:
+        teams.append(team_player.team)
+    editForms = []
+    removeForms = []
+    setMainForms = []
+    confirmEloForms = []
+    if request.method == 'POST':
+        usernameForm = UpdateUsernameForm(request.POST)
+        passwordForm = PasswordChangeForm(request.user, request.POST)
+        emailForm = UpdateEmailForm(request.POST)
+        addForm = AddAccountForm(request.POST)
+        out = passwordForm.is_valid()
+        for account in accounts:
+            editForms.append(EditAccountForm(request.POST, initial={'account_id': account.id}))
+            removeForms.append(RemoveAccountForm(request.POST, initial={'account_id': account.id}))
+            setMainForms.append(SetMainForm(request.POST, initial={'account_id': account.id}))
+        for unconfirmedPlayer in unconfirmedPlayers:
+            confirmEloForms.append(ConfirmEloForm(request.POST, initial={'seasonPlayerId': unconfirmedPlayer['id']}))
+        if usernameForm.is_valid() and 'submitUsername' in request.POST:
+            if usernameForm.cleaned_data['username']:
+                user.username = usernameForm.cleaned_data['username']
+                user.save()
+            return redirect('/profile')
+        if passwordForm.is_valid() and 'submitPassword' in request.POST:
+            user = passwordForm.save()
+            update_session_auth_hash(request, user)
+            return redirect('/signin')
+        if emailForm.is_valid() and 'submitEmail' in request.POST:
+            if emailForm.cleaned_data['email']:
+                user.email = emailForm.cleaned_data['email']
+                user.save()
+            return redirect('/profile')
+        if addForm.is_valid() and 'submitAdd' in request.POST:
+            name = addForm.cleaned_data['account_name']
+            if name:
+                userAccount = UserAccount.objects.create(user=request.user, name=name, isMain=False) 
+                userAccount.save()
+            return redirect('/profile')
+        for editForm, account in zip(editForms, accounts):
+            expectedSubmit ='submitEdit' + str(account.id)
+            if editForm.is_valid() and expectedSubmit in request.POST:
+                if editForm.cleaned_data['account_name']:
+                    userAccount = UserAccount.objects.get(id=editForm.cleaned_data['account_id'])
+                    userAccount.name = editForm.cleaned_data['account_name']
+                    userAccount.save()
+                return redirect('/profile')
+        for setMainForm, account in zip(setMainForms, accounts):
+            expectedSubmit ='submitSetMain' + str(account.id)
+            if setMainForm.is_valid() and expectedSubmit in request.POST:
+                userAccount = UserAccount.objects.get(id=editForm.cleaned_data['account_id'])
+                otherAccounts = UserAccount.objects.filter(user__id=userAccount.user.id)
+                for otherAccount in otherAccounts:
+                    otherAccount.isMain = False;
+                    otherAccount.save()
+                userAccount.isMain = True
+                userAccount.save()
+                return redirect('/profile')
+        for removeForm, account in zip(removeForms, accounts):
+            expectedSubmit ='submitRemove' + str(account.id)
+            if removeForm.is_valid() and expectedSubmit in request.POST:
+                userAccount = UserAccount.objects.get(id=removeForm.cleaned_data['account_id'])
+                userAccount.delete()
+                return redirect('/profile')
+        for confirmEloForm, unconfirmedPlayer in zip(confirmEloForms, unconfirmedPlayers):
+            confirmEloForm.is_valid()
+            expectedSubmit ='submitElo' + str(unconfirmedPlayer['id'])
+            elo = confirmEloForm.cleaned_data['elo']
+            if confirmEloForm.is_valid() and expectedSubmit in request.POST:
+                if confirmEloForm.cleaned_data['elo']:
+                    elo = confirmEloForm.cleaned_data['elo']
+                    seasonPlayer = SeasonPlayer.objects.get(id=confirmEloForm.cleaned_data['seasonPlayerId'])
+                    seasonPlayer.elo_value = elo
+                    seasonPlayer.save()
+                return redirect('/profile')
+
+    else:
+        usernameForm = UpdateUsernameForm()
+        passwordForm = PasswordChangeForm(request.user)
+        emailForm = UpdateEmailForm()
+        addForm = AddAccountForm()
+        for account in accounts:
+            editForms.append(EditAccountForm(initial={'account_id': account.id}))
+            removeForms.append(RemoveAccountForm(initial={'account_id': account.id}))
+            setMainForms.append(SetMainForm(initial={'account_id': account.id}))
+        for unconfirmedPlayer in unconfirmedPlayers:
+            confirmEloForms.append(ConfirmEloForm(initial={'seasonPlayerId': unconfirmedPlayer['id']}))
+
+    confirmEloForms = zip(unconfirmedPlayers, confirmEloForms)
+    accountForms = zip(accounts, removeForms, editForms, setMainForms)
     context = {
         'seasons': seasons,
-        'season': latest_season
+        'season': latest_season,
+        'user': user,
+        'player': player,
+        'preseasonPlayer': preseasonPlayer,
+        'teams': teams,
+        'accounts': accounts,
+        'usernameForm': usernameForm,
+        'passwordForm': passwordForm,
+        'emailForm': emailForm,
+        'addAccountForm': addForm,
+        'editForms': editForms,
+        'accountForms': accountForms,
+        'confirmEloForms': confirmEloForms,
+        'seasonPlayer': seasonPlayer,
+        'seasonPlayerRoles': seasonPlayerRoles,
+        'unconfirmedPlayers': unconfirmedPlayers,
+        'myRepTeam': myRepTeam,
+        'notifications': get_notifications(request.user)
     }
     return render(request, 'stats/profile.html', context)
+
+def read_response(request, response_id):
+    response = get_object_or_404(TeamInviteResponse, id=response_id)
+    if response.team.user == request.user:
+        response.delete()
+    return redirect("/profile/")
+
+def read_leave_team_notification(request, notification_id):
+    notification = get_object_or_404(LeaveTeamNotification, id=notification_id)
+    if notification.team.user == request.user:
+        notification.delete()
+    return redirect("/profile/")
 
 def valorant_signup(request):
     seasons = Season.objects.all().order_by('-id')
     latest_season = Season.objects.latest('id')
     context = {
         'seasons': seasons,
-        'season': latest_season
+        'season': latest_season,
+        'notifications': get_notifications(request.user)
     }
     return render(request, 'stats/valorant-signup.html', context)
 
@@ -67,17 +624,18 @@ def valorant_thanks(request):
     latest_season = Season.objects.latest('id')
     context = {
         'seasons': seasons,
-        'season': latest_season
+        'season': latest_season,
+        'notifications': get_notifications(request.user)
     }
     return render(request, 'stats/valorant-thanks.html', context)
-
 
 def email_signup(request):
     seasons = Season.objects.all().order_by('-id')
     latest_season = Season.objects.latest('id')
     context = {
         'seasons': seasons,
-        'season': latest_season
+        'season': latest_season,
+        'notifications': get_notifications(request.user)
     }
     return render(request, 'stats/email-signup.html', context)
 
@@ -127,7 +685,8 @@ def fun_stats(request):
         'total_kills': total_kills,
         'total_deaths': total_deaths,
         'total_assists': total_assists,
-        'damage_per_minute': damage_per_minute
+        'damage_per_minute': damage_per_minute,
+        'notifications': get_notifications(request.user)
     }
     return render(request, 'stats/fun-stats.html', context)
 
@@ -157,7 +716,8 @@ def create_roster_error(request, series_id):
     series = get_object_or_404(Series, id=series_id)
     context = {
         'season': latest_season,
-        'series': series
+        'series': series,
+        'notifications': get_notifications(request.user)
     }
     return render(request, 'stats/create_roster_error.html', context)
 
@@ -165,25 +725,29 @@ def create_roster_error(request, series_id):
 def about(request):
     latest_season = Season.objects.latest('id')
     context = {
-        'latest_season': latest_season
+        'latest_season': latest_season,
+        'notifications': get_notifications(request.user)
     }
     return render(request, 'stats/about.html', context)
 
 def head_to_head(request):
     latest_season = Season.objects.latest('id')
     context = {
-        'latest_season': latest_season
+        'latest_season': latest_season,
+        'notifications': get_notifications(request.user)
     }
     return render(request, 'stats/head_to_head.html', context)
 
 def faq(request):
     latest_season = Season.objects.latest('id')
     context = {
-        'latest_season': latest_season
+        'latest_season': latest_season,
+        'notifications': get_notifications(request.user)
     }
     return render(request, 'stats/faq.html', context)
 
 def season_detail(request, season_id):
+    seasons = Season.objects.all().order_by('-id')
     latest_season = Season.objects.latest('id')
     season = get_object_or_404(Season, id=season_id)
     teams = Team.objects.filter(season=season_id)
@@ -192,8 +756,10 @@ def season_detail(request, season_id):
     context = {
         'latest_season': latest_season,
         'season': season,
+        'seasons': seasons,
         'sorted_teams': sorted_teams,
-        'next_week': next_week
+        'next_week': next_week,
+        'notifications': get_notifications(request.user)
     }
     return render(request, 'stats/season.html', context)
 
@@ -204,7 +770,8 @@ def season_players(request, season_id):
     context = {
         'season': season,
         'seasons': seasons,
-        'team_players': team_players
+        'team_players': team_players,
+        'notifications': get_notifications(request.user)
     }
     return render(request, 'stats/season_players.html', context)
 
@@ -256,7 +823,8 @@ def season_graphs_detail(request, season_id, graph_type, selected_player_id_str)
         'roles': roles_set,
         'selected_players': selected_players,
         'max_duration': max_duration,
-        'graph_type': graph_type
+        'graph_type': graph_type,
+        'notifications': get_notifications(request.user)
     }
     return render(request, 'stats/season_graphs.html', context)
 
@@ -271,7 +839,8 @@ def season_teams_detail(request, season_id):
     context = {
         'latest_season': latest_season,
         'season': season,
-        'teams': teams
+        'teams': teams,
+        'notifications': get_notifications(request.user)
     }
     return render(request, 'stats/season_teams.html', context)
 
@@ -285,7 +854,8 @@ def season_champions_detail(request, season_id):
     context = {
         'latest_season': latest_season,
         'season': season,
-        'champions': champions
+        'champions': champions,
+        'notifications': get_notifications(request.user)
     }
     return render(request, 'stats/season_champions.html', context)
 
@@ -294,7 +864,8 @@ def player_detail(request, player_id):
     team_players = TeamPlayer.objects.filter(player=player_id)
     context = {
         'player': player,
-        'team_players': team_players
+        'team_players': team_players,
+        'notifications': get_notifications(request.user)
     }
     return render(request, 'stats/player.html', context)
 
@@ -308,8 +879,7 @@ def team_recache(request, season_id, team_id):
 def team_detail(request, season_id, team_id):
     team = get_object_or_404(Team, id=team_id, season=season_id)
     seasons = Season.objects.all().order_by('-id')
-    team_players = TeamPlayer.objects.filter(team=team_id).annotate(avg_kills=Avg('player__playermatch__kills'), avg_deaths=Avg('player__playermatch__deaths'), avg_assists=Avg('player__playermatch__assists'), num_champs_played=Count('player__playermatch__champion')).order_by('role')
-    players = Player.objects.filter(teamplayer__team=team).values('id', 'name').distinct()
+    team_players = TeamPlayer.objects.filter(team=team, role__isFill=True)
     all_season_teams = Team.objects.filter(media=team.media).order_by('-id')
     series_list = Series.objects.filter(seriesteam__team = team).order_by('-week__number')
     team_roles = TeamRole.objects.filter(team=team).order_by('role')
@@ -320,11 +890,11 @@ def team_detail(request, season_id, team_id):
         'team': team,
         'all_season_teams': all_season_teams,
         'team_players': team_players,
-        'players': players,
         'roles': team_roles,
 	'series_list': series_list,
         'kill_timelines': kill_timelines,
-        'overall_timelines': overall_timelines
+        'overall_timelines': overall_timelines,
+        'notifications': get_notifications(request.user)
     }
     return render(request, 'stats/team.html', context)
 
@@ -334,6 +904,11 @@ def team_player_role_detail(request, season_id, team_id, player_id, role_id):
     season = get_object_or_404(Season, id=season_id)
     team = get_object_or_404(Team, id=team_id, season=season_id)
     player = get_object_or_404(Player, id=player_id)
+    summoners = player.get_summoners()
+    summoner_links = []
+    for summoner in summoners:
+        summoner_links.append(summoner.name.replace(" ", "+"))
+    summoner_data = zip(summoners, summoner_links)
     team_player_role = TeamPlayer.objects.filter(player=player_id, team=team_id, role=role_id)[0]
     team_players = TeamPlayer.objects.filter(player=player_id, team=team_id, role__isFill=False).annotate(avg_kills=Avg('player__playermatch__kills'), avg_deaths=Avg('player__playermatch__deaths'), avg_assists=Avg('player__playermatch__assists'), num_champs_played=Count('player__playermatch__champion'))
     team_set = TeamPlayer.objects.filter(player=player_id, role__isFill=True).order_by('-team__season')
@@ -347,10 +922,12 @@ def team_player_role_detail(request, season_id, team_id, player_id, role_id):
         'season': season,
         'team': team,
         'player': player,
+        'summoner_data': summoner_data,
         'team_player_role': team_player_role,
         'team_players': team_players,
         'team_set': team_set,
-        'teammates': teammates
+        'teammates': teammates,
+        'notifications': get_notifications(request.user),
         #'timelines': timelines,
         #'max_duration': max_duration
     }
@@ -366,7 +943,8 @@ def champion_detail(request, champion_id):
     except ObjectNotFound:
         raise Http404("Champion does not exist")
     context = {
-        'champion': champion
+        'champion': champion,
+        'notifications': get_notifications(request.user)
     }
     return render(request, 'stats/champion.html', context)
 
@@ -383,7 +961,8 @@ def index(request):
     teams = Team.objects.filter(season=latest_season)
     context = {
         'seasons': seasons,
-        'teams': teams
+        'teams': teams,
+        'notifications': get_notifications(request.user),
     }
     return render(request, 'stats/index.html', context)
 
@@ -397,7 +976,8 @@ def schedule(request, season_id):
         'season': season,
         'seasons': seasons,
         'teams': teams,
-        'sorted_teams': sorted_teams
+        'sorted_teams': sorted_teams,
+        'notifications': get_notifications(request.user),
     }
     return render(request, 'stats/schedule.html', context)
 
@@ -415,7 +995,8 @@ def standings(request, season_id):
         'season': season,
         'seasons': seasons,
         'teams': teams,
-        'sorted_teams': sorted_teams
+        'sorted_teams': sorted_teams,
+        'notifications': get_notifications(request.user),
     }
     return render(request, 'stats/standings.html', context)
 
@@ -432,7 +1013,8 @@ def series_caster_tools(request, season_id, series_id):
     context = {
         'season': season,
         'series': series,
-        'roles': roles
+        'roles': roles,
+        'notifications': get_notifications(request.user),
     }
     return render(request, 'stats/caster_tools.html', context)
 
@@ -447,7 +1029,8 @@ def player_matchup(request, blue_player_id, red_player_id, blue_team_id, red_tea
         'blue_player': blue_player,
         'red_player': red_player,
         'max_duration': max_duration,
-        'role': role
+        'role': role,
+        'notifications': get_notifications(request.user),
     }
     return render(request, 'stats/player_matchup.html', context)
 
@@ -456,7 +1039,8 @@ def questions(request, season_id):
     season = get_object_or_404(Season, id=season_id)
 
     context = {
-        'season': season
+        'season': season,
+        'notifications': get_notifications(request.user),
     }
     return render(request, 'stats/questions.html', context)
 
@@ -470,7 +1054,7 @@ def series_head_to_head(request, season_id, series_id):
     context = {
         'series': series,
         'team1': team1,
-        'team2': team2
+        'team2': team2,
     }
     return render(request, 'stats/head_to_head.html', context)
 
@@ -543,7 +1127,8 @@ def series_lockin_detail(request, season_id, series_id, team_id):
             'mid': mid,
             'bot': bot,
             'sup': sup,
-            'sub': sub
+            'sub': sub,
+            'notifications': get_notifications(request.user),
     }
     return render(request, 'stats/lock-in.html', context)
 
@@ -570,7 +1155,8 @@ def series_detail(request, season_id, series_id):
         'team1': team1,
         'team2': team2,
         'now': datetime.utcnow().replace(tzinfo=utc),
-        'user': user
+        'user': user,
+        'notifications': get_notifications(request.user),
     }
     return render(request, 'stats/series.html', context)
 
@@ -633,7 +1219,8 @@ def create_roster(request, season_id, series_id, team_id):
         'season': season,
         'series': series,
         'team': team,
-        'form': form
+        'form': form,
+        'notifications': get_notifications(request.user),
     }
     return render(request, 'stats/create_roster.html', context)
 
@@ -645,7 +1232,9 @@ def create_code(request, match_id):
         'metadata': "",
         'pickType': match.series.week.season.pick_type,
         'spectatorType': match.series.week.season.spectator_type,
-        'teamSize': match.series.week.season.team_size
+        'teamSize': match.series.week.season.team_size,
+        'notifications': get_notifications(request.user),
+
     }
 
     result = {}
@@ -706,7 +1295,8 @@ def match_data_results(request, season_id, series_id, team_1_id, team_2_id, matc
 #    result = match_result_requester.request(str(match_id))
     match = get_match(team_1_id, team_2_id, match_id, series_id)
     context = {
-        'result': match
+        'result': match,
+        'notifications': get_notifications(request.user),
     }
 #    try:
 #        match = get_match(team_1_id, team_2_id, match_id)
@@ -734,9 +1324,10 @@ def loginpage(request):
         if user is not None:
             if user.is_active:
                 login(request, user)
-                return HttpResponseRedirect('/stats/schedule/')
+                return HttpResponseRedirect('/profile/')
     context = {
         'form': form,
-        'seasons': seasons
+        'seasons': seasons,
+        'notifications': get_notifications(request.user),
     }
     return render(request, 'stats/login.html', context)

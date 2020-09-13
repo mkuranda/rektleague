@@ -1,0 +1,51 @@
+h1 {
+    color: white;
+    font-size: 4em;
+    text-align: center;
+    font-weight: 900;
+}
+
+h2{
+    color: white;
+    font-weight: 900;
+}
+
+h3{
+    color: #bf1f2f;
+    font-weight: 700;
+}
+
+p, li{
+    color: white;
+    font-size: 1.5rem;
+    font-weight: 400!important;
+}
+
+.rulesContainer{
+    width: 80%;
+    margin: auto;
+}
+
+.links {
+    font-size: 1.3rem;
+    font-weight: 500;
+
+}
+
+.links a:hover {
+    color: #bf1f2f;
+    text-decoration: none;
+}
+
+strong{
+    color: #bf1f2f;
+}
+
+.linkStyle {
+    color: #bf1f2f;
+}
+
+.linkStyle:hover {
+    color:#bf1f2f91;
+}
+

@@ -1,7 +1,135 @@
 from django import forms
 from django.contrib.auth import authenticate, login
 from django.db.models import Q
-from .models import Team, Series, SeriesTeam, Player, TeamPlayer, Role, Summoner
+from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.models import User
+from django.core.exceptions import ValidationError
+from .models import Team, Series, SeriesTeam, Player, TeamPlayer, Role, Summoner, User, UserAccount
+
+class RegisterForm(UserCreationForm):
+    username = forms.CharField(label='Username', min_length=4, max_length=150)
+    email = forms.EmailField(label='Email')
+    password1 = forms.CharField(label='Password', widget=forms.PasswordInput)
+    password2 = forms.CharField(label='Confirm password', widget=forms.PasswordInput)
+    email = forms.EmailField()
+    mainAccount = forms.CharField(label='Main Riot Account Name', max_length=50)
+
+    class Meta:
+        model = User
+        fields = ["username", "email", "password1", "password2", "mainAccount"]
+
+        def save(self, commit=True):
+            user = super(UserCreationForm, self).save(commit=False)
+            user.email = self.cleaned_data['email']
+            return user
+
+    def clean_username(self):
+        username = self.cleaned_data['username'].lower()
+        r = User.objects.filter(username=username)
+        if r.count():
+            raise  ValidationError("Username already exists")
+        return username
+
+    def clean_email(self):
+        email = self.cleaned_data['email'].lower()
+        r = User.objects.filter(email=email)
+        if r.count():
+            raise  ValidationError("Email already exists")
+        return email
+
+    def clean_password1(self):
+        password1 = self.cleaned_data.get('password1')
+        password2 = self.cleaned_data.get('password2')
+
+        if password1 and password2 and password1 != password2:
+            raise ValidationError("Password don't match")
+
+        return password1
+
+    def save(self, commit=True):
+        user = User.objects.create_user(
+            self.cleaned_data['username'],
+            self.cleaned_data['email'],
+            self.cleaned_data['password1']
+        )
+        account = UserAccount.objects.create(user=user, name=self.cleaned_data['mainAccount'], isMain=True)
+        account.save()
+        return user
+
+class AddAccountForm(forms.Form):
+    account_name = forms.CharField(max_length=50, required=False)
+
+    def clean_account_name(self):
+        account_name = self.cleaned_data['account_name']
+        accountsWithSameName = UserAccount.objects.filter(name__iexact=account_name)
+        if accountsWithSameName:
+            raise forms.ValidationError("Sorry, someone already has an account with that name")
+        return account_name
+
+class EditAccountForm(forms.Form):
+    account_id = forms.IntegerField()
+    account_name = forms.CharField(max_length=50, required=False)
+
+    def __init__(self, *args, **kwargs):
+        super(EditAccountForm, self).__init__(*args, **kwargs)
+        self.fields['account_name'].error_messages.update({
+            'required': 'Sorry, we don\'t accept empty account names'
+            })
+
+    def clean_account_name(self):
+        account_name = self.cleaned_data['account_name']
+        accountsWithSameName = UserAccount.objects.filter(name__iexact=account_name)
+        if accountsWithSameName:
+            raise forms.ValidationError("Sorry, someone already has an account with that name")
+        return account_name
+
+class RemoveAccountForm(forms.Form):
+    account_id = forms.IntegerField(required=False)
+
+class SetMainForm(forms.Form):
+    account_id = forms.IntegerField(required=False)
+
+class UpdateUsernameForm(forms.Form):
+    username = forms.CharField(label='Username', min_length=4, max_length=150, required=False)
+
+    def clean_username(self):
+        username = self.cleaned_data['username'].lower()
+        r = User.objects.filter(username=username)
+        if r.count():
+            raise  ValidationError("Username already exists")
+        return username
+
+class UpdateEmailForm(forms.Form):
+    email = forms.EmailField(required=False)
+
+    def clean_email(self):
+        email = self.cleaned_data['email'].lower()
+        r = User.objects.filter(email=email)
+        if email and r.count():
+            raise ValidationError("Email already exists")
+        return email
+
+class SeasonSignupForm(forms.Form):
+    ROLES = ((1, "TOP"), (2, "JUNGLE"), (3, "MID"), (4, "BOT"), (5, "SUPPORT"))
+    ROSTER_CHOICES = ((1, "MAIN ROSTER"), (2, "SUBSTITUTE"))
+
+    mainRole = forms.ChoiceField(choices=ROLES, widget=forms.RadioSelect, required=True)
+    offRoles = forms.MultipleChoiceField(choices=ROLES, widget=forms.CheckboxSelectMultiple, required=False)
+    rosterPosition = forms.MultipleChoiceField(choices=ROSTER_CHOICES, widget=forms.CheckboxSelectMultiple)
+
+    def clean_offRoles(self):
+        off_roles = self.cleaned_data['offRoles']
+        if not 'mainRole' in self.cleaned_data:
+            return off_roles
+        main_role = self.cleaned_data['mainRole']
+        for role in off_roles:
+            if role == main_role:
+                raise forms.ValidationError("You can't choose a role as both your main role and off role")
+        return off_roles
+
+class ConfirmEloForm(forms.Form):
+    elo = forms.IntegerField()
+    seasonPlayerId = forms.IntegerField()
 
 class CreateRosterForm(forms.Form):
 

@@ -1,0 +1,424 @@
+{% extends "stats/base.html" %}
+{% load staticfiles %}
+
+{% block title %} Rekt League | Rules {% endblock %}
+
+{% block head %}
+<link rel="stylesheet" type="text/css" href="{% static 'stats/css/rules.css' %}"/>
+{% endblock %}
+
+{% block content %}
+<div class="rulesContainer">
+<h1>RULES</h1>
+
+<h3>Section links</h3>
+<p class="links">
+<a href="#intro">Rekt League Intro</a>
+<br>
+<a href="#format">Rekt League Format</a>
+<br>
+<a href="#rosters">Rosters</a>
+<br>
+<a href="#ff">Forfeiting</a>
+<br>
+<a href="#punishments">Punishments</a>
+<br>
+<a href="#swaps">Role Swaps</a>
+<br>
+<a href="#reality">The Reality of Competitive Play</a>
+<br>
+<a href="#disclaimer">Disclaimer</a>
+</p>
+
+<a id="intro"></a>
+<h2>Rekt League Intro</h2>
+
+<h3>Purpose</h3>
+<p>We want the Rekt League to be an environment in which players of varying skill levels can play in an organized and competitive environment with their friends. The goal of this league is to bring a level of professionalism, production value, and structure to players.  We want to give people an experience/community they want to be a part of. While we know there are issues with creating competitive environments including players of varying skill levels, our goal is to mitigate as many of those issues as possible to allow for friends to play together.</p>
+
+<h3>Honor Code</h3>
+<p>Certain things come along with the skill diversity that makes the Rekt League great, including the opportunity to take advantage of it. When there is a rule in place, sometimes it can be easy to get around, but it is there for a reason. Most are there to ensure that everyone can have a good experience, regardless of skill level. </p>
+<p>League of Legends is a game we take fairly seriously, which naturally brings frustration during competition.  That being said, our rules and standards are honor based. Meaning, we trust in players/teams to be honest with us about player-facing issues such as registering all accounts, account sharing, smurfing, etc.  Punishments for violating our rules are detailed further, later in this rulebook.</p>
+
+<h3>Why it Works</h3>
+<p>The Rekt League works because we are a league of players who respect the other players and teams in the league not just as players, but also as people. We strive to be a positive community where people can throw some smack talk around, but are always able to say “GG WP” and tip the hat to the other team.  We aren’t about putting individuals on blast in the Facebook group or making your team uncomfortable when you say stuff in bad taste in your games. The goal is to not be a D-Bag to your team or to the community and keep things fun and tasteful. In addition, it works because we do have what might seem like arbitrary or stricter rules than other leagues when it comes to roster balance, roster lock, and subs. But, we believe that by having these rules we can allow people to go into games feeling like they can be reasonably prepared for their matches. Keep in mind, none of us are LCS level and we’re not practicing 11 hours a day on counter picks and versatility. We reasonably expect teams to practice once to a couple times a week and have some weekly discussions about the weekend matches, but at the end of the day this is for fun and not our jobs.</p>
+
+<h3>3rd Party Help</h3>
+
+<ol>
+    <li>The Rekt League has no way of monitoring if you’re using any kind of 3rd party software that’s designed to give you in-game advantages. So if you are thinking about using any, ask yourself “why am I doing this?” and then just don’t.</li>
+    <li>Anything that breaks Riot’s ToS, OR would get you banned, is not allowed in the Rekt League.</li>
+</ol>
+
+<a id="format"></a>
+<h2>Rekt League Format</h2>
+
+<h3>Regular Season</h3>
+
+<p>Conferences and Game Days</p>
+<ul>
+    <li>Teams will be split into 2 separate conferences (Jungle and River)</li>
+    <li>Matches will be played primarily intra-conference, with 2 inter-conference matches per team in the regular season.</li>
+    <li>4 matches will be played per Sunday.</li>
+    <li>Due to overflow, 2 matches will be played on two given Thursdays following State of the League during the regular season, Week 3 and Week 6.</li>
+</ul>
+
+<p>Best of Two</p>
+<ul>
+    <li>Each team plays 2 games each Sunday against one other team.</li>
+    <li>Rosters need to be locked ahead of time for both games by the Wednesday night 11:59pm EST before each Sunday.</li>
+</ul>
+
+<p>Each <strong>MATCH</strong> will allow a 15 minute grace period. </p>
+<ul>
+    <li>If a full roster isn’t fielded by the end of the 15 minute period, it will result in a 0-2 for the late team. (If both teams are late, 1-1).</li>
+    <li>Once the first game is given up, the second cannot be played.</li>
+    <li>The 15 minute grace period begins when the caster’s countdown ends (same for the second game)</li>
+    <li>Games not played are not allowed to be rescheduled.</li>
+    <li>Exceptions are natural disasters, Riot server-wide lag, or other major events with an effect on our player population.</li>
+    <li>If a single player cannot attend a game they were scheduled in, a substitute is able to be used. *Note: Substitutes have their own section see <a href="#rosters">here</a></li>
+</ul>
+
+<p>When the first game in a match is completed, after the producer returns from break, they will start a 15 minute timer, this will be the grace period to field a roster for the second match.</p>
+
+<p><a target="_blank" class="linkStyle" href="/season/{{ season.id }}/schedule/">See the Season {{ season.id }} Schedule</a></p>
+<ul>
+    <li>Please note who the producer is for your game. If you’re planning on making a hype video, send it to therektleague@gmail.com</li>
+</ul>
+
+<p>All champions trades must be completed before the 20 second mark after all 10 champions have been locked in (LCS rule)</p>
+
+<p>Side selection is determined by win %. The team with the lower win % chooses which side they want for game 1, then for game 2, the sides are swapped. *Note: A tied win % results in a coin flip determination</p>
+
+<p>Pauses: each team is allowed half of the total pause timer (15 min total pause time for each team).</p>
+
+<h3>Schedule</h3>
+
+<p>See the Season {{ season.id }} schedule <a target="_blank" class="linkStyle" href="/season/{{ season.id }}/schedule/">here</a>.</p>
+<ul>
+    <li>Please note who the producer is for your game. If you’re planning on making a hype video, send it to <strong>therektleague@gmail.com</strong></li>
+</ul>
+
+<a id="playoffs"></a>
+<h3>Playoffs</h3>
+<p>Top 4 teams from each conference make the playoffs (8 teams in playoffs total).</p>
+<p>All playoff matches are now Bo5</p>
+<p>Tie breaker rules in order of decision</p>
+<ul>
+    <li>Head to head record (this will be TOTALED depending on # of teams tied) </li>
+    <li>Average win time across the entire season</li>
+</ul>
+<p>Each GAME will allow a 30 minute grace period. </p>
+<ul>
+    <li>If a full roster isn’t fielded within the time limit, that game will be forfeit and a 30 minute grace period for the second game will begin. This process continues as needed.</li>
+</ul>
+
+<p>Playoff games will be played only on Sundays</p>
+
+<ul>
+    <li>2pm / 7pm timeslots </li>
+</ul>
+
+<p>Better record has side selection for game 1, with alternating sides for each game after</p>
+
+<a id="rosters"></a>
+<h2>Rosters</h2>
+
+<p><strong>***Please do not change your summoner name</strong>, it messes up the website and casters, and people trying to research. If you do, inform an admin or team rep ASAP. This could result in being unable to play, and potentially a forfeit.***</p>
+
+<h3>Ranked requirements</h3>
+
+<p>NEW PLAYERS - There are <strong>two</strong> ranked requirements that must be completed before a new player is allowed to sign up for The Rekt League</p>
+<ul>
+    <li>Have a total of 50 solo/duo queue games played in the current competitive season.</li>
+    <ol>
+        <li>Flex queue/rank is not counted so that teams formed before the team creation point can play flex reliably without increasing their elo above the limit.</li>
+        <li>A large enough disparity between solo/duo and flex rank may be evaluated for establishing a new rank on a case by case basis for new players, per admin discretion.</li>
+    </ol>
+    <li>Have an all-time rank between a minimum of Silver 3 and a maximum of Diamond 3. (must be currently ranked at least Silver 3 to compete)</li>
+</ul>
+
+<p>RETURNING PLAYERS </p>
+<ul>
+    <li>Have a total of 50 <strong>solo/duo</strong> queue games played in the current competitive season.</li>
+    <li>Have an all-time rank between a minimum of Silver 3 and a maximum of Diamond 3, with the admins reserving the right to adjust player rank value arbitrarily in the rare case where it may be needed (8O2).</li>
+</ul>
+
+<h3>Roster Lock</h3>
+
+<p>Rosters must be submitted on the Wednesday before your match, each week.</p>
+
+<ul>
+    <li>In order to submit a roster, a team will list one active player for each of the five roles, and up to one substitute. The submitted roster must meet the roster requirements listed below. Each team’s roster will be revealed to the opposing team after the deadline.</li>
+    <li>Active Players are players who are listed on the website as eligible to play for your team.</li>
+    <li>More on substitutes below</li>
+</ul>
+
+<p>It is the Team Representative’s job to lock the roster, and only one lock  is needed per team</p>
+
+<ul>
+    <li>Team Representative is the person responsible for responding to all inquiries about the team. They are listed on the signup email, and you should know who you are.</li>
+    <li>They will sign in through the website, and can lock the roster and perform other team management functions from there, as well as view stats, other rosters, and more.</li>
+</ul>
+
+<h3>Roster Balance</h3>
+<p>When The List is generated, a league average elo is decided. All players who were registered at that time, have their elo locked.</p>
+
+<ul>
+    <li>Locked Elos are verified by admins, and used to allow player’s ranks to change as the season progresses and they climb, without losing their roster spots with their teams.</li>
+    <li>The League Elo Average is the average elo of the Draft of Players, instead of claiming this as an actual rank such as “Gold 1” we claim the LEA to be 0.For example: In this case, Gold 2 = -1. Gold 1 = 0, and Platinum 4 = +1</li>
+    <li><strong>NOTE:</strong> If a LEA for a season is different than a previous season, it will be announced as early as possible to allow for fair team formation.</li>
+    <li>A players locked elo is determined by highest all-time ranking on <a target="_blank" class="linkStyle" href="https://na.op.gg">OP.GG</a>, or current solo queue rank</li>
+</ul>
+
+<p>Player Point Values</p>
+<ul>
+    <li>A Roster Total is used to calculate a weekly roster and is based on the Locked Elo of the players, and the LEA. The Roster Total must ≤ 0, with a floor of -10</li>
+    <li>If the Roster Total is above 0, that roster is ineligible. For example: Air Drakes roster this week is +3, and therefore is not allowed to be played.</li>
+    <li>Rosters above 0 will result in a match loss if an eligible substitute cannot be fielded within the aforementioned 15 minute window.</li>
+</ul>
+
+<p>Check out the full rosters on the Preseason page or team page</p>
+<p>As of Season 7, there are allowed to be a total of up to 10 players assigned to each team’s roster.</p>
+
+<h3>Substitutes</h3>
+
+<p>Each team is allowed to lock in a single substitute each week, called a <em>Scheduled Substitute</em>. Each week you can lock in a 6-man roster!</p>
+
+<ul>
+    <li><strong>Scheduled substitute</strong>: a player who you plan to substitute in for a game of the series (regular season/Bo3/Bo5) and must be on your teams roster.</li>
+    <li>If a scheduled sub is used, the Roster Total still cannot be over 0. Plan accordingly!</li>
+    <li>If a player is subbed out, they may sub back in later in the series, but must play the same position.</li>
+    <li>The starting lineup should play game 1 of the series</li>
+</ul>
+<p>Scheduled substitutes must be a player on your team’s roster.</p>
+<ul>
+    <li>More on roster movement below</li>
+</ul>
+
+<p>During the regular season, each team gets an unlimited amount of Emergency Substitutes, within reason.</p>
+
+<ul>
+    <li>An Emergency Substitute may ONLY come from the five remaining players in your substitute pool.</li>
+    <li>As this form of substitution implies, it can only be used in emergencies when a player is suddenly unavailable. We will ask for a reason when this happens, as this should not be planned ahead of time.</li>
+    <li>You may use Emergency Substitutes in playoffs.</li>
+    <li>In the extreme event where multiple players on the main roster have an emergency, Emergency Subs may continue to be drawn from a team’s remaining sub pool until there are no more players in that sub pool.</li>
+</ul>
+
+<p>Each team will be allowed ONE <strong>Super Duper Emergency Substitute</strong> per season.</p>
+
+<ul>
+    <li>The <strong>Super Duper Emergency Substitute</strong> is for the extreme case when you cannot field a roster using emergency subs alone. In these circumstances, you may borrow an available KNOWN player on another Rekt League team for the remainder of the series to take the place of your missing player. As always, the Roster Total you have after any substitutes cannot be above 0.</li>
+    <li>This form of substitution may only be used once per season, so use it wisely.
+    </li>
+    <li><strong>Super Duper Emergency Substitutes</strong> may NOT be used during playoffs.</li>
+</ul>
+
+<p>Other</p>
+<ul>
+    <li>Substitutes of all types must be direct, with no other roster swaps allowed. <strong>For example</strong>: My substitute is a support main, but our jungler bailed. The substitute must directly play the role of the person who couldn’t make the match. Time for some soraka jungle.</li>
+    <li>Emergency subs and the one time <strong>Super Duper Emergency Substitute</strong> may be used in the same week in some extreme cases.</li>
+</ul>
+
+<h3>Roster Additions/Movement</h3>
+
+<p><strong>Trade deadline</strong>: All trades must be completed by the roster lock time on the 5th week of play. (Season 7: October 21st)</p>
+
+<p>Roster addition</p>
+<ul>
+    <li>You may trade, and add players to your roster as long as they stay within the following guidelines:</li>
+
+    <ol>
+        <li>You may only have 10 players on your roster.</li>
+        <li>The only way to change those 10 players is to trade them to another team (or multiple teams) for a player on another roster.</li>
+    </ol>
+
+    <li>Roster movements are executed through the site. That means the existing player has to be removed and resubmit a sign up to enter the Free Agent database. Then they can be invited to a new team. You can only get new players from the Free Agent Database not direct trades.</li>
+
+    <li>Teams can’not withhold players from moving to another team if they desire to</li>
+    <li>In order to play in a given week, all roster movements must be completed before roster lock of that week.</li>
+</ul>
+
+<p>There are no limits to the number trades, for teams or players</p>
+
+<a id="ff"></a>
+<h2>Forfeiting</h2>
+
+<h3>Rules regarding FF</h3>
+
+<p>For the sake of us making content, players being able to feel like they earned a win fully, and the belief that throws can happen, we ask you not to surrender games. Everyone invests time to be at the game; from the casters, to the viewers, to the other teams players. Don’t waste their time by surrendering.</p>
+
+<a id="punishments"></a>
+<h2>Punishments</h2>
+
+<h3>Playing with an unregistered account</h3>
+
+<p>An unregistered account is an account that belongs to a player but is not known or verified to league officials.</p>
+
+<p>Players a responsible for making sure their Rekt League profile is up-to-date with the ALL accounts and name changes</p>
+
+<p>An unregistered account is an account that belongs to a player but is not known or verified by Rekt League admins.</p>
+
+<ul>
+    <li>An investigation will be done and if the team representative had knowledge of these events, they will also receive a ban.</li>
+    <li>All other players on the team who had knowledge of the higher account and didn’t come forward to league admins will receive a strike.</li>
+    <li>If a team breaks this rule twice, with some other player/account, all players with knowledge and/or a strike will be banned from the Rekt League.</li>
+</ul>
+
+<h3>Roster lock</h3>
+
+<p>Missing roster locks results in punishments as follows:</p>
+<ul>
+    <li>After the first offense of missing roster lock, teams will be penalized bans <strong>IN THE FIRST BAN PHASE ONLY</strong> in the following order:</li>
+
+    <ol>
+        <li>1 missed roster lock offense = no ban restrictions</li>
+        <li>2 missed roster locks offense = 1 ban removed from game 1</li>
+        <li>3 missed roster locks offense = 1 ban removed from each game</li>
+        <li>4 missed roster locks offense = 2 bans removed from game 1, AND 1 ban removed from game 2.</li>
+        <li>...etc until all bans are removed.</li>
+    </ol>
+</ul>
+
+<p>These punishments only apply during a week that a roster lock was missed.</p>
+<ul>
+    <li>If a team missed roster lock in week 1, 2 and 3, but didn’t miss week 4, during the week 4 games they get all their bans.</li>
+    <li>If they miss again in week 5, they would have missed 4 total locks, and would only have 1 first round ban, in game 1., and 2 in game 2</li>
+</ul>
+
+<p>Only first round bans are affected.</p>
+
+<p>This only applies to the regular season</p>
+
+
+<h3>Roster above the elo limit</h3>
+
+<p>If a team (including substitutes) is absolutely unable to field an eligible roster on game day, that team forfeits the entire match.</p>
+
+<h3>Toxicity in zombie scrims/inhouse events</h3>
+
+<p>Aggressive verbal harassment, intentionally feeding, or griefing zombie scrims may result in a personal 1 week ban from the league.</p>
+
+<ul>
+    <li>These reports would need to be backed up with video/audio evidence.</li>
+    <li>The atmosphere/seriousness of the games would also be taken into account.</li>
+</ul>
+
+<h3>Changing your summoner name</h3>
+
+<p>If you change your summoner name mid season and don't update your profile, you run the risk of our tournament codes rejecting your new summoner name on game day. </p>
+<p>If you do change your summoner name UPDATE YOUR PROFILE IMMEDIATELY. If you don't then other teams won't be able to research your account. If you fail to update your account name before that weeks game day you will be suspended for that week and so on until you fix the account name.</p>
+
+<h3>Code of conduct</h3>
+
+<p>Toxicity is not allowed. Between teams or between players. Know your audience.</p>
+<ul>
+    <li>Hype videos and trash talk videos are fine. But again, know your audience. Don’t make a trash talk video of someone you don’t know. Don’t make one and release it AFTER you beat them.</li>
+    <li>Toxicity is more than just verbal abuse, it's team environment, sarcasm, or simply being rude.</li>
+    <li>Toxicity reports require validation, video and/or audio</li>
+    <li>Ban period begins at 1 week, but will increase based on severity and repetition</li>
+    <li>Toxicity can result in a permaban from the league.</li>
+</ul>
+
+<p>No hate speech</p>
+<ul>
+    <li>Hate speech reports require validation, video,audio, or screenshot.</li>
+    <li>Hate speech is defined as: any kind of communication in speech, writing or behaviour, that attacks or uses pejorative or discriminatory language with reference to a person or a group on the basis of who they are, in other words, based on their religion, ethnicity, nationality, race, colour, descent, gender or other identity factor.</li>
+</ul>
+
+<p>Toxicity in any form from a Team Rep is further prohibited. Team reps are expected to know and uphold this rulebook in its entirety</p>
+
+<ul>
+    <li>Failure to act accordingly will first result in up to two warnings (severity dependent)</li>
+    <li>Continued violations will result in expulsion from the league.</li>
+    <ol>
+        <li>Removed teams will have all matches expunged from the record, and future matches converted to a bye week</li>
+        <li>The team captain will not be allowed to return to play in the rekt league in a future season</li>
+        <li>Other players will be free to join another team, or play in another season</li>
+        <li>This may cause the Rekt League Schedule to be adjusted</li>
+    </ol>
+</ul>
+
+<p>Reporting players toxicity is well within Rekt League players rights, all players should feel able to reach out to any league admin for more information. </p>
+<ul>
+    <li>Primary player relations contacts are Darth Ted Icicli. Or just email therektleague@gmail.com</li>
+    <li>Players should feel free to reach out to admin for issues without fear of reprisal</li>
+</ul>
+
+<a id="swaps"></a>
+<h2>Role Swaps</h2>
+
+<h3>Strategy</h3>
+
+<p>A role swap is a strategy that professional teams use to enable or disable certain picks. It can be a good method in professional play to give one player the upper hand in an otherwise equal skill matchup. Although this is a great tool, in the Rekt League it can cause an unfair advantage on top of an already large skill discrepancy so it is not allowed.</p>
+
+<h3>Counterplay</h3>
+
+<p>The Rekt League has a variety of skill levels, so we can’t allow teams to swap players roles around each game to get a “your best player vs their worst player” matchup.</p>
+
+<ul>
+    <li>Teams prepare each week to play against certain players in certain positions. Changing roles or positions can prevent teams from preparing appropriately. </li>
+    <li>Because players can’t switch positions, all of the champion pool counterplay needs to come from the draft phase. Don’t get out-drafted! Do your champion pool research!</li>
+</ul>
+
+<p>The only exception to this rule is <strong>bottom lane</strong>. The meta has had things like Sona APC bot lane, frostmancy, Yasuo ADC, kill lanes, Senna etc.</p>
+
+<ul>
+    <li>We want these wacky things to be in the league so the adc/support players may swap their roles/who takes CS between each other. </li>
+    <li>They must still go to the bot lane.</li>
+    <li>There are no restrictions on who can buy the “support” item in the bot lane</li>
+</ul>
+
+<h3>Clarity</h3>
+
+<p>We don’t have “solo lane” as a role, your role is mid lane or top lane.</p>
+<p>Play the role assigned to you during the roster lock in every Wednesday.</p>
+<p>You <strong>can</strong> play a different role every week, as long as you are locked in as that role on the Wednesday roster lock.</p>
+
+<a id="reality"></a>
+<h2>The Reality of Competitive Play</h2>
+
+<h3>Pick/Ban</h3>
+
+<p>Our pick/ban uses the client tournament draft system (3 bans per team, 3 picks per team, 2 bans per team, two picks per team; with Blue side having first pick, Red side last pick)</p>
+<p>The pick/ban phase of a game should be used to help mitigate player/role skill differences, don’t just ban the OP’s of the patch. Do your research to get your Silver 3 player a sick counterpick!</p>
+<p>If you are a 1 trick pony, expect your 1 trick to always be banned. This is the reality you’re going to have to live with in competitive play, over performing and climbing to a high rank on a single champ doesn’t mean a whole lot when the other team has 5 bans.</p>
+
+<p>Consider 2 tricking?</p>
+
+<h3>Memes and Trash Talk</h3>
+
+<p>The Rekt Leagues opinion about trash talk align with Team Liquids ADC, Doublelift in an interview he had with The Shotcaller. Full quote as follows:</p>
+
+<blockquote>
+<p><strong><em>Speaking to your notoriousness, you’ve been renowned to be a trash talker. Do you think this is necessary within the league? Do you think more players should embrace the art of trash talk?</em></strong></p>
+
+<p>I think talking trash is fun for the viewers and fun if you enjoy having extra pressure on yourself to perform. A lot of people go about it wrong. They’re waiting until after they win, like, “haha that team was shit”. It’s like when Jensen beat us and he tweeted…well…this is why everyone memes his tweet, “I thought Team Liquid were supposed to be good”, AFTER they beat us.</p>
+
+<p><strong>In my opinion, the best way to trash talk is before the match because you’re betting that you could be wrong.</strong> When you say we’re going to shit on these guys, we’re going to beat them and it’s gonna be free…then you open up yourself to be wrong and looking like an idiot, while also opening up the possibility of being right and being cocky, yet you can back it up. Someone that waits for a win and kicks them while they’re down, it’s not cool. That’s not even trash talk, that’s just being an asshole. I try to trash talk before the game to bring hype. After you see your favorite player win, kicking someone while they’re down, that’s not hype, that’s just…eh? That doesn’t make me feel good personally.</p>
+</blockquote>
+
+<p>Full article can be found <a class="linkStyle" href="https://theshotcaller.net/doublelift-on-proper-trash-talk/" target="_blank">here</a></p>
+
+<p>The reality of trash talk is it’s great when done correctly, and makes you look like a huge douche when it’s not. So trash talk and meme your enemy <strong>before</strong> the game! Remember, it's a game, and the Rekt League is a bunch of real people so don’t kick them when they’re down.</p>
+
+<a id="misc"></a>
+<h2>Misc</h2>
+
+<p>New and reworked champions must have been available for 7 days before being played in The Rekt League.</p>
+<ul>
+    <li>Reworked champs are defined by Riots in the patch notes each patch. These are not balance changes.</li>
+    <li>Applies to gameplay updates, champion reworks, new champions</li>
+</ul>
+
+<a id="disclaimer"></a>
+<h2>Disclaimer</h2>
+
+<p>The Book of Rekt is not a finished product! When needed things will change! When discovered, rules will be added! Even after 7 seasons, we’re still learning! We experiment and figure out what works and what doesn’t. We don’t have teams of analysts ready to pounce on the best methods to run a skill diverse League of Legends tournament league. But one thing is certain, we will Rekt this book into shape.</p>
+
+<p>Money that gets paid to The Rekt League is non-refundable, but mugs are forever. Cheers!</p>
+
+</div>
+<script type="text/javascript" src="{% static 'stats/js/jquery-3.4.1.min.js' %}"></script>
+{% endblock %}
+

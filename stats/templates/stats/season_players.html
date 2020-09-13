@@ -38,8 +38,8 @@
 	    {% for team_player in team_players %}
 	    {% if team_player.get_player_matches.count > 0 %}
       <tr>
-        <td><a href="/season/{{ season.id }}/team/{{ team_player.team.id }}/player/{{ team_player.player.id }}/role/{{ team_player.role.id }}/">{{ team_player.player.name }}</a></td>
-	<td><a href="/season/{{ season.id }}/team/{{ team_player.team.id }}/"><img src="{{ team_player.team.media.icon.url }}" /><span>{{ team_player.team.name }}</span></a></td>
+        <td><a href="/season/{{ season.id }}/team/{{ team_player.team.id }}/player/{{ team_player.player.id }}/role/{{ team_player.role.id }}/">{{ team_player.player.get_name }}</a></td>
+	<td><a href="/season/{{ season.id }}/team/{{ team_player.team.id }}/"><img src="{{ team_player.team.media.icon.url }}" /><span>{{ team_player.team.media.name }}</span></a></td>
 	<td><img src="{{ team_player.role.icon.url }}" /><span>{{ team_player.role.name }}</span></td>
 	<td>{{ team_player.get_num_matches }}</td>
 	<td>{{ team_player.get_avg_kills|floatformat:"1" }}</td>

@@ -1,0 +1,80 @@
+{% extends "stats/base.html" %}
+{% load staticfiles %}
+
+{% block title %} Rekt League | Season {{ season.id }} - Preseason {% endblock %}
+
+{% block head %}
+<link rel="stylesheet" href="{% static 'stats/css/preseason.css' %}">
+
+<script type="text/javascript">
+function hideTeamDivs()
+{
+{% for team in teams %}
+      $(".teamDescriptionContainer{{ team.id }}").removeClass( "display" );
+{% endfor %}
+}
+
+$(document).ready(function(){
+	{% for team in teams %}
+  $( "#team{{ team.id }}" ).hover(
+    function() {
+      hideTeamDivs();
+      $(".teamDescriptionContainer{{ team.id }}").addClass( "display" );
+    });
+	{% endfor %}
+});
+
+</script>
+
+{% endblock %}
+
+{% block content %}
+<h1>SEASON <span class="rekt-red">{{ season.id }}</span></h1>
+<h2 class="subhead">PRESEASON</h2>
+
+<section class="teamsBanners">
+	{% for team in teams %}
+	<a href="javascript:void(0);"><img src="{{ team.media.home_splash.url }}" id="team{{ team.id }}" alt="team{{ team.id }}"></a>
+    	{% endfor %}
+</section>
+
+<!-- TEAM BANNER DESCRIPTIONS -->
+{% for data in teamData %}
+<div class="teamDescriptionContainer teamDescriptionContainer{{ data.team.id }}">
+	<h2 id="teamName">{{ data.team.media.name }}</h2>
+	<h4>MAIN ROSTER</h4>
+	<table>
+		{% for role in data.roles %}
+		{% if not role.role.isFill %}
+		<tr>
+			<td><img width=30 src="{{ role.role.icon.url }}"></td>
+			{% if role.player %}
+			<td>{{ role.player.get_name }} {% if role.player.is_rep %}*{% endif %}</td>
+			{% else %}
+			<td></td>
+			{% endif %}
+		</tr>
+		{% endif %}
+		{% endfor %}
+	</table>
+	<h4>SUBSTITUTES</h4>
+	<table>
+		{% for role in data.roles %}
+		{% if role.role.isFill %}
+		<tr>
+			<td><img width=30 src="{{ role.role.icon.url }}"></td>
+			{% if role.player %}
+			<td>{{ role.player.get_name }} {% if role.player.is_rep %}*{% endif %}</td>
+			{% else %}
+			<td></td>
+			{% endif %}
+		</tr>
+		{% endif %}
+		{% endfor %}
+	</table>
+</div>
+{% endfor %}
+<!-- END TEAM BANNER DESC -->
+           
+            </body>
+{% endblock %}

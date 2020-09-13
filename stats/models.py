@@ -8,14 +8,25 @@ from django.db.models import Count, Avg, Sum, Q, Case, When, F, Value, Expressio
 from django.utils import timezone
 from django.utils.encoding import python_2_unicode_compatible
 
+class MerchProduct(models.Model):
+    name = models.CharField(max_length=100)
+    blurb = models.CharField(max_length=1000)
+    warning = models.CharField(max_length=100)
+    price = models.FloatField(default=0)
+    photo = models.ImageField(upload_to='stats/merch_photos', default='')
+
+
 class Season(models.Model):
     tournament_id = models.IntegerField(default=0)
     team_size = models.IntegerField(default=5)
     pick_type = models.CharField(max_length=30)
     map_type = models.CharField(max_length=30)
     spectator_type = models.CharField(max_length=30)
-    playoff_bracket = models.ImageField(upload_to='stats/', default='')
-    splash = models.ImageField(upload_to='stats/season_splashes', default='')
+    playoff_bracket = models.ImageField(upload_to='stats/', default='', null=True, blank=True)
+    splash = models.ImageField(upload_to='stats/season_splashes', default='', null=True, blank=True)
+    isActive = models.BooleanField(default=False)
+    isPreseason = models.BooleanField(default=False)
+    numSubs = models.IntegerField(default=3)
 
     def __str__(self):
         return "SEASON " + str(self.pk)
@@ -170,9 +181,13 @@ class Season(models.Model):
                 if first_tower.playermatch.team == team:
                     first_towers = first_towers + 1
                     assists = assists + PlayerMatchBuildingAssist.objects.filter(kill=first_tower).count()
+            if first_towers == 0:
+                assists = 0
+            else:
+                assists = 1 + (1.0 * assists / first_towers)
             results.append({
                 'name': team.name,
-                'assists': 1 + (1.0 * assists / first_towers)
+                'assists': assists
                 })
         return sorted(results, key = lambda t: -t['assists'])
 
@@ -598,7 +613,10 @@ class Week(models.Model):
 
 class Role(models.Model):
     name = models.CharField(max_length=15)
+    name_lc = models.CharField(max_length=15)
+    title = models.CharField(max_length=15)
     icon = models.ImageField(upload_to='stats/role/icon', default='')
+    icon_w_name = models.ImageField(upload_to='stats/role/icon', default='')
     isFill = models.BooleanField(default=False)
 
     def __str__(self):
@@ -752,17 +770,31 @@ class Match(models.Model):
 @python_2_unicode_compatible
 class Player(models.Model):
     name = models.CharField(max_length=40)
-    user = models.ForeignKey(User, default=0)
+    user = models.ForeignKey(User, blank=True, null=True)
     riot_id = models.IntegerField(default=0)
     matches = models.ManyToManyField(Match, through='PlayerMatch')
     photo = models.ImageField(upload_to='stats/player_photos', blank=True, null=True)
     elo_value = models.IntegerField(default=100)
 
+    def get_name(self):
+        if self.user is None:
+            return self.name
+        mainAccount = UserAccount.objects.filter(user=self.user, isMain=True)
+        if not mainAccount:
+            return self.name
+        return mainAccount[0].name
+
+    def get_summoners(self):
+        if self.user is None:
+            return Summoner.objects.filter(player=self)
+        accounts = UserAccount.objects.filter(user=self.user).order_by('-isMain')
+        return accounts
+
     def team_players(self):
         return TeamPlayer.objects.filter(player=self)
 
     def teams(self):
-        return Team.objects.filter(pk__in=self.team_players())
+        return Team.objects.filter(id__in=self.team_players())
 
     def seasons(self):
         return Season.objects.filter(pk__in=self.teams())
@@ -817,8 +849,8 @@ class Team(models.Model):
     matches = models.ManyToManyField(Match, through='TeamMatch')
     season = models.ForeignKey(Season)
     media = models.ForeignKey(TeamMedia)
-    icon = models.ImageField(upload_to='stats')
-    splash = models.ImageField(upload_to='stats/team_splashes', default='')
+    icon = models.ImageField(upload_to='stats', blank=True, null=True)
+    splash = models.ImageField(upload_to='stats/team_splashes', blank=True, null=True)
     banner = models.ImageField(upload_to='stats/team_banners', blank=True, null=True)
     left_splash = models.ImageField(upload_to='stats/team_splashes', blank=True, null=True)
     right_splash = models.ImageField(upload_to='stats/team_splashes', blank=True, null=True)
@@ -826,6 +858,9 @@ class Team(models.Model):
 
     def get_players(self):
         return TeamPlayer.objects.filter(team=self, role__isFill=True)
+
+    def get_preseason_players(self):
+        return PreseasonTeamPlayer.objects.filter(team=self).order_by('role')
 
     def get_average_match_duration(self):
         return TeamMatch.objects.filter(team=self).aggregate(Avg('match__duration'))['match__duration__avg']
@@ -1201,6 +1236,9 @@ class TeamPlayer(models.Model):
 
     def get_team(self):
         return Team.objects.filter(pk=self.team)
+
+    def get_elo_value(self):
+        return SeasonPlayer.objects.get(user=self.player.user, season=self.team.season).elo_value
     
     def get_proximity_timeline(self):
         all_timelines = PlayerMatchTimeline.objects.filter(playermatch__player=self.player, playermatch__role=self.role, playermatch__team=self.team).annotate(minute=F('timestamp') / 1000 / 60).order_by('minute')
@@ -1633,23 +1671,107 @@ class HypeVideo(models.Model):
     creator = models.ForeignKey(Player)
     youtube_link = models.CharField(max_length=100, default='')
 
-
 class TeamInvite(models.Model):
-    player = models.ForeignKey(Player)
+    user = models.ForeignKey(User)
     team = models.ForeignKey(Team)
+    role = models.ForeignKey(Role)
 
-class PlayerPhotoRequest(models.Model):
-    player = models.ForeignKey(Player)
+    def get_name(self):
+        return SeasonPlayer.objects.get(user=self.user, season=self.team.season).get_name()
+
+    def get_elo_value(self):
+        return SeasonPlayer.objects.get(user=self.user, season=self.team.season).get_elo_value()
+
+    def get_season_player(self):
+        return SeasonPlayer.objects.get(user=self.user, season=self.team.season)
+    
+    def __str__(self):
+        return self.user.username + " - " + self.team.media.name + " (" + self.role.name + ")"
+
+class UserPhotoRequest(models.Model):
+    user = models.ForeignKey(User)
     photo = models.ImageField(upload_to='stats/player_photos')
 
 class SeasonPlayer(models.Model):
     season = models.ForeignKey(Season)
-    player = models.ForeignKey(Player)
+    user = models.ForeignKey(User)
+    main_roster = models.BooleanField(default=False)
+    substitute = models.BooleanField(default=False)
     elo_value = models.IntegerField(default=100)
+
+    def is_confirmed(self):
+        return self.elo_value != 100
+
+    def get_name(self):
+        return UserAccount.objects.get(user=self.user, isMain=True).name
+
+    def get_main_role(self):
+        return SeasonPlayerRole.objects.get(season=self.season, user=self.user, isMain=True)
+
+    def get_off_roles(self):
+        return SeasonPlayerRole.objects.filter(season=self.season, user=self.user, isMain=False)
+
+    def get_elo_value(self):
+        return self.elo_value
 
 class SeasonPlayerRole(models.Model):
     season = models.ForeignKey(Season)
-    player = models.ForeignKey(Player)
+    user = models.ForeignKey(User)
     role = models.ForeignKey(Role)
     isMain = models.BooleanField(default=False)
 
+    def get_elo_value(self):
+        return SeasonPlayer.objects.get(season=self.season, user=self.user).elo_value
+
+    def get_name(self):
+        return UserAccount.objects.get(user=self.user, isMain=True).name
+
+    def get_season_player(self):
+        return SeasonPlayer.objects.get(season=self.season, user=self.user)
+
+class PreseasonTeamPlayer(models.Model):
+    team = models.ForeignKey(Team)
+    user = models.ForeignKey(User)
+    role = models.ForeignKey(Role)
+
+    def get_name(self):
+        return UserAccount.objects.get(user=self.user, isMain=True).name
+
+    def get_elo_value(self):
+        return SeasonPlayer.objects.get(user=self.user, season=self.team.season).elo_value
+
+    def get_season_player(self):
+        return SeasonPlayer.objects.get(user=self.user, season=self.team.season)
+
+    def is_rep(self):
+        return self.team.user == self.user
+
+    def __str__(self):
+        return self.get_name() + " - " + self.team.media.name + " (" + self.role.name + ")"
+
+class UserAccount(models.Model):
+    user = models.ForeignKey(User)
+    name = models.CharField(max_length=100)
+    isMain = models.BooleanField(default=False)
+
+    def link(self):
+        return "https://na.op.gg/summoner/userName=" + self.name.replace(" ", "+")
+
+    def __str__(self):
+        return self.user.username + ": " + self.name
+
+class LeaveTeamNotification(models.Model):
+    user = models.ForeignKey(User)
+    team = models.ForeignKey(Team)
+
+    def get_season_player(self):
+        return SeasonPlayer.objects.get(user=self.user, season=self.team.season)
+
+class TeamInviteResponse(models.Model):
+    user = models.ForeignKey(User)
+    team = models.ForeignKey(Team)
+    role = models.ForeignKey(Role)
+    accepted = models.BooleanField()
+
+    def get_season_player(self):
+        return SeasonPlayer.objects.get(user=self.user, season=self.team.season)

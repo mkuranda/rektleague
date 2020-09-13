@@ -4,9 +4,463 @@
 {% block title %} Rekt League | Team Manager {% endblock %}
 
 {% block head %}
+<link rel="stylesheet" type="text/css" href="{% static 'stats/css/slick.css' %}"/>
+<link rel="stylesheet" type="text/css" href="{% static 'stats/css/slick-theme.css' %}"/>
+<link rel="stylesheet" href="{% static 'stats/css/team-manager.css' %}">
+
+<script type="text/javascript"><!--
+
+$(document).ready(function(){
+	{% for role in roles %}
+	$('.slider{{ role.name }}').slick();
+	{% endfor %}
+    var elo = 0;
+	{% for role in roles %}
+	{% if not role.isFill %}
+	var {{ role.name }}count = 0;
+	var {{ role.name }}value = 0;
+	{% if role.myPlayer %}
+	{{ role.name }}value += {{ role.myPlayer.get_elo_value }};
+	{{ role.name }}count = 1
+	elo += {{ role.name }}value;
+	{% elif role.myInvite %}
+	{{ role.name }}value += {{ role.myInvite.get_elo_value }};
+	elo += {{ role.name }}value;
+	{{ role.name }}count = 1
+	{% endif %}
+	{% else %}
+	{% for subNum in subNums %}
+	var {{ role.name }}{{ subNum }}count = 0;
+	{% endfor %}
+	{% endif %}
+	{% endfor %}
+
+    $("#teamElo").text( elo );
+	// Color indicator for ELO
+    if ( elo > 0){
+        $( "#teamElo" ).css( "color", "red" );
+    }
+
+    else {
+        $( "#teamElo" ).css( "color", "white" );
+    }
+
+
+	var currentPlayers = {};
+
+	{% for player in myPlayers %}
+	currentPlayers["{{ player.get_name }}"] = "{{ role.name }}";
+	{% endfor %}
+	{% for invite in myInvites %}
+	currentPlayers["{{ invite.get_name }}"] = "{{ role.name }}";
+	{% endfor %}
+
+	{% for role in roles %}
+	{% if not role.isFill %}
+    // ADD TOP
+	$(document).on( "click","#add{{ role.name }}", function() {
+		name = $('.slider{{ role.name }} .slick-active > div > .playerCard > .playerInfo > .playerName').text();
+        // If statement if team doesnt have a top
+		if ({{ role.name }}count === 0 && !(name in currentPlayers))
+		{
+        // Update ELO counter
+		{{ role.name }}value = Number( $('.slider{{ role.name }} .slick-active > div > .playerCard > .playerInfo > .playerValue').text() );
+		elo = 0;
+		{% for role in roles %}
+		{% if not role.isFill %}
+		elo += {{ role.name }}value;
+		{% endif %}
+		{% endfor %}
+        $("#teamElo").text( elo );
+        // Color indicator for ELO
+        if ( elo > 0){
+            $( "#teamElo" ).css( "color", "red" );
+        }
+
+        else {
+            $( "#teamElo" ).css( "color", "white" );
+        }
+        // Move playercard
+		$(".slider{{ role.name }} .slick-active > div > .playerCard").prependTo("#my{{ role.name }}");
+        // Reset Slider now that cards missing
+		$('.slider{{ role.name }}').slick('slickNext');
+        $('.slider{{ role.name }}').slick('unslick');
+        $('.slider{{ role.name }}').slick();
+        // Swap out add icon for minus icon
+		$( "#my{{ role.name }} > .playerCard > .playerPhoto > #add{{ role.name }}" ).remove();
+		$( "#my{{ role.name }} > .playerCard > .playerPhoto").append( "<i id='remove{{ role.name }}' class='fas fa-minus-square'></i>" );
+        // Increment top so that you can only add one top
+		++{{ role.name }}count;
+        currentPlayers[name] = "{{ role.name }}";
+		console.log("Adding " + name);
+		addLink{{ role.name }}();
+        }
+		else if ({{ role.name }}count > 0)
+		{
+			alert("YOU ALREADY HAVE A {{ role.name }}, SILLY!");
+		}
+		else
+		{
+			alert(name + " is already on your team");
+        }
+
+    });
+
+    // REMOVE TOP
+	$(document).on( "click", "#remove{{ role.name }}", function() {
+        // Declare variables
+		{{ role.name }}value = 0;
+		elo = 0;
+		{% for role in roles %}
+		{% if not role.isFill %}
+		elo += {{ role.name }}value;
+		{% endif %}
+		{% endfor %}
+        // Update ELO counter
+        $("#teamElo").text( elo );
+        // Color indicator for ELO
+        if ( elo > 0){
+            $( "#teamElo" ).css( "color", "red" );
+        }
+
+        else {
+            $( "#teamElo" ).css( "color", "white" );
+        }
+		name = $('#my{{ role.name }} > .playerCard > .playerInfo > .playerName').text();
+        // Switch - to +
+		$("#my{{ role.name }} > .playerCard > .playerPhoto > #remove{{ role.name }}").remove();
+		$("#my{{ role.name }} > .playerCard > .playerPhoto").append( "<i id='add{{ role.name }}' class='fas fa-plus-square'></i>" );
+        // remove "Add to team" button
+        // Add back into slider
+		$('.slider{{ role.name }}').slick('unslick');
+		$("#my{{ role.name }} > .playerCard").prependTo( $(".slider{{ role.name }}") );
+		$('.slider{{ role.name }}').slick();
+        // Allow new top to be added
+		{{ role.name }}count = 0;
+		console.log("Deleting " + name);
+		delete currentPlayers[name];
+    });
+	{% else %}
+
+ // ADD SUB
+$(document).on( "click","#add{{ role.name }}", function() {
+    name = $('.slider{{ role.name }} .slick-active > div > .playerCard > .playerInfo > .playerName').text();
+    // If statement if team doesnt have a top
+	{% for subNum in subNums %}
+    {% if forloop.counter == 1 %}
+	if({{ role.name }}{{ subNum }}count == 0 && !(name in currentPlayers)){
+	{% else %}
+	else if({{ role.name }}{{ subNum }}count == 0 && !(name in currentPlayers)){
+	{% endif %}
+    // Move playercard
+	$(".slider{{ role.name }} .slick-active > div > .playerCard").prependTo("#my{{ role.name }}{{ subNum }}");
+    // Reset Slider now that cards missing
+	$('.slider{{ role.name }}').slick('slickNext');
+    $('.slider{{ role.name }}').slick('unslick');
+    $('.slider{{ role.name }}').slick();
+    // Swap out add icon for minus icon
+	$( "#my{{ role.name }}{{ subNum }} > .playerCard > .playerPhoto > #add{{ role.name }}" ).remove();
+	$( "#my{{ role.name }}{{ subNum }} > .playerCard > .playerPhoto").append( "<i id='remove{{ role.name }}{{ subNum }}' class='fas fa-minus-square'></i>" );
+    // Add "Add to team" button
+    currentPlayers[name] = "{{ role.name }}";
+    // Increment top so that you can only add one top
+	++{{ role.name }}{{ subNum }}count;
+    }
+	{% endfor %}
+	else if(name in currentPlayers)
+	{
+	    alert(name + " is already on your team");
+	}
+    else{
+	    alert("YOU ALREADY HAVE {{ subNum.count }} {{ role.name }}S, SILLY!");
+    }
+
+});
+
+{% for subNum in subNums %}
+// REMOVE SUB 1
+$(document).on( "click", "#remove{{ role.name }}{{ subNum }}", function() {
+	name = $('#my{{ role.name }}{{ subNum }} > .playerCard > .playerInfo > .playerName').text();
+	console.log(name);
+    // Switch - to +
+    $("#my{{ role.name }}{{ subNum }} > .playerCard > .playerPhoto > #remove{{ role.name }}{{ subNum }}").remove();
+	$("#my{{ role.name }}{{ subNum }} > .playerCard > .playerPhoto").append( "<i id='add{{ role.name }}' class='fas fa-plus-square'></i>" );
+    // remove "Add to team" button
+    // Add back into slider
+	$('.slider{{ role.name }}').slick('unslick');
+	$("#my{{ role.name }}{{ subNum }} > .playerCard").prependTo( $(".slider{{ role.name }}") );
+	$('.slider{{ role.name }}').slick();
+    // Allow new top to be added
+	{{ role.name }}{{ subNum }}count = 0;
+	delete currentPlayers[name];
+});
+{% endfor %}
+{% endif %}
+{% endfor %}
+
+$(document).on( "click",".invitePlayers", function() {
+	var url = "/stats/team-manager/invite/";
+	{% for role in roles %}
+	{% if not role.isFill %}
+	    id = $('#my{{ role.name }} .playerCard > .playerInfo > .playerId').text();
+	    if (id == "")
+	    {
+			id = 0;
+	    }
+		url += id + "/";
+	{% else %}
+	{% for subNum in subNums %}
+	    id = $('#my{{ role.name }}{{ subNum }} .playerCard > .playerInfo > .playerId').text();
+	    if (id == "")
+	    {
+			id = 0;
+	    }
+		url += id + "/";
+	{% endfor %}
+	{% endif %}
+	{% endfor %}
+	window.location = url;
+});
+// CLOSING OF READY FUNCTION
+});
+</script>
+
+
 
 {% endblock %}
 
 {% block content %}
 
+{% if team %}
+<h1>TEAM MANAGER</h1>
+
+<p>Welcome to the Team Manager! From here you'll be able to look at all of the free agents, try out different player combinations, and then send invites to players to join your team. Pay attention to the ELO counter, if the number is greater than zero with your full roster then that team will not be legal to play. Substitutes do not count towards the ELO counter.<br><span class="rekt-red">*Note that the invite button will send invites to all players currently in your roster.</span></p>
+<div class="teamManagerContainer">
+
+<section class="freeAgentSection">
+    <div class="tab">
+        {% for role in roles %}
+        <button class="tablinks" onclick="openCity(event, '{{ role.name }}tab');"{% if forloop.counter == 1 %} id="defaultOpen"{% endif %}>{{ role.name }}</button>
+        {% endfor %}
+    </div>
+
+    <!-- Tab content -->
+	{% for role in roles %}
+	<div id="{{ role.name }}tab" class="tabcontent">
+        <!-- START TOPS -->
+		<div class="slider{{ role.name }}">
+		{% for player in role.players %}
+        <!-- SLIDE 1 -->
+	{% if player.get_elo_value < -3 %}
+        <div class="playerCard silverCard">
+	{% elif player.get_elo_value < 1 %}
+        <div class="playerCard goldCard">
+	{% elif player.get_elo_value < 5 %}
+        <div class="playerCard platCard">
+	{% else %}
+        <div class="playerCard diamondCard">
+	{% endif %}
+            <div class="playerPhoto">
+				<i id="add{{ role.name }}" class="fas fa-plus-square"></i>
+				<img class="main" src="{{ player.get_main_role.role.icon_w_name.url }}">
+				{% if player.get_off_roles.count > 3 %}
+				<img class="offrole1" src="{{ subRole.icon.url }}">
+				{% else %}
+				{% for offRole in player.get_off_roles %}
+				<img class="offrole{{ forloop.counter }}" src="{{ offRole.role.icon.url }}">
+				{% endfor %}
+				{% endif %}
+            </div>
+            <div class="playerInfo">
+				<p class="playerName">{{ player.get_name }}</p>
+                <img src="/static/stats/scoreboardicon_gold.png">
+				<p class="playerValue">{{ player.get_elo_value }}</p>
+				<div class="playerId">{{ player.id }}</div>
+            </div>
+        </div>
+		{% endfor %}
+		</div>
+    </div>
+	{% endfor %}
+
+</section>
+
+<section class="myTeamSection">
+	<button class="invitePlayers btn btn-primary spacer">SEND INVITES</button>
+    <h3>ELO</h3>
+    <p id="teamElo">0</p>
+	{% for role in roles %}
+	<h3>{{ role.name }}</h3>
+	{% if not role.isFill %}
+	<div id="my{{ role.name }}" class="emptyPlayer">
+	{% if role.myPlayer %}
+	{% if role.myPlayer.get_elo_value < -3 %}
+        <div class="playerCard silverCard" data-toggle="popover" data-trigger="hover" data-content="Accepted team invite!">
+	{% elif role.myPlayer.get_elo_value < 1 %}
+        <div class="playerCard goldCard" data-toggle="popover" data-trigger="hover" data-content="Accepted team invite!">
+	{% elif role.myPlayer.get_elo_value < 5 %}
+        <div class="playerCard platCard" data-toggle="popover" data-trigger="hover" data-content="Accepted team invite!">
+	{% else %}
+        <div class="playerCard diamondCard" data-toggle="popover" data-trigger="hover" data-content="Accepted team invite!">
+	{% endif %}
+            <div class="playerPhoto">
+				<i id='remove{{ role.name }}' class='fas fa-minus-square'></i>		
+				<img class="main" src="{{ role.myPlayer.get_season_player.get_main_role.role.icon_w_name.url }}">
+				{% if role.myPlayer.get_season_player.get_off_roles.count > 3 %}
+				<img class="offrole1" src="{{ subRole.icon.url }}">
+				{% else %}
+				{% for offRole in role.myPlayer.get_season_player.get_off_roles %}
+				<img class="offrole{{ forloop.counter }}" src="{{ offRole.role.icon.url }}">
+				{% endfor %}
+				{% endif %}
+
+            </div>                                                                            		
+            <div class="playerInfo">                                                          		
+        		<p class="playerName acceptedName">{{ role.myPlayer.get_name }}</p>   		
+                <img src="/static/stats/scoreboardicon_gold.png">                             		
+        		<p class="playerValue">{{ role.myPlayer.get_elo_value }}</p>          		
+        		<div class="playerId">{{ role.myPlayer.get_season_player.id }}</div>  		
+            </div>
+        </div>
+	{% elif role.myInvite %}
+	{% if role.myInvite.get_elo_value < -3 %}
+        <div class="playerCard silverCard" data-toggle="popover" data-trigger="hover" data-content="Response pending">
+	{% elif role.myInvite.get_elo_value < 1 %}
+        <div class="playerCard goldCard" data-toggle="popover" data-trigger="hover" data-content="Response pending">
+	{% elif role.myInvite.get_elo_value < 5 %}
+        <div class="playerCard platCard" data-toggle="popover" data-trigger="hover" data-content="Response pending">
+	{% else %}
+        <div class="playerCard diamondCard" data-toggle="popover" data-trigger="hover" data-content="Response pending">
+	{% endif %}
+            <div class="playerPhoto">
+				<i id='remove{{ role.name }}' class='fas fa-minus-square'></i>
+				<img class="main" src="{{ role.myInvite.get_season_player.get_main_role.role.icon_w_name.url }}">
+				{% if role.myInvite.get_season_player.get_off_roles.count > 3 %}
+				<img class="offrole1" src="{{ subRole.icon.url }}">
+				{% else %}
+				{% for offRole in role.myPlayer.get_season_player.get_off_roles %}
+				<img class="offrole{{ forloop.counter }}" src="{{ offRole.role.icon.url }}">
+				{% endfor %}
+				{% endif %}
+
+            </div>
+            <div class="playerInfo">
+        		<p class="playerName invitedName">{{ role.myInvite.get_name }}</p>
+                <img src="/static/stats/scoreboardicon_gold.png">
+        		<p class="playerValue">{{ role.myInvite.get_elo_value }}</p>
+        		<div class="playerId">{{ role.myInvite.get_season_player.id }}</div>
+            </div>
+        </div>
+	{% endif %}
+    </div>
+	{% else %}
+	{% for sub in mySubs %}
+	<div id="my{{ role.name }}{{ forloop.counter0 }}" class="emptyPlayer">
+	{% if sub.invite %}
+	{% if sub.invite.get_elo_value < -3 %}
+        <div class="playerCard silverCard" data-toggle="popover" data-trigger="hover" data-content="Response pending">
+	{% elif sub.invite.get_elo_value < 1 %}
+        <div class="playerCard goldCard" data-toggle="popover" data-trigger="hover" data-content="Response pending">
+	{% elif sub.invite.get_elo_value < 5 %}
+        <div class="playerCard platCard" data-toggle="popover" data-trigger="hover" data-content="Response pending">
+	{% else %}
+        <div class="playerCard diamondCard" data-toggle="popover" data-trigger="hover" data-content="Response pending">
+	{% endif %}
+            <div class="playerPhoto">
+				<i id='remove{{ role.name }}{{ forloop.counter0 }}' class='fas fa-minus-square'></i>
+				<img class="main" src="{{ sub.invite.get_season_player.get_main_role.role.icon_w_name.url }}">
+				{% if sub.invite.get_season_player.get_off_roles.count > 3 %}
+				<img class="offrole1" src="{{ subRole.icon.url }}">
+				{% else %}
+				{% for offRole in sub.invite.get_season_player.get_off_roles %}
+				<img class="offrole{{ forloop.counter }}" src="{{ offRole.role.icon.url }}">
+				{% endfor %}
+				{% endif %}
+            </div>
+            <div class="playerInfo">
+        		<p class="playerName invitedName">{{ sub.invite.get_name }}</p>
+                <img src="/static/stats/scoreboardicon_gold.png">
+        		<p class="playerValue">{{ sub.invite.get_season_player.elo_value }}</p>
+        		<div class="playerId">{{ sub.invite.get_season_player.id }}</div>
+            </div>
+        </div>
+	{% elif sub.player %}
+	{% if sub.player.get_elo_value < -3 %}
+        <div class="playerCard silverCard" data-toggle="popover" data-trigger="hover" data-content="Accepted team invite!">
+	{% elif sub.player.get_elo_value < 1 %}
+        <div class="playerCard goldCard" data-toggle="popover" data-trigger="hover" data-content="Accepted team invite!">
+	{% elif sub.player.get_elo_value < 5 %}
+        <div class="playerCard platCard" data-toggle="popover" data-trigger="hover" data-content="Accepted team invite!">
+	{% else %}
+        <div class="playerCard diamondCard" data-toggle="popover" data-trigger="hover" data-content="Accepted team invite!">
+	{% endif %}
+            <div class="playerPhoto">
+				<i id='remove{{ role.name }}{{ forloop.counter0 }}' class='fas fa-minus-square'></i>
+				<img class="main" src="{{ sub.player.get_season_player.get_main_role.role.icon_w_name.url }}">
+				{% if sub.player.get_season_player.get_off_roles.count > 3 %}
+				<img class="offrole1" src="{{ subRole.icon.url }}">
+				{% else %}
+				{% for offRole in sub.player.get_season_player.get_off_roles %}
+				<img class="offrole{{ forloop.counter }}" src="{{ offRole.role.icon.url }}">
+				{% endfor %}
+				{% endif %}
+            </div>
+            <div class="playerInfo">
+        		<p class="playerName acceptedInvite">{{ sub.player.get_name }}</p>
+                <img src="/static/stats/scoreboardicon_gold.png">
+        		<p class="playerValue">{{ sub.player.get_elo_value }}</p>
+        		<div class="playerId">{{ sub.player.get_season_player.id }}</div>
+            </div>
+        </div>
+	{% else %}
+	{% endif %}
+    </div>
+	{% endfor %}
+	{% endif %}
+	{% endfor %}
+<!-- END TEAM MANAGER CONTAINER -->
+</div>
+
+
+{% else %}
+<!-- Doesn't have permissions for this -->
+{% endif %}
+
+<script>
+function openCity(evt, cityName) {
+  var i, tabcontent, tablinks;
+  tabcontent = document.getElementsByClassName("tabcontent");
+  for (i = 0; i < tabcontent.length; i++) {
+    tabcontent[i].style.display = "none";
+  }
+  tablinks = document.getElementsByClassName("tablinks");
+  for (i = 0; i < tablinks.length; i++) {
+    tablinks[i].className = tablinks[i].className.replace(" active", "");
+  }
+  document.getElementById(cityName).style.display = "block";
+  evt.currentTarget.className += " active";
+
+	{% for role in roles %}
+	$('.slider{{ role.name }}').slick('slickGoTo','0', true);
+	{% endfor %}
+	{% for role in roles %}
+	$('.slider{{ role.name }}').slick('refresh');
+	{% endfor %}
+}
+
+// Get the element with id="defaultOpen" and click on it
+document.getElementById("defaultOpen").click();
+</script>
+
+<script>
+    $(document).ready(function(){
+        $('[data-toggle="popover"]').popover();   
+    });
+	</script>
+
+<script type="text/javascript" src="{% static 'stats/js/jquery-3.4.1.min.js' %}"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="{% static 'stats/js/slick.js' %}"></script>
+<script type="text/javascript" src="{% static 'stats/js/team-manager.js' %}"></script>
 {% endblock %}

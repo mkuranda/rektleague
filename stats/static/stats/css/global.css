@@ -43,10 +43,10 @@ Author: Brian McQueen & Matt Kuranda
 /*******************************************/
 
 body {
-    color: #000;
+    background: black;
     font-size: 12px;
     line-height: 1.4;
-    font-family: Helvetica, Arial, sans-serif;
+    font-family: 'Lato', sans-serif;
 }
 
 .rekt-red{
@@ -62,11 +62,6 @@ body {
 /* ADDITIONAL STYLES
 /*******************************************/
 
-body {
-    font-family: 'Lato', sans-serif;
-    background: black;
-    
-}
 
 /* TOP NAV */
 
@@ -89,8 +84,84 @@ nav {
   }
 
   .signinFloat {
-      float: right;
+    float: right;
   }
+
+  .profileFloat {
+    float: right;
+    display: inline-grid;
+    grid-template-columns: 20% 50% 30%;
+    grid-template-rows: 50% 50%;
+    width: 232px;
+  }
+
+  .proPic {
+    border-radius: 50%;
+    grid-column-start: 3;
+    margin-top: 15px;
+    margin-bottom: -9px;
+    margin-left: 11px;
+    width: 39px;
+    background-color: none;
+    text-decoration: none;
+    padding: 0;
+
+}
+
+#signOutBtn {
+  grid-column-start: 2;
+    grid-row-start: 2;
+    color: #bf1f2f;
+    font-weight: 800;
+    font-size: 1.1em;
+    margin: 0;
+    justify-self: end;
+    background-color: none;
+    text-decoration: none;
+    padding: 0;
+    display: inline;
+    line-height: 12px;
+
+}
+
+#bellFix{
+  display: contents;
+  padding: 0;
+  line-height: 12px;
+}
+
+#proImgFix{
+  display: inline;
+  padding: 0;
+  line-height: 12px;
+}
+
+nav #signOutBtn:hover, #proImgFix:hover, #bellFix:hover{
+  background-color: black !important;
+  background: black;
+}
+
+  .accountName {
+    grid-column-start: 2;
+    grid-row-start: 1;
+    color: white;
+    font-weight: 800;
+    font-size: 1.1em;
+    margin-top: 17px;
+    justify-self: end;
+}
+
+.notificationBell{
+  color: #bf1f2f;
+    grid-column-start: 1;
+    grid-row-start: 1;
+    font-size: 1.7em;
+    margin: 19px 0px 0 21px;
+}
+
+.notificationBell:hover, .proPic:hover, #signOutBtn:hover{
+  opacity: .8;
+}
   
   nav:after {
     content: "";
@@ -357,6 +428,50 @@ a:visited{
     nav ul ul ul li { position: static;
     
     }
+
+    .profileFloat {
+      float: left;
+      display: inline-grid;
+      grid-template-columns: 20% 50% 30%;
+      grid-template-rows: 50% 50%;
+      width: 232px;
+      margin-left: 15px;
+    }
+  
+    .proPic {
+      border-radius: 50%;
+      grid-column-start: 1;
+      margin-top: 15px;
+      margin-left: 0px;
+      width: 40px;
+  }
+  
+  #signOutBtn {
+    grid-column-start: 2;
+      grid-row-start: 2;
+      color: #bf1f2f;
+      font-weight: 800;
+      font-size: 1.1em;
+      margin: 0;
+      justify-self: start;
+  }
+  
+    .accountName {
+      grid-column-start: 2;
+      grid-row-start: 1;
+      color: white;
+      font-weight: 800;
+      font-size: 1.1em;
+      margin-top: 17px;
+      justify-self: start;
+  }
+  
+  .notificationBell{
+    color: #bf1f2f;
+      grid-column-start: 3;
+      grid-row-start: 1;
+      margin: 22px 0px 0 0;
+  }
     }
     
     @media all and (max-width : 330px) {
@@ -605,6 +720,11 @@ a:visited{
 
 
     /* FOOTER */
+  footer{
+    left: 0;
+    bottom: 0;
+    width: 100%;
+  }
   #disclaimer {
     font-size: 0.8em;
     padding: 4px;
@@ -621,6 +741,7 @@ a:visited{
     color: white;
     background: black;
     order: 1;
+    height: 150px;
 }
 
 .social-media{
@@ -630,6 +751,7 @@ a:visited{
     color: white;
     background: black;
     order: 2;
+    height: 150px;
 }
 
 div > p{
@@ -743,10 +865,6 @@ text-decoration: none;
 
     .video-background {
       display: none;
-    }
-
-    .slick-slider {
-      display: none!important;
     }
     
     .welcomeZIndex{
