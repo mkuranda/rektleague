@@ -25,7 +25,7 @@ class RegisterForm(UserCreationForm):
 
     def clean_username(self):
         username = self.cleaned_data['username'].lower()
-        r = User.objects.filter(username=username)
+        r = User.objects.filter(username__iexact=username)
         if r.count():
             raise  ValidationError("Username already exists")
         return username

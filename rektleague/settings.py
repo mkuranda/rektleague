@@ -51,6 +51,10 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.security.SecurityMiddleware',
 )
 
+AUTHENTICATION_BACKENDS = (
+    'stats.backends.CaseInsensitiveModelBackend',
+)
+
 ROOT_URLCONF = 'rektleague.urls'
 
 TEMPLATES = [
