@@ -460,14 +460,8 @@ def profile(request):
     if player:
         player = player[0]
     preseasonPlayer = PreseasonTeamPlayer.objects.filter(user=request.user.id, team__season=latest_season)
-    teamInviteResponses = []
-    leaveTeamNotifications = []
     if preseasonPlayer:
         preseasonPlayer = preseasonPlayer[0]
-        if preseasonPlayer.is_rep():
-            repTeam = Team.objects.get(user=request.user.id)
-            teamInviteResponses = TeamInviteResponse.objects.filter(team=repTeam)
-            leaveTeamNotifications = LeaveTeamNotification.objects.filter(team=repTeam)
     unconfirmedPlayers = []
     if user.is_staff:
         unconfirmedSeasonPlayers = SeasonPlayer.objects.filter(season=latest_season, elo_value=100)
@@ -478,13 +472,11 @@ def profile(request):
                 'id': unconfirmedSeasonPlayer.id,
                 'accounts': unconfirmedAccounts,
                 })
-    teamInvites = []
     seasonPlayer = []
     seasonPlayerRoles = []
     myRepTeam = Team.objects.filter(user=user.id, season=latest_season)
     if myRepTeam:
         myRepTeam = myRepTeam[0]
-    teamInvites = TeamInvite.objects.filter(user=user.id)
     seasonPlayer = SeasonPlayer.objects.filter(season=latest_season, user=user.id)
     if seasonPlayer:
         seasonPlayer = seasonPlayer[0]
@@ -597,12 +589,9 @@ def profile(request):
         'editForms': editForms,
         'accountForms': accountForms,
         'confirmEloForms': confirmEloForms,
-        'invites': teamInvites,
         'seasonPlayer': seasonPlayer,
         'seasonPlayerRoles': seasonPlayerRoles,
         'unconfirmedPlayers': unconfirmedPlayers,
-        'teamInviteResponses': teamInviteResponses,
-        'leaveTeamNotifications': leaveTeamNotifications,
         'myRepTeam': myRepTeam,
         'notifications': get_notifications(request.user)
     }

@@ -9,7 +9,6 @@ $(document).ready(function(){
 	{% for team in teams %}
   $( "#team{{ team.id }}" ).hover(
     function() {
-      $(".teamDescriptionContainer{{ team.id }}").append( ".teamsBanners" );  
       $(".teamDescriptionContainer{{ team.id }}").fadeIn( 0 );
       $(".teamDescriptionContainer{{ team.id }}").addClass( "display" );
     }, function() {

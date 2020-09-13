@@ -172,11 +172,6 @@ button:hover {
   order: 1;
 }
 
-.btn-primary{
-  background-color: #bf1f2f;
-  border-color: #bf1f2f;
-}
-
 .btn-primary:hover{
   background-color: #840f1b9e;
 }
@@ -290,7 +285,7 @@ button:hover {
 
 /* Create an active/current tablink class */
 .tab button.active {
-  background-color: #bf1f2f;
+  background-color: bf1f2f;
 }
 
 /* Style the tab content */
