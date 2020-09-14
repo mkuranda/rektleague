@@ -890,7 +890,7 @@ def team_detail(request, season_id, team_id):
     overall_timelines = team.get_overall_timelines()
     context = {
         'seasons': seasons,
-        'season': season,
+        'season': latest_season,
         'team': team,
         'all_season_teams': all_season_teams,
         'team_players': team_players,
