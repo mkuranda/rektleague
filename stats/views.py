@@ -155,7 +155,7 @@ def team_manager(request):
         return redirect('/preseason/' + str(latest_season.id))
     teamReps = []
     for team in teams:
-        if team.user != user:
+        if team.user != request.user:
             teamReps.append(team.user)
     unconfirmedPlayers = []
     for seasonPlayer in seasonPlayers:
