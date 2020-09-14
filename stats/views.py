@@ -881,6 +881,7 @@ def team_recache(request, season_id, team_id):
 def team_detail(request, season_id, team_id):
     team = get_object_or_404(Team, id=team_id, season=season_id)
     seasons = Season.objects.all().order_by('-id')
+    latest_season = Season.objects.latest('id')
     team_players = TeamPlayer.objects.filter(team=team, role__isFill=True)
     all_season_teams = Team.objects.filter(media=team.media).order_by('-id')
     series_list = Series.objects.filter(seriesteam__team = team).order_by('-week__number')
@@ -889,6 +890,7 @@ def team_detail(request, season_id, team_id):
     overall_timelines = team.get_overall_timelines()
     context = {
         'seasons': seasons,
+        'season': season,
         'team': team,
         'all_season_teams': all_season_teams,
         'team_players': team_players,
