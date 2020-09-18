@@ -49,3 +49,11 @@ strong{
     color:#bf1f2f91;
 }
 
+p a {
+    color: #bf1f2f;
+    text-decoration: none;
+}
+
+p a:hover {
+    color:#bf1f2f91;
+}

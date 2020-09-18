@@ -99,6 +99,41 @@
   </div>
   {% endfor %}
   <div><i id="addButton" onclick="$('#addModal').modal();" class="fas fa-user-plus"></i><span onclick="$('#addModal').modal();" class="addAccountLabel">ADD ACCOUNT</span></div>
+
+  <h4>SUBSCRIPTION</h4>
+  <p class="subCopy">If you are currently active in The Rekt League (playing on a team, sub league, or other tournament) we ask that you pay our Rekt League Membership Subscription fee. The fee is <strong>$2.99 a month</strong> and goes towards prizing, league upkeep, merch, and production.</p>
+  
+  <p class="subCopy">When you are <strong>NOT</strong> currently playing or active feel free to cancel the subscription and resume when you are playing. The fee will charge monthly from the date you start. If you have questions about errors or need assistance please email <a href="mailto:therektleague@gmail.com">therektleague@gmail.com</a></p>
+
+  <p class="subCopy">Please reference the <a href="/rules">rules page here</a> for more information on membership subscriptions.</p>
+
+  <div id="paypal-button-container"></div>
+<script src="https://www.paypal.com/sdk/js?client-id=ASKFVqFwwdgzpil1hJOqGNG8UBhMnDH83xCSr7r-82Mx8yAIOiHo_0z_r8RGMGe6PRBVum5BHfait_KI&vault=true" data-sdk-integration-source="button-factory"></script>
+<script>
+  paypal.Buttons({
+      style: {
+          shape: 'pill',
+          color: 'blue',
+          layout: 'vertical',
+          label: 'subscribe'
+      },
+      createSubscription: function(data, actions) {
+        return actions.subscription.create({
+          'plan_id': 'P-3FA0412551026062YL5SMZ2I'
+        });
+      },
+      onApprove: function(data, actions) {
+        alert(data.subscriptionID);
+      }
+  }).render('#paypal-button-container');
+</script>
+
+<p class="subCopy">Want to end your subscription? If you signed up using a Paypal account follow the link below to manage your subscriptions. If you didn't please email <a href="mailto:therektleague@gmail.com?subject=Cancel my subscription, please">therektleague@gmail.com</a> or reach out to an Admin to cancel for you. Any fees incurred due to our response time will be reimbursed in full.</p>
+
+<A target="_blank" HREF="https://www.paypal.com/cgi-bin/webscr?cmd=_subscr-find&alias=R3RFDC4MHG9HY">
+  <button class="btn btn-primary spacer unsub">Unsubscribe</button>
+  </A>
+
 <!-- END Profile account container  -->
 </div>
 
