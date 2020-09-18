@@ -49,7 +49,7 @@ h4 {
   width: 304px;
   text-align: center;
   font-weight: 800;
-  margin: 3% 0 10px 0;
+  margin: 3% auto 10px auto;
   box-shadow: 3px 8px 14px 1px rgba(0, 0, 0, 0.2);
 }
 
@@ -62,6 +62,38 @@ h4 {
 .editModalButtonSection{
   display: flex;
   justify-content: flex-end;
+}
+
+#paypal-button-container{
+  width: 75%;
+  margin: 30px auto;
+}
+
+.subCopy{
+  color:white;
+  font-size: 1.3em;
+  font-weight: 400;
+}
+
+.subCopy a {
+  text-decoration: none;
+  color: #bf1f2f;
+}
+
+.subCopy strong {
+  font-size: 1.4em;
+  font-weight: 800;
+}
+
+.subCopy a:hover {
+  text-decoration: none;
+  color: #840f1b9e;
+}
+
+.unsub {
+  margin: 0 auto 30px auto;
+  display: block;
+
 }
 /* TABS */
 
