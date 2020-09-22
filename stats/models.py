@@ -1714,6 +1714,9 @@ class SeasonPlayer(models.Model):
     def get_elo_value(self):
         return self.elo_value
 
+    def __str__(self):
+        return self.get_name()
+
 class SeasonPlayerRole(models.Model):
     season = models.ForeignKey(Season)
     user = models.ForeignKey(User)
@@ -1728,6 +1731,9 @@ class SeasonPlayerRole(models.Model):
 
     def get_season_player(self):
         return SeasonPlayer.objects.get(season=self.season, user=self.user)
+
+    def __str__(self):
+        return self.get_name() + " (" + str(self.role) + ")"
 
 class PreseasonTeamPlayer(models.Model):
     team = models.ForeignKey(Team)
