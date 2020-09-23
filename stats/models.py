@@ -818,13 +818,13 @@ class Player(models.Model):
         return player_matches['sum_kills']
 
     def get_elo_value(self):
-        seasonPlayers = SeasonPlayer.objects.filter(user=self.user)
+        seasonPlayers = SeasonPlayer.objects.filter(user=self.user).order_by('-id')
         if not seasonPlayers:
             return self.elo_value
-        return seasonPlayers[-1].elo_value
+        return seasonPlayers[0].elo_value
 
     def __str__(self):
-        return self.name + " (" + str(self.elo_value) + ")"
+        return self.name + " (" + str(self.get_elo_value()) + ")"
 
 @python_2_unicode_compatible
 class Summoner(models.Model):
