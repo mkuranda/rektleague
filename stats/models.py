@@ -608,7 +608,7 @@ class Week(models.Model):
 
     def __str__(self):
         if self.title != "" and self.title != " ":
-            return str(self.season) + ": " + self.title
+            return str(self.season) + ": WEEK " + str(self.number) + ": " + self.title
         return str(self.season) + ": WEEK " + str(self.number)
 
 class Role(models.Model):
