@@ -171,7 +171,7 @@ class CreateRosterForm(forms.Form):
         if failed:
             raise forms.ValidationError("You can only assign a player to one role at a time")
 
-        total_elo = cleaned_data.get('top').elo_value + cleaned_data.get('jun').elo_value + cleaned_data.get('mid').elo_value + cleaned_data.get('bot').elo_value + cleaned_data.get('sup').elo_value
+        total_elo = cleaned_data.get('top').get_elo_value() + cleaned_data.get('jun').get_elo_value() + cleaned_data.get('mid').get_elo_value() + cleaned_data.get('bot').get_elo_value() + cleaned_data.get('sup').get_elo_value()
         if total_elo > 0:
             raise forms.ValidationError("Submitted roster is above the elo limit at +" + str(total_elo))
  

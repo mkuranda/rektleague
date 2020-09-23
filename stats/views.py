@@ -422,8 +422,6 @@ def join_team(request, team_id, role_id):
     return redirect("/profile/")
 
 def season_activate(request, season_id):
-    if not request.user.is_staff:
-        return redirect("/season/" + str(season.id))
     season = get_object_or_404(Season, id=season_id)
     preseasonTeamPlayers = PreseasonTeamPlayer.objects.filter(team__season=season)
     for preseasonTeamPlayer in preseasonTeamPlayers:

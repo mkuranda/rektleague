@@ -817,6 +817,12 @@ class Player(models.Model):
             return 0
         return player_matches['sum_kills']
 
+    def get_elo_value(self):
+        seasonPlayers = SeasonPlayer.objects.filter(user=self.user)
+        if not seasonPlayers:
+            return self.elo_value
+        return seasonPlayers[-1].elo_value
+
     def __str__(self):
         return self.name + " (" + str(self.elo_value) + ")"
 
