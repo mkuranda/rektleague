@@ -1,9 +1,10 @@
 {% extends "stats/base.html" %}
 {% load staticfiles %}
 
-{% block title %}Rekt League | {{ series }}{% endblock %}
+{% block title %}The Rekt League | {{ series }}{% endblock %}
 
 {% block head %}
+<meta name="description" content="Series between {{ series.get_team_1.media.name }} and {{ series.get_team_2.media.name }}. Team Reps can lock in rosters here, players can see who is locked in after Roster Lock, and get historical data about the match.">
 <script type="text/javascript" src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>
 <script type="text/javascript">
 {% for match in matches %}

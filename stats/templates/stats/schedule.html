@@ -1,9 +1,10 @@
 {% extends "stats/base.html" %}
 {% load staticfiles %}
 
-{% block title %} Rekt League | Season {{ season.id }} Schedule {% endblock %}
+{% block title %}The Rekt League | Season {{ season.id }} Schedule {% endblock %}
 
 {% block head %}
+<meta name="description" content="Want to know whois hitting the rift and when? Check out the Season {{ season.id }} schedule.">
 <link rel="stylesheet" href="{% static 'stats/css/schedule.css' %}">
 {% endblock %}
 

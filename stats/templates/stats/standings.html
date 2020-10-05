@@ -1,9 +1,10 @@
 {% extends "stats/base.html" %}
 {% load staticfiles %}
 
-{% block title %} Rekt League | Season {{ season.id }} Standings {% endblock %}
+{% block title %}The Rekt League | Season {{ season.id }} Standings {% endblock %}
 
 {% block head %}
+<meta name="description" content="See who is top of the table in The Rekt League standings for Season {{ season.id }} here.">
 <link rel="stylesheet" href="{% static 'stats/css/standings.css' %}">
 {% endblock %}
 

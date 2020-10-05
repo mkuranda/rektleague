@@ -1,9 +1,10 @@
 {% extends "stats/base.html" %}
 {% load staticfiles %}
 
-{% block title %}Rekt League | Team {{ team.media.name }} | {{ team_player_role.player.get_name }}{% endblock %}
+{% block title %}The Rekt League | Team {{ team.media.name }} | {{ team_player_role.player.get_name }}{% endblock %}
 
 {% block head %}
+<meta name="description" content="Explore {{ team_player_role.player.get_name }} on Team {{ team.media.name }} stats for Season {{ season.id }}.">
 <link rel="stylesheet" href="{% static 'stats/css/player.css' %}">
 <script type="text/javascript"><!--
 	window.onload = function() {
@@ -19,9 +20,9 @@
 	   <a id="teamLink" href="/season/{{ season.id }}/team/{{ team.id }}/"> 
             <section id="banner">
 		    {% if player.photo %}
-		    <img class="playerPhoto" src="{{ player.photo.url }}">
+		    <img alt="{{ player.get_name }} profile picture" class="playerPhoto" src="{{ player.photo.url }}">
 		    {% else %}
-		    <img class="playerPhoto" src="/static/stats/player-photos/missing.png">
+		    <img alt="{{ player.get_name }} profile picture" class="playerPhoto" src="/static/stats/player-photos/missing.png">
         {% endif %}
 	<h3>SEASON <span class="rekt-red">{{ team.season.id }}</span></h3>
 		    <h1>{{ player.get_name }}</h1>
@@ -155,7 +156,7 @@
                   </tr>
 		  {% for champion in team_player_role.get_played_champion_list %}
 		  <tr>
-			  <td><img src="{{ MEDIA_URL }}{{ champion.playermatch__champion__icon }}"/></td>
+			  <td><img alt="{{ champion.playermatch__champion__icon }}" src="{{ MEDIA_URL }}{{ champion.playermatch__champion__icon }}"/></td>
 			  <td>{{ champion.champion_count }}</td>
 			  <td>{{ champion.avg_kills|floatformat:"1" }}/{{ champion.avg_deaths|floatformat:"1" }}/{{ champion.avg_assists|floatformat:"1" }}</td>
 			  <td>{{ champion.winrate|floatformat:"1" }}%</td>

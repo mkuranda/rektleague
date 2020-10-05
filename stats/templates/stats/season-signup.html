@@ -1,9 +1,10 @@
 {% extends "stats/base.html" %}
 {% load staticfiles %}
 
-{% block title %} Rekt League | Season {{ season.id }} Sign Up {% endblock %}
+{% block title %}The Rekt League | Season {{ season.id }} Sign Up {% endblock %}
 
 {% block head %}
+<meta name="description" content="Want to join The Rekt League Season {{ season.id }}? Use this form to select your roles for the upcoming season!">
 <link rel="stylesheet" type="text/css" href="{% static 'stats/css/season-signup.css' %}"/>
 {% endblock %}
 
