@@ -31,7 +31,7 @@ def get_all_summoner_spells(riot_id):
             ss.name = ""
             if "name" in ss_data:
                 ss.name = ss_data["name"]
-            r = requests.get("http://ddragon.leagueoflegends.com/cdn/10.6.1/img/item/" + ss_data["image"]["full"], stream=True)
+            r = requests.get("http://ddragon.leagueoflegends.com/cdn/10.20.1/img/item/" + ss_data["image"]["full"], stream=True)
             if r.status_code == 200:
                 with open("media/stats/summoner-spell/icon/" + ss_data["image"]["full"], 'wb') as f:
                     r.raw.decode_content = True
@@ -65,7 +65,7 @@ def get_all_items(riot_id):
             item.description = ""
             if "description" in item_data:
                 item.description = item_data["description"]
-            r = requests.get("http://ddragon.leagueoflegends.com/cdn/10.6.1/img/item/" + item_data["image"]["full"], stream=True)
+            r = requests.get("http://ddragon.leagueoflegends.com/cdn/10.20.1/img/item/" + item_data["image"]["full"], stream=True)
             if r.status_code == 200:
                 with open("media/stats/item/icon/" + item_data["image"]["full"], 'wb') as f:
                     r.raw.decode_content = True
@@ -88,7 +88,7 @@ def get_item(riot_id):
             raise ObjectNotFound("Item " + str(riot_id))
         item = Item.objects.create(riot_id)
         item.name = item_data["name"]
-	r = requests.get("http://ddragon.leagueoflegends.com/cdn/10.6.1/img/item/" + item_data["image"]["full"], stream=True)
+	r = requests.get("http://ddragon.leagueoflegends.com/cdn/10.20.1/img/item/" + item_data["image"]["full"], stream=True)
         if r.status_code == 200:
             with open("media/stats/item/icon" + item_data["image"]["full"], 'wb') as f:
                 r.raw.decode_content = True
@@ -100,7 +100,7 @@ def get_item(riot_id):
     return item
 
 def get_champions():
-    url = 'http://ddragon.leagueoflegends.com/cdn/10.6.1/data/en_US/champion.json'
+    url = 'http://ddragon.leagueoflegends.com/cdn/10.20.1/data/en_US/champion.json'
     r = requests.get(url).json()
     for champion_name in r['data']:
         champion_data = r['data'][champion_name]
@@ -113,7 +113,7 @@ def get_champions():
             champion = Champion.objects.create(id=key, name=name, title=title)
         champion.name = name
         champion.title = title
-	result = requests.get("http://ddragon.leagueoflegends.com/cdn/10.6.1/img/champion/" + champion_data["image"]["full"], stream=True)
+	result = requests.get("http://ddragon.leagueoflegends.com/cdn/10.20.1/img/champion/" + champion_data["image"]["full"], stream=True)
         with open("media/stats/champion/icon/" + champion_data["image"]["full"], 'wb') as f:
             result.raw.decode_content = True
             shutil.copyfileobj(result.raw, f)
@@ -135,7 +135,7 @@ def get_champion(riot_id):
     except Champion.DoesNotExist:
         champion_exists = False
 
-    url = 'http://ddragon.leagueoflegends.com/cdn/10.6.1/data/en_US/champion.json'
+    url = 'http://ddragon.leagueoflegends.com/cdn/10.20.1/data/en_US/champion.json'
     r = requests.get(url).json()
     if champion_exists == False or champion.name == "" or champion.title == "" or champion.icon == "":
         for champion_name in r['data']:
@@ -150,7 +150,7 @@ def get_champion(riot_id):
                     champion = Champion.objects.create(id=key, name=name, title=title)
                 champion.name = name
                 champion.title = title
-                result = requests.get("http://ddragon.leagueoflegends.com/cdn/10.6.1/img/champion/" + champion_data["image"]["full"], stream=True)
+                result = requests.get("http://ddragon.leagueoflegends.com/cdn/10.20.1/img/champion/" + champion_data["image"]["full"], stream=True)
                 with open("media/stats/champion/icon/" + champion_data["image"]["full"], 'wb') as f:
                     result.raw.decode_content = True
                     shutil.copyfileobj(result.raw, f)
