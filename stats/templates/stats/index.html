@@ -19,7 +19,7 @@ $(document).ready(function(){
       $(".teamDescriptionContainer{{ team.id }}").removeClass( "display" );
     }
   );
-	{% endfor %}
+  {% endfor %}
 });
 </script>
 {% endblock %}
@@ -33,8 +33,6 @@ $(document).ready(function(){
 <img class="mobileGIF" src="/media/stats/homepageSplash/banner.gif">
 
 <div class="welcome title" id="welcome">
-    <p class="welcomeZIndex">WELCOME TO</p> 
-    <img class="inlineLogo" src="/media/stats/medium.png" alt="THE REKT LEAGUE">
     <div id="twitch-embed"></div>
 </div>
 
@@ -44,6 +42,8 @@ $(document).ready(function(){
 
 <div class="bucket2" id="whoCopy">
     <h1>We are an amateur competitive League of Legends tournament league.  Since 2017, we have been streaming and producing biannual tournaments.  What started off with humble beginnings as a group of friends has grown into an 8-10 team bracket, and a full stream production crew for every single game.  We are dedicated to producing high quality content and a competitive, but most importantly, fun tournament atmosphere and community.</h1>
+
+    <button class="button"><a href="/register">SIGN UP</a></button>
 </div>
 
 <section class="teamsBanners">
@@ -85,10 +85,13 @@ WHY JOIN?
 
 <div class="bucket2" id="joinCopy">
 <h3><strong>JOIN OUR DISCORD</strong><br> This is where we communicate almost all updates about the league, and the best way to find friends to game and/or team with.</h3>
+<button class="button"><a href="https://discord.gg/HZ8ZMVa" target="_blank">JOIN</a></button>
 
 <h3><strong>TUNE IN SUNDAYS</strong><br>  Watching the stream on game day is a great sneak peak into the Rekt League, come see what all the hype is about!</h3>
+<button class="button"><a href="htpps://twitch.tv/therektleague" target="_blank">WATCH NOW</a></button>
 
-<h3><strong>JUST A FAN?</strong><br> Love the content but too busy to play? Support us by liking, following, and subscribing to us on social media or become a patron on Patreon!</h3>
+<h3><strong>SHOW SUPPORT</strong><br> Want to give some love back to the league? There's a lot of ways to show support! Subscribe to us on <a href="https://twitch.tv/therektleague" target="_blank">Twitch</a> and <a href="https://www.youtube.com/channel/UC79qzlDqxImPG49FKiChe0Q?sub_confirmation=1" target="_blank">Youtube</a>, buy some Rekt League merch from <a href="/merch">our store</a> or <a href="https://teespring.com/stores/rekt-shop" target="_blank">Teespring</a>, or become a patron through Patreon and get some sweet perks!</h3>
+<button class="button"><a href="https://www.patreon.com/therektleague" target="_blank">BECOME A PATRON</a></button>
 
 </div>
 
@@ -107,8 +110,8 @@ WHY JOIN?
         </div>
         
         <div class="icon">
-            <a href="https://www.patreon.com/therektleague" target="_blank"><img src="/media/stats/homepageSplash/patreon-logo-red-web.png">
-            <p>PATREON</p></a>
+            <a href="https://www.youtube.com/channel/UC79qzlDqxImPG49FKiChe0Q?sub_confirmation=1" target="_blank"><img src="/media/stats/homepageSplash/youtube-logo-red.png">
+            <p>YOUTUBE</p></a>
         </div>
     </div>
 </div>
