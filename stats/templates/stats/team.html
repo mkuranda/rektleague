@@ -1,9 +1,10 @@
 {% extends "stats/base.html" %}
 {% load staticfiles %}
 
-{% block title %} Rekt League | Season {{ team.season.id }} | {{ team.media.name }} {% endblock %}
+{% block title %}The Rekt League | Season {{ team.season.id }} | {{ team.media.name }} {% endblock %}
 
 {% block head %}
+<meta name="description" content="Explore Team {{ team.media.name }} stats for Season {{ season.id }}. You can see match ups, rosters, and more!">
 <link rel="stylesheet" href="{% static 'stats/css/team.css' %}">
 <script type="text/javascript"><!--
 	window.onload = function() {

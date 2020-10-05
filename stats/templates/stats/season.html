@@ -1,9 +1,10 @@
 {% extends "stats/base.html" %}
 {% load staticfiles %}
 
-{% block title %} Rekt League | Season {{ season.id }} {% endblock %}
+{% block title %}The Rekt League | Season {{ season.id }} {% endblock %}
 
 {% block head %}
+<meta name="description" content="Welcome to The Rekt League Season {{ season.id }}! Navigate to the schedule, stats, or standings page from here.">
 <link rel="stylesheet" type="text/css" href="{% static 'stats/css/season.css' %}"/>
 
 {% endblock %}

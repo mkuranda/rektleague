@@ -1,9 +1,12 @@
 {% extends "stats/base.html" %}
 {% load staticfiles %}
 
-{% block title %}Rekt League | Home{% endblock %}
+{% block title %}The Rekt League | Home{% endblock %}
 
 {% block head %}
+<meta name="description" content="The Rekt League is an amateur competitive League of Legends tournament league. We are dedicated to producing high quality content and a competitive and fun eSports experience.">
+
+
 <script type="text/javascript">
 $(document).ready(function(){
 	{% for team in teams %}

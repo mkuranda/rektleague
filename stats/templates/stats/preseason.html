@@ -1,9 +1,10 @@
 {% extends "stats/base.html" %}
 {% load staticfiles %}
 
-{% block title %} Rekt League | Season {{ season.id }} - Preseason {% endblock %}
+{% block title %}The Rekt League | Season {{ season.id }} - Preseason {% endblock %}
 
 {% block head %}
+<meta name="description" content="Take a look at how many spots are open on teams and scout out the competition for Season {{ season.id }}.">
 <link rel="stylesheet" href="{% static 'stats/css/preseason.css' %}">
 
 <script type="text/javascript">

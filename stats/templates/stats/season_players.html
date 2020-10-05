@@ -1,9 +1,10 @@
 {% extends "stats/base.html" %}
 {% load staticfiles %}
 
-{% block title %} Rekt League | Season {{ season.id }} | Players {% endblock %}
+{% block title %}The Rekt League | Season {{ season.id }} | Players {% endblock %}
 
 {% block head %}
+<meta name="description" content="Want to know who has the highest CSD, KDA, kill participation, or even deaths? Check out The Rekt League Season {{ season.id }} stats here.">
 <link rel="stylesheet" href="{% static 'stats/css/player-stats.css' %}">
 {% endblock %}
 

@@ -1,9 +1,10 @@
 {% extends "stats/base.html" %}
 {% load staticfiles %}
 
-{% block title %}Rekt League | Team {{ team.media.name }} | {{ team_player_role.player.get_name }}{% endblock %}
+{% block title %}The Rekt League | Team {{ team.media.name }} | {{ team_player_role.player.get_name }}{% endblock %}
 
 {% block head %}
+<meta name="description" content="Explore {{ team_player_role.player.get_name }} on Team {{ team.media.name }} stats for Season {{ season.id }}.">
 <link rel="stylesheet" href="{% static 'stats/css/player.css' %}">
 <script type="text/javascript"><!--
 	window.onload = function() {
