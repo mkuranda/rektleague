@@ -27,7 +27,7 @@ def get_notifications(user):
     count = invites.count()
     teamInviteResponses = []
     leaveTeamNotifications = []
-    team = Team.objects.filter(user=user.id)
+    team = Team.objects.filter(user=user.id).order_by('-id')
     if team:
         team = team[0]
         teamInviteResponses = TeamInviteResponse.objects.filter(team=team)
@@ -169,14 +169,18 @@ def team_manager(request):
         myPlayers = PreseasonTeamPlayer.objects.filter(team=team)
         myInvites = TeamInvite.objects.filter(team=team)
     playersOnTeams = TeamPlayer.objects.filter(team__season=latest_season, role__isFill=True, isActive=True)
+    preseasonPlayersOnTeams = PreseasonTeamPlayer.objects.filter(team__season=latest_season).exclude(id__in=myPlayers)
+    usersOnOtherTeams = []
+    for preseasonPlayer in preseasonPlayersOnTeams:
+        usersOnOtherTeams.append(preseasonPlayer.user.id)
     roles = Role.objects.all()
     rolePlayers = []
     for role in roles:
         players = []
         if role.isFill:
-            players = SeasonPlayer.objects.filter(season=latest_season, substitute=True).exclude(id__in=playersOnTeams).exclude(user__in=teamReps).exclude(user__in=unconfirmedPlayers)
+            players = SeasonPlayer.objects.filter(season=latest_season, substitute=True).exclude(user__in=usersOnOtherTeams).exclude(user__in=teamReps).exclude(user__in=unconfirmedPlayers)
         else:
-            playerRoles = SeasonPlayerRole.objects.filter(season=latest_season, role=role).exclude(id__in=playersOnTeams).exclude(user__in=teamReps).exclude(user__in=unconfirmedPlayers)
+            playerRoles = SeasonPlayerRole.objects.filter(season=latest_season, role=role).exclude(user__in=usersOnOtherTeams).exclude(user__in=teamReps).exclude(user__in=unconfirmedPlayers)
             myCurrentPlayer = myPlayers.filter(role=role)
             if myCurrentPlayer:
                 playerRoles = playerRoles.exclude(Q(user=myCurrentPlayer[0].user) & Q(role=myCurrentPlayer[0].role)).exclude(user__in=teamReps).exclude(user__in=unconfirmedPlayers)
@@ -202,7 +206,9 @@ def team_manager(request):
                   })
     mySubInvites = TeamInvite.objects.filter(team=team, role__isFill=True)
     mySubPlayers = PreseasonTeamPlayer.objects.filter(team=team, role__isFill=True)
-    mySubs = [{'invite': None, 'player': None},{'invite': None, 'player': None},{'invite': None, 'player': None}]
+    mySubs = []
+    for i in range(latest_season.numSubs):
+        mySubs.append({'invite': None, 'player': None})
     count = 0
     for invite in mySubInvites:
         if count < latest_season.numSubs:
@@ -277,9 +283,9 @@ def getTeamChanges(role, team, invites, inviteRemoves, removes, player_id):
             'id': player_id
             })
 
-def getSubTeamChanges(team, invites, inviteRemoves, removes, sub1_id, sub2_id, sub3_id):
+def getSubTeamChanges(team, invites, inviteRemoves, removes, sub1_id, sub2_id, sub3_id, sub4_id, sub5_id):
     current_subs = PreseasonTeamPlayer.objects.filter(team=team, role__isFill=True)
-    new_subs = SeasonPlayer.objects.filter(Q(id=sub1_id) | Q(id=sub2_id) | Q(id=sub3_id))
+    new_subs = SeasonPlayer.objects.filter(Q(id=sub1_id) | Q(id=sub2_id) | Q(id=sub3_id) | Q(id=sub4_id) | Q(id=sub5_id))
     sub_invites = TeamInvite.objects.filter(team=team, role__isFill=True)
 
     for sub in new_subs:
@@ -306,7 +312,7 @@ def getSubTeamChanges(team, invites, inviteRemoves, removes, sub1_id, sub2_id, s
 
     return
 
-def send_team_invites(request, top_id, jun_id, mid_id, bot_id, sup_id, sub1_id, sub2_id, sub3_id):
+def send_team_invites(request, top_id, jun_id, mid_id, bot_id, sup_id, sub1_id, sub2_id, sub3_id, sub4_id, sub5_id):
     seasons = Season.objects.all().order_by('-id')
     latest_season = Season.objects.latest('id')
     team = Team.objects.filter(user=request.user, season=latest_season)
@@ -322,7 +328,7 @@ def send_team_invites(request, top_id, jun_id, mid_id, bot_id, sup_id, sub1_id, 
     getTeamChanges(Role.objects.get(name="MID"), team, invites, inviteRemoves, removes, int(mid_id))
     getTeamChanges(Role.objects.get(name="BOT"), team, invites, inviteRemoves, removes, int(bot_id))
     getTeamChanges(Role.objects.get(name="SUPPORT"), team, invites, inviteRemoves, removes, int(sup_id))
-    getSubTeamChanges(team, invites, inviteRemoves, removes, int(sub1_id), int(sub2_id), int(sub3_id))
+    getSubTeamChanges(team, invites, inviteRemoves, removes, int(sub1_id), int(sub2_id), int(sub3_id), int(sub4_id), int(sub5_id))
 
     for remove in removes:
         PreseasonTeamPlayer.objects.get(id=remove['id']).delete()
@@ -342,7 +348,7 @@ def send_team_invites(request, top_id, jun_id, mid_id, bot_id, sup_id, sub1_id, 
 
     return redirect('/team-manager/')
 
-def team_invite(request, top_id, jun_id, mid_id, bot_id, sup_id, sub1_id, sub2_id, sub3_id):
+def team_invite(request, top_id, jun_id, mid_id, bot_id, sup_id, sub1_id, sub2_id, sub3_id, sub4_id, sub5_id):
     seasons = Season.objects.all().order_by('-id')
     latest_season = Season.objects.latest('id')
     team = Team.objects.filter(user=request.user, season=latest_season)
@@ -358,7 +364,7 @@ def team_invite(request, top_id, jun_id, mid_id, bot_id, sup_id, sub1_id, sub2_i
     getTeamChanges(Role.objects.get(name="MID"), team, invites, inviteRemoves, removes, int(mid_id))
     getTeamChanges(Role.objects.get(name="BOT"), team, invites, inviteRemoves, removes, int(bot_id))
     getTeamChanges(Role.objects.get(name="SUPPORT"), team, invites, inviteRemoves, removes, int(sup_id))
-    getSubTeamChanges(team, invites, inviteRemoves, removes, int(sub1_id), int(sub2_id), int(sub3_id))
+    getSubTeamChanges(team, invites, inviteRemoves, removes, int(sub1_id), int(sub2_id), int(sub3_id), int(sub4_id), int(sub5_id))
 
     context = {
         'seasons': seasons,
@@ -373,15 +379,15 @@ def team_invite(request, top_id, jun_id, mid_id, bot_id, sup_id, sub1_id, sub2_i
 
 def leave_team(request, team_id):
     team = get_object_or_404(Team, id=team_id)
-    notification = LeaveTeamNotification(team=team, user=request.user)
-    notification.save()
-    if team.season.isPreseason:
-        preseasonTeamPlayer = get_object_or_404(PreseasonTeamPlayer, user=request.user, team=team)
-        preseasonTeamPlayer.delete()
-        return redirect("/profile/")
-    player = get_object_or_404(Player, user=request.user)
     if not team.season.isActive:
         return redirect("/profile/")
+    notification = LeaveTeamNotification(team=team, user=request.user)
+    notification.save()
+    preseasonTeamPlayer = get_object_or_404(PreseasonTeamPlayer, user=request.user, team=team)
+    preseasonTeamPlayer.delete()
+    if team.season.isPreseason:
+        return redirect("/profile/")
+    player = get_object_or_404(Player, user=request.user)
     team_players = TeamPlayer.objects.filter(team=team, player=player)
     for team_player in team_players:
         team_player.isActive = False
@@ -399,7 +405,37 @@ def join_team(request, team_id, role_id):
     invites = TeamInvite.objects.filter(user=request.user.id).delete()
     response = TeamInviteResponse.objects.create(user=request.user, team=team, role=role, accepted=True)
     response.save()
+    roles = Role.objects.all()
+    player = Player.objects.filter(user=preseasonPlayer.user)
+    if player:
+        player = player[0]
+    else:
+        player = Player.objects.create(name=preseasonPlayer.get_name(), user=preseasonPlayer.user)
+    for role in roles:
+        teamPlayer = TeamPlayer.objects.create(team=team, role=role, player=player)
+        if not teamPlayer:
+            tpr = TeamPlayer.objects.create(player=player, team=team, role=role)
+            tpr.save()
+        else:
+            teamPlayer.isActive=True
+            teamPlayer.save()
     return redirect("/profile/")
+
+def season_activate(request, season_id):
+    season = get_object_or_404(Season, id=season_id)
+    preseasonTeamPlayers = PreseasonTeamPlayer.objects.filter(team__season=season)
+    for preseasonTeamPlayer in preseasonTeamPlayers:
+        player = Player.objects.filter(user=preseasonTeamPlayer.user)
+        if player:
+            player = player[0]
+        else:
+            player = Player.objects.create(name=preseasonTeamPlayer.get_name(), user=preseasonTeamPlayer.user)
+        for role in Role.objects.all():
+            teamplayerrole = TeamPlayer.objects.filter(team=preseasonTeamPlayer.team, player=player, role=role)
+            if not teamplayerrole:
+                tpr = TeamPlayer.objects.create(player=player, team=preseasonTeamPlayer.team, role=role)
+                tpr.save()
+    return redirect("/season/" + str(season.id))
 
 def preseason_detail(request, season_id):
     seasons = Season.objects.all().order_by('-id')

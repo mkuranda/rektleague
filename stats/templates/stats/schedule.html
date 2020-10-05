@@ -15,7 +15,7 @@
 		   <button class="collapsible" id="week{{ week.number }}"><span class="week">WEEK {{ week.number }}</span><span class="date">{% if week.date %}{{ week.date|date:"n/j" }}{% endif %}</span></button>
             <div class="content">
 	{% for series in week.series_set.all %}
-	<p><span class="rekt-red">({{ series.get_series_team_1.get_record_before }})</span><a href="/season/{{ season.id }}/team/{{ series.get_team_1.id }}/"> {{ series.get_team_1.media.name }} </a><span class="rekt-red vs">VS.</span> <a href="/season/{{ season.id }}/team/{{ series.get_team_2.id }}/"> {{ series.get_team_2.media.name }} </a><span class="rekt-red">({{ series.get_series_team_2.get_record_before }})</span><span class="rekt-red time">{{ series.date|date:"g:i a" }}</span></a><a href="/season/{{ season.id }}/series/{{ series.id }}/" class="matchupButton">VIEW MATCH UP</a></p>
+	<p><span class="rekt-red">({{ series.get_series_team_1.get_record_before }})</span><a href="/season/{{ season.id }}/team/{{ series.get_team_1.id }}/"> {{ series.get_team_1.media.name }} </a><span class="rekt-red vs">VS.</span> <a href="/season/{{ season.id }}/team/{{ series.get_team_2.id }}/"> {{ series.get_team_2.media.name }} </a><span class="rekt-red">({{ series.get_series_team_2.get_record_before }})</span><span class="rekt-red time">{{ series.date|date:"D (n/j) g:i a" }}</span></a><a href="/season/{{ season.id }}/series/{{ series.id }}/" class="matchupButton">VIEW MATCH UP</a></p>
 	{% endfor %}
             </div>
           </section>
@@ -33,7 +33,7 @@
 		   <button class="collapsible" id="week{{ week.number }}"><span class="week">{{ week.title }}</span><span class="date">{% if week.date %}{{ week.date|date:"n/j" }}{% endif %}</span></button>
             <div class="content">
 	{% for series in week.series_set.all %}
-	<p><span class="rekt-red">({{ series.get_series_team_1.get_record_before }})</span><a href="/season/{{ season.id }}/team/{{ series.get_team_1.id }}/"> {{ series.get_team_1.media.name }} </a><span class="rekt-red vs">VS.</span><a href="/season/{{ season.id }}/team/{{ series.get_team_2.id }}/"> {{ series.get_team_2.media.name }} </a><span class="rekt-red">({{ series.get_series_team_2.get_record_before }})</span><span class="rekt-red time">{{ series.date|date:"g:i a" }}</span><a href="/season/{{ season.id }}/series/{{ series.id }}/" class="matchupButton">VIEW MATCH UP</a></p>
+	<p><span class="rekt-red">({{ series.get_series_team_1.get_record_before }})</span><a href="/season/{{ season.id }}/team/{{ series.get_team_1.id }}/"> {{ series.get_team_1.media.name }} </a><span class="rekt-red vs">VS.</span><a href="/season/{{ season.id }}/team/{{ series.get_team_2.id }}/"> {{ series.get_team_2.media.name }} </a><span class="rekt-red">({{ series.get_series_team_2.get_record_before }})</span><span class="rekt-red time">{{ series.date|date:"D (n/j) g:i a" }}</span><a href="/season/{{ season.id }}/series/{{ series.id }}/" class="matchupButton">VIEW MATCH UP</a></p>
 	{% endfor %}
             </div>
           </section>

@@ -608,7 +608,7 @@ class Week(models.Model):
 
     def __str__(self):
         if self.title != "" and self.title != " ":
-            return str(self.season) + ": " + self.title
+            return str(self.season) + ": WEEK " + str(self.number) + ": " + self.title
         return str(self.season) + ": WEEK " + str(self.number)
 
 class Role(models.Model):
@@ -817,8 +817,14 @@ class Player(models.Model):
             return 0
         return player_matches['sum_kills']
 
+    def get_elo_value(self):
+        seasonPlayers = SeasonPlayer.objects.filter(user=self.user).order_by('-id')
+        if not seasonPlayers:
+            return self.elo_value
+        return seasonPlayers[0].elo_value
+
     def __str__(self):
-        return self.name + " (" + str(self.elo_value) + ")"
+        return self.name + " (" + str(self.get_elo_value()) + ")"
 
 @python_2_unicode_compatible
 class Summoner(models.Model):
@@ -1714,6 +1720,9 @@ class SeasonPlayer(models.Model):
     def get_elo_value(self):
         return self.elo_value
 
+    def __str__(self):
+        return self.get_name()
+
 class SeasonPlayerRole(models.Model):
     season = models.ForeignKey(Season)
     user = models.ForeignKey(User)
@@ -1728,6 +1737,9 @@ class SeasonPlayerRole(models.Model):
 
     def get_season_player(self):
         return SeasonPlayer.objects.get(season=self.season, user=self.user)
+
+    def __str__(self):
+        return self.get_name() + " (" + str(self.role) + ")"
 
 class PreseasonTeamPlayer(models.Model):
     team = models.ForeignKey(Team)
