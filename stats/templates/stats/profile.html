@@ -26,9 +26,9 @@
 <section class="profileHeader">
 {% endif %}
 {% if player and player.photo %}
-  <img class="playerPhoto" src="{{ player.photo.url }}">
+  <img class="playerPhoto" alt="{{ accounts.first.name }} profile picture" src="{{ player.photo.url }}">
 {% else %}
-  <img class="playerPhoto" src="/static/stats/player-photos/missing.png">
+  <img class="playerPhoto" alt="{{ accounts.first.name }} profile picture" src="/static/stats/player-photos/missing.png">
 {% endif %}
   <h2>{{ accounts.first.name }}</h2>
   {% if preseasonPlayer %}

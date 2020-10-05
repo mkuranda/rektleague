@@ -48,7 +48,7 @@ $(document).ready(function(){
 
 <section class="teamsBanners">
 	{% for team in teams %}
-	<a href="/stats/season/{{ team.season.id }}/team/{{ team.id }}/"><img src="{{ team.media.home_splash.url }}" id="team{{ team.id }}" alt="team{{ team.id }}"></a>
+	<a href="/stats/season/{{ team.season.id }}/team/{{ team.id }}/"><img src="{{ team.media.home_splash.url }}" id="team{{ team.id }}" alt="team {{ team.id }} splash image"></a>
     	{% endfor %}
 </section>
 
@@ -100,17 +100,17 @@ WHY JOIN?
     <div class="supportIcons">
 
         <div class="icon">
-            <a href="https://www.twitch.tv/therektleague" target="_blank"><img src="/media/stats/homepageSplash/twitch-logo-red-web.png">
+            <a href="https://www.twitch.tv/therektleague" target="_blank"><img alt="twitch logo" src="/media/stats/homepageSplash/twitch-logo-red-web.png">
             <p>TWITCH</p></a>
         </div>
 
         <div class="icon">
-            <a href="https://discord.gg/HZ8ZMVa" target="_blank"><img src="/media/stats/homepageSplash/discord-logo-red-web.png">
+            <a href="https://discord.gg/HZ8ZMVa" target="_blank"><img alt="discord logo" src="/media/stats/homepageSplash/discord-logo-red-web.png">
             <p>DISCORD</p>
         </div>
         
         <div class="icon">
-            <a href="https://www.youtube.com/channel/UC79qzlDqxImPG49FKiChe0Q?sub_confirmation=1" target="_blank"><img src="/media/stats/homepageSplash/youtube-logo-red.png">
+            <a href="https://www.youtube.com/channel/UC79qzlDqxImPG49FKiChe0Q?sub_confirmation=1" target="_blank"><img alt="youtube logo" src="/media/stats/homepageSplash/youtube-logo-red.png">
             <p>YOUTUBE</p></a>
         </div>
     </div>
