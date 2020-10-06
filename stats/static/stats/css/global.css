@@ -261,13 +261,8 @@ a:visited{
 
 
 /* BUTTONS */
-
-.button, .emailListButton{
-    overflow: hidden; 
-    text-align: center;
-  }
   
-.button input, .button {
+.button, .emailListButton {
     background: #bf1e2d;
     color: white;
     padding: 5px 15px;
@@ -277,7 +272,10 @@ a:visited{
     border-radius: 25px;
     border: 0;
     display: block;
-    margin: 20px auto;
+    margin:20px auto;
+    width: fit-content;
+    overflow: hidden; 
+    text-align: center;
 }
 
   .button:hover, .button input:hover, .emailListButton a:hover, .button a:hover{
