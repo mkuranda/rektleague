@@ -5,12 +5,12 @@ from django.contrib.auth.models import User
 from django.contrib.auth.forms import PasswordChangeForm
 from django.http import HttpResponse, HttpResponseRedirect, Http404
 from django.template import loader
-from django.db.models import Avg, Count, Sum, F, When, Q
+from django.db.models import Avg, Count, Sum, F, When, Q, Max
 from django.utils.timezone import utc
 from django.conf import settings
 from riot_request import RiotRequester
 from .models import Player, TeamPlayer, Team, Season, Champion, Match, Week, Series, SeriesTeam, TeamMatch, SeasonChampion, PlayerMatch, Role, TeamRole, SeriesPlayer, Summoner, UserAccount, TeamInvite
-from .models import SeasonPlayer, SeasonPlayerRole, PreseasonTeamPlayer, TeamInviteResponse, LeaveTeamNotification
+from .models import SeasonPlayer, SeasonPlayerRole, PreseasonTeamPlayer, TeamInviteResponse, LeaveTeamNotification, PlayerMatchKill, PlayerMatchWardPlace, PlayerMatchWardKill, PlayerMatchBuildingKill, PlayerMatchEliteMonsterKill
 from .forms import TournamentCodeForm, InitializeMatchForm, CreateRosterForm, LoginForm, EditProfileForm, RegisterForm, AddAccountForm, EditAccountForm, RemoveAccountForm, SetMainForm, UpdateUsernameForm, UpdateEmailForm, SeasonSignupForm, ConfirmEloForm
 from get_riot_object import ObjectNotFound, get_item, get_champions, get_champion, get_match, get_all_items, get_match_timeline, update_playermatchkills, update_team_timelines, update_season_timelines, update_team_player_timelines
 from datetime import datetime
@@ -699,6 +699,34 @@ def fun_stats(request):
     total_kills = sorted(players, key= lambda t: -1 * t.total_kills())
     total_deaths = sorted(players, key= lambda t: -1 * t.total_deaths())
     total_assists = sorted(players, key= lambda t: -1 * t.total_assists())
+    winrates = sorted(players, key= lambda t: -1 * t.winrate())
+
+    focused_player = Player.objects.get(name="Darth Ted")
+
+#    unique_fields = ['playermatch', 'monster_type', 'timestamp']
+#
+#    duplicates = (
+#            PlayerMatchEliteMonsterKill.objects.values(*unique_fields)
+#            .order_by()
+#            .annotate(max_id=Max('id'), count_id=Count('id'))
+#            .filter(count_id__gt=1)
+#    )
+#
+#    for duplicate in duplicates:
+#        (
+#                PlayerMatchEliteMonsterKill.objects.filter(**{x: duplicate[x] for x in unique_fields})
+#                .exclude(id=duplicate['max_id'])
+#                .delete()
+#         )
+#
+#    leonidas_kills = PlayerMatchKill.objects.filter(victim__player__name="Leonidas04")
+#    leo_kills = []
+#    for kill in leonidas_kills:
+#        leo_kills.append([kill.killer.player.name, kill.timestamp])
+#
+#    c = leonidas_kills.count()
+#
+#    a = 5/0
 
     context = {
         'season': latest_season,
@@ -721,7 +749,9 @@ def fun_stats(request):
         'total_kills': total_kills,
         'total_deaths': total_deaths,
         'total_assists': total_assists,
+        'winrates': winrates,
         'damage_per_minute': damage_per_minute,
+        'focused_player': focused_player,
         'notifications': get_notifications(request.user)
     }
     return render(request, 'stats/fun-stats.html', context)

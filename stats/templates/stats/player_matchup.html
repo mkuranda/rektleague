@@ -60,12 +60,20 @@ chart.render();
 <div>
 	<div>
 		<img class="teamSplashImage" src="{{ blue_player.team.media.banner.url }}">
+		{% if blue_player.player.photo %}
 		<img class="playerPhoto Right" src="{{ blue_player.player.photo.url }}">
+		{% else %}
+		<img class="playerPhoto Right" src="/static/stats/player-photos/missing.png">
+		{% endif %}
 	</div>
 	<img class="laneicon" src="/media/stats/icons for lanes/Jungle_icon.png">
 	<div>
 		<img class="teamSplashImage" src="{{ red_player.team.media.banner.url }}">
+		{% if red_player.player.photo %}
 		<img class="playerPhoto Left" src="{{ red_player.player.photo.url }}">
+		{% else %}
+		<img class="playerPhoto Left" src="/static/stats/player-photos/missing.png">
+		{% endif %}
 	</div>
 </div>
 <div class="names">

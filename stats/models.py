@@ -1,4 +1,4 @@
-import datetime
+import datetime, operator
 import time
 import math
 import re
@@ -823,8 +823,69 @@ class Player(models.Model):
             return self.elo_value
         return seasonPlayers[0].elo_value
 
+    def num_matches(self):
+        playerMatches = PlayerMatch.objects.filter(player=self)
+        return playerMatches.count()
+
+    def wins(self):
+        playerMatches = PlayerMatch.objects.filter(player=self)
+        wins = 0
+        for playerMatch in playerMatches:
+            teamMatch = TeamMatch.objects.get(team=playerMatch.team, match=playerMatch.match)
+            if teamMatch.win:
+                wins = wins + 1
+        return wins
+
+    def losses(self):
+        playerMatches = PlayerMatch.objects.filter(player=self)
+        losses = 0
+        for playerMatch in playerMatches:
+            teamMatch = TeamMatch.objects.get(team=playerMatch.team, match=playerMatch.match)
+            if not teamMatch.win:
+                losses = losses + 1
+        return losses 
+
+    def winrate(self):
+        wins = self.wins()
+        losses = self.losses()
+        if wins + losses == 0:
+            return 0
+        return 100.0 * wins / (wins + losses)
+
     def __str__(self):
         return self.name + " (" + str(self.get_elo_value()) + ")"
+
+    def most_picked_champs(self):
+        playerMatches = PlayerMatch.objects.filter(player=self)
+        champions = {}
+        for playerMatch in playerMatches:
+            if playerMatch.champion.name not in champions:
+                champions[playerMatch.champion.name] = 1
+            else:
+                champions[playerMatch.champion.name] += 1
+        return sorted(champions.items(), key=operator.itemgetter(1), reverse=True)
+
+    def most_killed_players(self):
+        playerMatchKills = PlayerMatchKill.objects.filter(killer__player=self)
+        enemyPlayers = {}
+        for kill in playerMatchKills:
+            if kill.victim.player.name not in enemyPlayers:
+                enemyPlayers[kill.victim.player.name] = 1
+            else:
+                enemyPlayers[kill.victim.player.name] += 1
+        return sorted(enemyPlayers.items(), key=operator.itemgetter(1), reverse=True)
+
+    def most_killed_by_players(self):
+        playerMatchKills = PlayerMatchKill.objects.filter(victim__player=self)
+        enemyPlayers = {}
+        for kill in playerMatchKills:
+            if kill.killer.player.name not in enemyPlayers:
+                enemyPlayers[kill.killer.player.name] = 1
+            else:
+                enemyPlayers[kill.killer.player.name] += 1
+        return sorted(enemyPlayers.items(), key=operator.itemgetter(1), reverse=True)
+
+
 
 @python_2_unicode_compatible
 class Summoner(models.Model):
