@@ -66,7 +66,7 @@ chart.render();
 		<img class="playerPhoto Right" src="/static/stats/player-photos/missing.png">
 		{% endif %}
 	</div>
-	<img class="laneicon" src="/media/stats/icons for lanes/Jungle_icon.png">
+	<img class="laneicon" src="{{ role.icon.url }}">
 	<div>
 		<img class="teamSplashImage" src="{{ red_player.team.media.banner.url }}">
 		{% if red_player.player.photo %}
