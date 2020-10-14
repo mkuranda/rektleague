@@ -22,17 +22,22 @@ $(document).ready(function(){
 	var {{ role.name }}value = 0;
 	{% if role.myPlayer %}
 	{{ role.name }}value += {{ role.myPlayer.get_elo_value }};
-	{{ role.name }}count = 1
+	{{ role.name }}count = 1;
 	elo += {{ role.name }}value;
 	{% elif role.myInvite %}
 	{{ role.name }}value += {{ role.myInvite.get_elo_value }};
 	elo += {{ role.name }}value;
-	{{ role.name }}count = 1
+	{{ role.name }}count = 1;
 	{% endif %}
 	{% else %}
 	{% for subNum in subNums %}
 	var {{ role.name }}{{ subNum }}count = 0;
 	{% endfor %}
+	{% endif %}
+	{% endfor %}
+	{% for sub in mySubs %}
+	{% if sub.invite or sub.player %}
+	SUBSTITUTE{{ forloop.counter0 }}count = 1;
 	{% endif %}
 	{% endfor %}
 
@@ -146,7 +151,7 @@ $(document).ready(function(){
  // ADD SUB
 $(document).on( "click","#add{{ role.name }}", function() {
     name = $('.slider{{ role.name }} .slick-active > div > .playerCard > .playerInfo > .playerName').text();
-    // If statement if team doesnt have a top
+    // If statement if team doesnt have a sub
 	{% for subNum in subNums %}
     {% if forloop.counter == 1 %}
 	if({{ role.name }}{{ subNum }}count == 0 && !(name in currentPlayers)){
