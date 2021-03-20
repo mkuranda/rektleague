@@ -10,7 +10,7 @@ from django.utils.timezone import utc
 from django.conf import settings
 from riot_request import RiotRequester
 from .models import Player, TeamPlayer, Team, Season, Champion, Match, Week, Series, SeriesTeam, TeamMatch, SeasonChampion, PlayerMatch, Role, TeamRole, SeriesPlayer, Summoner, UserAccount, TeamInvite
-from .models import SeasonPlayer, SeasonPlayerRole, PreseasonTeamPlayer, TeamInviteResponse, LeaveTeamNotification, PlayerMatchKill, PlayerMatchWardPlace, PlayerMatchWardKill, PlayerMatchBuildingKill, PlayerMatchEliteMonsterKill
+from .models import SeasonPlayer, SeasonPlayerRole, PreseasonTeamPlayer, TeamInviteResponse, LeaveTeamNotification, PlayerMatchKill, PlayerMatchWardPlace, PlayerMatchWardKill, PlayerMatchBuildingKill, PlayerMatchEliteMonsterKill, TeamMatchBan
 from .forms import TournamentCodeForm, InitializeMatchForm, CreateRosterForm, LoginForm, EditProfileForm, RegisterForm, AddAccountForm, EditAccountForm, RemoveAccountForm, SetMainForm, UpdateUsernameForm, UpdateEmailForm, SeasonSignupForm, ConfirmEloForm
 from get_riot_object import ObjectNotFound, get_item, get_champions, get_champion, get_match, get_all_items, get_match_timeline, update_playermatchkills, update_team_timelines, update_season_timelines, update_team_player_timelines
 from datetime import datetime
@@ -42,6 +42,11 @@ def get_notifications(user):
         'count': count
     }
     return notifications
+
+def the_next_chapter(request):
+    seasons = Season.objects.all().order_by('-id')
+    latest_season = Season.objects.latest('id')
+    return render(request, "stats/the_next_chapter.html")
 
 def register(request):
     seasons = Season.objects.all().order_by('-id')
@@ -679,7 +684,9 @@ def fun_stats(request):
     latest_season = Season.objects.latest('id')
     top_counterjunglers = latest_season.get_top_counterjunglers()
     most_solo_kills = latest_season.get_most_solo_kills()
+    non_jungler_jungle_cs = latest_season.get_most_non_jungler_jungle_cs()
     control_ward_pct = latest_season.get_most_percent_control_ward_gold()
+    control_ward_pct_non_support = latest_season.get_most_percent_control_ward_gold_non_support()
     tower_lane_pct = latest_season.lane_first_tower_pct()
     inhib_lane_pct = latest_season.lane_first_inhib_pct()
     dragon_map_pct = latest_season.dragon_map_pct()
@@ -699,9 +706,20 @@ def fun_stats(request):
     total_kills = sorted(players, key= lambda t: -1 * t.total_kills())
     total_deaths = sorted(players, key= lambda t: -1 * t.total_deaths())
     total_assists = sorted(players, key= lambda t: -1 * t.total_assists())
+    teammate_kills = sorted(players, key = lambda t: -1 * t.teammate_kill_count())
+    num_champs_picked = sorted(players, key = lambda t: -1 * t.num_picked_champs())
     winrates = sorted(players, key= lambda t: -1 * t.winrate())
 
+    seasons = Season.objects.all()
+
     focused_player = Player.objects.get(name="Darth Ted")
+
+    #teammate_kills = focused_player.get_past_teammate_kills()
+
+    num_matches = Match.objects.all().count()
+    most_picked_champs = PlayerMatch.objects.all().values('champion__name', 'champion').annotate(total=Count('champion'), pick_rate=Count('champion') * 100 / num_matches).order_by('-pick_rate')[:5]
+    most_banned_champs = TeamMatchBan.objects.all().values('champion__name', 'champion').annotate(total=Count('champion'), ban_rate=Count('champion') * 100 / num_matches).order_by('-ban_rate')[:5]
+
 
 #    unique_fields = ['playermatch', 'monster_type', 'timestamp']
 #
@@ -730,9 +748,12 @@ def fun_stats(request):
 
     context = {
         'season': latest_season,
+        'seasons': seasons,
         'top_counterjunglers': top_counterjunglers,
+        'non_jungler_jungle_cs': non_jungler_jungle_cs,
         'most_solo_kills': most_solo_kills,
         'control_ward_pct': control_ward_pct,
+        'control_ward_pct_non_support': control_ward_pct_non_support,
         'tower_lane_pct': tower_lane_pct,
         'inhib_lane_pct': inhib_lane_pct,
         'dragon_map_pct': dragon_map_pct,
@@ -749,8 +770,12 @@ def fun_stats(request):
         'total_kills': total_kills,
         'total_deaths': total_deaths,
         'total_assists': total_assists,
+        'teammate_kills': teammate_kills,
+        'num_champs_picked': num_champs_picked,
         'winrates': winrates,
         'damage_per_minute': damage_per_minute,
+        'most_picked_champs': most_picked_champs,
+        'most_banned_champs': most_banned_champs,
         'focused_player': focused_player,
         'notifications': get_notifications(request.user)
     }

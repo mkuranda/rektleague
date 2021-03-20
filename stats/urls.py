@@ -5,6 +5,7 @@ from . import views
 urlpatterns = [
     url(r'^$', views.index, name='index'),
     url(r'^index/$', views.index, name='index'),
+    url(r'^the-next-chapter/$', views.the_next_chapter, name='the_next_chapter'),
     url(r'^register/$', views.register, name='register'),
     url(r'^profile/$', views.profile, name='profile'),
     url(r'^leave-team/(?P<team_id>[0-9]+)/$', views.leave_team, name='leave_team'),
@@ -37,7 +38,7 @@ urlpatterns = [
     url(r'^team-manager/$', views.team_manager, name='team_manager'),
     url(r'^team-manager/invite/(?P<top_id>[0-9]+)/(?P<jun_id>[0-9]+)/(?P<mid_id>[0-9]+)/(?P<bot_id>[0-9]+)/(?P<sup_id>[0-9]+)/(?P<sub1_id>[0-9]+)/(?P<sub2_id>[0-9]+)/(?P<sub3_id>[0-9]+)/(?P<sub4_id>[0-9]+)/(?P<sub5_id>[0-9]+)/$', views.team_invite, name='team_invite'),
     url(r'^team-manager/invite/(?P<top_id>[0-9]+)/(?P<jun_id>[0-9]+)/(?P<mid_id>[0-9]+)/(?P<bot_id>[0-9]+)/(?P<sup_id>[0-9]+)/(?P<sub1_id>[0-9]+)/(?P<sub2_id>[0-9]+)/(?P<sub3_id>[0-9]+)/(?P<sub4_id>[0-9]+)/(?P<sub5_id>[0-9]+)/send/$', views.send_team_invites, name='send_team_invites'),
-    #url(r'^fun_stats/$', views.fun_stats, name='fun_stats'),
+    url(r'^fun_stats/$', views.fun_stats, name='fun_stats'),
     #url(r'^profile/$', views.profile, name='profile'),
 
     #url(r'^season/(?P<season_id>[0-9]+)/$', views.season_detail, name='season'),

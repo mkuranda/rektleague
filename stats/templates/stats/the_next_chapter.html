@@ -1,0 +1,31 @@
+{% extends "stats/base.html" %}
+{% load staticfiles %}
+
+{% block title %}The Rekt League | The Next Chapter {% endblock %}
+
+{% block head %}
+<meta name="description" content="What comes next for the Rekt League?">
+<link rel="stylesheet" type="text/css" href="{% static 'stats/css/the_next_chapter.css' %}"/>
+{% endblock %}
+
+{% block content %}
+<div class="rulesContainer" style="text-align: center; width: 70%;">
+<h1>YOU THOUGHT WE WERE DONE?</h1>
+
+<p>In January of 2021, we felt that the Rekt League had run its course, and we declared an end to it. Over the course of seven seasons, the league had changed into something we were no longer excited to work on, and we were itching for something new. We missed the lower stakes of earlier seasons, when practice wasn't required and hype videos were commonplace. And League of Legends was fun, but we wanted more.</p>
+
+<h3 style="font-weight: 1000; font-size: 40;">ENTER THE REKT LEAGUE INVITATIONAL</h3>
+<p>You are here because you have been selected as a gamer of outstanding character, and one that we want to be a part of our next project. We ask that you watch the following instructions, and if it sounds like something you want to be a part of, follow the discord link below to participate in the next chapter of the Rekt League.</p>
+<script type="text/javascript" src="{% static 'stats/js/jquery-3.4.1.min.js' %}"></script>
+<video style="margin: auto; width: 50%;" width="640" height="480" controls autoplay>
+	<source src="{% static 'stats/next_chapter.mp4' %}" type="video/mp4">
+Your browser does not support the video tag.
+</video>
+<h3 style="padding-top: 40px; font-weight: 1000; font-size: 40;">JOIN US IN THE DISCORD</h3>
+<div class="icon" style="margin: auto;">
+	<a href="https://discord.gg/MeN9BXC8Np" target="_blank"><img alt="discord logo" src="{% static 'stats/rekt-league-invitational.png' %}">
+</div>
+</div>
+
+{% endblock %}
+
